@@ -1,0 +1,56 @@
+/*
+  Write your variables here. All available variables can be
+  found in https://github.com/vueComponent/ant-design-vue/blob/main/components/style/themes/default.less.
+*/
+
+@import 'lib/color-palette.less';
+
+@primary-color: #4d8ce4; // 全局主色
+@primary-color-dark: #40a9ff;
+@error-color: #f5222d; // 错误色
+@error-color-dark: #ff7875;
+@q-border-color: #f3eded; // 答题通用边框色
+@q-bg-color: #fbfbfb; // 答题通用背景色
+
+@menu-item-padding-horizontal: 15px;
+
+// 标准字体大小
+@font-size-base: 14px;
+
+@primary-1: rgba(51, 122, 183, 0.2);
+
+@primary-2: color(~`colorPalette('@{primary-color}', 2) `); // replace tint(@primary-color, 80%)
+@primary-3: color(~`colorPalette('@{primary-color}', 3) `);
+@primary-4: color(~`colorPalette('@{primary-color}', 4) `);
+@primary-5: color(~`colorPalette('@{primary-color}', 5) `);
+@primary-6: @primary-color;
+@primary-7: color(~`colorPalette('@{primary-color}', 7) `); // replace shade(@primary-color, 5%)
+@primary-8: color(~`colorPalette('@{primary-color}', 8) `);
+@primary-9: color(~`colorPalette('@{primary-color}', 9) `);
+@primary-10: color(~`colorPalette('@{primary-color}', 10) `);
+
+@tabs-bar-margin: 0 0 0px 0;
+
+@card-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09);
+
+@animation-duration-slow: 0.3s;
+
+@animation-duration-fast: 0.1s;
+
+// 禁止用户选择
+.user-select() {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// 移动端样式，传入的styles只在移动端生效
+.mobile-style(@styles) {
+  .design-form-canvas.mobile &{
+    @styles(); 
+  }
+  .form-canvas.mobile &{
+    @styles(); 
+  }
+}

@@ -1,0 +1,59 @@
+@import 'variable.less';
+
+.design-form-canvas {
+  &.pc {
+    padding: 20px;
+
+    > .design-form-canvas-page {
+      box-sizing: border-box;
+      width: 100%;
+      flex-grow: 1;
+      border-radius: 6px;
+      min-height: 100%;
+
+      > .questionnaire-content {
+      }
+    }
+  }
+}
+
+.form-canvas {
+  &.pc {
+    min-height: 600px;
+
+    > .form-canvas-body {
+      // PC状态下的底部按钮栏
+      > .fixed-bottom {
+        border-top: 1px solid #f5f5f5;
+        padding-top: 10px;
+
+        > .fixed-bottom-content {
+          justify-content: flex-end;
+
+          > button {
+            width: auto;
+            padding: 8px 20px;
+            line-height: 1.3715;
+          }
+        }
+      }
+
+      // 单行问答题
+      .component-item-single {
+        width: 500px;
+      }
+    }
+  }
+}
+
+// 创建框
+.create-new-dialog {
+  .ant-modal-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+
+  .ant-modal-content {
+    border-radius: 10px;
+  }
+}

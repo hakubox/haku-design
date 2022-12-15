@@ -1,0 +1,341 @@
+@import '/src/assets/less/variable.less';
+@import 'component.lazy.less';
+@import 'ant-design-vue/dist/antd.dark.less';
+
+@primary-color: #177ddc;
+
+.design-form {
+  > .design-form-header {
+    background-color: #323233;
+    border-bottom: 2px solid @primary-color;
+
+    > .design-form-header-logo {
+      color: #c1ccc1;
+    }
+
+    > .design-form-header-menu {
+      .ant-menu {
+        background-color: #323233;
+
+        .ant-menu-item,
+        .ant-menu-submenu {
+          color: #bababa;
+        }
+      }
+    }
+  }
+
+  > .design-form-body {
+    > .design-form-center {
+      background-color: #3c3c3c !important;
+
+      > .design-form-canvas {
+        > .design-form-canvas-page {
+          background-color: #1e1e1e;
+
+          > .questionnaire-title {
+            color: white;
+          }
+        }
+      }
+    }
+
+    > .design-form-aside {
+      > .design-form-aside-group {
+        background-color: #333333;
+
+        > .design-form-aside-group-item {
+          &:hover {
+            background-color: transparent;
+
+            > .iconfont {
+              color: #ffffff;
+            }
+          }
+
+          &.active {
+            background-color: @primary-color;
+
+            &:after {
+              background-color: @primary-color;
+            }
+          }
+
+          > .iconfont {
+            color: #858585;
+            transition: 0.15s;
+          }
+
+          > span {
+            color: #cccccc;
+          }
+        }
+      }
+
+      > .design-form-aside-content {
+        background-color: #252526;
+
+        > .design-form-aside-toolbox {
+          > .design-form-aside-toolbox-group {
+            > .design-form-aside-toolbox-group-title {
+              color: #cccccc;
+            }
+
+            > .design-form-aside-components {
+              > .component-item {
+                background-color: #3c3c3c;
+              }
+            }
+          }
+        }
+
+        > .design-form-aside-added-components {
+          color: #969696;
+
+          > li {
+            &.active {
+              color: #ffffff;
+            }
+          }
+        }
+      }
+    }
+
+    > .design-form-property {
+      background-color: #252526;
+
+      .event-item {
+        background-color: #3c3c3c;
+        border-top: 1px solid #3c3c3c;
+        border-bottom: 1px solid #3c3c3c;
+        border-right: 1px solid #3c3c3c;
+
+        > .event-item-header {
+          > .event-item-header-tools {
+            > .event-item-remove {
+              border: 1px solid #5b5b5c;
+            }
+          }
+        }
+
+        > .event-item-trigger {
+          border-bottom: 1px solid #474747;
+
+          > .event-item-trigger-item {
+            > .event-item-trigger-item-remove {
+              border: 1px solid #5b5b5c;
+            }
+
+            > .event-format {
+              > .event-format-item {
+                color: #8d8e8f;
+              }
+            }
+          }
+        }
+
+        > .event-item-action {
+          > .event-item-action-item {
+            > .event-item-action-item-remove {
+              border: 1px solid #5b5b5c;
+            }
+
+            > .event-format {
+              > .event-format-item {
+                color: #8d8e8f;
+              }
+            }
+          }
+        }
+
+        .ant-input.ant-input-sm,
+        .ant-input-number.ant-input-number-sm,
+        .ant-input-affix-wrapper {
+          background-color: #3c3c3c;
+          color: #cccccc;
+          line-height: 2;
+        }
+      }
+
+      .ant-tabs-nav-wrap {
+        background-color: #2d2d2d;
+      }
+
+      .property-collapse-item-title {
+        color: #cccccc;
+      }
+
+      .ant-tabs-nav-wrap {
+        .ant-tabs-tab {
+          background-color: #333333;
+          border-color: #333333;
+          color: #858585;
+          border-bottom: 2px solid #333333;
+
+          &.ant-tabs-tab-active {
+            background-color: #333333;
+            border-color: #333333;
+            border-bottom: 2px solid #ffffff;
+          }
+        }
+      }
+
+      .form-design-body-property-item {
+        > .form-design-body-property-item-label {
+          color: #8d8e8f;
+        }
+      }
+    }
+  }
+
+  // 底部栏
+  > .design-form-footer {
+    background-color: #333333;
+
+    > .design-form-footer-right {
+      > label {
+        color: #919fc7;
+
+        > .iconfont {
+          color: #6e8697;
+        }
+
+        &.hover {
+          &:hover {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+.form-design-body-property-item {
+  > .form-design-body-property-item-value {
+    .ant-input-sm,
+    .ant-input-number-sm,
+    .ant-input-affix-wrapper {
+      border-color: #3c3c3c;
+      color: #cccccc;
+    }
+    .ant-input.ant-input-sm,
+    .ant-input-number.ant-input-number-sm,
+    .ant-input-affix-wrapper {
+      background-color: #3c3c3c;
+      color: #cccccc;
+      line-height: 2;
+    }
+    .ant-input-affix-wrapper {
+      > .ant-input {
+        background-color: #3c3c3c;
+        color: #cccccc;
+      }
+    }
+
+    .ant-select {
+      &.ant-select-sm {
+        line-height: 2;
+
+        > .ant-select-selector {
+          background-color: #3c3c3c;
+          color: #cccccc;
+        }
+      }
+    }
+
+    .ant-table {
+      background: #252526;
+
+      .ant-table-thead > tr > th {
+        background: #2d2d2d;
+      }
+    }
+
+    // 文本框
+    .text-editor {
+      background-color: #3c3c3c !important;
+      border-color: #3c3c3c;
+
+      > input {
+        color: #cccccc;
+      }
+    }
+
+    // 富文本框
+    .richtext-editor {
+      background-color: #2d2d2d !important;
+
+      .w-e-toolbar {
+        background-color: #2d2d2d !important;
+      }
+
+      .w-e-text-container {
+        background-color: #3c3c3c;
+        color: #cccccc;
+      }
+    }
+
+    // 颜色选择器
+    .color-picker {
+      border-color: #3c3c3c;
+
+      > .color-picker-input {
+        background-color: #3c3c3c;
+        color: #cccccc;
+      }
+    }
+
+    // 盒子模型编辑器
+    .box-editor {
+      > div {
+        > .box-editor-label {
+          color: #8d8e8f;
+        }
+
+        > input {
+          background-color: #3c3c3c;
+          border: 1px solid #3c3c3c;
+        }
+      }
+    }
+
+    .ant-input-number-group-addon {
+      background-color: #141414;
+      border-color: #141414;
+
+      > .ant-select {
+        &.ant-select-sm {
+          > .ant-select-selector {
+            background-color: #141414;
+            color: rgba(255, 255, 255, 0.45);
+          }
+        }
+      }
+    }
+  }
+}
+
+.property-collapse {
+  > .property-collapse-item {
+    &:after {
+      background-color: #474747;
+    }
+  }
+}
+
+
+// 折叠面板
+.expand-handle-left {
+  &:hover {
+    &:before {
+      background-color: #20364a;
+    }
+    &:after {
+      color: #cccccc;
+    }
+  }
+
+  &:before {
+    background-color: #252526;
+  }
+}

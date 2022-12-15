@@ -1,0 +1,33 @@
+// 问卷样式
+.form-component {
+  .component-item {
+    > .component-item-label {
+      color: #cccccc;
+
+      &:before {
+      }
+    }
+
+    &.required {
+      > .component-item-label {
+        &:before {
+          color: #ff4d4f;
+        }
+      }
+    }
+
+    &.component-item-single {
+      > input {
+        background-color: #3c3c3c;
+        border-color: #3c3c3c;
+      }
+    }
+
+    // 选择框
+    .van-checkbox {
+      .van-checkbox__label {
+        color: #969696;
+      }
+    }
+  }
+}

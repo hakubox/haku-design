@@ -1,0 +1,96 @@
+@import '/src/assets/less/variable.less';
+
+.introjs-helperNumberLayer {
+  font-family: tahoma, Arial, verdana, sans-serif;
+  font-size: 14px;
+  text-shadow: none;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  border: 2px solid #ecf0f1;
+  border-radius: 50%;
+  background: #e74c3c;
+}
+
+.introjs-helperLayer {
+  background-color: #FFF;
+  background-color: rgba(255,255,255,.9);
+  border: none;
+  border-radius: 2px;
+}
+
+.introjs-tooltip {
+  color: #2c3e50;
+  font-family: tahoma, Arial, verdana, sans-serif;
+  border-radius: 4px;
+
+  // 头部
+  > .introjs-tooltip-header {
+
+    > .introjs-tooltip-title {
+      font-size: 1.3rem;
+      line-height: 1.2;
+      margin-top: 0.6em;
+      margin-bottom: 0.4em;
+      font-weight: 400;
+    }
+    
+    // 跳过按钮
+    > .introjs-skipbutton {
+      font-family: monospace, cursive, fangsong, serif;
+      color: #BBB;
+    }
+  }
+
+  // 正文内容
+  > .introjs-tooltiptext {
+    padding: 0px 20px 10px 20px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #7f7f7d;
+  }
+
+  > .introjs-bullets {
+    display: inline-block;
+    width: auto;
+
+    > ul {
+      margin-top: 10px;
+      margin-left: 18px;
+    }
+  }
+
+  > .introjs-tooltipbuttons {
+    float: right;
+    display: inline-block;
+    width: auto;
+    border-top: none;
+
+    > .introjs-button {
+      padding: 0.3em 0.4em;
+      text-shadow: none;
+      font-weight: bold;
+      color: @primary-color;
+      font-size: 0.9em;
+      border: none;
+      background: transparent;
+      background-image: none;
+      border-radius: .2em;
+      transition: .3s;
+      box-shadow: none;
+
+      + .introjs-button {
+        margin-left: 0.4em;
+      }
+
+      &:hover {
+        color: #43a4f4;
+      }
+
+      &.introjs-disabled {
+        color: #cbccc8;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

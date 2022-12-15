@@ -1,0 +1,36 @@
+@import './print-variable.less';
+
+@media print {
+  @page {
+    /* 纵向 */
+    size: portrait;
+    margin: 0;
+    width: 21cm;
+
+    /* 边距 上右下左 */
+    margin: 0cm 0cm 0cm 0cm;
+
+    body {
+      margin: 1cm;
+    }
+  }
+
+  .app-canvas-printmode {
+    print-color-adjust: exact;
+
+    > .form-header {
+      text-align: center;
+
+      > .form-title {
+
+      }
+    }
+    
+    > .form-canvas {
+
+      > .form-canvas-body {
+        padding: 30px;
+      }
+    }
+  }
+}

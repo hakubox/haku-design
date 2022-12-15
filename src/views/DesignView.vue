@@ -1,0 +1,426 @@
+<template>
+  <div>
+    <div class="design-form">
+      <!-- 头部部分 -->
+      <div class="design-form-header">
+
+        <div class="design-form-header-logo">
+          <img src="@/assets/logo.svg" alt="">
+        </div>
+        
+        <!-- 标题栏右侧菜单 -->
+        <div class="design-form-header-menu">
+          <a-menu mode="horizontal" :forceSubMenuRender="true" :selectable="false">
+            <a-sub-menu>
+              <template #icon><FileOutlined /></template>
+              <template #title>文件</template>
+              <!-- <a-sub-menu>
+                <template #icon><SelectOutlined /></template>
+                <template #title>导入JSON</template>
+                <a-menu-item key="config" :disabled="true">
+                  <i class="iconfont icon-file menu-iconfont"></i>JSON文件
+                </a-menu-item>
+              </a-sub-menu> -->
+              <a-menu-item key="create" @click="showCreateNewDialog">
+                <i class="iconfont icon-add menu-iconfont"></i>新建
+              </a-menu-item>
+              <a-menu-item key="createByLocal" @click="showCreateNewByLocalDialog">
+                <i class="iconfont icon-add menu-iconfont"></i>新建本地
+              </a-menu-item>
+              <a-menu-item @click="showPrivateQuestionnaireLibraryDialog()">
+                <i class="iconfont icon-weizhigeshi menu-iconfont"></i>打开
+              </a-menu-item>
+              <a-sub-menu>
+                <template #title>
+                  <i class="iconfont icon-file menu-iconfont"></i>导入
+                </template>
+                <a-menu-item key="importForFile">
+                  <i class="iconfont icon-file menu-iconfont"></i>从文件导入
+                </a-menu-item>
+                <a-menu-item @click="showPublicQuestionnaireLibraryDialog()">
+                  <i class="iconfont icon-weizhigeshi menu-iconfont"></i>从公共模板库导入
+                </a-menu-item>
+              </a-sub-menu>
+              <a-sub-menu v-if="editorState.appConfig.isInit">
+                <template #icon>
+                  <ExportOutlined />
+                </template>
+                <template #title>导出</template>
+                <a-menu-item key="export_json" @click="menu_exportJSON()">导出为JSON</a-menu-item>
+              </a-sub-menu>
+              <a-sub-menu>
+                <template #icon>
+                  <SkinOutlined />
+                </template>
+                <template #title>主题</template>
+                <a-menu-item
+                  :class="{ 'ant-menu-item-active': editorState.appConfig.formTheme == theme.code }"
+                  v-for="(theme, index) in state.formThemes"
+                  :key="'sub1-2-' + index"
+                  @click="editorService.selectTheme(theme.code, theme.title)"
+                >
+                  <CheckOutlined v-show="editorState.appConfig.formTheme == theme.code" />
+                  {{theme.title}}
+                </a-menu-item>
+              </a-sub-menu>
+              <a-menu-item key="config" @click="configService.open()">
+                <i class="iconfont icon-config menu-iconfont"></i>设置
+              </a-menu-item>
+            </a-sub-menu>
+            <a-sub-menu  key="edit" v-if="editorState.appConfig.isInit">
+              <template #icon><EditOutlined /></template>
+              <template #title>编辑</template>
+              <a-menu-item key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
+                <i class="iconfont icon-undo menu-iconfont"></i>撤销
+              </a-menu-item>
+              <a-menu-item key="redo" @click="historyService.redo" :disabled="!historyState.canRedo">
+                <i class="iconfont icon-redo menu-iconfont"></i>恢复
+              </a-menu-item>
+            </a-sub-menu>
+            <a-sub-menu v-if="editorState.appConfig.isInit">
+              <template #icon><AppstoreOutlined /></template>
+              <template #title>应用</template>
+              <a-menu-item key="redo" @click="editorState.showAppStyleDialog = true">
+                <i class="iconfont icon-theme menu-iconfont"></i>样式配置
+              </a-menu-item>
+              <a-menu-item key="appconig" @click="editorState.showAppConfigDialog = true">
+                <i class="iconfont icon-config menu-iconfont"></i>应用配置
+              </a-menu-item>
+            </a-sub-menu>
+            <a-menu-item v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</a-menu-item>
+            <!-- <a-menu-item><template #icon><ScanOutlined /></template>二维码</a-menu-item> -->
+            <a-menu-item v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</a-menu-item>
+            <!-- <a-menu-item v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</a-menu-item> -->
+          </a-menu>
+        </div>
+      </div>
+
+      <!-- 主体部分 -->
+      <div class="design-form-body">
+
+        <!-- 主体中部 -->
+        <div class="design-form-center">
+
+          <!-- 全局搜索按钮 -->
+          <div class="design-form-center-question">
+            <a-tooltip placement="top">
+              <template #title>
+                <span>全局搜索</span>
+              </template>
+              <a-button shape="circle" @click="globalSearchService.open">
+                <template #icon><i class="iconfont icon-search2"></i></template>
+              </a-button>
+            </a-tooltip>
+          </div>
+
+          <!-- 切换页面单选组 -->
+          <div v-if="editorState.pages.length > 1" class="design-form-page-change">
+            <a-radio-group button-style="solid" v-model:value="editorState.currentPageIndex">
+              <a-radio-button v-for="(page, pageIndex) in editorState.pages" :key="pageIndex" :value="pageIndex">{{ page.pageTitle }}</a-radio-button>
+            </a-radio-group>
+          </div>
+
+          <!-- 画布 -->
+          <div class="design-form-canvas"
+            :class="editorState.appConfig.deviceType"
+            @mousedown="editorService.changeSelectedFormComponent()"
+            v-if="editorState.appConfig.isInit"
+          >
+
+            <!-- 问卷画布 -->
+            <div class="design-form-canvas-page app-canvas" :class="editorState.currentPage.pageType">
+              <!-- 画布页面名称 -->
+              <div class="design-form-canvas-page-title">{{ editorState.currentPage.pageTitle }}</div>
+              <!-- 问卷标题 -->
+              <div class="questionnaire-title form-header" v-show="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.appType === 'questionnaire'">
+                <span class="form-title">{{editorState.appConfig.appTitle}}</span>
+              </div>
+              <!-- 问卷内容 -->
+              <div class="questionnaire-content form-content">
+                <DesignCanvas ref="componentCanvas" :isPreview="false" :isReadonly="false" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 欢迎界面 -->
+          <WelComePanel
+            v-else-if="!editorState.appConfig.isInit"
+            @create="welcomeCreate"
+            @openQuestionnaireLibrary="showPublicQuestionnaireLibraryDialog()"
+          ></WelComePanel>
+          
+          <!-- 空面板提示 -->
+          <a-empty v-else style="margin-top: calc(50vh - 130px);">
+            <template #description>
+              <span>当前暂未创建问卷</span>
+            </template>
+            <a-button type="primary" @click="showCreateNewDialog">创建问卷</a-button>
+          </a-empty>
+        </div>
+
+        <!-- 主体左侧菜单栏 -->
+        <AsidePanel v-if="editorState.appConfig.isInit"></AsidePanel>
+
+        <!-- 主体右侧菜单栏 -->
+        <ConfigPanel v-if="editorState.appConfig.isInit"></ConfigPanel>
+
+      </div>
+      
+      <!-- 底部状态部分 -->
+      <div class="design-form-footer" tabindex="-1">
+        <div class="design-form-footer-right">
+          <a-popover v-model:visible="saveHistoryVisible" title="应用保存记录" trigger="click">
+            <template #content>
+              <a-timeline>
+                <a-timeline-item v-for="item in configState.saveHistory" :key="item">{{dayjs(item.time).fromNow()}}</a-timeline-item>
+              </a-timeline>
+            </template>
+            <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
+          </a-popover>
+          <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
+          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
+          <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
+          <label :class="configState.config.proMode ? 'pro-mode' : 'normal-mode'">
+            <i class="iconfont" :class="configState.config.proMode === 'normal' ? 'icon-yunyingzhongxin' : 'icon-star'"></i>{{configState.getModeTxt }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 新建 -->
+    <CreateNewDialog v-model:visible="state.visibleCreateNewDialog" v-model:create-type="state.createNewType" @complete="editorService.createNew"></CreateNewDialog>
+
+    <!-- 新建 -->
+    <CreateNewDialog title="创建新本地应用" v-model:visible="state.visibleCreateNewByLocalDialog" v-model:create-type="state.createNewType" @complete="editorService.createNewByLocal"></CreateNewDialog>
+
+    <!-- 发布弹窗 -->
+    <PublishDialog v-model:visible="state.visiblePublishDialog" @complete="editorService.publish"></PublishDialog>
+
+    <!-- 应用预览弹出框 -->
+    <AppPreviewDialog v-model:visible="editorState.isPreview"></AppPreviewDialog>
+
+    <!-- 应用配置弹出框 -->
+    <Drawer
+      title="应用配置"
+      width="600px"
+      :bodyStyle="{ padding: '5px' }"
+      :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
+      v-model:visible="editorState.showAppConfigDialog"
+    >
+      <QuestionnaireConfig labelWidth="130px"
+        v-if="['questionnaire', 'courseware'].includes(editorState.appConfig.appType)"
+      ></QuestionnaireConfig>
+      <ComplexComponentConfig labelWidth="130px"
+        v-else-if="editorState.appConfig.appType === 'complex-component'"
+      ></ComplexComponentConfig>
+    </Drawer>
+
+    <!-- 应用样式弹出框 -->
+    <Drawer
+      title="样式配置"
+      width="600px"
+      :bodyStyle="{ padding: '5px' }"
+      :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
+      v-model:visible="editorState.showAppStyleDialog"
+    >
+      <ThemeConfig labelWidth="130px"></ThemeConfig>
+    </Drawer>
+
+    <!-- JSON -->
+    <Drawer
+      :width="800"
+      :maskClosable="true"
+      title="导出JSON"
+      @close="state.jsonEditorVisible = false"
+      :visible="state.jsonEditorVisible"
+    >
+      <code-editor style="height: calc(100vh - 150px);"
+        language="json"
+        v-model:value="state.editorJson">
+      </code-editor>
+      <div class="drawer-footer">
+        <a-button @click="setEditorJson()" type="link">重新生成</a-button>
+        <a-button @click="exportJSONFile()" type="primary">导出JSON文件</a-button>
+      </div>
+    </Drawer>
+
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue';
+import DesignCanvas from '../components/module/DesignCanvas.vue';
+import { downLoadFile, dateFormat } from '@/tools/common';
+import { Drawer } from 'ant-design-vue';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
+import { state as configState, service as configService } from '@/common/config-module';
+import { state as versionHistoryState, service as versionHistoryService } from '@/modules/version-history-module';
+import { state as globalSearchState, service as globalSearchService } from '@/modules/global-search-module';
+import { useComponentHandle } from '@/common/component-handle';
+import { useAppHandle } from '@/common/app-handle';
+import CreateNewDialog from '@/components/module/CreateNewDialog.vue';
+import PublishDialog from '@/components/module/PublishDialog.vue';
+import WelComePanel from '@/components/module/WelcomePanel.vue';
+import AppPreviewDialog from '@/components/module/AppPreviewDialog.vue';
+import ThemeConfig from '@/modules/theme-module/component/ThemeConfig.vue';
+import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
+import { AppType } from '@/@types/enum';
+  
+import { initCommands } from '@/data/form-commands';
+import { getQuestionary } from '@/api/common/questionnaire';
+import { useRoute } from 'vue-router';
+import { Component } from '@/@types/component';
+import dayjs from 'dayjs';
+import { toast } from '@/common/message';
+
+const {
+  showPrivateQuestionnaireLibraryDialog,
+  showPublicQuestionnaireLibraryDialog,
+} = useAppHandle();
+
+
+/** 保存记录pop弹窗 */
+const saveHistoryVisible = ref<boolean>(false);
+
+/** 从欢迎界面创建 */
+const welcomeCreate = (type) => {
+  state.visibleCreateNewDialog = true;
+  state.createNewType = type;
+};
+/** 打开新建弹出框 */
+const showCreateNewDialog = () => {
+  state.createNewType = undefined;
+  state.visibleCreateNewDialog = true;
+};
+/** 打开新建弹出框 */
+const showCreateNewByLocalDialog = () => {
+  state.createNewType = undefined;
+  state.visibleCreateNewByLocalDialog = true;
+};
+/** 显示发布弹窗 */
+const showPublishDialog = () => {
+  state.visiblePublishDialog = true;
+};
+/** 保存设置 */
+const saveConfig = () => {
+
+};
+/** 设置JSON */
+const setEditorJson = () => {
+  const _layout = JSON.stringify(editorService.getExportData(), undefined, '  ');
+  state.editorJson = _layout;
+  toast('已生成JSON', 'success');
+};
+/** 导出为JSON */
+const exportJSONFile = () => {
+  downLoadFile(`${editorState.appConfig.appTitle}_${dateFormat(new Date(), 'yyyy-MM-dd')}.json`, state.editorJson);
+};
+/** 导出为Json文件 */
+const menu_exportJSON = () => {
+  setEditorJson();
+  if (configState.config.proMode) {
+    state.jsonEditorVisible = true;
+  } else {
+    exportJSONFile();
+  }
+};
+/** 保存功能 */
+const save = () => {
+  historyService.exec('save', { value: 'save' });
+};
+
+onMounted(() => {
+  editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
+    componentHandle(eventName, params, component);
+  });
+});
+    
+const instance = getCurrentInstance();
+const { componentHandle } = useComponentHandle();
+
+const route = useRoute();
+
+initCommands();
+
+/** 根据 id 请求数据并加载页面 */
+const getDataById = id => {
+  const hide = toast('问卷加载中...', 'loading', 0);
+  // 获取测试问卷
+  getQuestionary(id as string).then(({ questionary, tagList }) => {
+    if (!questionary) {
+      toast('未查询到对应的应用', 'error');
+    } else if (questionary.innerType && !questionary.content) {
+      editorService.createNew({
+        id: id + '',
+        title: questionary.title,
+        description: '',
+        type: questionary.innerType.toLowerCase() as AppType,
+        params: {},
+      });
+    } else if (questionary.content) {
+      editorService.loadAppBody(id + '', questionary.content);
+    }
+  }).catch(err => {
+    console.error(err);
+    toast(`应用加载失败，错误原因：${err.message}`, 'error');
+  }).finally(() => {
+    hide();
+  });
+}
+
+/** 监听问卷版本切换 */
+versionHistoryState.bus.$on('version_change', () => {
+  getDataById(route.query.qid);
+});
+
+onMounted(() => {
+  window.onresize = () => {
+    editorService.onPageSize();
+  };
+  document.body.addEventListener('mousemove', draggableService.dragMove);
+  document.body.addEventListener('mouseup', draggableService.endDrag);
+  if (route.query.qid) {
+    getDataById(route.query.qid);
+  }
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('mousemove', draggableService.dragMove);
+  document.body.removeEventListener('mouseup', draggableService.endDrag);
+});
+
+watch(() => route.fullPath, (newPath, oldPath) => {
+  if (newPath !== oldPath && route.query.qid) {
+    getDataById(route.query.qid);
+  }
+})
+
+const state = reactive({
+  /** 版本号 */
+  version: instance ? instance.appContext.config.globalProperties.$packageInfo.version : '',
+  /** 是否显示JSON导出框 */
+  jsonEditorVisible: false,
+  /** 导出的JSON */
+  editorJson: '',
+  /** 是否显示新建弹出框 */
+  visibleCreateNewDialog: false,
+  /** 是否显示本地新建弹出框 */
+  visibleCreateNewByLocalDialog: false,
+  /** 新建类型 */
+  createNewType: AppType.questionnaire as AppType | undefined,
+  /** 是否显示编辑框 */
+  visibleConfigDialog: false,
+  /** 是否显示发布弹出框 */
+  visiblePublishDialog: false,
+  /** 表单主题清单 */
+  formThemes: [
+    { code: 'default', title: '浅色主题' },
+    { code: 'dark', title: '深色主题' },
+    { code: 'translucent', title: '半透明主题' }
+  ] as { code: string, title: string }[],
+});
+
+editorState.componentCanvas = ref(DesignCanvas);
+</script>
