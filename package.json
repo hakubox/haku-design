@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env PROJ=design vite",
-    "build": "cross-env PROJ=design vite build",
-    "preview": "cross-env PROJ=design vite preview",
+    "build:design": "cross-env PROJ=design vite build",
+    "preview:design": "cross-env PROJ=design vite preview",
     "build:answer": "cross-env PROJ=answer vite build",
+    "preview:answer": "cross-env PROJ=answer vite preview",
     "build:lib": "cross-env PROJ=answer-lib vite build"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "@vitejs/plugin-basic-ssl": "1.0.1",
     "@vitejs/plugin-vue": "4.0.0",
     "@zougt/vite-plugin-theme-preprocessor": "^1.4.8",
+    "accessible-nprogress": "^2.1.2",
     "ant-design-vue": "^3.2.15",
     "compression-webpack-plugin": "^10.0.0",
     "cross-env": "^7.0.3",
@@ -54,7 +56,6 @@
     "monaco-editor-esm-webpack-plugin": "2.1.0",
     "monaco-editor-nls": "3.0.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
-    "nprogress": "^0.2.0",
     "qrcode-vue3": "^1.4.17",
     "qs": "^6.11.0",
     "rollup-plugin-visualizer": "^5.8.3",

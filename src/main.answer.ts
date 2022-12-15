@@ -8,6 +8,7 @@ import components from '@/packages/answer/common/register-global-components';
 import '@vant/touch-emulator';
 import 'vant/lib/index.less';
 import '@/packages/answer/assets/less/main.less';
+import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

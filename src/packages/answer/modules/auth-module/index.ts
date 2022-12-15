@@ -1,6 +1,6 @@
 import { state as globalState } from '@/common/global';
 import { NavigationFailure } from 'vue-router';
-import NProgress from 'nprogress';
+import NProgress from 'accessible-nprogress';
 import { Toast } from 'vant';
 
 /** 评分模块 */

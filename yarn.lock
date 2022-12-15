@@ -592,6 +592,11 @@
     fs-extra "^10.0.0"
     string-hash "^1.1.3"
 
+accessible-nprogress@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/accessible-nprogress/-/accessible-nprogress-2.1.2.tgz#8e65ebf4936db1752638e1cd2e8730f9bef311e9"
+  integrity sha512-reIwMbbt+ZGOmQLWPXGcPf5X1F4fzsZAekY9alCxpekxizRhQMAd/QInaA8k7WtwTcGMzD9hnYswGLcaJDRY/A==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -884,10 +889,10 @@ core-js@^3.15.1:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.26.1.tgz#7a9816dabd9ee846c1c0fe0e8fcad68f3709134e"
   integrity sha512-21491RRQVzUn0GGM9Z1Jrpr6PNPxPi+Za8OM9q4tksTSnlbXXGKK1nXNg/QvwFYettXvSX6zWKCtHHfjN4puyA==
 
-cos-js-sdk-v5@^1.4.15-beta.0:
-  version "1.4.15-beta.0"
-  resolved "https://registry.yarnpkg.com/cos-js-sdk-v5/-/cos-js-sdk-v5-1.4.15-beta.0.tgz#6209fdab00fd1e450a6b32cfe4496a48b4679dc5"
-  integrity sha512-pOoVnnHCAd+0y6QQFR0SmJP9fNC7rM6l62EtFyWuoXDHdODv9T4i7hKoxz7Wa8JSWg6v7UX5UBEpUdJG0qMvAA==
+cos-js-sdk-v5@^1.4.14:
+  version "1.4.14"
+  resolved "https://registry.yarnpkg.com/cos-js-sdk-v5/-/cos-js-sdk-v5-1.4.14.tgz#768bf4fcf0498d736b58960c52b76a93df64c9ad"
+  integrity sha512-nw4kQijqyXSzRElL9HAKGWA96SQk6Sfx/SvJrGra2cXo2L4ipL3Y0wNnH+Wga1f7iigun85+nIk9BrL5+iBJOg==
   dependencies:
     "@xmldom/xmldom" "^0.8.6"
 
@@ -2092,11 +2097,6 @@ normalize-url@^6.0.1:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-6.1.0.tgz#40d0885b535deffe3f3147bec877d05fe4c5668a"
   integrity sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==
-
-nprogress@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
-  integrity sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==
 
 nth-check@^2.0.1:
   version "2.1.1"

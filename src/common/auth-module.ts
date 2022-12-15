@@ -4,7 +4,7 @@ import { removeToken, setToken } from '@/lib/api';
 import { toast } from './message';
 import { state as globalState } from '@/common/global';
 import type { NavigationFailure } from 'vue-router';
-import NProgress from 'nprogress';
+import NProgress from 'accessible-nprogress';
 import mobile from 'is-mobile';
 
 /** 用户模块状态 */

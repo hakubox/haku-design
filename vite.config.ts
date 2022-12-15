@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type UserConfigExport } from 'vite';
 import path, { resolve } from 'path';
 import vue from '@vitejs/plugin-vue';
 // import basicSsl from '@vitejs/plugin-basic-ssl';
@@ -13,25 +13,27 @@ import {
 const proj = process.env.PROJ;
 
 const transformIndexHtml = (code) => {
-  switch (process.env.NODE_ENV) {
-    case 'production':
-      return code.replace(/__MAIN__/, '/src/main.answer.ts'); // 生产环境
-    default:
-      return code.replace(/__MAIN__/, '/src/main.design.ts'); // 开发环境
+  switch (proj) {
+    case 'answer': return code.replace(/__MAIN__/, '/src/main.answer.ts');
+    case 'design': return code.replace(/__MAIN__/, '/src/main.design.ts');
   }
 };
 
-let config;
+let config: UserConfigExport;
 
 switch (proj) {
   // 设计端
   case 'design':
+    console.log('——设计端编译——');
     config = defineConfig({
       resolve: {
         alias: [
           {
             find: '@/',
             replacement: '/src/',
+          }, {
+            find: '@answer/',
+            replacement: '/src/packages/answer/',
           },
         ],
       },
@@ -93,9 +95,7 @@ switch (proj) {
         {
           name: 'demo-transform',
           enforce: 'pre',
-          // vite build is production will not invoke `transformIndexHtml`
           transform(code, id) {
-            // console.log('code' + code + 'id' + id);
             if (id.endsWith('.html')) {
               return { code: transformIndexHtml(code), map: null };
             }
@@ -115,24 +115,33 @@ switch (proj) {
       },
       build: {
         rollupOptions: {
-          input: 'design.html'
+          output: {
+            chunkFileNames: 'assets/js/[name]-[hash].js',
+            entryFileNames: 'assets/js/[name]-[hash].js',
+            assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+            manualChunks(id) { //静态资源分拆打包
+              if (id.includes('node_modules')) {
+                return id.toString().split('node_modules/')[1].split('/')[0].toString();
+              }
+            }
+          }
         }
       }
-    })
+    });
     break;
 
   // 用户端
   case 'answer':
+    console.log('——用户端编译——');
     config = defineConfig({
-      optimizeDeps: {
-        exclude: [
-        ]
-      },
       resolve: {
         alias: [
           {
             find: '@/',
             replacement: '/src/',
+          }, {
+            find: '@answer/',
+            replacement: '/src/packages/answer/',
           },
         ],
       },
@@ -148,9 +157,7 @@ switch (proj) {
         {
           name: 'demo-transform',
           enforce: 'pre',
-          // vite build is production will not invoke `transformIndexHtml`
           transform(code, id) {
-            // console.log('code' + code + 'id' + id);
             if (id.endsWith('.html')) {
               return { code: transformIndexHtml(code), map: null };
             }
@@ -170,8 +177,6 @@ switch (proj) {
       },
       build: {
         rollupOptions: {
-          input: 'answer.html',
-          // 静态资源分类打包
           output: {
             chunkFileNames: 'assets/js/[name]-[hash].js',
             entryFileNames: 'assets/js/[name]-[hash].js',
@@ -190,6 +195,7 @@ switch (proj) {
     
   // 用户答题组件
   case 'answer-lib':
+    console.log('——用户组件编译——');
     config = defineConfig({
       optimizeDeps: {
         exclude: [
@@ -200,6 +206,9 @@ switch (proj) {
           {
             find: '@/',
             replacement: '/src/',
+          }, {
+            find: '@answer/',
+            replacement: '/src/packages/answer/',
           },
         ],
       },
@@ -212,18 +221,6 @@ switch (proj) {
         },
       },
       plugins: [
-        {
-          name: 'demo-transform',
-          enforce: 'pre',
-          // vite build is production will not invoke `transformIndexHtml`
-          transform(code, id) {
-            // console.log('code' + code + 'id' + id);
-            if (id.endsWith('.html')) {
-              return { code: transformIndexHtml(code), map: null };
-            }
-          },
-          transformIndexHtml,
-        },
         // basicSsl(),
         vue(),
         visualizer({
@@ -239,7 +236,7 @@ switch (proj) {
       build: {
         lib: {
           entry: path.resolve(__dirname, 'src/packages/answer/index.ts'),
-          name: 'answer-component',
+          name: 'AnswerComponent',
           fileName: (format) => `answer-component.${format}.js`
         },
         rollupOptions: {
@@ -257,141 +254,8 @@ switch (proj) {
     });
     break;
 
-  
-
   default:
     break;
 }
 
 export default config;
-
-// export default defineConfig(({ command, mode, ssrBuild }) => {
-//   const env = loadEnv(mode, process.cwd(), '')
-
-//   if (mode === 'design') {
-//     return {
-//       resolve: {
-//         alias: {
-//           '@/': resolve(__dirname, './src/')
-//         }
-//       },
-//       plugins: [
-//         {
-//           name: 'demo-transform',
-//           enforce: 'pre',
-//           // vite build is production will not invoke `transformIndexHtml`
-//           transform (code, id) {
-//             console.log('code' + code + 'id' + id)
-//             if (id.endsWith('.html')) {
-//               return { code: transformIndexHtml(code), map: null }
-//             }
-//           },
-//           transformIndexHtml
-//         },
-//         basicSsl(),
-//         vue()
-//       ],
-//       define: {
-//         __APP_ENV__: env.APP_ENV
-//       }
-//     }
-//   } else if (mode === 'answer') {
-//     return {
-//       resolve: {
-//         alias: {
-//           '@/': resolve(__dirname, './src/')
-//         }
-//       },
-//       plugins: [
-//         {
-//           name: 'demo-transform',
-//           enforce: 'pre',
-//           // vite build is production will not invoke `transformIndexHtml`
-//           transform (code, id) {
-//             console.log('code' + code + 'id' + id)
-//             if (id.endsWith('.html')) {
-//               return { code: transformIndexHtml(code), map: null }
-//             }
-//           },
-//           transformIndexHtml
-//         },
-//         basicSsl(),
-//         vue()
-//       ],
-//       define: {
-//         __APP_ENV__: env.APP_ENV
-//       }
-//     }
-//   } else if (mode === 'answer-lib') {
-//     return {
-//       resolve: {
-//         alias: {
-//           '@/': resolve(__dirname, './src/')
-//         }
-//       },
-//       plugins: [
-//         {
-//           name: 'demo-transform',
-//           enforce: 'pre',
-//           // vite build is production will not invoke `transformIndexHtml`
-//           transform (code, id) {
-//             console.log('code' + code + 'id' + id)
-//             if (id.endsWith('.html')) {
-//               return { code: transformIndexHtml(code), map: null }
-//             }
-//           },
-//           transformIndexHtml
-//         },
-//         basicSsl(),
-//         vue()
-//       ],
-//       define: {
-//         __APP_ENV__: env.APP_ENV
-//       },
-//       build: {
-//         lib: {
-//           entry: resolve(__dirname, 'src/packages/answer/index.ts'),
-//           name: 'AnswerComponent',
-//           fileName: 'answer-component'
-//         },
-//         rollupOptions: {
-//           // 确保外部化处理那些你不想打包进库的依赖
-//           external: ['vue'],
-//           output: {
-//             // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
-//             globals: {
-//               vue: 'Vue'
-//             }
-//           }
-//         }
-//       }
-//     }
-//   } else {
-//     return {
-//       resolve: {
-//         alias: {
-//           '@/': resolve(__dirname, './src/')
-//         }
-//       },
-//       plugins: [
-//         {
-//           name: 'demo-transform',
-//           enforce: 'pre',
-//           // vite build is production will not invoke `transformIndexHtml`
-//           transform (code, id) {
-//             console.log('code' + code + 'id' + id)
-//             if (id.endsWith('.html')) {
-//               return { code: transformIndexHtml(code), map: null }
-//             }
-//           },
-//           transformIndexHtml
-//         },
-//         // basicSsl(),
-//         vue()
-//       ],
-//       define: {
-//         __APP_ENV__: env.APP_ENV
-//       }
-//     }
-//   }
-// });

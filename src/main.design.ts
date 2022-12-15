@@ -15,6 +15,7 @@ import AntdZHCN from 'ant-design-vue/es/locale/zh_CN';
 import '@vant/touch-emulator';
 import 'vant/lib/index.less';
 import '@/assets/less/main.less';
+import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
 import { state as configState } from '@/common/config-module';
 import dayjs from 'dayjs';
