@@ -14,8 +14,8 @@ dist
 dist-ssr
 *.local
 /docs/.vuepress/dist
-/docs/.vuepress/.cache
-/docs/.vuepress/.temp
+.cache
+.temp
 
 # Editor directories and files
 .vscode/*
