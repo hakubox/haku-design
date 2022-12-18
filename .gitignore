@@ -7,10 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+*-backup.md
+
 node_modules
 dist
 dist-ssr
 *.local
+/docs/.vuepress/dist
+/docs/.vuepress/.cache
+/docs/.vuepress/.temp
 
 # Editor directories and files
 .vscode/*

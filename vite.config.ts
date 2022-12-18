@@ -21,6 +21,8 @@ const transformIndexHtml = (code) => {
 
 let config: UserConfigExport;
 
+const monacoPrefix = `monaco-editor/esm/vs`;
+
 switch (proj) {
   // 设计端
   case 'design':
@@ -119,14 +121,25 @@ switch (proj) {
             chunkFileNames: 'assets/js/[name]-[hash].js',
             entryFileNames: 'assets/js/[name]-[hash].js',
             assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-            manualChunks(id) { //静态资源分拆打包
-              if (id.includes('node_modules')) {
-                return id.toString().split('node_modules/')[1].split('/')[0].toString();
-              }
-            }
+            // manualChunks(id) { //静态资源分拆打包
+            //   if (id.includes('node_modules')) {
+            //     return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            //   }
+            // },
+            manualChunks: {
+              jsonWorker: [`${monacoPrefix}/language/json/json.worker`],
+              cssWorker: [`${monacoPrefix}/language/css/css.worker`],
+              htmlWorker: [`${monacoPrefix}/language/html/html.worker`],
+              tsWorker: [`${monacoPrefix}/language/typescript/ts.worker`],
+              editorWorker: [`${monacoPrefix}/editor/editor.worker`],
+            },
           }
         }
-      }
+      },
+      optimizeDeps: {
+        exclude: [
+        ]
+      },
     });
     break;
 

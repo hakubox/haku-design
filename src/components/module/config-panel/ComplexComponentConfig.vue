@@ -1,7 +1,10 @@
 <template>
   <div class="property-collapse">
     <div class="property-collapse-item">
-      <label class="property-collapse-item-title"><DownOutlined /> 基础配置</label>
+      <label class="property-collapse-item-title">
+        <!-- <DownOutlined /> -->
+        基础配置
+      </label>
       <div class="property-collapse-item-content">
         <!-- 面板标题 -->
         <!-- <label class="form-design-body-property-item">

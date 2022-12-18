@@ -1,5 +1,5 @@
 import { IDomEditor, IButtonMenu } from '@wangeditor/editor';
-import { createVNode, reactive, h, render, type VNode } from 'vue';
+import { createVNode, reactive, h, render, type VNode, ConcreteComponent } from 'vue';
 import { Boot } from '@wangeditor/editor';
 import bus from '@/tools/bus';
 import VariablePickerDialog from './VariablePickerDialog.vue';
@@ -52,7 +52,7 @@ export class VariablePickerMenu implements IButtonMenu {
   /** 点击菜单时触发的函数 */
   exec(editor: IDomEditor, value: string | boolean) {
     _editor = editor;
-    variableDialogContainer = loadComponent(VariablePickerDialog).dom;
+    variableDialogContainer = loadComponent(VariablePickerDialog as ConcreteComponent).dom;
   }
 }
 

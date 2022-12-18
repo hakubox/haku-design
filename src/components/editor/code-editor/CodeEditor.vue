@@ -1,178 +1,171 @@
 <template>
-  <div class="code-editor" ref="containerRef" :height="($attrs.style as any).height"></div>
+  <div class="code-editor" ref="containerRef" :height="(attrs.style as any).height"></div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import { defineComponent, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, useAttrs, watch } from 'vue';
+import * as monaco from 'monaco-editor';
 
-export default defineComponent({
-  name: 'CodeEditor',
-  props: {
-    value: {
-      type: String,
-      required: true,
-    },
-    marker: {
-      type: Function,
-    },
-    height: {
-      type: String,
-      default: '200px',
-    },
-    /** 主题名称 */
-    theme: {
-      type: String,
-      default: 'gj-dark',
-    },
-    /** 语言类型 */
-    language: {
-      type: String,
-      default: 'json',
-    },
-    /** 是否为表达式 */
-    isExpression: {
-      type: Boolean,
-      default: false,
-    },
-    /** 提示文本 */
-    placeholder: {
-      type: String,
-      default: '请输入JSON字符串',
-    },
-    /** 改变事件 */
-    onChange: {
-      type: Function as PropType<(value: string) => void>
-    },
-    /** 附加参数 */
-    options: {
-      type: Object,
-      default: () => ({}),
-    },
+const props = defineProps({
+  value: {
+    type: String,
+    required: true,
   },
-  mounted() {
+  marker: {
+    type: Function,
   },
-  methods: {
+  height: {
+    type: String,
+    default: '200px',
   },
-  setup(props, { emit }) {
+  /** 主题名称 */
+  theme: {
+    type: String,
+    default: 'gj-dark',
+  },
+  /** 语言类型 */
+  language: {
+    type: String,
+    default: 'json',
+  },
+  /** 是否为表达式 */
+  isExpression: {
+    type: Boolean,
+    default: false,
+  },
+  /** 提示文本 */
+  placeholder: {
+    type: String,
+    default: '请输入JSON字符串',
+  },
+  /** 改变事件 */
+  onChange: {
+    type: Function as PropType<(value: string) => void>
+  },
+  /** 附加参数 */
+  options: {
+    type: Object,
+    default: () => ({}),
+  },
+});
 
-    let state = reactive({
-      content: '',
-      /** TS转JS的数据 */
-      realJavascript: '',
-      defaultOptions: {
-        wordWrap: 'off', //控制如何换行
-        automaticLayout: true,
-        fontFamily: "'Fira Code', Consolas, 'Courier New', monospace, 'Microsoft YaHei'",
-      },
-      /** 停止绘制 */
-      preventTriggerChangeEvent: false,
-    });
+const attrs = useAttrs();
 
-    const editorRef = shallowRef();
-    const containerRef = ref(null);
-    let _subscription: any;
+const state = reactive({
+  content: '',
+  /** TS转JS的数据 */
+  realJavascript: '',
+  defaultOptions: {
+    wordWrap: 'off', //控制如何换行
+    automaticLayout: true,
+    fontFamily: "'Fira Code', Consolas, 'Courier New', monospace, 'Microsoft YaHei'",
+  },
+  /** 停止绘制 */
+  preventTriggerChangeEvent: false,
+});
 
-    onMounted(()=>{
-      let _options = {
-        ...state.defaultOptions,
-        ...props.options,
-        theme: props.theme,
-        language: props.language,
-        fontFamily: 'Courier New',
-        wordWrap: 'on',
-        minimap: {
-          enabled: false // 是否启用预览图
-        },
-      };
+const emit = defineEmits<{
+  (event: 'focus'): void;
+  (event: 'change', value: string, e: any): void;
+}>();
 
-      const editor = editorRef.value = monaco.editor.create(containerRef.value, {
-        value: props.value,
-        ..._options,
-      });
-      editor.onDidFocusEditorText(() => {
-        emit('focus');
-      });
-      _subscription = editor.onDidChangeModelContent(throttle((event) => {
-        if (!state.preventTriggerChangeEvent) {
-          emit('change', editor.getValue(), event);
-        }
-      }));
-    })
+const editorRef = shallowRef();
+const containerRef = ref<HTMLElement>();
+let _subscription: any;
 
-    /** 获取值 */
-    const getValue = () => {
-      const editor = editorRef.value;
-      return editor?.getValue?.() || '';
-    };
-    /** 销毁 */
-    const destory = () => {
-      const editor = editorRef.value;
-      if (_subscription) _subscription.dispose()
-      const model = editor.getModel();
-      if (model) model.dispose();
-      editor.dispose();
-    };
-    /** 监听值 */
-    watch(() => props.value, (count, prevCount) => {
-      const editor = editorRef.value;
-      if (editor) {
-        if (count != editor.getValue()) {
-          editor.setValue(count);
-        }
-      }
-    });
-    
-    if (props.isExpression) {
-      monaco.editor.defineTheme('gj-dark', {
-        base: 'vs-dark',
-        inherit: true,
-        rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-        colors: {}
-      });
+onMounted(()=>{
+  let _options = {
+    ...state.defaultOptions,
+    ...props.options,
+    theme: props.theme,
+    language: props.language,
+    fontFamily: 'Courier New',
+    wordWrap: 'on',
+    minimap: {
+      enabled: false // 是否启用预览图
+    },
+  };
 
-      // validation settings
-      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: true,
-        noSyntaxValidation: false,
-      });
-
-      // compiler options
-      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        allowNonTsExtensions: true,
-      });
-
-    } else {
-      monaco.editor.defineTheme('gj-dark', {
-        base: 'vs-dark',
-        inherit: true,
-        rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-        colors: {}
-      });
-
-      const _languages = monaco.languages.getLanguages().map((i) => i.id);
-      if (!_languages.includes(props.language)) {
-        switch (props.language) {
-          case 'sql':
-            break;
-          default:
-            break;
-        }
-      }
+  const editor = editorRef.value = monaco.editor.create(containerRef.value!, {
+    value: props.value,
+    ..._options,
+  } as monaco.editor.IStandaloneEditorConstructionOptions);
+  editor.onDidFocusEditorText(() => {
+    emit('focus');
+  });
+  _subscription = editor.onDidChangeModelContent(throttle((event) => {
+    if (!state.preventTriggerChangeEvent) {
+      emit('change', editor.getValue(), event);
     }
-    
-    onBeforeUnmount(() => {
-      destory();
-    })
+  }));
+})
 
-    return {
-      ...toRefs(state),
-      editorRef,
-      containerRef,
-      getValue
+/** 获取值 */
+const getValue = () => {
+  const editor = editorRef.value;
+  return editor?.getValue?.() || '';
+};
+/** 销毁 */
+const destory = () => {
+  const editor = editorRef.value;
+  if (_subscription) _subscription.dispose()
+  const model = editor.getModel();
+  if (model) model.dispose();
+  editor.dispose();
+};
+/** 监听值 */
+watch(() => props.value, (count, prevCount) => {
+  const editor = editorRef.value;
+  if (editor) {
+    if (count != editor.getValue()) {
+      editor.setValue(count);
     }
   }
+});
+
+onBeforeMount(() => {
+  if (props.isExpression) {
+    monaco.editor.defineTheme('gj-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+      colors: {}
+    });
+
+    // validation settings
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: false,
+    });
+
+    // compiler options
+    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+      allowNonTsExtensions: true,
+    });
+  } else {
+    monaco.editor.defineTheme('gj-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+      colors: {}
+    });
+
+    const _languages = monaco.languages.getLanguages().map((i) => i.id);
+    if (!_languages.includes(props.language)) {
+      switch (props.language) {
+        case 'sql':
+          break;
+        default:
+          break;
+      }
+    }
+  }
+});
+
+onBeforeUnmount(() => {
+  destory();
 });
 </script>
 

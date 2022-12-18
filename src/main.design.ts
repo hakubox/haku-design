@@ -28,11 +28,7 @@ dayjs.extend(relativeTime);
 
 globalStore.state.antdConfigProvider.locale = AntdZHCN;
 
-// import zh_CN from 'monaco-editor-nls/locale/zh-hans.json';
-
-import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
-
-import * as editorApi from 'monaco-editor/esm/vs/editor/editor.api';
+// import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
 
 import FilePicker from '@/modules/storage-module/component/file-picker/FilePicker.vue';
 
@@ -50,8 +46,30 @@ configState.ConfigDialog = ConfigDialog;
 
 messageInit({ toastModule: message, confirmModule: Modal });
 
-setLocaleData(zhHans);
-window['monaco'] = editorApi;
+import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
+import 'monaco-editor/esm/vs/basic-languages/less/less.contribution'
+import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+
+window['MonacoEnvironment'] = {
+  getWorker (_: string, label: string) {
+    console.log('getWorker', label);
+    if (label === 'typescript' || label === 'javascript') return new TsWorker()
+    if (label === 'json') return new JsonWorker()
+    if (label === 'css' || label === 'less') return new CssWorker()
+    if (label === 'html') return new HtmlWorker()
+    return new EditorWorker()
+  }
+}
+
+// setLocaleData(zhHans);
+// window['monaco'] = editorApi;
+// window['monacoEditor'] = monaco;
 
 window.addEventListener('load', () => {
   if (window.opener) {

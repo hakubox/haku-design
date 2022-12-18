@@ -19,6 +19,7 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
   // 头部
   > .design-form-header {
+    user-select: none;
     display: flex;
     justify-content: space-between;
     flex-grow: 0;
@@ -70,6 +71,7 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
     // 左侧栏
     > .design-form-aside {
+      user-select: none;
       position: relative;
       display: flex;
       flex-direction: row;
@@ -391,11 +393,13 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
       > label {
         .user-select();
         cursor: default;
-        display: inline-block;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
         color: #6d6d79;
-        font-size: 14px;
-        line-height: 18px;
-        margin-right: 20px;
+        font-size: 12px;
+        margin-right: 15px;
         padding: 2px;
         border-radius: 3px;
         transition: 0.15s;
@@ -924,9 +928,11 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
     }
 
     > .property-collapse-item-title {
+      position: relative;
       display: block;
       margin-bottom: 0px;
       padding: 15px;
+      margin-bottom: 5px;
       font-size: 15px;
       font-weight: bold;
       color: #2f2e3f;
@@ -935,6 +941,18 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
         font-size: 12px;
         margin-right: 6px;
         vertical-align: middle;
+      }
+
+      &:before {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        width: 22px;
+        height: 4px;
+        border-radius: 3px;
+        background-color: @primary-color;
+        bottom: 8px;
+        left: 15px;
       }
     }
 

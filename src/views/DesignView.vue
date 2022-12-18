@@ -10,50 +10,50 @@
         
         <!-- 标题栏右侧菜单 -->
         <div class="design-form-header-menu">
-          <a-menu mode="horizontal" :forceSubMenuRender="true" :selectable="false">
-            <a-sub-menu>
+          <Menu mode="horizontal" :forceSubMenuRender="true" :selectable="false">
+            <SubMenu>
               <template #icon><FileOutlined /></template>
               <template #title>文件</template>
-              <!-- <a-sub-menu>
+              <!-- <SubMenu>
                 <template #icon><SelectOutlined /></template>
                 <template #title>导入JSON</template>
-                <a-menu-item key="config" :disabled="true">
+                <MenuItem key="config" :disabled="true">
                   <i class="iconfont icon-file menu-iconfont"></i>JSON文件
-                </a-menu-item>
-              </a-sub-menu> -->
-              <a-menu-item key="create" @click="showCreateNewDialog">
+                </MenuItem>
+              </SubMenu> -->
+              <MenuItem key="create" @click="showCreateNewDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建
-              </a-menu-item>
-              <a-menu-item key="createByLocal" @click="showCreateNewByLocalDialog">
+              </MenuItem>
+              <MenuItem key="createByLocal" @click="showCreateNewByLocalDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建本地
-              </a-menu-item>
-              <a-menu-item @click="showPrivateQuestionnaireLibraryDialog()">
+              </MenuItem>
+              <MenuItem @click="showPrivateQuestionnaireLibraryDialog()">
                 <i class="iconfont icon-weizhigeshi menu-iconfont"></i>打开
-              </a-menu-item>
-              <a-sub-menu>
+              </MenuItem>
+              <SubMenu>
                 <template #title>
                   <i class="iconfont icon-file menu-iconfont"></i>导入
                 </template>
-                <a-menu-item key="importForFile">
+                <MenuItem key="importForFile">
                   <i class="iconfont icon-file menu-iconfont"></i>从文件导入
-                </a-menu-item>
-                <a-menu-item @click="showPublicQuestionnaireLibraryDialog()">
+                </MenuItem>
+                <MenuItem @click="showPublicQuestionnaireLibraryDialog()">
                   <i class="iconfont icon-weizhigeshi menu-iconfont"></i>从公共模板库导入
-                </a-menu-item>
-              </a-sub-menu>
-              <a-sub-menu v-if="editorState.appConfig.isInit">
+                </MenuItem>
+              </SubMenu>
+              <SubMenu v-if="editorState.appConfig.isInit">
                 <template #icon>
                   <ExportOutlined />
                 </template>
                 <template #title>导出</template>
-                <a-menu-item key="export_json" @click="menu_exportJSON()">导出为JSON</a-menu-item>
-              </a-sub-menu>
-              <a-sub-menu>
+                <MenuItem key="export_json" @click="menu_exportJSON()">导出为JSON</MenuItem>
+              </SubMenu>
+              <SubMenu>
                 <template #icon>
                   <SkinOutlined />
                 </template>
                 <template #title>主题</template>
-                <a-menu-item
+                <MenuItem
                   :class="{ 'ant-menu-item-active': editorState.appConfig.formTheme == theme.code }"
                   v-for="(theme, index) in state.formThemes"
                   :key="'sub1-2-' + index"
@@ -61,37 +61,37 @@
                 >
                   <CheckOutlined v-show="editorState.appConfig.formTheme == theme.code" />
                   {{theme.title}}
-                </a-menu-item>
-              </a-sub-menu>
-              <a-menu-item key="config" @click="configService.open()">
+                </MenuItem>
+              </SubMenu>
+              <MenuItem key="config" @click="configService.open()">
                 <i class="iconfont icon-config menu-iconfont"></i>设置
-              </a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu  key="edit" v-if="editorState.appConfig.isInit">
+              </MenuItem>
+            </SubMenu>
+            <SubMenu  key="edit" v-if="editorState.appConfig.isInit">
               <template #icon><EditOutlined /></template>
               <template #title>编辑</template>
-              <a-menu-item key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
+              <MenuItem key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
                 <i class="iconfont icon-undo menu-iconfont"></i>撤销
-              </a-menu-item>
-              <a-menu-item key="redo" @click="historyService.redo" :disabled="!historyState.canRedo">
+              </MenuItem>
+              <MenuItem key="redo" @click="historyService.redo" :disabled="!historyState.canRedo">
                 <i class="iconfont icon-redo menu-iconfont"></i>恢复
-              </a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu v-if="editorState.appConfig.isInit">
+              </MenuItem>
+            </SubMenu>
+            <SubMenu v-if="editorState.appConfig.isInit">
               <template #icon><AppstoreOutlined /></template>
               <template #title>应用</template>
-              <a-menu-item key="redo" @click="editorState.showAppStyleDialog = true">
+              <MenuItem key="redo" @click="editorState.showAppStyleDialog = true">
                 <i class="iconfont icon-theme menu-iconfont"></i>样式配置
-              </a-menu-item>
-              <a-menu-item key="appconig" @click="editorState.showAppConfigDialog = true">
+              </MenuItem>
+              <MenuItem key="appconig" @click="editorState.showAppConfigDialog = true">
                 <i class="iconfont icon-config menu-iconfont"></i>应用配置
-              </a-menu-item>
-            </a-sub-menu>
-            <a-menu-item v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</a-menu-item>
-            <!-- <a-menu-item><template #icon><ScanOutlined /></template>二维码</a-menu-item> -->
-            <a-menu-item v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</a-menu-item>
-            <!-- <a-menu-item v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</a-menu-item> -->
-          </a-menu>
+              </MenuItem>
+            </SubMenu>
+            <MenuItem v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
+            <!-- <MenuItem><template #icon><ScanOutlined /></template>二维码</MenuItem> -->
+            <MenuItem v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
+            <!-- <MenuItem v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem> -->
+          </Menu>
         </div>
       </div>
 
@@ -103,14 +103,14 @@
 
           <!-- 全局搜索按钮 -->
           <div class="design-form-center-question">
-            <a-tooltip placement="top">
+            <Tooltip placement="top">
               <template #title>
                 <span>全局搜索</span>
               </template>
-              <a-button shape="circle" @click="globalSearchService.open">
+              <Button shape="circle" @click="globalSearchService.open">
                 <template #icon><i class="iconfont icon-search2"></i></template>
-              </a-button>
-            </a-tooltip>
+              </Button>
+            </Tooltip>
           </div>
 
           <!-- 切换页面单选组 -->
@@ -150,12 +150,12 @@
           ></WelComePanel>
           
           <!-- 空面板提示 -->
-          <a-empty v-else style="margin-top: calc(50vh - 130px);">
+          <Empty v-else style="margin-top: calc(50vh - 130px);">
             <template #description>
               <span>当前暂未创建问卷</span>
             </template>
-            <a-button type="primary" @click="showCreateNewDialog">创建问卷</a-button>
-          </a-empty>
+            <Button type="primary" @click="showCreateNewDialog">创建问卷</Button>
+          </Empty>
         </div>
 
         <!-- 主体左侧菜单栏 -->
@@ -239,8 +239,8 @@
         v-model:value="state.editorJson">
       </code-editor>
       <div class="drawer-footer">
-        <a-button @click="setEditorJson()" type="link">重新生成</a-button>
-        <a-button @click="exportJSONFile()" type="primary">导出JSON文件</a-button>
+        <Button @click="setEditorJson()" type="link">重新生成</Button>
+        <Button @click="exportJSONFile()" type="primary">导出JSON文件</Button>
       </div>
     </Drawer>
 
@@ -251,13 +251,13 @@
 import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
 import { downLoadFile, dateFormat } from '@/tools/common';
-import { Drawer } from 'ant-design-vue';
+import { Button, Drawer, Empty, Menu, MenuItem, SubMenu, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
-import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
+import { service as draggableService } from '@/modules/draggable-module';
 import { state as configState, service as configService } from '@/common/config-module';
-import { state as versionHistoryState, service as versionHistoryService } from '@/modules/version-history-module';
-import { state as globalSearchState, service as globalSearchService } from '@/modules/global-search-module';
+import { state as versionHistoryState } from '@/modules/version-history-module';
+import { service as globalSearchService } from '@/modules/global-search-module';
 import { useComponentHandle } from '@/common/component-handle';
 import { useAppHandle } from '@/common/app-handle';
 import CreateNewDialog from '@/components/module/CreateNewDialog.vue';
@@ -274,12 +274,12 @@ import { useRoute } from 'vue-router';
 import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
 import { toast } from '@/common/message';
+import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
   showPublicQuestionnaireLibraryDialog,
 } = useAppHandle();
-
 
 /** 保存记录pop弹窗 */
 const saveHistoryVisible = ref<boolean>(false);

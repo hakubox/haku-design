@@ -12,7 +12,7 @@ export default {
 <script lang="ts" setup>
 import { onMounted, watch, ref } from 'vue';
 import { getQBasicProps } from '@/tools/common';
-import { ECharts } from 'echarts';
+import type { ECharts } from 'echarts';
 import BaseECharts from '@/components/common/BaseECharts.vue';
 
 const props = defineProps({

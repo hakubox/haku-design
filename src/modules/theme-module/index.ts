@@ -1,4 +1,4 @@
-import { render } from 'less/lib/less/render';
+import { render } from 'less';
 import type { ThemeConfig } from './@types';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';

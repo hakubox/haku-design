@@ -6,7 +6,7 @@
 </template>
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import * as echarts from 'echarts';
+import { init as echartInit, type ECharts } from 'echarts';
 import { defineProps, watch, ref, reactive, onMounted, nextTick } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import { Empty } from 'vant';
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const echartEl = ref<HTMLElement>();
 const state = reactive({
-  chart: undefined as unknown as echarts.ECharts,
+  chart: undefined as unknown as ECharts,
 });
 
 const { width, height } = useElementSize(echartEl);
@@ -34,7 +34,7 @@ const { width, height } = useElementSize(echartEl);
 const init = () => {
   if (!state.chart) {
     if (echartEl.value) {
-      state.chart = echarts.init(echartEl.value);
+      state.chart = echartInit(echartEl.value);
     }
   }
 };

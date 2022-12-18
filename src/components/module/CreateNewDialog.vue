@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 产品预览 -->
-    <a-modal
+    <Modal
       :width="1000"
       :visible="visible"
       :footer="false"
@@ -9,12 +9,11 @@
       wrapClassName="create-new-dialog"
       :bodyStyle="{ padding: '0px', borderRadius: '8px' }"
       @cancel="onClose"
-      @ok="onSubmit"
     >
       <template #title>
         <!-- <i class="iconfont icon-zidingyi" style="margin-right: 10px;font-size: 16px;" /> -->
-        <form-outlined style="margin-right: 10px" />
-        {{ title }}
+        <FormOutlined style="margin-right: 10px" />
+        {{ title }} + {{ visible }}
       </template>
       <div class="create-new-panel">
         <div class="create-new-panel-left">
@@ -28,15 +27,15 @@
           </div>
         </div>
         <div class="create-new-config">
-          <a-form
-            :model="formState"
+          <Form
+            :model="state.formState"
             autocomplete="off"
             layout="vertical"
             @finish="onSubmit"
             @finishFailed="onFinishFailed"
           >
-            <a-form-item
-              v-if="isShowCreateType"
+            <FormItem
+              v-if="state.isShowCreateType"
               label="应用类型"
               type="title"
               :rules="[{ required: true, message: '请选择创建应用类型' }]"
@@ -44,10 +43,10 @@
               <div class="create-new-list">
                 <div
                   class="create-new-item"
-                  v-for="item in appTypeList"
+                  v-for="item in state.appTypeList"
                   :key="item.type"
                   @click="changeType(item)"
-                  :class="{ active: item.type === formState.type }"
+                  :class="{ active: item.type === state.formState.type }"
                 >
                   <img class="create-new-item-img" :alt="`${item.title}类型`" :src="item.backgroundImage" />
                   <div class="create-new-item-info">
@@ -56,197 +55,174 @@
                   </div>
                 </div>
               </div>
-            </a-form-item>
-            <a-form-item label="标题" name="title" :rules="[{ required: true, message: '请输入标题' }]">
-              <a-input v-model:value="formState.title" />
-            </a-form-item>
-            <a-form-item :label="`${getTitle}描述`" name="title">
-              <a-textarea v-model:value="formState.description" />
-            </a-form-item>
-            <!-- <a-form-item v-if="formState.type === 'questionnaire'" label="问卷类型" :name="['params', 'aaa']" :rules="[{ required: true, message: '请输入问卷类型' }]">
+            </FormItem>
+            <FormItem label="标题" name="title" :rules="[{ required: true, message: '请输入标题' }]">
+              <Input v-model:value="state.formState.title" />
+            </FormItem>
+            <FormItem :label="`${getTitle}描述`" name="title">
+              <Textarea v-model:value="state.formState.description" />
+            </FormItem>
+            <!-- <FormItem v-if="formState.type === 'questionnaire'" label="问卷类型" :name="['params', 'aaa']" :rules="[{ required: true, message: '请输入问卷类型' }]">
               <a-radio-group v-model:value="formState.params.aaa">
                 <a-radio value="a">医疗问卷</a-radio>
                 <a-radio value="b">非医疗问卷</a-radio>
               </a-radio-group>
-            </a-form-item>
-            <a-form-item v-if="formState.type === 'questionnaire'" label="评测类型" :name="['params', 'bbb']" :rules="[{ required: true, message: '请输入评测类型' }]">
+            </FormItem>
+            <FormItem v-if="formState.type === 'questionnaire'" label="评测类型" :name="['params', 'bbb']" :rules="[{ required: true, message: '请输入评测类型' }]">
               <a-radio-group v-model:value="formState.params.bbb">
                 <a-radio value="a">自评</a-radio>
                 <a-radio value="b">他评</a-radio>
               </a-radio-group>
-            </a-form-item>
-            <a-form-item v-if="formState.type === 'complex-component'" label="组件类型" :name="['params', 'ccc']" :rules="[{ required: true, message: '请输入评测类型' }]">
+            </FormItem>
+            <FormItem v-if="formState.type === 'complex-component'" label="组件类型" :name="['params', 'ccc']" :rules="[{ required: true, message: '请输入评测类型' }]">
               <a-radio-group v-model:value="formState.params.ccc">
                 <a-radio value="a">标准组件</a-radio>
                 <a-radio value="b">自定义组件</a-radio>
               </a-radio-group>
-            </a-form-item> -->
+            </FormItem> -->
 
-            <a-form-item class="form-item-btn">
-              <a-button block type="primary" size="large" html-type="submit">创建新{{ getTitle }}</a-button>
-            </a-form-item>
-          </a-form>
+            <FormItem class="form-item-btn">
+              <Button block type="primary" size="large" html-type="submit">创建新{{ getTitle }}</Button>
+            </FormItem>
+          </Form>
         </div>
       </div>
-    </a-modal>
+    </Modal>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs, ref, watch, computed, PropType } from 'vue';
-import { state as configState, service as configService } from '@/common/config-module';
+<script lang="ts" setup>
+import { reactive, watch, computed, PropType } from 'vue';
 import { CreateNewConfig } from '@/@types';
 import { AppType } from '@/@types/enum';
+import { Button, Form, FormItem, Input, Modal, Textarea } from 'ant-design-vue';
+import { FormOutlined } from '@ant-design/icons-vue';
 
-export default defineComponent({
-  name: 'CreateNewDialog',
-  components: {},
-  props: {
-    /** 是否显示 */
-    visible: {
-      type: Boolean,
-      default: false,
+const props = defineProps({
+  /** 是否显示 */
+  visible: {
+    type: Boolean,
+    default: false,
+  },
+  /** 资源创建类型 */
+  createType: {
+    type: String as PropType<AppType>,
+  },
+  /** 标题 */
+  title: {
+    type: String,
+    default: '创建新应用'
+  }
+});
+
+const emit = defineEmits<{
+  (event: 'update:visible', val: boolean): void;
+  (event: 'complete', val: typeof state.formState): void;
+}>();
+
+const state = reactive({
+  /** 是否加载中 */
+  isLoading: false,
+  /** 是否显示创建类型 */
+  isShowCreateType: true,
+  /** 创建类型列表 */
+  appTypeList: [
+    {
+      title: '问卷',
+      type: 'questionnaire',
+      description: '创建新的调查问卷',
+      backgroundImage: new URL('@/assets/img/create-questionnaire.png', import.meta.url).href,
     },
-    /** 资源创建类型 */
-    createType: {
-      type: String as PropType<AppType>,
+    {
+      title: '课件',
+      type: 'courseware',
+      description: '创建新的课件',
+      backgroundImage: new URL('@/assets/img/create-courseware.png', import.meta.url).href,
     },
+    {
+      title: '复合组件',
+      type: 'complex-component',
+      description: '创建新的可复用组件',
+      backgroundImage: new URL('@/assets/img/create-component.png', import.meta.url).href,
+    },
+    {
+      title: '画布',
+      type: 'canvas',
+      description: '创建新的空白画布',
+      backgroundImage: new URL('@/assets/img/create-canvas.png', import.meta.url).href,
+    },
+  ],
+  /** 提交表单 */
+  formState: {
     /** 标题 */
-    title: {
-      type: String,
-      default: '创建新应用'
+    title: '新建问卷',
+    /** 类型 */
+    type: 'questionnaire',
+    /** 描述 */
+    description: '',
+    /** 其他参数 */
+    params: {},
+  } as CreateNewConfig,
+});
+
+const getTitle = computed(() => {
+  return state.appTypeList.find((i) => i.type === state.formState.type)?.title;
+});
+
+const getBackgroundImage = computed(() => {
+  return state.appTypeList.find((i) => i.type === state.formState.type)?.backgroundImage;
+});
+
+const getDescription = computed(() => {
+  return state.appTypeList.find((i) => i.type === state.formState.type)?.description;
+});
+
+/** 关闭 */
+const onClose = () => {
+  emit('update:visible', false);
+};
+/** 提交 */
+const onSubmit = () => {
+  state.isLoading = true;
+  emit('complete', state.formState);
+  onClose();
+};
+/** 提交错误 */
+const onFinishFailed = (e) => {
+  console.log('提交错误', e);
+};
+/** 改变应用类型 */
+const changeType = (typeObj) => {
+  state.formState.type = typeObj.type;
+};
+
+watch(() => props.createType, (value, oldValue) => {
+  if (value !== oldValue) {
+    if (props.createType === undefined) {
+      state.formState.type = AppType.questionnaire;
+      state.isShowCreateType = true;
+    } else {
+      state.formState.type = props.createType;
+      state.isShowCreateType = false;
     }
-  },
-  methods: {
-    onClose() {
-      this.$emit('update:visible', false);
-    },
-    /** 提交 */
-    onSubmit() {
-      this.isLoading = true;
-      this.$emit('complete', this.formState);
-      this.onClose();
-    },
-    onFinishFailed() {},
-    changeType(typeObj) {
-      this.formState.type = typeObj.type;
-    },
-  },
-  created() {
-    // get('/api/configs').then(({ data }) => {
-    //   this.configModule = data;
-    // });
-  },
-  mounted() {},
-  setup(props) {
-    const state = reactive({
-      /** 是否加载中 */
-      isLoading: false,
-      /** 是否显示创建类型 */
-      isShowCreateType: true,
-      /** 创建类型列表 */
-      appTypeList: [
-        {
-          title: '问卷',
-          type: 'questionnaire',
-          description: '创建新的调查问卷',
-          backgroundImage: new URL('@/assets/img/create-questionnaire.png', import.meta.url).href,
-        },
-        {
-          title: '课件',
-          type: 'courseware',
-          description: '创建新的课件',
-          backgroundImage: new URL('@/assets/img/create-courseware.png', import.meta.url).href,
-        },
-        {
-          title: '复合组件',
-          type: 'complex-component',
-          description: '创建新的可复用组件',
-          backgroundImage: new URL('@/assets/img/create-component.png', import.meta.url).href,
-        },
-        {
-          title: '画布',
-          type: 'canvas',
-          description: '创建新的空白画布',
-          backgroundImage: new URL('@/assets/img/create-canvas.png', import.meta.url).href,
-        },
-      ],
-      /** 提交表单 */
-      formState: {
-        /** 标题 */
-        title: '新建问卷',
-        /** 类型 */
-        type: 'questionnaire',
-        /** 描述 */
-        description: '',
-        /** 其他参数 */
-        params: {},
-      } as CreateNewConfig,
-    });
-
-    const getTitle = computed(() => {
-      return state.appTypeList.find((i) => i.type === state.formState.type)?.title;
-    });
-
-    const getBackgroundImage = computed(() => {
-      return state.appTypeList.find((i) => i.type === state.formState.type)?.backgroundImage;
-    });
-
-    const getDescription = computed(() => {
-      return state.appTypeList.find((i) => i.type === state.formState.type)?.description;
-    });
-
-    // const getBackgroundPosition = computed(() => {
-    //   return state.appTypeList.find(i => i.type === state.formState.type)?.backgroundPosition ?? '';
-    // });
-
-    watch(
-      () => props.createType,
-      (value, oldValue) => {
-        if (value !== oldValue) {
-          if (props.createType === undefined) {
-            state.formState.type = AppType.questionnaire;
-            state.isShowCreateType = true;
-          } else {
-            state.formState.type = props.createType;
-            state.isShowCreateType = false;
-          }
-          state.formState = {
-            title: `新建${state.appTypeList.find((i) => i.type === value)?.title || ''}`,
-            type: value ?? AppType.questionnaire,
-            description: '',
-            params: {},
-          };
-        }
-      },
-    );
-
-    watch(
-      () => state.formState.type,
-      (value, oldValue) => {
-        if (value !== oldValue) {
-          state.formState = {
-            title: `新建${state.appTypeList.find((i) => i.type === value)?.title || ''}`,
-            type: value,
-            description: '',
-            params: {},
-          };
-        }
-      },
-    );
-
-    const rules = {};
-
-    return {
-      ...toRefs(state),
-      configState,
-      rules,
-      getTitle,
-      getBackgroundImage,
-      getDescription,
-      // getBackgroundPosition
+    state.formState = {
+      title: `新建${state.appTypeList.find((i) => i.type === value)?.title || ''}`,
+      type: value ?? AppType.questionnaire,
+      description: '',
+      params: {},
     };
-  },
+  }
+});
+
+watch(() => state.formState.type, (value, oldValue) => {
+  if (value !== oldValue) {
+    state.formState = {
+      title: `新建${state.appTypeList.find((i) => i.type === value)?.title || ''}`,
+      type: value,
+      description: '',
+      params: {},
+    };
+  }
 });
 </script>
 

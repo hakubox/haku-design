@@ -7,7 +7,7 @@
       :key="'p' + index"
     >
       <label class="property-collapse-item-title">
-        <DownOutlined />
+        <!-- <DownOutlined /> -->
         {{propGroup.title}}
       </label>
       <div class="property-collapse-item-content">
