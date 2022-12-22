@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import { defineComponent, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { onMounted, reactive, watch } from 'vue';
 
 const props = defineProps({
   value: {

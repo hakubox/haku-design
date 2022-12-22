@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, reactive, toRefs, ref, watch, computed, onMounted, onUnmounted } from "vue";
+import { reactive, ref, watch, onUnmounted } from "vue";
 import bus from '@/tools/bus';
 import { Modal } from 'ant-design-vue';
 import VariablePicker from '@/components/editor/variable-picker/VariablePicker.vue';

@@ -82,8 +82,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, ref, watch, computed } from 'vue';
-import { state as configState, service as configService } from '@/common/config-module';
+import { defineComponent, reactive, toRefs, ref, watch } from 'vue';
+import { state as configState } from '@/common/config-module';
 import QRCode from '@/components/common/QRCode.vue';
 import { message } from 'ant-design-vue';
 

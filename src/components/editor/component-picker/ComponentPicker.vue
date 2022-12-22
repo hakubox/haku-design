@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { Select } from 'ant-design-vue';
-import { computed, defineComponent, onMounted, PropType, reactive, toRefs, useAttrs, watch } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive, useAttrs, watch } from 'vue';
 
 const props = defineProps({
   /** 是否仅表单项 */
@@ -38,8 +38,8 @@ const props = defineProps({
   },
   /** 组件尺寸 */
   size: {
-    type: String as PropType<'large' | 'default' | 'small'>,
-    default: 'default',
+    type: String as PropType<'large' | 'middle' | 'small'>,
+    default: 'middle',
   },
   /** 是否只读 */
   readonly: {
@@ -91,16 +91,26 @@ const getTxt = computed(() => {
   }
 });
 
+/** DOM节点缓存 */
+let domCache: Record<string, HTMLElement> = {};
+
 /** 组件光标移动上去 */
 const componentMouseEnter = (componentId: string) => {
-  const _dom = document.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
+  let _dom;
+  if (domCache[componentId]) {
+    _dom = domCache[componentId];
+  } else {
+    _dom = document.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
+    domCache[componentId] = _dom;
+  }
   if (_dom) {
     _dom.classList.add('highlight');
   }
 };
 
 const componentMouseOut = () => {
-  const _domList = [ ...document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`) ];
+  const _domList = Array.from(document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
+  domCache = {};
   if (_domList?.length) _domList.forEach(i => {
     i.classList.remove('highlight');
   });
@@ -123,6 +133,10 @@ watch(() => props.value, () => {
 
 onMounted(() => {
   state.inputValue = props.value;
+});
+
+onUnmounted(() => {
+  domCache = {};
 });
 </script>
 

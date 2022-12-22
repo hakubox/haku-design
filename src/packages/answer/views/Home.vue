@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs, defineComponent, onMounted } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import '../assets/sweetalert.css';
 import AnswerCanvas from '../components/AnswerCanvas.vue';
 import { useRoute } from 'vue-router';

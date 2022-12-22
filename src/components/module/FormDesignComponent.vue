@@ -164,14 +164,14 @@
 <script lang="ts" setup>
 import type { Component } from '@/@types';
 import type { DragConfig } from '@/modules/draggable-module/@types';
-import { computed, defineComponent, inject, nextTick, onMounted, ref, type PropType } from 'vue';
+import { computed, nextTick, ref, type PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { useComponentHandle } from "@/common/component-handle";
-import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
+import { service as draggableService } from '@/modules/draggable-module';
+import { service as eventService } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { state as variableState, service as variableService } from '@/modules/variable-module';
-import { state as formulaState, service as formulaService } from "@/modules/formula-module";
+import { service as variableService } from '@/modules/variable-module';
+import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
 import { EventTriggerType } from '@/modules/event-module/enum';
 import { any } from 'vue-types';

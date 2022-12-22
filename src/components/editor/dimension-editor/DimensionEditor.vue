@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, PropType, reactive, toRefs, useAttrs } from 'vue';
+import { computed, onUnmounted, PropType, reactive, useAttrs } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { Empty } from 'ant-design-vue';
 import { createModelId } from '@/tools/common';
@@ -127,15 +127,25 @@ const componentList = computed(() => {
   }));
 });
 
+/** DOM节点缓存 */
+let domCache: Record<string, HTMLElement> = {};
+
 /** 组件光标移动上去 */
 const componentMouseEnter = (componentId: string) => {
-  const _dom = document.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
+  let _dom;
+  if (domCache[componentId]) {
+    _dom = domCache[componentId];
+  } else {
+    _dom = document.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
+    domCache[componentId] = _dom;
+  }
   if (_dom) {
     _dom.classList.add('highlight');
   }
 };
 const componentMouseOut = () => {
-  const _domList = [ ...document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`) ];
+  const _domList = Array.from(document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
+  domCache = {};
   if (_domList?.length) _domList.forEach(i => {
     i.classList.remove('highlight');
   });
@@ -238,6 +248,10 @@ const tableColumns = () => {
       },
     ]);
 };
+
+onUnmounted(() => {
+  domCache = {};
+});
 
 </script>
 

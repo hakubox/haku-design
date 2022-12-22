@@ -136,11 +136,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, PropType, reactive, ref, watch } from 'vue';
+import { defineComponent, PropType, reactive, watch } from 'vue';
 import { ComponentPropertyEditor } from '@/@types/enum';
-import { PropertyEditor, Component } from '@/@types';
+import { Component } from '@/@types';
 import { message } from 'ant-design-vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState } from '@/modules/editor-module';
 import { throttle } from '@/tools/common';
 
 export default defineComponent({

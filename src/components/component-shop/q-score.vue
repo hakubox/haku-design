@@ -18,7 +18,6 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { defineComponent, PropType } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Rate } from 'vant';
 

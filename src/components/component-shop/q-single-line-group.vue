@@ -20,7 +20,7 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { defineComponent, PropType, reactive } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 
 const props = defineProps({

@@ -57,8 +57,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, reactive, toRefs } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { defineComponent, reactive, toRefs } from 'vue';
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { dateFormat } from '@/tools/common';
 import { formCommands } from '@/data/form-commands';

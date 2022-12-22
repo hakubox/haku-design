@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   name: 'SwitchEditor',

@@ -123,11 +123,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, onMounted, PropType, reactive } from "vue";
-import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { state as historyState, service as historyService } from "@/common/history-module";
+import { onMounted, PropType, reactive } from "vue";
+import { state as editorState } from "@/modules/editor-module";
 import { Component } from "@/@types/component";
-import type { ComponentProperty } from "@/@types/component-property";
 import { ComponentPropertyEditor } from "@/@types/enum";
 import GeneralEditorItem from './GeneralEditorItem.vue';
 import { GeneralProperty } from "@/@types";

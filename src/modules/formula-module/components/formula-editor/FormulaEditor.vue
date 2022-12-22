@@ -18,10 +18,10 @@
 
 <script lang="ts" setup>
 import { createModelId, throttle, timeout } from '@/tools/common';
-import { defineComponent, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
+import { onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
 import { state as formulaState } from '../../';
-import { state as variableState, service as variableService, getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
+import { state as editorState } from '@/modules/editor-module';
 // import monaco from 'monaco-editor';
 
 /** LibModel */

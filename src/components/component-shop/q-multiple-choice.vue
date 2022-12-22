@@ -59,8 +59,8 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { defineComponent, onMounted, PropType, reactive, watch } from 'vue';
-import { state as storageState, service as storageService } from '@/modules/storage-module';
+import { onMounted, PropType, reactive, watch } from 'vue';
+import { service as storageService } from '@/modules/storage-module';
 import { computed } from '@vue/reactivity';
 import { getQBasicProps } from '@/tools/common';
 import { Checkbox, CheckboxGroup } from 'vant';

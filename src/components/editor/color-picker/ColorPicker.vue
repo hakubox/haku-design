@@ -112,8 +112,8 @@ export default defineComponent({
       default: true,
     },
     size: {
-      type: String as PropType<'large' | 'default' | 'small'>,
-      default: 'default',
+      type: String as PropType<'large' | 'middle' | 'small'>,
+      default: 'middle',
     },
   },
   created() {

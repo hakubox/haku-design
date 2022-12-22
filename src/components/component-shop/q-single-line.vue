@@ -19,7 +19,7 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { defineComponent, inject, PropType, reactive, ref, toRefs, useAttrs } from 'vue';
+import { inject, PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Component } from '@/@types';
 

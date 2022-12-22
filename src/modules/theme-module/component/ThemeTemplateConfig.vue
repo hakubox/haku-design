@@ -70,10 +70,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, createVNode, defineComponent, reactive, ref, toRefs } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { defineComponent, reactive, ref, toRefs } from 'vue';
+import { state as editorState } from '@/modules/editor-module';
 import { state as themeState, service as themeService } from '../index';
-import { createModelId } from '@/tools/common';
 import type { ThemeConfig } from '../@types';
 import { toast } from '@/common/message';
 // import { StorageServiceType } from "../enum";

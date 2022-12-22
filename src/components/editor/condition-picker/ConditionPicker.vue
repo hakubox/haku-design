@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineComponent, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { computed, onMounted, PropType, reactive, toRefs, watch } from 'vue';
 
 const props = defineProps({
   /** 值类型 */
@@ -44,8 +44,8 @@ const props = defineProps({
   },
   /** 尺寸 */
   size: {
-    type: String as PropType<'large' | 'default' | 'small'>,
-    default: 'default',
+    type: String as PropType<'large' | 'middle' | 'small'>,
+    default: 'middle',
     required: true,
   },
 });

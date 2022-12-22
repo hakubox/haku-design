@@ -14,7 +14,6 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { defineComponent } from "vue";
 import { getQBasicProps } from '@/tools/common';
 
 const props = defineProps({

@@ -3,7 +3,7 @@
     <span v-if="state.inputValue" class="component-option-picker-txt">{{ getTxt }}</span>
     <span v-else class="component-option-picker-empty">[未选择]</span>
   </div>
-  <a-cascader v-else
+  <Cascader v-else
     class="component-option-picker"
     v-model:value="state.inputValue"
     :options="componentList"
@@ -11,13 +11,14 @@
     placeholder="请选择"
     @change="change"
   >
-  </a-cascader>
+  </Cascader>
 </template>
 
 <script lang="ts" setup>
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { Select } from 'ant-design-vue';
-import { computed, defineComponent, onMounted, PropType, reactive, watch, useAttrs } from 'vue';
+import { service as editorService } from '@/modules/editor-module';
+import { Cascader } from 'ant-design-vue';
+import { computed, PropType, reactive, watch, useAttrs } from 'vue';
+
 
 const props = defineProps({
   value: {
@@ -25,8 +26,8 @@ const props = defineProps({
     default: ''
   },
   size: {
-    type: String as PropType<'large' | 'default' | 'small'>,
-    default: 'default',
+    type: String as PropType<'small' | 'middle' | 'large'>,
+    default: 'middle',
     required: true,
   },
   readonly: {

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { Component } from '@/@types';
 
 export default defineComponent({

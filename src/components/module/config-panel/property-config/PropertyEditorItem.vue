@@ -34,9 +34,9 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, PropType, computed, watch, onMounted } from "vue";
-import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { state as historyState, service as historyService } from "@/common/history-module";
+import { PropType, computed, watch } from "vue";
+import { state as editorState } from "@/modules/editor-module";
+import { service as historyService } from "@/common/history-module";
 import { ComponentProperty } from "@/@types/component-property";
 import { type Component } from "@/@types";
 

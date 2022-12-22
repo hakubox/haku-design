@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { defineComponent, onMounted, reactive, toRefs, watch } from 'vue';
 
 export default defineComponent({
   name: 'RadioGroupPicker',

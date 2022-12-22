@@ -33,8 +33,8 @@ export default defineComponent({
       required: true,
     },
     size: {
-      type: String as PropType<'large' | 'default' | 'small'>,
-      default: 'default',
+      type: String as PropType<'large' | 'middle' | 'small'>,
+      default: 'middle',
       required: true,
     },
   },

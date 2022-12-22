@@ -1298,6 +1298,8 @@ export const service = {
   },
 };
 
+window['editorModule'] = state;
+
 export default {
   state,
   service

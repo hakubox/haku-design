@@ -23,20 +23,21 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 import '@/common/theme';
 
+// import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
+
+import FilePicker from '@/modules/storage-module/component/file-picker/FilePicker.vue';
+import FormulaEditor from '@/modules/formula-module/components/formula-editor/FormulaEditor.vue';
+import ConfigDialog from '@/components/module/ConfigDialog.vue';
+import packageInfo from '../package.json';
+import { init } from '@/lib/monitor';
+
+const app = createApp(App);
+init(app);
+
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);
 
 globalStore.state.antdConfigProvider.locale = AntdZHCN;
-
-// import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
-
-import FilePicker from '@/modules/storage-module/component/file-picker/FilePicker.vue';
-
-import FormulaEditor from '@/modules/formula-module/components/formula-editor/FormulaEditor.vue';
-
-import ConfigDialog from '@/components/module/ConfigDialog.vue';
-
-import packageInfo from '../package.json';
 
 import { init as messageInit } from '@/common/message';
 
@@ -93,7 +94,6 @@ window.addEventListener('message', (event) => {
   } catch (error) {}
 }, false);
 
-const app = createApp(App);
 globalStore.install(app, router);
 
 // 安装组件

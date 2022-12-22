@@ -1,109 +1,93 @@
 <template>
   <div class="rules-editor">
     <!-- 是否必填 -->
-    <a-input-group v-if="allRules.required.show" compact class="rule-item">
-      <a-checkbox class="rule-item-label" @change="changeEnable()" v-model="allRules.required.value"
-        >是否必填</a-checkbox
-      >
-    </a-input-group>
+    <InputGroup v-if="state.allRules.required.show" compact class="rule-item">
+      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:value="state.allRules.required.value">是否必填</Checkbox>
+    </InputGroup>
     <!-- 最大文本长度 -->
-    <a-input-group v-if="allRules.len.show" compact class="rule-item" :class="{ enable: allRules.len.enable }">
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.len)" v-model="allRules.len.enable"
-        >固定长度</a-checkbox
-      >
-      <a-input-number
+    <InputGroup v-if="state.allRules.len.show" compact class="rule-item" :class="{ enable: state.allRules.len.enable }">
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.len)" v-model:value="state.allRules.len.enable">固定长度</Checkbox>
+      <InputNumber
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.len.enable"
-        v-model.lazy="allRules.len.value"
+        v-show="state.allRules.len.enable"
+        v-model.lazy="state.allRules.len.value"
       />
-    </a-input-group>
+    </InputGroup>
     <!-- 最小值 -->
-    <a-input-group v-if="allRules.min.show" compact class="rule-item" :class="{ enable: allRules.min.enable }">
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.min)" v-model="allRules.min.enable"
-        >最小{{ type == 'text' ? '长度' : '值' }}</a-checkbox
-      >
-      <a-input-number
+    <InputGroup v-if="state.allRules.min.show" compact class="rule-item" :class="{ enable: state.allRules.min.enable }">
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.min)" v-model:value="state.allRules.min.enable">最小{{ type == 'text' ? '长度' : '值' }}</Checkbox>
+      <InputNumber
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.min.enable"
-        v-model.lazy="allRules.min.value"
+        v-show="state.allRules.min.enable"
+        v-model.lazy="state.allRules.min.value"
       />
-    </a-input-group>
+    </InputGroup>
     <!-- 最大值 -->
-    <a-input-group v-if="allRules.max.show" compact class="rule-item" :class="{ enable: allRules.max.enable }">
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.max)" v-model="allRules.max.enable"
-        >最大{{ type == 'text' ? '长度' : '值' }}</a-checkbox
-      >
-      <a-input-number
+    <InputGroup v-if="state.allRules.max.show" compact class="rule-item" :class="{ enable: state.allRules.max.enable }">
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.max)" v-model:value="state.allRules.max.enable">最大{{ type == 'text' ? '长度' : '值' }}</Checkbox>
+      <InputNumber
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.max.enable"
-        v-model.lazy="allRules.max.value"
+        v-show="state.allRules.max.enable"
+        v-model.lazy="state.allRules.max.value"
       />
-    </a-input-group>
+    </InputGroup>
     <!-- 正则表达式 -->
-    <a-input-group v-if="allRules.pattern.show" compact class="rule-item" :class="{ enable: allRules.pattern.enable }">
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.pattern)" v-model="allRules.pattern.enable"
-        >正则表达式</a-checkbox
-      >
-      <a-input
+    <InputGroup v-if="state.allRules.pattern.show" compact class="rule-item" :class="{ enable: state.allRules.pattern.enable }">
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.pattern)" v-model:value="state.allRules.pattern.enable">正则表达式</Checkbox>
+      <Input
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.pattern.enable"
-        v-model.lazy.trim="allRules.pattern.value"
+        v-show="state.allRules.pattern.enable"
+        v-model:value.trim="state.allRules.pattern.value"
       />
-    </a-input-group>
+    </InputGroup>
     <!-- 内建校验类型 https://github.com/yiminghe/async-validator#type -->
-    <a-input-group v-if="allRules.type.show" compact class="rule-item" :class="{ enable: allRules.type.enable }">
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.type)" v-model="allRules.type.enable"
-        >数值类型</a-checkbox
-      >
-      <a-select
+    <InputGroup v-if="state.allRules.type.show" compact class="rule-item" :class="{ enable: state.allRules.type.enable }">
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.type)" v-model:value="state.allRules.type.enable">数值类型</Checkbox>
+      <Select
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.type.enable"
-        :options="types"
-        v-model="allRules.type.value"
-      ></a-select>
-    </a-input-group>
+        v-show="state.allRules.type.enable"
+        :options="state.types"
+        v-model:value="state.allRules.type.value"
+      ></Select>
+    </InputGroup>
     <!-- 自定义校验 -->
-    <a-input-group
-      v-if="allRules.validator.show"
+    <InputGroup
+      v-if="state.allRules.validator.show"
       compact
       class="rule-item"
-      :class="{ enable: allRules.validator.enable }"
+      :class="{ enable: state.allRules.validator.enable }"
     >
-      <a-checkbox class="rule-item-label" @change="changeEnable(allRules.validator)" v-model="allRules.validator.enable"
-        >自定义校验</a-checkbox
-      >
-      <a-input
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.validator)" v-model:value="state.allRules.validator.enable">自定义校验</Checkbox>
+      <Input
         class="rule-item-value"
         @change="change"
         size="small"
-        v-show="allRules.validator.enable"
-        v-model="allRules.validator.value"
+        v-show="state.allRules.validator.enable"
+        v-model:value="state.allRules.validator.value"
       />
-    </a-input-group>
+    </InputGroup>
     <!-- 允许空格 -->
-    <a-input-group v-if="allRules.whitespace.show" compact class="rule-item">
-      <a-checkbox class="rule-item-label" @change="changeEnable()" v-model="allRules.whitespace.value"
-        >允许空格</a-checkbox
-      >
-    </a-input-group>
+    <InputGroup v-if="state.allRules.whitespace.show" compact class="rule-item">
+      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:value="state.allRules.whitespace.value">允许空格</Checkbox>
+    </InputGroup>
   </div>
 </template>
 
-<script lang="ts">
-import Vue, { toRefs, computed, defineComponent, inject, PropType, reactive, ref } from 'vue';
+<script lang="ts" setup>
+import { Checkbox, Input, InputGroup, InputNumber, Select } from 'ant-design-vue';
+import { PropType, reactive, onMounted, watch, onBeforeMount } from 'vue';
 
 interface Rules {
-  vue?: typeof Vue;
   /** 是否启用校验 */
   enable: boolean;
   /** 值 */
@@ -114,141 +98,140 @@ interface Rules {
   message(): string;
 }
 
-export default defineComponent({
-  name: 'RulesEditor',
-  props: {
-    /** 当前变量 */
-    value: {
-      type: Array as PropType<Array<any>>,
-      default: () => [],
-      required: true,
-    },
-    /** 筛选变量类型 */
-    type: {
-      type: String,
-      default: 'any',
-      required: true,
-    },
-    size: {
-      type: String as PropType<'large' | 'default' | 'small'>,
-      default: 'default',
-      required: true,
-    },
+const props = defineProps({
+  /** 当前变量 */
+  value: {
+    type: Array as PropType<Array<any>>,
+    default: () => [],
+    required: true,
   },
-  watch: {
-    type() {
-      this.changeType();
-    },
+  /** 筛选变量类型 */
+  type: {
+    type: String,
+    default: 'any',
+    required: true,
   },
-  mounted() {
-    this.init();
+  size: {
+    type: String as PropType<'large' | 'middle' | 'small'>,
+    default: 'middle',
+    required: true,
   },
-  created() {
-    this.allRules = {
-      required: { show: false, enable: true, value: undefined, message: () => '{{label}}不能为空。' },
-      enum: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为指定值。' },
-      len: { show: false, enable: false, value: undefined, message: () => '{{label}}长度必须为{{value}}位。' },
-      min: {
-        show: false,
-        enable: false,
-        value: undefined,
-        message: () => `{{label}}最小不能低于{{value}}${this.type == 'text' ? '位' : ''}。`,
-      },
-      max: {
-        show: false,
-        enable: false,
-        value: undefined,
-        message: () => `{{label}}最大不能超过{{value}}${this.type == 'text' ? '位' : ''}。`,
-      },
-      pattern: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
-      type: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为{{value}}格式。' },
-      validator: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
-      whitespace: { show: false, enable: true, value: undefined, message: () => '' },
-    };
-  },
-  methods: {
-    /** 初始化 */
-    init() {
-      if (this.value) {
-        this.value.forEach((i) => {
-          this.allRules[i.category] = {
-            ...this.allRules[i.category],
-            enable: !!i[i.category],
-            value: i[i.category],
-          };
-        });
-      }
-      this.changeType();
-    },
-    changeType() {
-      let _rules: string[] = [];
-      switch (this.type) {
-        case 'text':
-          _rules = ['required', 'enum', 'len', 'min', 'max', 'pattern', 'validator', 'whitespace']; //'type',
-          break;
-        case 'number':
-          _rules = ['required', 'min', 'max', 'validator', 'whitespace'];
-          break;
-        case 'select':
-          _rules = ['required'];
-          break;
-        case 'date':
-          _rules = ['required'];
-          break;
-        case 'upload':
-          _rules = ['required'];
-          break;
-      }
-      Object.entries(this.allRules).forEach(([key, value]) => {
-        this.allRules[key].show = _rules.includes(key);
-      });
-    },
-    /** 改变值 */
-    change() {
-      let re = Object.entries(this.allRules)
-        .filter(([key, value]) => value.enable && !!value.value)
-        .map(([key, value]) => {
-          return { [key]: value.value, category: key, message: value.message() };
-        });
-      this.$emit('input', re);
-    },
-    changeEnable(variable?) {
-      if (variable) {
-        variable.value = undefined;
-      }
-      this.change();
-    },
-  },
-  setup() {
-    const state = reactive({
-      /** 真实值 */
-      inputValue: [] as string[],
-      /** 所有条件状态 */
-      allRules: {} as Record<string, Rules>,
-      /** 内建校验类型选项 */
-      types: [
-        { value: 'any', label: '任意值' },
-        { value: 'string', label: '字符串' },
-        { value: 'number', label: '数字' },
-        { value: 'boolean', label: '布尔/真假' },
-        { value: 'method', label: '函数' },
-        { value: 'regexp', label: '正则表达式' },
-        { value: 'integer', label: '整数' },
-        { value: 'float', label: '浮点数' },
-        { value: 'array', label: '数组' },
-        { value: 'object', label: '对象' },
-        { value: 'enum', label: '枚举' },
-        { value: 'date', label: '日期' },
-        { value: 'url', label: '地址' },
-        { value: 'hex', label: 'HEX颜色' },
-        { value: 'email', label: '邮箱' },
-      ],
-    });
+});
 
-    return {
-      ...toRefs(state),
-    };
-  },
+const state = reactive({
+  /** 真实值 */
+  inputValue: [] as string[],
+  /** 所有条件状态 */
+  allRules: {} as Record<string, Rules>,
+  /** 内建校验类型选项 */
+  types: [
+    { value: 'any', label: '任意值' },
+    { value: 'string', label: '字符串' },
+    { value: 'number', label: '数字' },
+    { value: 'boolean', label: '布尔/真假' },
+    { value: 'method', label: '函数' },
+    { value: 'regexp', label: '正则表达式' },
+    { value: 'integer', label: '整数' },
+    { value: 'float', label: '浮点数' },
+    { value: 'array', label: '数组' },
+    { value: 'object', label: '对象' },
+    { value: 'enum', label: '枚举' },
+    { value: 'date', label: '日期' },
+    { value: 'url', label: '地址' },
+    { value: 'hex', label: 'HEX颜色' },
+    { value: 'email', label: '邮箱' },
+  ],
+});
+
+const emit = defineEmits<{
+  (event: 'change', val: any): void;
+}>();
+
+/** 初始化 */
+const init = () => {
+  if (props.value) {
+    props.value.forEach((i) => {
+      state.allRules[i.category] = {
+        ...state.allRules[i.category],
+        enable: !!i[i.category],
+        value: i[i.category],
+      };
+    });
+  }
+  changeType();
+};
+
+const changeType = () => {
+  let _rules: string[] = [];
+  switch (props.type) {
+    case 'text':
+      _rules = ['required', 'enum', 'len', 'min', 'max', 'pattern', 'validator', 'whitespace']; //'type',
+      break;
+    case 'number':
+      _rules = ['required', 'min', 'max', 'validator', 'whitespace'];
+      break;
+    case 'select':
+      _rules = ['required'];
+      break;
+    case 'date':
+      _rules = ['required'];
+      break;
+    case 'upload':
+      _rules = ['required'];
+      break;
+  }
+  Object.entries(state.allRules).forEach(([key, value]) => {
+    state.allRules[key].show = _rules.includes(key);
+  });
+};
+
+/** 改变值 */
+const change = () => {
+  let re = Object.entries(state.allRules)
+    .filter(([key, value]) => value.enable && !!value.value)
+    .map(([key, value]) => {
+      return { [key]: value.value, category: key, message: value.message() };
+    });
+  emit('change', re);
+};
+
+const changeEnable = (variable?) => {
+  if (variable) {
+    variable.value = undefined;
+  }
+  change();
+};
+
+watch(() => props.type, () => {
+  changeType();
+});
+
+onMounted(() => {
+  init();
+});
+
+onBeforeMount(() => {
+  state.allRules = {
+    required: { show: false, enable: true, value: undefined, message: () => '{{label}}不能为空。' },
+    enum: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为指定值。' },
+    len: { show: false, enable: false, value: undefined, message: () => '{{label}}长度必须为{{value}}位。' },
+    min: {
+      show: false,
+      enable: false,
+      value: undefined,
+      message: () => `{{label}}最小不能低于{{value}}${props.type == 'text' ? '位' : ''}。`,
+    },
+    max: {
+      show: false,
+      enable: false,
+      value: undefined,
+      message: () => `{{label}}最大不能超过{{value}}${props.type == 'text' ? '位' : ''}。`,
+    },
+    pattern: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
+    type: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为{{value}}格式。' },
+    validator: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
+    whitespace: { show: false, enable: true, value: undefined, message: () => '' },
+  };
 });
 </script>
 

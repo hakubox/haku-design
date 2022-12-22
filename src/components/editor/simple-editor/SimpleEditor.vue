@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import { PropType } from 'vue';
-import { getType, dateFormat } from '@/tools/common';
+import { dateFormat } from '@/tools/common';
 import { ComponentAnswerType } from '@/@types';
 
 const props = defineProps({
