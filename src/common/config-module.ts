@@ -124,7 +124,7 @@ export const service = {
   },
   /** 打开设置界面 */
   async open() {
-    if (process.env.PROJ === 'design') {
+    if (process.env.buildProj === 'design') {
       container = loadComponent(state.ConfigDialog as ConcreteComponent, {
         onClose() {
           destoryComponent(container);

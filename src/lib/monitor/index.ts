@@ -23,10 +23,10 @@ export function XMLTYPE(event) {
   let target = event.target;
 
   if ('readystatechange' === event.type) {
-    // console.log('请求状态码改变')
+    // console.debug('请求状态码改变')
     if (target.readyState == 4) {
       if (target.status == 404) {
-        console.log({
+        console.debug({
           errMsg: '错误码：' + event.target.status,
           errUrl: target.responseURL,
           errType: hakuDebug.message.AJAXERR,
@@ -36,8 +36,8 @@ export function XMLTYPE(event) {
   }
 
   if ('error' === event.type) {
-    // console.log('请求出错')
-    console.log({
+    // console.debug('请求出错')
+    console.debug({
       errMsg: '错误码：' + event.target.status,
       errUrl: target.responseURL,
       errType: hakuDebug.message.AJAXERR,
@@ -45,8 +45,8 @@ export function XMLTYPE(event) {
   }
 
   if ('timeout' === event.type) {
-    // console.log('请求超时')
-    console.log({
+    // console.debug('请求超时')
+    console.debug({
       errMsg: '错误码：' + event.target.status,
       errUrl: target.responseURL,
       errType: hakuDebug.message.AJAXTIMEOUTERR,
@@ -92,7 +92,7 @@ export function getPerformanceTiming() {
         connect: t.connectEnd - t.connectStart,
       };
     });
-    if (_list[0]) console.warn('性能监测', _list[0]);
+    if (_list[0]) console.debug('性能监测', _list[0]);
     // observer.disconnect();
   });
   observer.observe({ type: "navigation", buffered: true });
@@ -104,7 +104,7 @@ export function init(vue: App<Element>) {
   // 全局点击事件捕获
   window.addEventListener('mousedown', function (e) {
     if (hakuDebug.targetTypes_mousedown.indexOf(e.target?.['tagName'].toLowerCase()) >= 0) {
-      // console.log('鼠标点击', e);
+      // console.debug('鼠标点击', e);
     }
   });
   
@@ -114,21 +114,21 @@ export function init(vue: App<Element>) {
       [27, 13, 116].indexOf(e.keyCode) >= 0 &&
       hakuDebug.targetTypes_keydown.indexOf(e.target?.['tagName'].toLowerCase()) >= 0
     ) {
-      // console.log('键盘按键', e);
+      // console.debug('键盘按键', e);
     }
   });
   
   // 全局页面跳转
   window.addEventListener('popstate', function (event) {
-    // console.log('页面跳转', event);
+    // console.debug('页面跳转', event);
   });
   
   /******************************/
   
   // 全局js错误
-  window.addEventListener('error', function (e: ErrorEvent) {
+  window.addEventListener('error', (e: ErrorEvent) => {
     const _targetList = e.composedPath();
-    console.error('全局错误', e.message, e.filename, e.lineno, e.colno, _targetList, e.error);
+    console.debug('全局错误', e.message, e.filename, e.lineno, e.colno, _targetList, e.error);
   });
   
   // 监听静态资源加载错误
@@ -139,8 +139,8 @@ export function init(vue: App<Element>) {
       // @ts-ignore
       if (errorTarget.baseURI) {
         // @ts-ignore
-        let a = { errMsg: errorTarget.outerHTML, errUrl: errorTarget.baseURI, errType: '' };
-        console.log(a);
+        let a = { errMsg: errorTarget.outerHTML, errUrl: errorTarget.baseURI, errType: '', error: event };
+        console.debug(a);
       }
     }
   }, true);
@@ -149,14 +149,14 @@ export function init(vue: App<Element>) {
    * 全局异步错误
    */
   window.addEventListener('unhandledrejection', function (event) {
-    console.error('异步错误', event);
+    console.debug('异步错误', event);
   });
   
   /**
    * Vue内部错误监控
    */
   vue.config.errorHandler = function (err, vm, info) {
-    console.error('Vue内部错误', err, vm, info);
+    console.debug('Vue内部错误', err, vm, info);
   };
   
   /**

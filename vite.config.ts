@@ -6,14 +6,20 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import {
   themePreprocessorPlugin,
   themePreprocessorHmrPlugin,
-} from "@zougt/vite-plugin-theme-preprocessor";
+} from '@zougt/vite-plugin-theme-preprocessor';
+import * as dotenv from 'dotenv';
 
 // https://vitejs.dev/config/
 
-const proj = process.env.PROJ;
+if (!process.env.buildMode) process.env.buildMode = 'development';
+
+dotenv.config({ path: '.env' });
+dotenv.config({ path: `.env.${process.env.buildMode}` });
+
+const buildProj = process.env.buildProj;
 
 const transformIndexHtml = (code) => {
-  switch (proj) {
+  switch (buildProj) {
     case 'answer': return code.replace(/__MAIN__/, '/src/main.answer.ts');
     case 'design': return code.replace(/__MAIN__/, '/src/main.design.ts');
   }
@@ -23,7 +29,7 @@ let config: UserConfigExport;
 
 const monacoPrefix = `monaco-editor/esm/vs`;
 
-switch (proj) {
+switch (buildProj) {
   // 设计端
   case 'design':
     console.log('——设计端编译——');

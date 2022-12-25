@@ -47,9 +47,9 @@
     </div>
 
     <Verify
-      ref="verify"
-      :mode="'pop'"
-      :captcha-type="'blockPuzzle'"
+      ref="verifyRef"
+      mode="pop"
+      captcha-type="blockPuzzle"
       :img-size="{ width: '330px', height: '155px' }"
       @success="capctchaCheckSuccess"
     ></Verify>
@@ -84,6 +84,7 @@ const rules: { [k: string]: RuleObject[] } = {
   password: [{ required: true, message: '密码必填', trigger: 'blur' }],
 };
 const formRef = ref<typeof Form>();
+const verifyRef = ref<typeof Verify>();
 
 /** 登录前校验 */
 const capctchaCheckSuccess = (params: any) => {
@@ -97,13 +98,11 @@ const capctchaCheckSuccess = (params: any) => {
   });
 };
 
-const verify = ref<typeof Verify>();
-
 /** 登录 */
 const login = () => {
   state.isLoading = true;
   formRef.value!.validate().then(() => {
-    verify.value!.show();
+    verifyRef.value!.show();
   }).catch((error: any) => {
     console.error('error', error);
     // if (error.errorFields?.length) {

@@ -120,6 +120,16 @@ watchEffect(() => {
       break;
   }
 });
+
+defineExpose({
+  clickShow,
+  verifyType,
+  componentType,
+  instance,
+  showBox,
+  closeBox,
+  show,
+});
 </script>
 <style>
 .verifybox {

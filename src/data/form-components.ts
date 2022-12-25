@@ -58,6 +58,9 @@ export let formComponents: InitComponent[] = [
         name: 'required', title: '是否必填', default: true,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
       }, {
+        name: 'validate', title: '数据校验', default: [],
+        group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.rules
+      }, {
         name: 'name', title: '组件名称', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
       }, {

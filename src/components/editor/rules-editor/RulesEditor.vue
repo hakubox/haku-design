@@ -2,11 +2,11 @@
   <div class="rules-editor">
     <!-- 是否必填 -->
     <InputGroup v-if="state.allRules.required.show" compact class="rule-item">
-      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:value="state.allRules.required.value">是否必填</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:checked="state.allRules.required.value">是否必填</Checkbox>
     </InputGroup>
     <!-- 最大文本长度 -->
     <InputGroup v-if="state.allRules.len.show" compact class="rule-item" :class="{ enable: state.allRules.len.enable }">
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.len)" v-model:value="state.allRules.len.enable">固定长度</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.len)" v-model:checked="state.allRules.len.enable">固定长度</Checkbox>
       <InputNumber
         class="rule-item-value"
         @change="change"
@@ -17,7 +17,7 @@
     </InputGroup>
     <!-- 最小值 -->
     <InputGroup v-if="state.allRules.min.show" compact class="rule-item" :class="{ enable: state.allRules.min.enable }">
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.min)" v-model:value="state.allRules.min.enable">最小{{ type == 'text' ? '长度' : '值' }}</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.min)" v-model:checked="state.allRules.min.enable">最小{{ type == 'text' ? '长度' : '值' }}</Checkbox>
       <InputNumber
         class="rule-item-value"
         @change="change"
@@ -28,7 +28,7 @@
     </InputGroup>
     <!-- 最大值 -->
     <InputGroup v-if="state.allRules.max.show" compact class="rule-item" :class="{ enable: state.allRules.max.enable }">
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.max)" v-model:value="state.allRules.max.enable">最大{{ type == 'text' ? '长度' : '值' }}</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.max)" v-model:checked="state.allRules.max.enable">最大{{ type == 'text' ? '长度' : '值' }}</Checkbox>
       <InputNumber
         class="rule-item-value"
         @change="change"
@@ -39,7 +39,7 @@
     </InputGroup>
     <!-- 正则表达式 -->
     <InputGroup v-if="state.allRules.pattern.show" compact class="rule-item" :class="{ enable: state.allRules.pattern.enable }">
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.pattern)" v-model:value="state.allRules.pattern.enable">正则表达式</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.pattern)" v-model:checked="state.allRules.pattern.enable">正则表达式</Checkbox>
       <Input
         class="rule-item-value"
         @change="change"
@@ -50,7 +50,7 @@
     </InputGroup>
     <!-- 内建校验类型 https://github.com/yiminghe/async-validator#type -->
     <InputGroup v-if="state.allRules.type.show" compact class="rule-item" :class="{ enable: state.allRules.type.enable }">
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.type)" v-model:value="state.allRules.type.enable">数值类型</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.type)" v-model:checked="state.allRules.type.enable">数值类型</Checkbox>
       <Select
         class="rule-item-value"
         @change="change"
@@ -67,7 +67,7 @@
       class="rule-item"
       :class="{ enable: state.allRules.validator.enable }"
     >
-      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.validator)" v-model:value="state.allRules.validator.enable">自定义校验</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable(state.allRules.validator)" v-model:checked="state.allRules.validator.enable">自定义校验</Checkbox>
       <Input
         class="rule-item-value"
         @change="change"
@@ -78,14 +78,14 @@
     </InputGroup>
     <!-- 允许空格 -->
     <InputGroup v-if="state.allRules.whitespace.show" compact class="rule-item">
-      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:value="state.allRules.whitespace.value">允许空格</Checkbox>
+      <Checkbox class="rule-item-label" @change="changeEnable()" v-model:checked="state.allRules.whitespace.value">允许空格</Checkbox>
     </InputGroup>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Checkbox, Input, InputGroup, InputNumber, Select } from 'ant-design-vue';
-import { PropType, reactive, onMounted, watch, onBeforeMount } from 'vue';
+import { PropType, reactive, onMounted, watch } from 'vue';
 
 interface Rules {
   /** 是否启用校验 */
@@ -107,14 +107,12 @@ const props = defineProps({
   },
   /** 筛选变量类型 */
   type: {
-    type: String,
+    type: String as PropType<'any' | 'text' | 'number' | 'select' | 'date' | 'upload'>,
     default: 'any',
-    required: true,
   },
   size: {
     type: String as PropType<'large' | 'middle' | 'small'>,
     default: 'middle',
-    required: true,
   },
 });
 
@@ -122,7 +120,27 @@ const state = reactive({
   /** 真实值 */
   inputValue: [] as string[],
   /** 所有条件状态 */
-  allRules: {} as Record<string, Rules>,
+  allRules: {
+    required: { show: false, enable: true, value: undefined, message: () => '{{label}}不能为空。' },
+    enum: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为指定值。' },
+    len: { show: false, enable: false, value: undefined, message: () => '{{label}}长度必须为{{value}}位。' },
+    min: {
+      show: false,
+      enable: false,
+      value: undefined,
+      message: () => `{{label}}最小不能低于{{value}}${props.type == 'text' ? '位' : ''}。`,
+    },
+    max: {
+      show: false,
+      enable: false,
+      value: undefined,
+      message: () => `{{label}}最大不能超过{{value}}${props.type == 'text' ? '位' : ''}。`,
+    },
+    pattern: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
+    type: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为{{value}}格式。' },
+    validator: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
+    whitespace: { show: false, enable: true, value: undefined, message: () => '' },
+  },
   /** 内建校验类型选项 */
   types: [
     { value: 'any', label: '任意值' },
@@ -164,6 +182,9 @@ const init = () => {
 const changeType = () => {
   let _rules: string[] = [];
   switch (props.type) {
+    case 'any':
+      _rules = ['required', 'enum', 'len', 'min', 'max', 'pattern', 'validator', 'whitespace']; //'type',
+      break;
     case 'text':
       _rules = ['required', 'enum', 'len', 'min', 'max', 'pattern', 'validator', 'whitespace']; //'type',
       break;
@@ -209,30 +230,6 @@ watch(() => props.type, () => {
 onMounted(() => {
   init();
 });
-
-onBeforeMount(() => {
-  state.allRules = {
-    required: { show: false, enable: true, value: undefined, message: () => '{{label}}不能为空。' },
-    enum: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为指定值。' },
-    len: { show: false, enable: false, value: undefined, message: () => '{{label}}长度必须为{{value}}位。' },
-    min: {
-      show: false,
-      enable: false,
-      value: undefined,
-      message: () => `{{label}}最小不能低于{{value}}${props.type == 'text' ? '位' : ''}。`,
-    },
-    max: {
-      show: false,
-      enable: false,
-      value: undefined,
-      message: () => `{{label}}最大不能超过{{value}}${props.type == 'text' ? '位' : ''}。`,
-    },
-    pattern: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
-    type: { show: false, enable: false, value: undefined, message: () => '{{label}}必须为{{value}}格式。' },
-    validator: { show: false, enable: false, value: undefined, message: () => '{{label}}格式不正确。' },
-    whitespace: { show: false, enable: true, value: undefined, message: () => '' },
-  };
-});
 </script>
 
 <style lang="less" scoped>
@@ -250,13 +247,25 @@ onBeforeMount(() => {
       width: 100%;
     }
 
-    > .rule-item-label {
+    > :deep(.rule-item-label) {
+      display: flex;
+      align-items: flex-start;
       user-select: none;
       vertical-align: middle;
       line-height: 22px;
-      padding-left: 8px;
+      padding-left: 2px;
       flex-grow: 1;
       white-space: nowrap;
+      margin-top: 4px;
+
+      > .ant-checkbox {
+        white-space: nowrap;
+
+        > .ant-checkbox-inner {
+          display: inline-block;
+          vertical-align: text-top;
+        }
+      }
     }
     > .rule-item-value {
       flex-grow: 200;

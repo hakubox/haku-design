@@ -1,16 +1,16 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons-vue";
 import { createVNode } from "vue";
 
-const proj = process.env.PROJ;
+const buildProj = process.env.buildProj;
 
 let _toastModule;
 let _confirmModule;
 
 export const init = async ({ toastModule, confirmModule }) => {
-  if (proj === 'design') {
+  if (buildProj === 'design') {
     _toastModule = toastModule;
     _confirmModule = confirmModule;
-  } else if (proj === 'answer') {
+  } else if (buildProj === 'answer') {
     _toastModule = toastModule;
     _confirmModule = confirmModule;
   }
@@ -19,7 +19,7 @@ export const init = async ({ toastModule, confirmModule }) => {
 /** 提示框 */
 export const toast = (messageInfo: string, type: 'info' | 'success' | 'error' | 'warning' | 'loading' = 'info', duration: number = 2000): () => void => {
   let _type = type as string;
-  if (proj === 'design') {
+  if (buildProj === 'design') {
     const message = _toastModule;
     message[_type](messageInfo, duration / 1000);
     return () => {
@@ -39,7 +39,7 @@ export const toast = (messageInfo: string, type: 'info' | 'success' | 'error' | 
 
 /** 确认弹出框 */
 export const confirm = (title: string | undefined, content: string | (() => any), config: Record<string, any> = {}): Promise<void> => {
-  if (proj === 'design') {
+  if (buildProj === 'design') {
     return new Promise((resolve, reject) => {
       _confirmModule.confirm({
         title,

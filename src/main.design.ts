@@ -30,6 +30,18 @@ import ConfigDialog from '@/components/module/ConfigDialog.vue';
 import packageInfo from '../package.json';
 import { init } from '@/lib/monitor';
 
+import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
+import 'monaco-editor/esm/vs/basic-languages/less/less.contribution'
+import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+
+configState.ConfigDialog = ConfigDialog;
+
 const app = createApp(App);
 init(app);
 
@@ -42,19 +54,7 @@ import { init as messageInit } from '@/common/message';
 
 import { message, Modal } from 'ant-design-vue';
 
-configState.ConfigDialog = ConfigDialog;
-
 messageInit({ toastModule: message, confirmModule: Modal });
-
-import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
-import 'monaco-editor/esm/vs/basic-languages/less/less.contribution'
-import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 
 window['MonacoEnvironment'] = {
   getWorker (_: string, label: string) {
@@ -100,7 +100,7 @@ app.component('FilePicker', FilePicker);
 app.component('ConfigDialog', ConfigDialog);
 app.component('FormulaEditor', FormulaEditor);
 
-changeConfig(process.env.VUE_APP_Environment as ServerEnvironment);
+changeConfig(process.env.Environment as ServerEnvironment);
 
 app.use(directives);
 app.use(Menus);

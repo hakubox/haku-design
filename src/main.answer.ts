@@ -58,7 +58,7 @@ window.addEventListener('message', (event) => {
 const app = createApp(App);
 globalStore.install(app, router);
 
-changeConfig(process.env.VUE_APP_Environment as ServerEnvironment);
+changeConfig(process.env.Environment as ServerEnvironment);
 
 app.use(components);
 
