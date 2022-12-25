@@ -13,7 +13,7 @@
         <template #extra>
         </template>
         <!-- <DescriptionsItem label="服务状态" :span="6">
-          <a-badge status="processing" text="运行中" />
+          <Badge status="processing" text="运行中" />
         </DescriptionsItem> -->
         <DescriptionsItem label="自动保存" :span="2">
           <Switch v-model:checked="configState.config.autoSave" checked-children="是" un-checked-children="否" />
@@ -52,7 +52,7 @@
 import { reactive } from "vue";
 import { state as configState } from '@/common/config-module';
 import { service as storageService } from '@/modules/storage-module';
-import { Button, Descriptions, DescriptionsItem, Modal, RadioButton, RadioGroup, Switch, ConfigProvider } from "ant-design-vue";
+import { Badge, Button, Descriptions, DescriptionsItem, Modal, RadioButton, RadioGroup, Switch, ConfigProvider } from "ant-design-vue";
 import { state as globalState } from '@/common/global';
 import { vBoardKey } from '@/directives';
 

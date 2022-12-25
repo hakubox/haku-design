@@ -30,15 +30,15 @@ export const state = reactive({
   /** 最后一次保存记录 */
   latestSaveHistory: '——',
   /** 获取问卷保存记录 */
-  saveHistory: computed((): { time: Date }[] => {
-    let history = [];
+  saveHistory: computed((): { time: Date, index: number }[] => {
+    let history = [] as any[];
     const localOperation = localStorage.getItem(SaveHistory);
     let operationRecordList = [] as any[];
     if (localOperation) {
       operationRecordList = JSON.parse(localOperation);
     }
     history = operationRecordList.find(x => x.id === editorState.appConfig.id)?.history ?? [];
-    return history;
+    return history.map((i, index) => ({ ...i, index }));
   }),
   /** 获取模式文本 */
   getModeTxt: computed(() => {

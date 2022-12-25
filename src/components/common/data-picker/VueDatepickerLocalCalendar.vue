@@ -132,7 +132,6 @@
 </template>
 
 <script lang="ts" setup>
-import { dateFormat } from '@/tools/common';
 import { computed, nextTick, onMounted, PropType, reactive, watch } from 'vue';
 
 const emit = defineEmits<{

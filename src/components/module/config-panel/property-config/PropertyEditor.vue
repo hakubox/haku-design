@@ -1,5 +1,5 @@
 <template>
-  <a-empty v-if="!editorState.currentSelectedComponentPropertyGroups.length" description="暂未选择组件" :style="{ marginTop: '20vh' }"></a-empty>
+  <Empty v-if="!editorState.currentSelectedComponentPropertyGroups.length" description="暂未选择组件" :style="{ marginTop: '20vh' }"></Empty>
   <div v-else class="property-collapse">
     <div
       class="property-collapse-item"
@@ -21,7 +21,7 @@
           <span class="form-design-body-property-item-label" :class="{ require: prop.require, leaf: prop.leaf }">
             <div>
               <span>{{prop.title}}&nbsp;</span>
-              <a-popover v-if="prop.remark" placement="topRight" arrow-point-at-center>
+              <Popover v-if="prop.remark" placement="topRight" arrow-point-at-center>
                 <template #content>
                   {{prop.remark}}
                 </template>
@@ -29,37 +29,37 @@
                   <span>{{prop.title}} {{prop.name}}</span>
                 </template>
                 <QuestionCircleOutlined style="font-size:12px;color: #AAA;" />
-              </a-popover>
+              </Popover>
             </div>
             <div class="form-design-body-property-item-label-tools">
               <template v-if="prop.layout == 'block' || (prop.attach && prop.attach.length)">
-                <a-tooltip
+                <Tooltip
                   placement="topRight"
                   class="prop-tool-btn"
                   arrow-point-at-center
                   v-if="prop.name === 'label'"
                 >
                   <template #title>复制为组件名称</template>
-                  <a-button size="small" @click="resetComponentName()">
+                  <Button size="small" @click="resetComponentName()">
                     <clear-outlined size="small" />
-                  </a-button>
-                </a-tooltip>
-                <a-tooltip
+                  </Button>
+                </Tooltip>
+                <Tooltip
                   placement="topRight"
                   class="prop-tool-btn"
                   arrow-point-at-center
                   v-if="state.propertyEditors[prop.editor]?.canFullScreen"
                 >
                   <template #title>最大化</template>
-                  <a-button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
-                    <fullscreen-outlined size="small" />
-                  </a-button>
-                </a-tooltip>
+                  <Button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
+                    <FullscreenOutlined size="small" />
+                  </Button>
+                </Tooltip>
               </template>
-              <a-button-group v-if="prop.attach" size="small">
-                <a-button :type="!editorState.currentPropertyEditors[prop.name] || editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor)">常规</a-button>
-                <a-button :type="editorState.currentPropertyEditors[prop.name] == attach ? 'primary' : 'default'" v-for="attach in prop.attach" :key="attach" :value="attach" @click="changePropAttach(prop, attach);">{{ editorState.propertyEditors[attach].description }}</a-button>
-              </a-button-group>
+              <ButtonGroup v-if="prop.attach" size="small">
+                <Button :type="!editorState.currentPropertyEditors[prop.name] || editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor)">常规</Button>
+                <Button :type="editorState.currentPropertyEditors[prop.name] == attach ? 'primary' : 'default'" v-for="attach in prop.attach" :key="attach" :value="attach" @click="changePropAttach(prop, attach);">{{ editorState.propertyEditors[attach].description }}</Button>
+              </ButtonGroup>
             </div>
           </span>
           <div class="form-design-body-property-item-value">
@@ -100,18 +100,18 @@
             </component>
           </div>
           <template v-if="!(prop.layout == 'block' || (prop.attach && prop.attach.length))">
-            <a-tooltip placement="topLeft" class="fullscreen" v-if="state.propertyEditors[prop.editor]?.canFullScreen">
+            <Tooltip placement="topLeft" class="fullscreen" v-if="state.propertyEditors[prop.editor]?.canFullScreen">
               <template #title>最大化</template>
-              <a-button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
-                <fullscreen-outlined size="small" />
-              </a-button>
-            </a-tooltip>
+              <Button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
+                <FullscreenOutlined size="small" />
+              </Button>
+            </Tooltip>
           </template>
         </div>
       </div>
     </div>
     
-    <a-modal
+    <Modal
       :centered="true" 
       :footer="false"
       :width="'80vw'" 
@@ -157,19 +157,21 @@
           </component>
         </template>
       </component>
-    </a-modal>
+    </Modal>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { state as historyState, service as historyService } from "@/common/history-module";
+import { service as historyService } from "@/common/history-module";
 import type { ComponentProperty } from "@/@types/component-property";
 import { initPropertyEditors } from '@/data/property-editor';
 import { ComponentPropertyEditor } from "@/@types/enum";
 import PropertyEditorItem from './PropertyEditorItem.vue';
 import type { Component } from "@/@types";
+import { Button, ButtonGroup, Empty, Modal, Popover, Tooltip } from "ant-design-vue";
+import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
 
 const state = reactive({
   /** 默认属性编辑器哈希表 */

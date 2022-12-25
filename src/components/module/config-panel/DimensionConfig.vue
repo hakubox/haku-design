@@ -2,15 +2,15 @@
   <div class="dimension-config">
     <Table row-key="id" :pagination="false" size="small" :columns="tableColumns()" :dataSource="value">
       <template #emptyText>
-        <a-empty :image="simpleImage">
+        <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE">
           <template #description>
             <span style="display: inline-block; margin-bottom: 10px">暂无维度</span><br />
-            <a-button type="primary" @click="addRow()">
+            <Button type="primary" @click="addRow()">
               <template #icon><PlusOutlined /></template>
               创建新维度
-            </a-button>
+            </Button>
           </template>
-        </a-empty>
+        </Empty>
       </template>
 
       <template #bodyCell="{ column, index }">
@@ -25,10 +25,10 @@
           />
         </template>
         <template v-if="column.dataIndex === 'dimensionTitle'">
-          <a-input v-model:value="value![index]['dimensionTitle']"></a-input>
+          <Input v-model:value="value![index]['dimensionTitle']"></Input>
         </template>
         <template v-if="column.dataIndex === 'dimensionQuestions'">
-          <a-select
+          <Select
             v-model:value="value![index]['dimensionQuestions']"
             mode="multiple"
             :allowClear="true"
@@ -50,163 +50,150 @@
             <template #tagRender>
               {{ getQuestionsLabel(index) }}
             </template>
-          </a-select>
+          </Select>
         </template>
 
         <template v-if="column.dataIndex === 'operation'">
-          <a-button type="primary" size="small" @click="addRow(index)">
+          <Button type="primary" size="small" @click="addRow(index)">
             <template #icon><PlusOutlined /></template>
-          </a-button>
-          <a-button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
+          </Button>
+          <Button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
             <template #icon><DeleteOutlined /></template>
-          </a-button>
-          <a-dropdown :trigger="['click']">
-            <a-button size="small" style="margin-left: 6px">
+          </Button>
+          <Dropdown :trigger="['click']">
+            <Button size="small" style="margin-left: 6px">
               <template #icon><ToolOutlined /></template>
-            </a-button>
+            </Button>
             <template #overlay>
-              <a-menu>
-                <a-menu-item :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</a-menu-item>
-                <a-menu-item :disabled="index == value.length - 1" key="2" @click="moveDown(index)"
-                  ><ArrowDownOutlined />下移</a-menu-item
-                >
-                <a-menu-divider />
-                <a-menu-item key="2" @click="copyRow(index)"><CopyOutlined />复制</a-menu-item>
-              </a-menu>
+              <Menu>
+                <MenuItem :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</MenuItem>
+                <MenuItem :disabled="index == value.length - 1" key="2" @click="moveDown(index)"><ArrowDownOutlined />下移</MenuItem>
+                <MenuDivider />
+                <MenuItem key="2" @click="copyRow(index)"><CopyOutlined />复制</MenuItem>
+              </Menu>
             </template>
-          </a-dropdown>
+          </Dropdown>
         </template>
       </template>
     </Table>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, reactive, toRefs } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { Empty, InputNumber, Table } from 'ant-design-vue';
+<script lang="ts" setup>
+import { PropType, reactive, toRefs } from 'vue';
+import { service as editorService } from '@/modules/editor-module';
+import { Button, Dropdown, Empty, Input, InputNumber, Menu, MenuDivider, MenuItem, Select, Table } from 'ant-design-vue';
+import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined, PlusOutlined, ToolOutlined } from '@ant-design/icons-vue';
 
-export default defineComponent({
-  name: 'DimensionConfig',
-  components: { Table, InputNumber },
-  props: {
-    /** 当前值 */
-    value: {
-      type: Array as PropType<Record<string, any>[]>,
-      required: true,
-    },
-  },
-  methods: {
-    /** 获取题目显示的标签文本 */
-    getQuestionsLabel(index: number) {
-      if (!this.value[index]['dimensionQuestions'] || !this.value[index]['dimensionQuestions'].length) {
-        return '暂无数据';
-      }
-      const _list: { id: string; index: number }[][] = [];
-      this.editorService.getAllFormItem().forEach((item, qIndex) => {
-        if (this.value[index]['dimensionQuestions'].includes(item.id)) {
-          const _item = { id: item.id, index: qIndex };
-          if (qIndex === 0 || !_list.length) {
-            _list.push([_item]);
-          } else {
-            let _lastItem = _list[_list.length - 1];
-            if (_lastItem.length && _lastItem[_lastItem.length - 1].index === qIndex - 1) {
-              _lastItem.push(_item);
-            } else {
-              _list.push([_item]);
-            }
-          }
-        }
-      });
-      if (!_list.length) return '暂无数据';
-      return _list
-        .filter((i) => i.length)
-        .map((i) => {
-          if (i.length === 1) {
-            return `${i[0].index + 1}`;
-          } else {
-            return `${i[0].index + 1}-${i[0].index + i.length}`;
-          }
-        })
-        .join(', ');
-    },
-    /** 新增行 */
-    addRow(index = 0) {
-      this.$emit('update:value', [...this.value.slice(0, index), {}, ...this.value.slice(index)]);
-    },
-    /** 复制行 */
-    copyRow(index) {
-      const re = [...this.value.slice(0, index), { ...this.value[index] }, ...this.value.slice(index)];
-      this.$emit('update:value', re);
-      this.$emit('change', re);
-    },
-    /** 删除行 */
-    removeRow(index) {
-      const re = [...this.value.slice(0, index), ...this.value.slice(index + 1)];
-      this.$emit('update:value', re);
-      this.$emit('change', re);
-    },
-    /** 上移行 */
-    moveUp(index) {
-      const re = [
-        ...this.value.slice(0, index - 1),
-        this.value[index],
-        this.value[index - 1],
-        ...this.value.slice(index + 1),
-      ];
-      this.$emit('update:value', re);
-      this.$emit('change', re);
-    },
-    /** 下移行 */
-    moveDown(index) {
-      const re = [
-        ...this.value.slice(0, index),
-        this.value[index + 1],
-        this.value[index],
-        ...this.value.slice(index + 2),
-      ];
-      this.$emit('update:value', re);
-      this.$emit('change', re);
-    },
-    /** 返回表格列 */
-    tableColumns() {
-      return (this.columns || [])
-        .map((i) => ({
-          title: i.title,
-          key: i.name,
-          dataIndex: i.name,
-          width: i.width,
-          fixed: i.fixed,
-        }))
-        .concat([
-          {
-            title: '编辑',
-            key: 'operation',
-            dataIndex: 'operation',
-            width: '100px',
-            fixed: undefined,
-          },
-        ]);
-    },
-  },
-  setup(props) {
-    /** 状态管理 */
-    const state = reactive({
-      /** 配置列 */
-      columns: [
-        { name: 'dimensionFactor', title: '权重', width: '17%' },
-        { name: 'dimensionTitle', title: '名称', width: '25%' },
-        { name: 'dimensionQuestions', title: '关联问题' },
-      ] as Record<string, any>[],
-    });
-
-    return {
-      ...toRefs(state),
-      editorService,
-      simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
-    };
+const props = defineProps({
+  /** 当前值 */
+  value: {
+    type: Array as PropType<Record<string, any>[]>,
+    required: true,
   },
 });
+
+const emit = defineEmits<{
+  (event: 'change', val: any): void;
+}>();
+
+/** 状态管理 */
+const state = reactive({
+  /** 配置列 */
+  columns: [
+    { name: 'dimensionFactor', title: '权重', width: '17%' },
+    { name: 'dimensionTitle', title: '名称', width: '25%' },
+    { name: 'dimensionQuestions', title: '关联问题' },
+  ] as Record<string, any>[],
+});
+
+/** 获取题目显示的标签文本 */
+const getQuestionsLabel = (index: number) => {
+  if (!props.value[index]['dimensionQuestions'] || !props.value[index]['dimensionQuestions'].length) {
+    return '暂无数据';
+  }
+  const _list: { id: string; index: number }[][] = [];
+  editorService.getAllFormItem().forEach((item, qIndex) => {
+    if (props.value[index]['dimensionQuestions'].includes(item.id)) {
+      const _item = { id: item.id, index: qIndex };
+      if (qIndex === 0 || !_list.length) {
+        _list.push([_item]);
+      } else {
+        let _lastItem = _list[_list.length - 1];
+        if (_lastItem.length && _lastItem[_lastItem.length - 1].index === qIndex - 1) {
+          _lastItem.push(_item);
+        } else {
+          _list.push([_item]);
+        }
+      }
+    }
+  });
+  if (!_list.length) return '暂无数据';
+  return _list
+    .filter((i) => i.length)
+    .map((i) => {
+      if (i.length === 1) {
+        return `${i[0].index + 1}`;
+      } else {
+        return `${i[0].index + 1}-${i[0].index + i.length}`;
+      }
+    })
+    .join(', ');
+};
+/** 新增行 */
+const addRow = (index = 0) => {
+  emit('change', [...props.value.slice(0, index), {}, ...props.value.slice(index)]);
+};
+/** 复制行 */
+const copyRow = (index) => {
+  const re = [...props.value.slice(0, index), { ...props.value[index] }, ...props.value.slice(index)];
+  emit('change', re);
+};
+/** 删除行 */
+const removeRow = (index) => {
+  const re = [...props.value.slice(0, index), ...props.value.slice(index + 1)];
+  emit('change', re);
+};
+/** 上移行 */
+const moveUp = (index) => {
+  const re = [
+    ...props.value.slice(0, index - 1),
+    props.value[index],
+    props.value[index - 1],
+    ...props.value.slice(index + 1),
+  ];
+  emit('change', re);
+};
+/** 下移行 */
+const moveDown = (index) => {
+  const re = [
+    ...props.value.slice(0, index),
+    props.value[index + 1],
+    props.value[index],
+    ...props.value.slice(index + 2),
+  ];
+  emit('change', re);
+};
+/** 返回表格列 */
+const tableColumns = () => {
+  return (state.columns || [])
+    .map((i) => ({
+      title: i.title,
+      key: i.name,
+      dataIndex: i.name,
+      width: i.width,
+      fixed: i.fixed,
+    }))
+    .concat([
+      {
+        title: '编辑',
+        key: 'operation',
+        dataIndex: 'operation',
+        width: '100px',
+        fixed: undefined,
+      },
+    ]);
+};
 </script>
 
 <style lang="less" scoped>

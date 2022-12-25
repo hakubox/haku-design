@@ -4,16 +4,16 @@
       <!-- Logo标题 -->
       <h1 class="login-page-form-title">表单设计器登录</h1>
       <!-- 登录表单 -->
-      <a-form ref="formRef" :model="state.loginForm" :rules="rules" :label-col="{ span: 4 }">
-        <a-form-item name="username">
-          <a-input v-model:value.trim="state.loginForm.username" size="large" placeholder="用户名">
+      <Form ref="formRef" :model="state.loginForm" :rules="rules" :label-col="{ span: 4 }">
+        <FormItem name="username">
+          <Input v-model:value.trim="state.loginForm.username" size="large" placeholder="用户名">
             <template #prefix>
               <UserOutlined :style="{ fontSize: '16px', color: '#333333', paddingRight: '4px' }" />
             </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item name="password">
-          <a-input
+          </Input>
+        </FormItem>
+        <FormItem name="password">
+          <Input
             v-model:value.trim="state.loginForm.password"
             size="large"
             type="password"
@@ -23,13 +23,13 @@
             <template #prefix>
               <LockOutlined :style="{ fontSize: '16px', color: '#333333', paddingRight: '4px' }" />
             </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item :wrapper-col="{ span: 24 }">
-          <a-row :gutter="24">
-            <a-col :offset="0" :span="24">
-              <a-form-item label="" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" :colon="false">
-                <a-button
+          </Input>
+        </FormItem>
+        <FormItem :wrapper-col="{ span: 24 }">
+          <Row :gutter="24">
+            <Col :offset="0" :span="24">
+              <FormItem label="" :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" :colon="false">
+                <Button
                   :loading="state.isLoading"
                   style="width: 100%"
                   block
@@ -38,12 +38,12 @@
                   @click="login"
                 >
                   登录
-                </a-button>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form-item>
-      </a-form>
+                </Button>
+              </FormItem>
+            </Col>
+          </Row>
+        </FormItem>
+      </Form>
     </div>
 
     <Verify
@@ -60,9 +60,11 @@
 import { reactive, ref } from '@vue/reactivity';
 import { useRouter } from 'vue-router';
 import Verify from '@/components/common/verifition/Verify.vue';
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { service as authService } from '@/common/auth-module';
 import { toast } from '@/common/message';
+import { Button, Col, Form, Input, Row, FormItem } from 'ant-design-vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import type { RuleObject } from 'ant-design-vue/lib/form';
 
 const router = useRouter();
 
@@ -77,11 +79,11 @@ const state = reactive({
     code: '',
   },
 });
-const rules = {
+const rules: { [k: string]: RuleObject[] } = {
   username: [{ required: true, message: '用户名必填', trigger: 'blur' }],
   password: [{ required: true, message: '密码必填', trigger: 'blur' }],
 };
-const formRef = ref();
+const formRef = ref<typeof Form>();
 
 /** 登录前校验 */
 const capctchaCheckSuccess = (params: any) => {
@@ -100,7 +102,7 @@ const verify = ref<typeof Verify>();
 /** 登录 */
 const login = () => {
   state.isLoading = true;
-  formRef.value.validate().then(() => {
+  formRef.value!.validate().then(() => {
     verify.value!.show();
   }).catch((error: any) => {
     console.error('error', error);

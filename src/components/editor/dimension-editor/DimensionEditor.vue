@@ -1,34 +1,34 @@
 <template>
   <div class="dimension-config">
-    <a-table row-key="dimensionId" :pagination="false" size="small" :columns="tableColumns()" :dataSource="value">
+    <Table row-key="dimensionId" :pagination="false" size="small" :columns="tableColumns()" :dataSource="value">
       <template #emptyText>
-        <a-empty :image="Empty.PRESENTED_IMAGE_SIMPLE">
+        <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE">
           <template #description>
             <span style="display: inline-block; margin-bottom: 10px">暂无维度</span><br />
-            <a-button type="primary" @click="addRow()">
+            <Button type="primary" @click="addRow()">
               <template #icon><PlusOutlined /></template>
               创建新维度
-            </a-button>
+            </Button>
           </template>
-        </a-empty>
+        </Empty>
       </template>
 
       <template #bodyCell="{ column, index }">
         <template v-if="column.dataIndex === 'dimensionFactor'">
-          <a-input-number
+          <InputNumber
             :defaultValue="1"
             style="width: 60px"
             :min="0"
             :max="10"
             :step="0.1"
             v-model:value="value![index]['dimensionFactor']"
-          ></a-input-number>
+          ></InputNumber>
         </template>
         <template v-if="column.dataIndex === 'dimensionTitle'">
-          <a-input v-model:value="value![index]['dimensionTitle']"></a-input>
+          <Input v-model:value="value![index]['dimensionTitle']"></Input>
         </template>
         <template v-if="column.dataIndex === 'dimensionQuestions'">
-          <a-select
+          <Select
             v-model:value="value![index]['dimensionQuestions']"
             mode="multiple"
             :allowClear="true"
@@ -48,42 +48,41 @@
             <template #tagRender>
               {{ getQuestionsLabel(index) }}
             </template>
-          </a-select>
+          </Select>
         </template>
 
         <template v-if="column.dataIndex === 'operation'">
-          <a-button type="primary" size="small" @click="addRow(index)">
+          <Button type="primary" size="small" @click="addRow(index)">
             <template #icon><PlusOutlined /></template>
-          </a-button>
-          <a-button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
+          </Button>
+          <Button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
             <template #icon><DeleteOutlined /></template>
-          </a-button>
-          <a-dropdown :trigger="['click']">
-            <a-button size="small" style="margin-left: 6px">
+          </Button>
+          <Dropdown :trigger="['click']">
+            <Button size="small" style="margin-left: 6px">
               <template #icon><ToolOutlined /></template>
-            </a-button>
+            </Button>
             <template #overlay>
-              <a-menu>
-                <a-menu-item :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</a-menu-item>
-                <a-menu-item :disabled="index == value.length - 1" key="2" @click="moveDown(index)"
-                  ><ArrowDownOutlined />下移</a-menu-item
-                >
-                <a-menu-divider />
-                <a-menu-item key="2" @click="copyRow(index)"><CopyOutlined />复制</a-menu-item>
-              </a-menu>
+              <Menu>
+                <MenuItem :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</MenuItem>
+                <MenuItem :disabled="index == value.length - 1" key="2" @click="moveDown(index)"><ArrowDownOutlined />下移</MenuItem>
+                <MenuDivider />
+                <MenuItem key="2" @click="copyRow(index)"><CopyOutlined />复制</MenuItem>
+              </Menu>
             </template>
-          </a-dropdown>
+          </Dropdown>
         </template>
       </template>
-    </a-table>
+    </Table>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, onUnmounted, PropType, reactive, useAttrs } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { Empty } from 'ant-design-vue';
+import { Button, Dropdown, Empty, Input, InputNumber, Menu, MenuDivider, MenuItem, Select, Table } from 'ant-design-vue';
 import { createModelId } from '@/tools/common';
+import { ArrowDownOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   /** 当前值 */

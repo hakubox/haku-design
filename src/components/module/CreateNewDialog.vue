@@ -62,24 +62,12 @@
             <FormItem :label="`${getTitle}描述`" name="title">
               <Textarea v-model:value="state.formState.description" />
             </FormItem>
-            <!-- <FormItem v-if="formState.type === 'questionnaire'" label="问卷类型" :name="['params', 'aaa']" :rules="[{ required: true, message: '请输入问卷类型' }]">
-              <a-radio-group v-model:value="formState.params.aaa">
-                <a-radio value="a">医疗问卷</a-radio>
-                <a-radio value="b">非医疗问卷</a-radio>
-              </a-radio-group>
+            <FormItem v-if="state.formState.type === 'complex-component'" label="组件类型" :name="['params', 'ccc']" :rules="[{ required: true, message: '请输入评测类型' }]">
+              <RadioGroup v-model:value="state.formState.params.ccc">
+                <Radio value="a">标准组件</Radio>
+                <Radio value="b">自定义组件</Radio>
+              </RadioGroup>
             </FormItem>
-            <FormItem v-if="formState.type === 'questionnaire'" label="评测类型" :name="['params', 'bbb']" :rules="[{ required: true, message: '请输入评测类型' }]">
-              <a-radio-group v-model:value="formState.params.bbb">
-                <a-radio value="a">自评</a-radio>
-                <a-radio value="b">他评</a-radio>
-              </a-radio-group>
-            </FormItem>
-            <FormItem v-if="formState.type === 'complex-component'" label="组件类型" :name="['params', 'ccc']" :rules="[{ required: true, message: '请输入评测类型' }]">
-              <a-radio-group v-model:value="formState.params.ccc">
-                <a-radio value="a">标准组件</a-radio>
-                <a-radio value="b">自定义组件</a-radio>
-              </a-radio-group>
-            </FormItem> -->
 
             <FormItem class="form-item-btn">
               <Button block type="primary" size="large" html-type="submit">创建新{{ getTitle }}</Button>
@@ -95,7 +83,7 @@
 import { reactive, watch, computed, PropType } from 'vue';
 import { CreateNewConfig } from '@/@types';
 import { AppType } from '@/@types/enum';
-import { Button, Form, FormItem, Input, Modal, Textarea } from 'ant-design-vue';
+import { Button, Form, FormItem, Input, Modal, Radio, RadioGroup, Textarea } from 'ant-design-vue';
 import { FormOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({

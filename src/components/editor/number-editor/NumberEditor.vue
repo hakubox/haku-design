@@ -2,7 +2,7 @@
   <div v-if="props.readonly" class="number-editor-preview editor-preview">
     {{ state.inputValue ?? '——' }}
   </div>
-  <a-input-number
+  <InputNumber
     v-else
     class="number-editor"
     v-model:value="state.inputValue"
@@ -20,11 +20,12 @@
     <!-- <template v-else #addonAfter>
       <slot name="suffix"></slot>
     </template> -->
-  </a-input-number>
+  </InputNumber>
 </template>
 
 <script lang="ts" setup>
 import { isNotBlank, throttle } from '@/tools/common';
+import { InputNumber } from 'ant-design-vue';
 import { onMounted, PropType, reactive, toRefs, watch } from 'vue';
 
 const props = defineProps({

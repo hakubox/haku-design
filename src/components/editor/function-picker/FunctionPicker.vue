@@ -1,6 +1,6 @@
 <template>
-  <a-select
-    v-model="inputValue"
+  <Select
+    v-model:value="state.inputValue"
     placeholder="请选择页面函数"
     @change="change"
     :size="size"
@@ -10,73 +10,66 @@
     :showSearch="true"
     ref="editor"
   >
-  </a-select>
+  </Select>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { computed, inject, PropType, reactive, ref } from 'vue';
 import { FormScript } from '@/@types';
-import { computed, defineComponent, inject, PropType, ref } from 'vue';
+import { Select } from 'ant-design-vue';
 
-export default defineComponent({
-  name: 'FunctionPicker',
-  props: {
-    /** 当前变量 */
-    value: {
-      type: String,
-      default: '',
-      required: true,
-    },
-    /** 筛选变量类型 */
-    type: {
-      type: String,
-      default: 'any',
-      required: true,
-    },
-    size: {
-      type: String as PropType<'large' | 'middle' | 'small'>,
-      default: 'middle',
-      required: true,
-    },
+const props = defineProps({
+  /** 当前变量 */
+  value: {
+    type: String,
+    default: '',
+    required: true,
   },
-  methods: {
-    search(inputValue: string, treeNode: any) {
-      return ('' + treeNode.data.props.value).includes(inputValue) || treeNode.data.props.title.includes(inputValue);
-    },
-    /** 初始化 */
-    init() {
-      this.inputValue = this.value;
-    },
-    /** 改变值 */
-    change() {
-      this.$emit('input', this.inputValue);
-    },
+  /** 筛选变量类型 */
+  type: {
+    type: String,
+    default: 'any',
+    required: true,
   },
-  mounted() {
-    this.init();
-  },
-  setup() {
-    /** 真实值 */
-    let inputValue = ref('');
-
-    /** 表单变量 */
-    let formScriptComment = inject('formScriptComment') as Record<string, any>;
-    /** 表单变量 */
-    let formScript = inject('formScript') as FormScript;
-
-    const functionList = computed(() => {
-      let _formScriptComment = formScriptComment;
-      return Object.entries(formScript.methods).map(([key, value]) => ({
-        label: _formScriptComment[key] ? _formScriptComment[key] + ': ' + key : key,
-        value: key,
-      })) as Array<Record<string, any>>;
-    });
-
-    return {
-      inputValue,
-      functionList,
-    };
+  size: {
+    type: String as PropType<'large' | 'middle' | 'small'>,
+    default: 'middle',
+    required: true,
   },
 });
+
+const emit = defineEmits<{
+  (event: 'change', value: any): void;
+}>();
+
+const state = reactive({
+  /** 真实值 */
+  inputValue: '',
+});
+/** 表单变量 */
+let formScriptComment = inject('formScriptComment') as Record<string, any>;
+/** 表单变量 */
+let formScript = inject('formScript') as FormScript;
+/** 获取函数列表 */
+const functionList = computed(() => {
+  let _formScriptComment = formScriptComment;
+  return Object.entries(formScript.methods).map(([key, value]) => ({
+    label: _formScriptComment[key] ? _formScriptComment[key] + ': ' + key : key,
+    value: key,
+  })) as Array<Record<string, any>>;
+});
+
+const search = (inputValue: string, treeNode: any) => {
+  return ('' + treeNode.data.props.value).includes(inputValue) || treeNode.data.props.title.includes(inputValue);
+};
+/** 初始化 */
+const init = () => {
+  state.inputValue = props.value;
+};
+/** 改变值 */
+const change = () => {
+  emit('change', state.inputValue);
+};
 </script>
 
 <style lang="less" scoped></style>

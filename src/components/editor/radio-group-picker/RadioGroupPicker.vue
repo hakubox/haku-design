@@ -1,62 +1,51 @@
 <template>
   <div class="radio-group-picker">
-    <a-radio-group v-model:value="inputValue" :size="$attrs.size" :buttonStyle="$attrs.buttonStyle" @change="onChange">
-      <a-radio-button v-for="item in ($attrs.options as any[])" :key="item.value" :value="item.value">{{
+    <RadioGroup v-model:value="state.inputValue" :size="($attrs.size as any)" :buttonStyle="($attrs.buttonStyle as any)" @change="onChange">
+      <RadioButton v-for="item in ($attrs.options as any[])" :key="item.value" :value="item.value">{{
         item.label
-      }}</a-radio-button>
-    </a-radio-group>
+      }}</RadioButton>
+    </RadioGroup>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs, watch } from 'vue';
+<script lang="ts" setup>
+import { RadioButton, RadioGroup } from 'ant-design-vue';
+import { onMounted, reactive, watch } from 'vue';
 
-export default defineComponent({
-  name: 'RadioGroupPicker',
-  props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
+const props = defineProps({
+  value: {
+    type: String,
+    default: '',
   },
-  unmounted() {
-    // if (this.inputValue != this.value) {
-    //   this.$emit('change', this.inputValue);
-    // }
+  placeholder: {
+    type: String,
+    default: '',
   },
-  setup(props, { emit }) {
-    let state = reactive({
-      inputValue: '',
-    });
+});
 
-    /** 改变值 */
-    const onChange = () => {
-      emit('update:value', state.inputValue);
-      emit('change', state.inputValue);
-    };
+const emit = defineEmits<{
+  (event: 'update:value', val: string): void;
+  (event: 'change', val: string): void;
+}>();
 
-    onMounted(() => {
-      state.inputValue = props.value;
-    });
+let state = reactive({
+  inputValue: '',
+});
 
-    watch(
-      () => props.value,
-      (val, oldVal) => {
-        if (val !== oldVal && val !== state.inputValue) {
-          state.inputValue = props.value;
-        }
-      },
-    );
+/** 改变值 */
+const onChange = () => {
+  emit('update:value', state.inputValue);
+  emit('change', state.inputValue);
+};
 
-    return {
-      ...toRefs(state),
-      onChange,
-    };
-  },
+onMounted(() => {
+  state.inputValue = props.value;
+});
+
+watch(() => props.value, (val, oldVal) => {
+  if (val !== state.inputValue) {
+    state.inputValue = props.value;
+  }
 });
 </script>
 

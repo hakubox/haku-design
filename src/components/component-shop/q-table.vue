@@ -42,7 +42,7 @@
           v-if="props.pagination !== false && (props.pagination.total || 0) > (props.pagination.defaultPageSize || 0)"
           class="component-card-list-pagination"
         >
-          <a-pagination
+          <Pagination
             v-if="props.pagination !== false"
             v-model:current="props.pagination!.current"
             v-model:page-size="props.pagination!.pageSize"

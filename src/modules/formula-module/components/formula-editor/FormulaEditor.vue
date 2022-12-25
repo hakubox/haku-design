@@ -4,12 +4,12 @@
       <div class="formula-editor-prefix">=</div>
       <div class="formula-editor-code" ref="containerRef" style="height: 20px;"></div>
       <div class="formula-editor-tools">
-        <a-tooltip v-if="state.errorList.length" placement="topRight" title="当前函数不正确" color="#DD4F38" arrow-point-at-center>
+        <Tooltip v-if="state.errorList.length" placement="topRight" title="当前函数不正确" color="#DD4F38" arrow-point-at-center>
           <warning-outlined class="formula-editor-tool-bug" />
-        </a-tooltip>
-        <a-tooltip placement="topRight" title="打开函数编辑器" arrow-point-at-center>
+        </Tooltip>
+        <Tooltip placement="topRight" title="打开函数编辑器" arrow-point-at-center>
           <function-outlined class="formula-editor-tool-function" />
-        </a-tooltip>
+        </Tooltip>
       </div>
       <div v-if="!props?.value?.value?.length" class="formula-editor-placeholder">请输入公式</div>
     </div>
@@ -22,6 +22,7 @@ import { onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs
 import { state as formulaState } from '../../';
 import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
 import { state as editorState } from '@/modules/editor-module';
+import { Tooltip } from 'ant-design-vue';
 // import monaco from 'monaco-editor';
 
 /** LibModel */

@@ -3,7 +3,7 @@
     <span v-if="state.inputValue" class="select-picker-txt">{{ getTxt }}</span>
     <span v-else class="select-picker-empty">[未选择]</span>
   </div>
-  <a-select v-else
+  <Select v-else
     class="select-picker"
     :size="props.size"
     :value="state.inputValue"
@@ -11,11 +11,12 @@
     :mode="props.mode"
     @change="change"
   >
-  </a-select>
+  </Select>
 </template>
 
 <script lang="ts" setup>
 import { computed } from '@vue/reactivity';
+import { Select } from 'ant-design-vue';
 import { onMounted, PropType, reactive, watch } from 'vue';
 
 
@@ -41,8 +42,8 @@ const props = defineProps({
   },
   /** 选择模式 */
   mode: {
-    type: String as PropType<'' | 'multiple' | 'tags' | 'combobox'>,
-    default: ''
+    type: String as PropType<"multiple" | "tags" | undefined>,
+    default: undefined
   },
 });
 

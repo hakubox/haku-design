@@ -1,6 +1,6 @@
 <template>
   <div class="theme-config">
-    <a-empty v-if="!themeState.themeList.length" description="暂无主题" :style="{ marginTop: '20vh' }"></a-empty>
+    <Empty v-if="!themeState.themeList.length" description="暂无主题" :style="{ marginTop: '20vh' }"></Empty>
     <template v-else>
       <ul class="theme-config-list">
         <li
@@ -22,11 +22,11 @@
     </template>
 
     <!-- 弹出基本配置框 -->
-    <a-modal
+    <Modal
       :wrap-class-name="`preview-modal`"
       width="700px"
       :centered="true"
-      :visible="showBasicConfigDialog"
+      :visible="state.showBasicConfigDialog"
       :destroyOnClose="true"
       @ok="editStorageInfo"
       @cancel="closeEditStorageInfoDialog"
@@ -36,199 +36,181 @@
         {{ themeState.currentTheme?.title }}
       </template>
       <div style="margin-top: 20px"></div>
-      <a-form
+      <Form
         ref="formRef"
         :layout="'horizontal'"
-        :model="editStorage"
-        :rules="rules"
+        :model="state.editStorage"
+        :rules="state.rules"
         :labelCol="{ span: 4 }"
         :wrapperCol="{ span: 14 }"
       >
-        <template v-if="editStorage.type == 'cos'">
-          <a-form-item label="标题" name="title">
-            <a-input v-model:value="editStorage.title" placeholder="标题" />
-          </a-form-item>
-          <a-form-item label="SecretId" name="secretId">
-            <a-input v-model:value="editStorage.secretId" placeholder="请输入 API 密钥 SecretID" />
-          </a-form-item>
-          <a-form-item label="SecretKey" name="secretKey">
-            <a-input v-model:value="editStorage.secretKey" placeholder="请输入 API 密钥 SecretKey" />
-          </a-form-item>
-          <a-form-item label="存储桶" name="bucket">
-            <a-input v-model:value="editStorage.bucket" placeholder="请输入存储桶，例如 test-1250000000" />
-          </a-form-item>
-          <a-form-item label="区域" name="region">
-            <a-input v-model:value="editStorage.region" placeholder="请输入存储桶区域，例如 ap-beijing" />
-          </a-form-item>
+        <template v-if="state.editStorage.type == 'cos'">
+          <FormItem label="标题" name="title">
+            <Input v-model:value="state.editStorage.title" placeholder="标题" />
+          </FormItem>
+          <FormItem label="SecretId" name="secretId">
+            <Input v-model:value="state.editStorage.secretId" placeholder="请输入 API 密钥 SecretID" />
+          </FormItem>
+          <FormItem label="SecretKey" name="secretKey">
+            <Input v-model:value="state.editStorage.secretKey" placeholder="请输入 API 密钥 SecretKey" />
+          </FormItem>
+          <FormItem label="存储桶" name="bucket">
+            <Input v-model:value="state.editStorage.bucket" placeholder="请输入存储桶，例如 test-1250000000" />
+          </FormItem>
+          <FormItem label="区域" name="region">
+            <Input v-model:value="state.editStorage.region" placeholder="请输入存储桶区域，例如 ap-beijing" />
+          </FormItem>
         </template>
-        <a-form-item label="备注" name="remark">
-          <a-textarea v-model:value="editStorage.remark" placeholder="备注" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+        <FormItem label="备注" name="remark">
+          <Textarea v-model:value="state.editStorage.remark" placeholder="备注" />
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, ref, toRefs } from 'vue';
-import { state as editorState } from '@/modules/editor-module';
+<script lang="ts" setup>
+import { reactive, ref } from 'vue';
 import { state as themeState, service as themeService } from '../index';
 import type { ThemeConfig } from '../@types';
 import { toast } from '@/common/message';
-// import { StorageServiceType } from "../enum";
+import { Empty, Form, FormItem, Input, Modal, Textarea } from 'ant-design-vue';
+import { RuleObject } from 'ant-design-vue/lib/form';
 
-export default defineComponent({
-  components: {},
-  methods: {
-    /** 切换主题 */
-    changeTheme(item: ThemeConfig) {
-      themeService.changeTheme(item.code);
-    },
-    /** 关闭编辑弹出框 */
-    closeEditStorageInfoDialog() {
-      this.showBasicConfigDialog = false;
-      this.editStorage = {};
-    },
-    /** 展示数据配置弹窗 */
-    showDataConfig(instance: ThemeConfig) {
-      this.showThemeCode = instance.code || '';
-      this.showDataConfigDialog = true;
-    },
-    /** 展示数据编辑弹窗 */
-    showDataEdit(instance?: Record<string, any>) {
-      if (instance) {
-      }
-      this.showDataEditDialog = true;
-    },
-    /** 编辑数据配置 */
-    editStorageInfo() {
-      this.formRef.validate().then(() => {
-        if (!this.showThemeCode) {
-          return;
-        }
-        let _index = this.themeState.themeList.findIndex((i) => i.code === this.showThemeCode);
-        if (_index >= 0) {
-          this.themeState.themeList[_index].title = this.editStorage.title;
-          this.themeState.themeList[_index].remark = this.editStorage.remark;
-          this.showBasicConfigDialog = false;
-        } else {
-          toast('未找到当前数据源', 'error');
-        }
-        localStorage.setItem(
-          'theme-service',
-          JSON.stringify(
-            this.themeState.themeList.map((i) => ({
-              ...i,
-              sdk: undefined,
-            })),
-          ),
-        );
-        this.showBasicConfigDialog = false;
-      }).catch((err) => {
-        toast(err.errorFields.map((i) => i.errors.flat()).flat().join('；\n'), 'error');
-      });
-    },
-    /** 获取变量类型描述 */
-    getVarTypeStr(type: string) {
-      return {
-        object: '对象',
-        list: '列表',
-        string: '字符串',
-        number: '数字',
-        boolean: '真/假',
-      }[type];
-    },
-    /** 导入JSON文件 */
-    importJSON() {},
-  },
-  setup(props) {
-    const formRef = ref();
+const formRef = ref();
 
-    const state = reactive({
-      /** 是否显示基本配置界面 */
-      showBasicConfigDialog: false,
-      /** 是否显示数据配置界面 */
-      showDataConfigDialog: false,
-      /** 是否显示变量编辑界面 */
-      showDataEditDialog: false,
-      /** 当前显示主题代码 */
-      showThemeCode: '',
-      /** 临时编辑数据源信息 */
-      editStorage: {} as Record<string, any>,
-      /** 表格列 */
-      columns: [
-        { title: '变量名', dataIndex: 'name', key: 'name', width: '25%' },
-        { title: '类型', dataIndex: 'type', key: 'type', width: '10%', slots: { customRender: 'type' } },
-        { title: '值', dataIndex: 'value', key: 'value', width: '20%', slots: { customRender: 'value' } },
-        { title: '备注', dataIndex: 'remark', key: 'remark', slots: { customRender: 'remark' } },
-        { title: '操作', dataIndex: 'handle', width: '120px', slots: { customRender: 'handle' } },
-      ] as any[],
-      /** 数据源编辑校验规则 */
-      rules: {
-        title: [{ required: true, message: '请输入主题标题', trigger: 'blur' }],
-        secretId: [{ required: true, message: '请输入API密钥ID', trigger: 'blur' }],
-        secretKey: [{ required: true, message: '请输入API密钥Key', trigger: 'blur' }],
-        bucket: [{ required: true, message: '请输入存储桶', trigger: 'blur' }],
-        region: [{ required: true, message: '请输入存储桶区域', trigger: 'blur' }],
-      },
-      /** 表格数据 */
-      storage: [
-        {
-          key: 1,
-          name: 'title',
-          type: 'string',
-          remark: '标题',
-        },
-        {
-          key: 1,
-          name: 'config',
-          type: 'object',
-          remark: '配置',
-          children: [{ key: 3, name: 'age', type: 'number', value: 16 }],
-        },
-        {
-          key: 2,
-          name: 'arr',
-          remark: '列表',
-          type: 'list',
-          children: [
-            { key: 3, name: '[0]', type: 'number', value: 16 },
-            { key: 4, name: '[1]', type: 'number', value: 16 },
-          ],
-        },
-      ] as any[],
-      /** 已勾选数据 */
-      rowSelection: [] as any[],
-    });
-
-    /** 当前数据源类型列表 */
-    // const showStorageTypes = computed<StorageService[]>(() => {
-    //   return Object.values(themeStore.storageTypes).filter(i => i.enabled);
-    // });
-
-    // const showStorage = computed<Record<string, any>>(() => {
-    //   if (state.showThemeId) {
-    //     let _index = themeStore.themeList.findIndex(i => i.id == state.showThemeId);
-    //     if (_index >= 0) {
-    //       return themeStore.themeList[_index];
-    //     }
-    //   }
-    //   return { title: '', remark: '' };
-    // });
-
-    return {
-      ...toRefs(state),
-      formRef,
-      editorState,
-      themeState,
-      themeService,
-      /** 当前显示/编辑的数据源 */
-      // showStorage,
-      /** 当前数据源类型列表 */
-      // showStorageTypes
-    };
-  },
+const state = reactive({
+  /** 是否显示基本配置界面 */
+  showBasicConfigDialog: false,
+  /** 是否显示数据配置界面 */
+  showDataConfigDialog: false,
+  /** 是否显示变量编辑界面 */
+  showDataEditDialog: false,
+  /** 当前显示主题代码 */
+  showThemeCode: '',
+  /** 临时编辑数据源信息 */
+  editStorage: {} as Record<string, any>,
+  /** 表格列 */
+  columns: [
+    { title: '变量名', dataIndex: 'name', key: 'name', width: '25%' },
+    { title: '类型', dataIndex: 'type', key: 'type', width: '10%', slots: { customRender: 'type' } },
+    { title: '值', dataIndex: 'value', key: 'value', width: '20%', slots: { customRender: 'value' } },
+    { title: '备注', dataIndex: 'remark', key: 'remark', slots: { customRender: 'remark' } },
+    { title: '操作', dataIndex: 'handle', width: '120px', slots: { customRender: 'handle' } },
+  ] as any[],
+  /** 数据源编辑校验规则 */
+  rules: {
+    title: [{ required: true, message: '请输入主题标题', trigger: 'blur' }],
+    secretId: [{ required: true, message: '请输入API密钥ID', trigger: 'blur' }],
+    secretKey: [{ required: true, message: '请输入API密钥Key', trigger: 'blur' }],
+    bucket: [{ required: true, message: '请输入存储桶', trigger: 'blur' }],
+    region: [{ required: true, message: '请输入存储桶区域', trigger: 'blur' }],
+  } as { [k: string]: RuleObject[] },
+  /** 表格数据 */
+  storage: [
+    {
+      key: 1,
+      name: 'title',
+      type: 'string',
+      remark: '标题',
+    },
+    {
+      key: 1,
+      name: 'config',
+      type: 'object',
+      remark: '配置',
+      children: [{ key: 3, name: 'age', type: 'number', value: 16 }],
+    },
+    {
+      key: 2,
+      name: 'arr',
+      remark: '列表',
+      type: 'list',
+      children: [
+        { key: 3, name: '[0]', type: 'number', value: 16 },
+        { key: 4, name: '[1]', type: 'number', value: 16 },
+      ],
+    },
+  ] as any[],
+  /** 已勾选数据 */
+  rowSelection: [] as any[],
 });
+
+/** 当前数据源类型列表 */
+// const showStorageTypes = computed<StorageService[]>(() => {
+//   return Object.values(themeStore.storageTypes).filter(i => i.enabled);
+// });
+
+// const showStorage = computed<Record<string, any>>(() => {
+//   if (state.showThemeId) {
+//     let _index = themeStore.themeList.findIndex(i => i.id == state.showThemeId);
+//     if (_index >= 0) {
+//       return themeStore.themeList[_index];
+//     }
+//   }
+//   return { title: '', remark: '' };
+// });
+
+/** 切换主题 */
+const changeTheme = (item: ThemeConfig) => {
+  themeService.changeTheme(item.code);
+};
+/** 关闭编辑弹出框 */
+const closeEditStorageInfoDialog = () => {
+  state.showBasicConfigDialog = false;
+  state.editStorage = {};
+};
+/** 展示数据配置弹窗 */
+const showDataConfig = (instance: ThemeConfig) => {
+  state.showThemeCode = instance.code || '';
+  state.showDataConfigDialog = true;
+};
+/** 展示数据编辑弹窗 */
+const showDataEdit = (instance?: Record<string, any>) => {
+  if (instance) {
+  }
+  state.showDataEditDialog = true;
+};
+/** 编辑数据配置 */
+const editStorageInfo = () => {
+  formRef.value.validate().then(() => {
+    if (!state.showThemeCode) {
+      return;
+    }
+    let _index = themeState.themeList.findIndex((i) => i.code === state.showThemeCode);
+    if (_index >= 0) {
+      themeState.themeList[_index].title = state.editStorage.title;
+      themeState.themeList[_index].remark = state.editStorage.remark;
+      state.showBasicConfigDialog = false;
+    } else {
+      toast('未找到当前数据源', 'error');
+    }
+    localStorage.setItem(
+      'theme-service',
+      JSON.stringify(
+        themeState.themeList.map((i) => ({
+          ...i,
+          sdk: undefined,
+        })),
+      ),
+    );
+    state.showBasicConfigDialog = false;
+  }).catch((err) => {
+    toast(err.errorFields.map((i) => i.errors.flat()).flat().join('；\n'), 'error');
+  });
+};
+/** 获取变量类型描述 */
+const getVarTypeStr = (type: string) => {
+  return {
+    object: '对象',
+    list: '列表',
+    string: '字符串',
+    number: '数字',
+    boolean: '真/假',
+  }[type];
+};
+/** 导入JSON文件 */
+const importJSON = () => {};
 </script>
 
 <style lang="less">

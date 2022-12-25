@@ -14,8 +14,8 @@
       <span class="event-item-header-title">{{ props.event.title }}</span>
       <label class="event-item-state"></label>
       <div class="event-item-header-tools">
-        <a-button size="small" type="link" style="font-size: 14px" @click="emit('edit', event)">编辑</a-button>
-        <a-button size="small" type="link" style="font-size: 14px" danger @click="emit('remove', event)">删除</a-button>
+        <Button size="small" type="link" style="font-size: 14px" @click="emit('edit', event)">编辑</Button>
+        <Button size="small" type="link" style="font-size: 14px" danger @click="emit('remove', event)">删除</Button>
       </div>
     </div>
     <div class="event-item-trigger">
@@ -61,6 +61,7 @@ import { AppEvent } from '@/modules/event-module/@types';
 import { state as eventState, service as eventService } from '@/modules/event-module';
 import EventFormatPreview from './EventFormatPreview.vue';
 import { computed } from '@vue/reactivity';
+import { Button } from 'ant-design-vue';
 
 const props = defineProps({
   /** 事件 */

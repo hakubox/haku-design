@@ -14,18 +14,18 @@
           <div class="event-editor-header-icon" :class="isGlobal ? 'global-event' : 'component-event'">
             <i class="iconfont icon-rule"></i>
           </div>
-          <a-input class="event-editor-header-title" v-model:value="state.title" placeholder="逻辑标题" />
+          <Input class="event-editor-header-title" v-model:value="state.title" placeholder="逻辑标题" />
         </div>
         <div class="event-editor-header-btns">
-          <a-button type="primary" @click="saveEvent">
+          <Button type="primary" @click="saveEvent">
             <template #icon>
               <SaveOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/>
             </template>
             保存逻辑
-          </a-button>
-          <a-button type="primary" ghost @click="cancel">
+          </Button>
+          <Button type="primary" ghost @click="cancel">
             取消
-          </a-button>
+          </Button>
         </div>
       </div>
       <div class="event-editor-state">
@@ -45,38 +45,38 @@
           <div class="event-editor-trigger-content">
             <div class="event-editor-trigger-item" v-for="(item, triggerIndex) in state.event.triggers" :key="item.id">
               <div class="event-editor-trigger-item-prefix" v-if="triggerIndex === 0">当</div>
-              <a-select class="event-editor-trigger-item-prefix" v-model:value="item.logicGate" v-else>
-                <a-select-option value="and">且</a-select-option>
-                <a-select-option value="or">或</a-select-option>
-              </a-select>
+              <Select class="event-editor-trigger-item-prefix" v-model:value="item.logicGate" v-else>
+                <SelectOption value="and">且</SelectOption>
+                <SelectOption value="or">或</SelectOption>
+              </Select>
               <EventFormatEditor :config="item" :prop="item.config"></EventFormatEditor>
-              <a-tooltip class="event-editor-trigger-item-remove">
+              <Tooltip class="event-editor-trigger-item-remove">
                 <template #title>删除当前条件</template>
-                <a-button danger ghost @click="removeTrigger(state.event, triggerIndex)">
+                <Button danger ghost @click="removeTrigger(state.event, triggerIndex)">
                   <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
                   删除
-                </a-button>
-              </a-tooltip>
+                </Button>
+              </Tooltip>
             </div>
-            <a-dropdown :trigger="['click']">
-              <a-button class="btn-add" type="link" size="small" @click.prevent>
+            <Dropdown :trigger="['click']">
+              <Button class="btn-add" type="link" size="small" @click.prevent>
                 <template #icon><PlusCircleOutlined /></template>
                 添加新条件
-              </a-button>
+              </Button>
               <template #overlay>
-                <a-menu :forceSubMenuRender="true">
-                  <a-sub-menu v-for="group in triggerGroups" :key="group.value" :title="group.label">
-                    <a-menu-item
+                <Menu :forceSubMenuRender="true">
+                  <SubMenu v-for="group in triggerGroups" :key="group.value" :title="group.label">
+                    <MenuItem
                       v-for="trigger in eventTriggers.filter((i) => i.group == group.value && i.isGlobal === props.isGlobal)"
                       :key="trigger.name"
                       @click="addTrigger(state.event, trigger)"
                     >
                       {{ trigger.title }}
-                    </a-menu-item>
-                  </a-sub-menu>
-                </a-menu>
+                    </MenuItem>
+                  </SubMenu>
+                </Menu>
               </template>
-            </a-dropdown>
+            </Dropdown>
           </div>
         </div>
 
@@ -87,37 +87,37 @@
               <div class="event-editor-action-item-prefix" v-if="actionIndex === 0">则</div>
               <div class="event-editor-action-item-prefix" v-else>以及</div>
               <EventFormatEditor :config="item" :prop="item.config"></EventFormatEditor>
-              <a-tooltip class="event-editor-action-item-remove">
+              <Tooltip class="event-editor-action-item-remove">
                 <template #title>删除当前行为</template>
-                <a-button danger ghost @click="removeAction(state.event, actionIndex)">
+                <Button danger ghost @click="removeAction(state.event, actionIndex)">
                   <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
                   删除
-                </a-button>
-              </a-tooltip>
+                </Button>
+              </Tooltip>
             </div>
-            <a-dropdown :trigger="['click']">
-              <a-button class="btn-add" type="link" size="small" @click.prevent>
+            <Dropdown :trigger="['click']">
+              <Button class="btn-add" type="link" size="small" @click.prevent>
                 <template #icon><PlusCircleOutlined /></template>
                 添加新行为
-              </a-button>
+              </Button>
               <template #overlay>
-                <a-menu :forceSubMenuRender="true">
-                  <a-sub-menu
+                <Menu :forceSubMenuRender="true">
+                  <SubMenu
                     v-for="group in eventActionGroups.filter(group => eventActions.some((i) => i.group == group.value))"
                     :key="group.value"
                     :title="group.label"
                   >
-                    <a-menu-item
+                    <MenuItem
                       v-for="action in eventActions.filter((i) => i.group == group.value)"
                       :key="action.name"
                       @click="addAction(state.event, action)"
                     >
                       {{ action.title }}
-                    </a-menu-item>
-                  </a-sub-menu>
-                </a-menu>
+                    </MenuItem>
+                  </SubMenu>
+                </Menu>
               </template>
-            </a-dropdown>
+            </Dropdown>
           </div>
         </div>
 
@@ -128,39 +128,39 @@
               <div class="event-editor-action-item-prefix" v-if="actionIndex === 0">否则</div>
               <div class="event-editor-action-item-prefix" v-else>以及</div>
               <EventFormatEditor :config="item" :prop="item.config"></EventFormatEditor>
-              <a-tooltip class="event-editor-action-item-remove">
+              <Tooltip class="event-editor-action-item-remove">
                 <template #title>删除当前行为</template>
-                <a-button danger ghost @click="removeElseAction(state.event, actionIndex)">
+                <Button danger ghost @click="removeElseAction(state.event, actionIndex)">
                   <template #icon
                     ><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"
                   /></template>
                   删除
-                </a-button>
-              </a-tooltip>
+                </Button>
+              </Tooltip>
             </div>
-            <a-dropdown :trigger="['click']">
-              <a-button class="btn-add" type="link" size="small" @click.prevent>
+            <Dropdown :trigger="['click']">
+              <Button class="btn-add" type="link" size="small" @click.prevent>
                 <template #icon><PlusCircleOutlined /></template>
                 添加新反向行为
-              </a-button>
+              </Button>
               <template #overlay>
-                <a-menu :forceSubMenuRender="true">
-                  <a-sub-menu
+                <Menu :forceSubMenuRender="true">
+                  <SubMenu
                     v-for="group in eventActionGroups.filter(group => eventActions.some((i) => i.group == group.value))"
                     :key="group.value"
                     :title="group.label"
                   >
-                    <a-menu-item
+                    <MenuItem
                       v-for="action in eventActions.filter((i) => i.group == group.value)"
                       :key="action.name"
                       @click="addElseAction(state.event, action)"
                     >
                       {{ action.title }}
-                    </a-menu-item>
-                  </a-sub-menu>
-                </a-menu>
+                    </MenuItem>
+                  </SubMenu>
+                </Menu>
               </template>
-            </a-dropdown>
+            </Dropdown>
           </div>
         </div>
       </div>
@@ -176,7 +176,7 @@ import { eventTriggers, eventTriggerGroups } from '@/modules/event-module/data/e
 import { createModelId } from '@/tools/common';
 import { eventActions, eventActionGroups } from '@/modules/event-module/data/event-action';
 import EventFormatEditor from './EventFormatEditor.vue';
-import { message, Modal } from 'ant-design-vue';
+import { Button, Dropdown, Input, Menu, MenuItem, message, Modal, Select, SelectOption, SubMenu, Tooltip } from 'ant-design-vue';
 import { DeleteOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons-vue';
 import { cloneLoop } from '@/lib/clone';
 

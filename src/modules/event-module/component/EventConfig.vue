@@ -1,21 +1,21 @@
 <template>
   <div style="position: relative;">
-    <a-empty v-if="!eventList.length" :description="`${isGlobal ? '暂无全局逻辑' : '当前组件暂无逻辑'}`" :style="{ marginTop: '20vh' }">
-      <a-button v-if="!isGlobal" type="primary" style="margin-top: 10px" @click="addNewEvent">
+    <Empty v-if="!eventList.length" :description="`${isGlobal ? '暂无全局逻辑' : '当前组件暂无逻辑'}`" :style="{ marginTop: '20vh' }">
+      <Button v-if="!isGlobal" type="primary" style="margin-top: 10px" @click="addNewEvent">
         <template #icon
           ><PlusOutlined :style="{ fontSize: '16px', lineHeight: '14px', verticalAlign: 'middle' }"
         /></template>
         添加{{ isGlobal ? '' : '组件' }}逻辑
-      </a-button>
-    </a-empty>
+      </Button>
+    </Empty>
     <div class="event-list" v-else>
       <div v-if="!isGlobal" style="text-align: left; padding: 10px 15px">
-        <a-button type="primary" @click="addNewEvent">
+        <Button type="primary" @click="addNewEvent">
           <template #icon
             ><PlusOutlined :style="{ fontSize: '16px', lineHeight: '14px', verticalAlign: 'middle' }"
           /></template>
           添加{{ isGlobal ? '' : '组件' }}逻辑
-        </a-button>
+        </Button>
       </div>
       <!-- 逻辑项 -->
       <EventItem
@@ -42,6 +42,7 @@ import { createModelId } from '@/tools/common';
 import EventFormatPreview from './EventFormatPreview.vue';
 import EventEditor from './EventEditor.vue';
 import EventItem from './EventItem.vue';
+import { Button, Empty } from 'ant-design-vue';
 
 const props = defineProps({
   /** 关联目标（默认为'global'） */

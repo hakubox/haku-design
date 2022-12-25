@@ -1,11 +1,12 @@
 <template>
-  <a-config-provider v-bind="globalState.antdConfigProvider">
+  <ConfigProvider v-bind="globalState.antdConfigProvider">
     <router-view />
-  </a-config-provider>
+  </ConfigProvider>
 </template>
 
 <script lang="ts" setup>
 import { state as globalState } from '@/common/global';
+import { ConfigProvider } from 'ant-design-vue';
 </script>
 
 <style lang="less">

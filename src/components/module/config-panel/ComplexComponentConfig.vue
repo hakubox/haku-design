@@ -2,7 +2,6 @@
   <div class="property-collapse">
     <div class="property-collapse-item">
       <label class="property-collapse-item-title">
-        <!-- <DownOutlined /> -->
         基础配置
       </label>
       <div class="property-collapse-item-content">
@@ -10,14 +9,14 @@
         <!-- <label class="form-design-body-property-item">
             <span class="form-design-body-property-item-label">面板标题</span>
             <div class="form-design-body-property-item-value">
-                <a-input size="small" placeholder="表单标题" allowClear v-model.lazy="appConfig.canvasTitle" />
+                <Input size="small" placeholder="表单标题" allowClear v-model.lazy="appConfig.canvasTitle" />
             </div>
         </label> -->
         <!-- 组件标题 -->
         <label class="form-design-body-property-item">
           <span class="form-design-body-property-item-label">组件标题</span>
           <div class="form-design-body-property-item-value">
-            <a-input
+            <Input
               size="small"
               placeholder="组件标题"
               allowClear
@@ -36,7 +35,7 @@
         <label class="form-design-body-property-item">
           <span class="form-design-body-property-item-label">组件描述</span>
           <div class="form-design-body-property-item-value">
-            <a-textarea
+            <Textarea
               size="small"
               placeholder="请填写组件描述"
               allowClear
@@ -48,7 +47,7 @@
         <label class="form-design-body-property-item">
           <span class="form-design-body-property-item-label">问卷备注</span>
           <div class="form-design-body-property-item-value">
-            <a-textarea
+            <Textarea
               size="small"
               placeholder="请填写备注"
               allowClear
@@ -63,14 +62,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState } from '@/modules/editor-module';
+import { Input, Textarea } from 'ant-design-vue';
 
 export default defineComponent({
   components: {
     VNodes: (_, { attrs }) => {
-      return attrs.vnodes;
+        return attrs.vnodes;
     },
-  },
+    Input,
+    Textarea
+},
   methods: {},
   created() {},
   mounted() {},

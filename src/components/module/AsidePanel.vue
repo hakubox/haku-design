@@ -46,7 +46,7 @@
           </template>
         </div>
         <!-- <div class="design-form-aside-toolbox-footer">
-          <a-button type="primary" block>创建复合题型</a-button>
+          <Button type="primary" block>创建复合题型</Button>
         </div> -->
       </div>
 
@@ -67,9 +67,7 @@
           </ul>
         </div>
         <div class="design-form-aside-toolbox-footer">
-          <a-button type="primary" block v-if="editorState.appConfig.appType === 'complex-component'"
-            >上传到题库</a-button
-          >
+          <Button type="primary" block v-if="editorState.appConfig.appType === 'complex-component'">上传到题库</Button>
         </div>
       </div>
 
@@ -107,6 +105,7 @@ import AsideComponentView from '@/components/module/aside-panel/AsideComponentVi
 import HistoryLog from '@/components/module/aside-panel/HistoryLog.vue';
 import HistoryVersionConfig from '@/components/module/aside-panel/HistoryVersionConfig.vue';
 import ThemeTemplateConfig from '@/modules/theme-module/component/ThemeTemplateConfig.vue';
+import { Button } from 'ant-design-vue';
 
 const state = reactive({
   /** 左侧默认展开内容 */

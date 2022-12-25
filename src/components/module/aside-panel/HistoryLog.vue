@@ -3,11 +3,11 @@
     <div class="history-log-header">
       <span class="history-log-title">操作历史记录</span>
     </div>
-    <a-empty
+    <Empty
       v-if="historyState.historyData.length == 0"
       description="暂无历史记录"
       :style="{ marginTop: '20vh' }"
-    ></a-empty>
+    ></Empty>
     <ul class="history-log-list" v-else>
       <li
         class="history-log-item"
@@ -29,18 +29,18 @@
           </template>
         </div>
         <span class="history-log-item-active">
-          <a-tooltip placement="right">
+          <Tooltip placement="right">
             <template #title><span>当前节点</span></template>
             <i class="iconfont icon-position"></i>
-          </a-tooltip>
+          </Tooltip>
         </span>
         <span class="history-log-item-noupdatable">
-          <a-tooltip placement="right">
+          <Tooltip placement="right">
             <template #title><span>无法回退</span></template>
             <i class="iconfont icon-box3"></i>
-          </a-tooltip>
+          </Tooltip>
         </span>
-        <span class="history-log-item-time">{{ getTimeStr(item.executeTime) }}</span>
+        <span class="history-log-item-time">{{ dateFormat(item.executeTime, 'HH:mm') }}</span>
         <div class="history-log-item-tools">
           <div class="history-log-item-tool danger" @click="undo(index)" v-show="index < historyState.historyIndex">
             <i class="iconfont icon-undo" />
@@ -56,44 +56,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue';
+<script lang="ts" setup>
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { dateFormat } from '@/tools/common';
 import { formCommands } from '@/data/form-commands';
+import { Empty, Tooltip } from 'ant-design-vue';
 
-export default defineComponent({
-  name: 'HistoryLog',
-  components: {},
-  methods: {
-    /** 撤销 */
-    undo(index: number) {
-      this.historyService.undoByIndex(index);
-    },
-    /** 恢复 */
-    redo(index: number) {
-      this.historyService.redoByIndex(index);
-    },
-    /** 是否可更新 */
-    isUpdatable(commandType: string): boolean {
-      return formCommands[commandType].updatable;
-    },
-  },
-  setup(props) {
-    const state = reactive({});
-
-    const getTimeStr = (time: number) => {
-      return dateFormat(new Date(time), 'HH:mm');
-    };
-
-    return {
-      ...toRefs(state),
-      historyState,
-      historyService,
-      getTimeStr,
-    };
-  },
-});
+/** 撤销 */
+const undo = (index: number) => {
+  historyService.undoByIndex(index);
+};
+/** 恢复 */
+const redo = (index: number) => {
+  historyService.redoByIndex(index);
+};
+/** 是否可更新 */
+const isUpdatable = (commandType: string): boolean => {
+  return formCommands[commandType].updatable;
+};
 </script>
 
 <style lang="less">

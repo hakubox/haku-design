@@ -1,20 +1,21 @@
 <template>
   <div class="width-editor">
-    <a-input-number size="small" style="width: 100%" v-model:value="state.inputValue" @change="change">
+    <InputNumber size="small" style="width: 100%" v-model:value="state.inputValue" @change="change">
       <template #addonAfter>
-        <a-select v-model:value="state.suffix" size="small" @change="change" style="width: 60px">
-          <a-select-option value="px">px</a-select-option>
-          <a-select-option value="%">%</a-select-option>
-          <a-select-option value="vw">vw</a-select-option>
-          <a-select-option value="vh">vh</a-select-option>
-        </a-select>
+        <Select v-model:value="state.suffix" size="small" @change="change" style="width: 60px">
+          <SelectOption value="px">px</SelectOption>
+          <SelectOption value="%">%</SelectOption>
+          <SelectOption value="vw">vw</SelectOption>
+          <SelectOption value="vh">vh</SelectOption>
+        </Select>
       </template>
-    </a-input-number>
+    </InputNumber>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
+import { InputNumber, Select, SelectOption } from 'ant-design-vue';
 import { onMounted, reactive, watch } from 'vue';
 
 const props = defineProps({

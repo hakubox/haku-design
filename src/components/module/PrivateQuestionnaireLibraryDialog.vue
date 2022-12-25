@@ -28,7 +28,7 @@
         <!-- 筛选 / 排序栏 -->
         <!-- <div class="questionnaire-library-filter">
           <span class="questionnaire-library-filter-label">筛选项：</span>
-          <a-checkbox-group v-model:value="filter.tags" name="checkboxgroup" :options="filterTags" />
+          <CheckboxGroup v-model:value="filter.tags" name="checkboxgroup" :options="filterTags" />
         </div> -->
         <!-- 展示列表 -->
         <div class="questionnaire-library-list">
@@ -124,7 +124,7 @@ import { reactive, ref, watch, PropType, Ref, onMounted } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { getQuestionary, listQuestionary } from "@/api/common/questionnaire";
 import { dateFormat } from '@/tools/common';
-import { InputSearch, message, Modal, Pagination, Tag, Tooltip, ConfigProvider } from "ant-design-vue";
+import { InputSearch, message, Modal, Pagination, Tag, Tooltip, ConfigProvider, CheckboxGroup } from "ant-design-vue";
 import { state as globalState } from '@/common/global';
 import SearchOutlined from "@ant-design/icons-vue/SearchOutlined";
 
@@ -135,8 +135,6 @@ const props = defineProps({
     default: false
   }
 });
-
-const formRef = ref();
 
 const emit = defineEmits<{
   (event: 'update:visible', val: boolean): void;

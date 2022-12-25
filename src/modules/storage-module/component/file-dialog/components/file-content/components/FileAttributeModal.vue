@@ -1,26 +1,24 @@
 <template>
   <Modal class="file-attribute-modal-container" title="文件属性" v-model:visible="visible" @ok="onOk">
-    <a-descriptions bordered :column="1" size="small">
-      <a-descriptions-item
+    <Descriptions bordered :column="1" size="small">
+      <DescriptionsItem
         v-for="{ label, value } in fileAttributeList"
         :key="label"
         :label="label"
         :labelStyle="{ width: '100px' }"
       >
         {{ value }}
-      </a-descriptions-item>
-    </a-descriptions>
+      </DescriptionsItem>
+    </Descriptions>
   </Modal>
 </template>
 
 <script lang="ts" setup>
-/**
- * 查看文件属性弹窗
- */
+/** 查看文件属性弹窗 */
 import { StorageFileInfo } from '@/modules/storage-module/@types';
 import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
 import { computed } from '@vue/reactivity';
-import { Modal } from 'ant-design-vue';
+import { Descriptions, DescriptionsItem, Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { PropType } from 'vue';
 import { parseByte } from '../../../tools/transFileSize';

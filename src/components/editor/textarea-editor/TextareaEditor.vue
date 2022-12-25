@@ -1,5 +1,5 @@
 <template>
-  <a-textarea
+  <Textarea
     class="textarea-editor"
     v-model:value="state.inputValue"
     :disabled="($attrs.disabled as boolean)"
@@ -10,6 +10,7 @@
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
+import { Textarea } from 'ant-design-vue';
 import { onMounted, reactive, watch } from 'vue';
 
 const props = defineProps({

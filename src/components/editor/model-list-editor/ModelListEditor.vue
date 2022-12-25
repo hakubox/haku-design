@@ -1,6 +1,6 @@
 <template>
   <div class="model-list-editor">
-    <a-table
+    <Table
       :row-key="rowKey"
       :pagination="false"
       size="small"
@@ -11,24 +11,23 @@
     >
       <template #headerCell="{ title, column }">
         <template v-if="column.dataIndex === 'operation'">
-          <a-tooltip>
+          <Tooltip>
             <template #title>新增行</template>
-            <a-button type="primary" @click="addRow(value?.length)" size="small">
+            <Button type="primary" @click="addRow(value?.length)" size="small">
               <template #icon><plus-outlined /></template>
-            </a-button> </a-tooltip
-          >&nbsp;
-          <a-tooltip v-if="state.fullscreen">
+            </Button> </Tooltip>&nbsp;
+          <Tooltip v-if="state.fullscreen">
             <template #title>还原</template>
-            <a-button @click="state.fullscreen = false" size="small">
+            <Button @click="state.fullscreen = false" size="small">
               <template #icon><fullscreen-exit-outlined /></template>
-            </a-button>
-          </a-tooltip>
-          <a-tooltip v-else>
+            </Button>
+          </Tooltip>
+          <Tooltip v-else>
             <template #title>最大化</template>
-            <a-button @click="state.fullscreen = true" size="small">
+            <Button @click="state.fullscreen = true" size="small">
               <template #icon><fullscreen-outlined /></template>
-            </a-button>
-          </a-tooltip>
+            </Button>
+          </Tooltip>
         </template>
         <template v-else>
           {{ title }}
@@ -37,7 +36,7 @@
       <template #bodyCell="{ column, record, index }">
         <template v-for="col in columns" :key="col.name">
           <template v-if="column.dataIndex === col.name && col.buttonEditorText">
-            <a-popover placement="topRight" :title="col.buttonEditorText" arrow-point-at-center trigger="click">
+            <Popover placement="topRight" :title="col.buttonEditorText" arrow-point-at-center trigger="click">
               <template #content>
                 <div style="width: 800px">
                   <component
@@ -70,10 +69,10 @@
                   </component>
                 </div>
               </template>
-              <a-button size="small" type="primary">
+              <Button size="small" type="primary">
                 <template #icon><form-outlined /></template>
-              </a-button>
-            </a-popover>
+              </Button>
+            </Popover>
           </template>
           <component
             :ref="component.id"
@@ -108,30 +107,28 @@
         </template>
 
         <template v-if="column.dataIndex === 'operation'">
-          <a-button type="primary" size="small" @click="addRow(index)">
+          <Button type="primary" size="small" @click="addRow(index)">
             <template #icon><PlusOutlined /></template>
-          </a-button>
-          <a-button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
+          </Button>
+          <Button type="primary" size="small" danger @click="removeRow(index)" style="margin-left: 6px">
             <template #icon><DeleteOutlined /></template>
-          </a-button>
-          <a-dropdown :trigger="['click']">
-            <a-button size="small" style="margin-left: 6px">
+          </Button>
+          <Dropdown :trigger="['click']">
+            <Button size="small" style="margin-left: 6px">
               <template #icon><ToolOutlined /></template>
-            </a-button>
+            </Button>
             <template #overlay>
-              <a-menu>
-                <a-menu-item :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</a-menu-item>
-                <a-menu-item :disabled="index == value.length - 1" key="2" @click="moveDown(index)"
-                  ><ArrowDownOutlined />下移</a-menu-item
-                >
-                <a-menu-divider />
-                <a-menu-item key="2" @click="copyRow(index)"><CopyOutlined />复制</a-menu-item>
-              </a-menu>
+              <Menu>
+                <MenuItem :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</MenuItem>
+                <MenuItem :disabled="index == value.length - 1" key="2" @click="moveDown(index)"><ArrowDownOutlined />下移</MenuItem>
+                <MenuDivider />
+                <MenuItem key="2" @click="copyRow(index)"><CopyOutlined />复制</MenuItem>
+              </Menu>
             </template>
-          </a-dropdown>
+          </Dropdown>
         </template>
       </template>
-    </a-table>
+    </Table>
   </div>
 </template>
 
@@ -139,13 +136,13 @@
 import { defineComponent, PropType, reactive, watch } from 'vue';
 import { ComponentPropertyEditor } from '@/@types/enum';
 import { Component } from '@/@types';
-import { message } from 'ant-design-vue';
+import { Button, Dropdown, Menu, MenuDivider, MenuItem, Popover, Table, Tooltip, message } from 'ant-design-vue';
 import { state as editorState } from '@/modules/editor-module';
 import { throttle } from '@/tools/common';
 
 export default defineComponent({
   name: 'ModelListEditor',
-  components: {},
+  components: { Table, Tooltip, Button, Popover, Dropdown, Menu, MenuItem, MenuDivider },
   props: {
     /** 当前值 */
     value: {

@@ -115,9 +115,9 @@
 
           <!-- 切换页面单选组 -->
           <div v-if="editorState.pages.length > 1" class="design-form-page-change">
-            <a-radio-group button-style="solid" v-model:value="editorState.currentPageIndex">
-              <a-radio-button v-for="(page, pageIndex) in editorState.pages" :key="pageIndex" :value="pageIndex">{{ page.pageTitle }}</a-radio-button>
-            </a-radio-group>
+            <RadioGroup button-style="solid" v-model:value="editorState.currentPageIndex">
+              <RadioButton v-for="(page, pageIndex) in editorState.pages" :key="pageIndex" :value="pageIndex">{{ page.pageTitle }}</RadioButton>
+            </RadioGroup>
           </div>
 
           <!-- 画布 -->
@@ -169,14 +169,14 @@
       <!-- 底部状态部分 -->
       <div class="design-form-footer" tabindex="-1">
         <div class="design-form-footer-right">
-          <a-popover v-model:visible="saveHistoryVisible" title="应用保存记录" trigger="click">
+          <Popover v-model:visible="saveHistoryVisible" title="应用保存记录" trigger="click">
             <template #content>
-              <a-timeline>
-                <a-timeline-item v-for="item in configState.saveHistory" :key="item">{{dayjs(item.time).fromNow()}}</a-timeline-item>
-              </a-timeline>
+              <Timeline>
+                <TimelineItem v-for="item in configState.saveHistory" :key="item.index">{{dayjs(item.time).fromNow()}}</TimelineItem>
+              </Timeline>
             </template>
             <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
-          </a-popover>
+          </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
@@ -251,7 +251,7 @@
 import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
 import { downLoadFile, dateFormat } from '@/tools/common';
-import { Button, Drawer, Empty, Menu, MenuItem, SubMenu, Tooltip } from 'ant-design-vue';
+import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { service as draggableService } from '@/modules/draggable-module';

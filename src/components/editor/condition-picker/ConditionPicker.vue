@@ -3,7 +3,7 @@
     <span v-if="state.inputValue" class="component-picker-txt">{{ getTxt }}</span>
     <span v-else class="component-picker-empty">[未选择]</span>
   </div>
-  <a-select v-else
+  <Select v-else
     v-model:value.sync="state.inputValue"
     @change="change"
     :size="size"
@@ -14,11 +14,12 @@
     ref="editor"
     style="width: 100%"
   >
-  </a-select>
+  </Select>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { Select } from 'ant-design-vue';
+import { computed, onMounted, PropType, reactive, watch } from 'vue';
 
 const props = defineProps({
   /** 值类型 */

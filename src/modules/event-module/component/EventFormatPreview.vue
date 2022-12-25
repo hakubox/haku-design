@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ComputedRef, defineComponent, PropType, reactive, toRefs } from 'vue';
+import { computed, ComputedRef, PropType, reactive } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import type { AppEventActionInstance, AppEventTriggerInstance } from '../@types';
 import EventEditorItem from './EventEditorItem.vue';

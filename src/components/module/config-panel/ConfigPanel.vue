@@ -30,12 +30,10 @@
     >
       <EventConfig ref="eventConfig" target="global"></EventConfig>
       <template #extra>
-        <a-space>
-          <Button type="primary" @click="eventConfig?.addNewEvent">
-            <template #icon><PlusOutlined /></template>
-            添加逻辑
-          </Button>
-        </a-space>
+        <Button type="primary" @click="eventConfig?.addNewEvent">
+          <template #icon><PlusOutlined /></template>
+          添加逻辑
+        </Button>
       </template>
     </Drawer>
   </div>

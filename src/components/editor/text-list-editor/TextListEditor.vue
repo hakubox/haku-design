@@ -1,16 +1,16 @@
 <template>
   <div>
     <template v-for="tag in state.tags" :key="tag">
-      <a-tooltip v-if="tag.length > props.maxCount" :title="tag">
-        <a-tag :closable="true" @close="handleClose(tag)">
+      <Tooltip v-if="tag.length > props.maxCount" :title="tag">
+        <Tag :closable="true" @close="handleClose(tag)">
           {{ `${tag.slice(0, props.maxCount)}...` }}
-        </a-tag>
-      </a-tooltip>
-      <a-tag v-else :closable="true" @close="handleClose(tag)">
+        </Tag>
+      </Tooltip>
+      <Tag v-else :closable="true" @close="handleClose(tag)">
         {{ tag }}
-      </a-tag>
+      </Tag>
     </template>
-    <a-input
+    <Input
       v-if="state.inputVisible"
       ref="inputRef"
       v-model:value="state.inputValue"
@@ -20,14 +20,16 @@
       @blur="handleInputConfirm"
       @keyup.enter="handleInputConfirm"
     />
-    <a-tag v-else style="background: #fff; border-style: dashed" @click="showInput">
-      <plus-outlined />
+    <Tag v-else style="background: #fff; border-style: dashed" @click="showInput">
+      <PlusOutlined />
       新标签
-    </a-tag>
+    </Tag>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { Input, Tag, Tooltip } from 'ant-design-vue';
 import { ref, onMounted, PropType, reactive, nextTick, watch } from 'vue';
 
 const props = defineProps({

@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import globalStore from '@/common/global';
 import { setLocaleData } from 'monaco-editor-nls';
 import { changeConfig, serverConfig } from './config';
-import Antd from 'ant-design-vue';
 import Menus from 'vue3-menus';
 import Vant from 'vant';
 import App from './App.vue';
@@ -111,4 +110,4 @@ app.use(AntdIcon);
 app.config.globalProperties.$message = message;
 app.config.globalProperties.$packageInfo = packageInfo;
 
-app.use(Vant).use(Antd).use(router).mount('#app');
+app.use(Vant).use(router).mount('#app');

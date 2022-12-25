@@ -1,7 +1,7 @@
 <template>
   <div class="file-picker">
     <div v-if="multiple">
-      <a-tag v-for="item in value" :key="item">{{ storageService.getFileInfo(item)?.name }}</a-tag>
+      <Tag v-for="item in value" :key="item">{{ storageService.getFileInfo(item)?.name }}</Tag>
     </div>
     <input
       v-else
@@ -24,7 +24,7 @@
 import { state as storageState, service as storageService } from '../../index';
 import { defineComponent, reactive } from 'vue';
 import fileDialog from '../file-dialog';
-import { Tooltip } from 'ant-design-vue';
+import { Tag, Tooltip } from 'ant-design-vue';
 
 export default defineComponent({
   props: {
@@ -88,7 +88,7 @@ export default defineComponent({
       storageService,
     };
   },
-  components: { Tooltip }
+  components: { Tooltip, Tag }
 });
 </script>
 

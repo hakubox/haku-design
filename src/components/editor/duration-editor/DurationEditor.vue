@@ -2,27 +2,28 @@
   <div v-if="props.readonly" class="number-editor-preview editor-preview">
     {{ state.inputValue ?? '——' }}
   </div>
-  <a-input-number v-else class="duration-editor" :size="props.size" v-model:value="state.inputValue" :precision="getPrecision" @change="change">
+  <InputNumber v-else class="duration-editor" :size="props.size" v-model:value="state.inputValue" :precision="getPrecision" @change="change">
     <template #addonAfter>
       <span v-if="!props?.useUnits?.length">{{ getUnitText(state.unit) }}</span>
-      <a-dropdown v-else>
+      <Dropdown v-else>
         <a @click.prevent>
           {{ getUnitText(state.unit) }}
           <DownOutlined />
         </a>
         <template #overlay>
-          <a-menu>
-            <a-menu-item v-for="item in props.useUnits" :key="item">{{ getUnitText(item) }}</a-menu-item>
-          </a-menu>
+          <Menu>
+            <MenuItem v-for="item in props.useUnits" :key="item">{{ getUnitText(item) }}</MenuItem>
+          </Menu>
         </template>
-      </a-dropdown>
+      </Dropdown>
     </template>
-  </a-input-number>
+  </InputNumber>
 </template>
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
 import { computed } from '@vue/reactivity';
+import { Dropdown, InputNumber, Menu, MenuItem } from 'ant-design-vue';
 import { onMounted, PropType, reactive, watch } from 'vue';
 
 const props = defineProps({

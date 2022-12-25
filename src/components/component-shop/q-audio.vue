@@ -14,74 +14,66 @@
       :class="{ hidden: isBackground }"
       ref="audioEl"
     >
-      您的浏览器不支持音频元素
+      当前浏览器不支持音频元素
     </audio>
   </q-basic>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script lang="ts" setup>
+import { ref } from 'vue';
 
-export default defineComponent({
-  components: {},
-  props: {
-    /** 是否预览状态 */
-    isPreview: {
-      type: Boolean,
-      required: true,
-    },
-    /** 是否为背景音乐 */
-    isBackground: {
-      type: Boolean,
-      required: true,
-    },
-    /** 记住播放位置 */
-    rememberPosition: {
-      type: Boolean,
-      default: true,
-    },
+const props = defineProps({
+  /** 是否预览状态 */
+  isPreview: {
+    type: Boolean,
+    required: true,
   },
-  setup(props, { attrs }) {
-    const audioEl = ref<HTMLAudioElement>();
-
-    // const test = () => {
-    //   if (props.isBackground) {
-    //     if (props.isPreview) {
-    //       if (!audioObj) audioObj = new Audio(attrs.src as string);
-    //       if (audioObj) {
-    //         audioObj.onloadstart = (e) => {
-    //           audioObj?.play();
-    //         };
-    //       }
-    //     } else if (audioObj) {
-    //       console.log('暂停播放辣');
-    //       audioObj.pause();
-    //     }
-    //   }
-    // };
-
-    // watch(() => props.isPreview, (val, oldVal) => {
-    //   test();
-    // });
-
-    // onMounted(() => {
-    //   setTimeout(() => {
-    //     test();
-    //   }, 100);
-    // });
-
-    // onBeforeUnmount(() => {
-    //   if (audioObj) {
-    //     audioObj.pause();
-    //     audioObj = undefined;
-    //   }
-    // })
-
-    return {
-      audioEl,
-    };
+  /** 是否为背景音乐 */
+  isBackground: {
+    type: Boolean,
+    required: true,
+  },
+  /** 记住播放位置 */
+  rememberPosition: {
+    type: Boolean,
+    default: true,
   },
 });
+
+const audioEl = ref<HTMLAudioElement>();
+
+// const test = () => {
+//   if (props.isBackground) {
+//     if (props.isPreview) {
+//       if (!audioObj) audioObj = new Audio(attrs.src as string);
+//       if (audioObj) {
+//         audioObj.onloadstart = (e) => {
+//           audioObj?.play();
+//         };
+//       }
+//     } else if (audioObj) {
+//       console.log('暂停播放');
+//       audioObj.pause();
+//     }
+//   }
+// };
+
+// watch(() => props.isPreview, (val, oldVal) => {
+//   test();
+// });
+
+// onMounted(() => {
+//   setTimeout(() => {
+//     test();
+//   }, 100);
+// });
+
+// onBeforeUnmount(() => {
+//   if (audioObj) {
+//     audioObj.pause();
+//     audioObj = undefined;
+//   }
+// })
 </script>
 
 <style lang="less" scoped>

@@ -1,26 +1,26 @@
 <template>
   <div class="data-source-config">
-    <a-empty v-if="!dataSourceState.dataSourceList.length" description="暂无数据源" :style="{ marginTop: '20vh' }">
-      <a-dropdown :trigger="['click']">
-        <a-button type="primary" style="margin-top: 10px">
+    <Empty v-if="!dataSourceState.dataSourceList.length" description="暂无数据源" :style="{ marginTop: '20vh' }">
+      <Dropdown :trigger="['click']">
+        <Button type="primary" style="margin-top: 10px">
           <template #icon
             ><PlusOutlined :style="{ fontSize: '16px', lineHeight: '14px', verticalAlign: 'middle' }"
           /></template>
           添加数据源
-        </a-button>
+        </Button>
         <template #overlay>
-          <a-menu>
-            <a-menu-item
+          <Menu>
+            <MenuItem
               v-for="item in dataSourceTypes.filter((i) => i.enabled)"
               :key="item.type"
               @click="addNewDataSource(item)"
             >
               {{ item.title }}
-            </a-menu-item>
-          </a-menu>
+            </MenuItem>
+          </Menu>
         </template>
-      </a-dropdown>
-    </a-empty>
+      </Dropdown>
+    </Empty>
     <template v-else>
       <ul class="data-source-config-list">
         <li class="data-source-item" v-for="(item, index) in dataSourceState.dataSourceList" :key="index">
@@ -30,16 +30,16 @@
               {{ item.title }}
             </span>
             <div class="data-source-item-tools">
-              <a-popconfirm
+              <Popconfirm
                 :title="`是否确认移除“${dataSourceState.dataSourceList[index].title}”？`"
                 ok-text="确认"
                 cancel-text="取消"
                 @confirm="removeDataSource(index)"
               >
-                <a-button size="small" type="text" danger>
+                <Button size="small" type="text" danger>
                   <template #icon><DeleteOutlined /></template>
-                </a-button>
-              </a-popconfirm>
+                </Button>
+              </Popconfirm>
             </div>
           </div>
           <span class="data-source-item-remark">
@@ -49,7 +49,7 @@
           <div class="data-source-item-info">
             <dl class="data-source-item-info-detail">
               <dt>状态</dt>
-              <dd style="padding-left: 5px"><a-badge color="green" status="processing" text="正常" /></dd>
+              <dd style="padding-left: 5px"><Badge color="green" status="processing" text="正常" /></dd>
             </dl>
             <dl class="data-source-item-info-detail">
               <dt>类型</dt>
@@ -65,107 +65,104 @@
             </dl>
           </div>
           <div class="data-source-item-btns">
-            <a-tooltip placement="top">
+            <Tooltip placement="top">
               <template #title>
                 <span>基础设置</span>
               </template>
               <div class="data-source-item-btn" @click="showBasicConfig(item)">
                 <i class="iconfont icon-config"></i>
               </div>
-            </a-tooltip>
-            <a-tooltip placement="top">
+            </Tooltip>
+            <Tooltip placement="top">
               <template #title>
                 <span>数据配置</span>
               </template>
               <div class="data-source-item-btn" @click="showDataConfig(item)">
                 <i class="iconfont icon-chucun"></i>
               </div>
-            </a-tooltip>
+            </Tooltip>
           </div>
         </li>
       </ul>
       <div class="data-source-config-create">
-        <a-dropdown :trigger="['click']">
-          <a-button type="primary">
+        <Dropdown :trigger="['click']">
+          <Button type="primary">
             <template #icon
               ><PlusOutlined :style="{ fontSize: '16px', lineHeight: '14px', verticalAlign: 'middle' }"
             /></template>
             添加数据源
-          </a-button>
+          </Button>
           <template #overlay>
-            <a-menu>
-              <a-menu-item
+            <Menu>
+              <MenuItem
                 v-for="item in dataSourceTypes.filter((i) => i.enabled)"
                 :key="item.type"
                 @click="addNewDataSource(item)"
               >
                 {{ item.title }}
-              </a-menu-item>
-            </a-menu>
+              </MenuItem>
+            </Menu>
           </template>
-        </a-dropdown>
+        </Dropdown>
       </div>
     </template>
 
     <!-- 弹出基本配置框 -->
-    <a-modal
+    <Modal
       :wrap-class-name="`preview-modal`"
       width="700px"
       :centered="true"
-      :visible="showBasicConfigDialog"
+      :visible="state.showBasicConfigDialog"
       :destroyOnClose="true"
       @ok="editDataSourceInfo"
-      @cancel="showBasicConfigDialog = false"
+      @cancel="state.showBasicConfigDialog = false"
     >
       <template #title>
         <i class="iconfont icon-config" style="color: #4d8ce4; margin-right: 5px"></i>
         {{ `${showDataSource?.title} 基本配置` }}
       </template>
       <div style="margin-top: 20px"></div>
-      <a-form
+      <Form
         ref="formRef"
         :layout="'horizontal'"
-        :model="editDataSource"
-        :rules="rules"
+        :model="state.editDataSource"
+        :rules="state.rules"
         :labelCol="{ span: 4 }"
         :wrapperCol="{ span: 14 }"
       >
-        <a-form-item label="类型" name="type">
-          <a-radio-group :value="editDataSource.type" button-style="solid">
-            <a-radio-button
+        <FormItem label="类型" name="type">
+          <RadioGroup :value="state.editDataSource.type" button-style="solid">
+            <RadioButton
               v-for="item in dataSourceTypes.filter((i) => i.enabled)"
               :key="item.type"
               :value="item.type"
-              >{{ item.title }}</a-radio-button
+              >{{ item.title }}</RadioButton
             >
-          </a-radio-group>
+          </RadioGroup>
           <label style="
-              font-size: 12px;
-              color: rgb(245, 34, 45);
-              display: inline-block;
-              padding-left: 10px;
-              vertical-align: bottom;
-            "
-          >
-            数据类型暂无法更改
-          </label>
-        </a-form-item>
-        <a-form-item label="标题" name="title">
-          <a-input v-model:value="editDataSource.title" placeholder="标题" />
-        </a-form-item>
-        <a-form-item label="备注" name="remark">
-          <a-textarea v-model:value="editDataSource.remark" placeholder="备注" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+            font-size: 12px;
+            color: rgb(245, 34, 45);
+            display: inline-block;
+            padding-left: 10px;
+            vertical-align: bottom;
+          ">数据类型暂无法更改</label>
+        </FormItem>
+        <FormItem label="标题" name="title">
+          <Input v-model:value="state.editDataSource.title" placeholder="标题" />
+        </FormItem>
+        <FormItem label="备注" name="remark">
+          <Textarea v-model:value="state.editDataSource.remark" placeholder="备注" />
+        </FormItem>
+      </Form>
+    </Modal>
 
     <!-- 弹出数据配置框 -->
-    <a-modal
+    <Modal
       width="1000px"
       :centered="true"
-      :visible="showDataConfigDialog"
+      :visible="state.showDataConfigDialog"
       :destroyOnClose="true"
-      @cancel="showDataConfigDialog = false"
+      @cancel="state.showDataConfigDialog = false"
     >
       <template #title>
         <i class="iconfont icon-chucun" style="color: #4d8ce4; margin-right: 5px"></i>
@@ -173,24 +170,24 @@
       </template>
 
       <template #footer>
-        <a-button type="primary" @click="saveVariableData()">保存</a-button>
+        <Button type="primary" @click="saveVariableData()">保存</Button>
       </template>
 
       <div style="text-align: right; margin-bottom: 15px;">
-        <a-button type="default" @click="importJSON()">导入JSON</a-button>&nbsp;
-        <a-button type="default" @click="addChildNode(undefined)">增加子项</a-button>&nbsp;
+        <Button type="default" @click="importJSON()">导入JSON</Button>&nbsp;
+        <Button type="default" @click="addChildNode(undefined)">增加子项</Button>&nbsp;
       </div>
 
-      <a-table
+      <Table
         bordered
         size="small"
         tableLayout="fixed"
         :scroll="{ y: 400 }"
         :defaultExpandAllRows="true"
-        :dataSource="dataSource"
-        :columns="columns"
-        :row-selection="rowSelection"
-        :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+        :dataSource="state.dataSource"
+        :columns="state.columns"
+        :rowSelection="(state.rowSelection as any)"
+        :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : '')"
         :pagination="false"
         :locale="{
           filterConfirm: '确定',
@@ -205,372 +202,350 @@
               [{{ getParentIndex(record.parentId, record.key) }}]
             </span>
             <span v-else-if="getParentNode(record.parentId)?.type === 'object'">
-              <a-input size="small" v-model:value="record.name" placeholder="请输入值" />
+              <Input size="small" v-model:value="record.name" placeholder="请输入值" />
             </span>
             <span v-else>
-              <a-input size="small" v-model:value="record.name" placeholder="请输入值" />
+              <Input size="small" v-model:value="record.name" placeholder="请输入值" />
             </span>
           </template>
           <!-- 类型选择框 -->
           <template v-if="column.dataIndex === 'type'">
             <!-- {{ getVarTypeStr(text) }} -->
-            <a-select
+            <Select
               ref="select"
               size="small"
               :value="record.type"
               style="width: 100%;"
               @select="changeDataType($event, record)"
             >
-              <a-select-option value="object">对象</a-select-option>
-              <a-select-option value="list">列表</a-select-option>
-              <a-select-option value="string">字符串</a-select-option>
-              <a-select-option value="number">数字</a-select-option>
-              <a-select-option value="boolean">真/假</a-select-option>
-            </a-select>
+              <SelectOption value="object">对象</SelectOption>
+              <SelectOption value="list">列表</SelectOption>
+              <SelectOption value="string">字符串</SelectOption>
+              <SelectOption value="number">数字</SelectOption>
+              <SelectOption value="boolean">真/假</SelectOption>
+            </Select>
           </template>
           <!-- 值 -->
           <template v-else-if="column.dataIndex === 'value'">
             <!-- {{ text }} -->
             <div v-if="record.type === 'object' || record.type === 'list'" style="height: 30px;"></div>
             <div v-else-if="record.type === 'boolean'">
-              <a-switch checked-children="开" un-checked-children="关" v-model:checked="record.value" />
+              <Switch checked-children="开" un-checked-children="关" v-model:checked="record.value" />
             </div>
             <div v-else-if="record.type === 'number'">
-              <a-input-number size="small" style="width: 100%;" v-model:value="record.value" :step="1" />
+              <InputNumber size="small" style="width: 100%;" v-model:value="record.value" :step="1" />
             </div>
             <div v-else>
-              <a-input size="small" v-model:value="record.value" placeholder="请输入值" />
+              <Input size="small" v-model:value="record.value" placeholder="请输入值" />
             </div>
           </template>
           <!-- 备注 -->
           <template v-else-if="column.dataIndex === 'title'">
             <!-- {{ text }} -->
-            <a-input size="small" v-model:value="record.title" />
+            <Input size="small" v-model:value="record.title" />
           </template>
           <!-- 操作 -->
           <template v-else-if="column.dataIndex === 'handle'">
-            <a-button size="small" type="primary" style="margin-right: 10px">
+            <Button size="small" type="primary" style="margin-right: 10px">
               <template #icon><EditOutlined /></template>
-            </a-button>
-            <a-button size="small" danger style="margin-right: 10px" @click="removeChildNode(record)"
+            </Button>
+            <Button size="small" danger style="margin-right: 10px" @click="removeChildNode(record)"
               ><template #icon><DeleteOutlined /></template
-            ></a-button>
-            <a-button size="small" v-if="record.type == 'object' || record.type == 'list'" @click="addChildNode(record)">
+            ></Button>
+            <Button size="small" v-if="record.type == 'object' || record.type == 'list'" @click="addChildNode(record)">
               <template #icon><PlusOutlined /></template>
-            </a-button>
+            </Button>
           </template>
         </template>
-      </a-table>
-    </a-modal>
+      </Table>
+    </Modal>
 
     <!-- 弹出变量编辑框 -->
-    <a-modal
+    <Modal
       width="700px"
       :centered="true"
-      :visible="showDataEditDialog"
+      :visible="state.showDataEditDialog"
       :destroyOnClose="true"
       title="数据编辑"
       @ok="editDataSourceInfo"
-      @cancel="showDataEditDialog = false"
+      @cancel="state.showDataEditDialog = false"
     >
       <div style="margin-top: 20px"></div>
-      <a-form
+      <Form
         ref="formRef"
         :layout="'horizontal'"
-        :model="editDataSource"
-        :rules="rules"
+        :model="state.editDataSource"
+        :rules="state.rules"
         :labelCol="{ span: 4 }"
         :wrapperCol="{ span: 14 }"
       >
-        <a-form-item label="类型" name="type">
-          <a-radio-group :value="editDataSource.type" button-style="solid">
-            <a-radio-button
+        <FormItem label="类型" name="type">
+          <RadioGroup :value="state.editDataSource.type" button-style="solid">
+            <RadioButton
               v-for="item in dataSourceTypes.filter((i) => i.enabled)"
               :key="item.type"
               :value="item.type"
-              >{{ item.title }}</a-radio-button
-            >
-          </a-radio-group>
+            >{{ item.title }}</RadioButton>
+          </RadioGroup>
           <label style="
-              font-size: 12px;
-              color: rgb(245, 34, 45);
-              display: inline-block;
-              padding-left: 10px;
-              vertical-align: bottom;
-            "
-          >
-            数据类型暂无法更改
-          </label>
-        </a-form-item>
-        <a-form-item label="标题" name="title">
-          <a-input v-model:value="editDataSource.title" placeholder="标题" />
-        </a-form-item>
-        <a-form-item label="备注" name="remark">
-          <a-textarea v-model:value="editDataSource.remark" placeholder="备注" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+            font-size: 12px;
+            color: rgb(245, 34, 45);
+            display: inline-block;
+            padding-left: 10px;
+            vertical-align: bottom;
+          ">数据类型暂无法更改</label>
+        </FormItem>
+        <FormItem label="标题" name="title">
+          <Input v-model:value="state.editDataSource.title" placeholder="标题" />
+        </FormItem>
+        <FormItem label="备注" name="remark">
+          <Textarea v-model:value="state.editDataSource.remark" placeholder="备注" />
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
-<script lang="ts">
-import { computed, createVNode, defineComponent, reactive, ref, toRefs } from 'vue';
-import { state as editorState } from '@/modules/editor-module';
+<script lang="ts" setup>
+import { computed, createVNode, reactive, ref } from 'vue';
 import { state as dataSourceState } from '../index';
 import { dataSourceTypes } from '../data/data-source-types';
 import { createModelId, recursive } from '@/tools/common';
 import type { DataSource, DataSourceTypeItem } from '../@types';
-import { message, Modal } from 'ant-design-vue';
+import { Empty, Dropdown, message, Modal, Button, Menu, MenuItem, Table, FormItem, Tooltip, Form, Popconfirm, Input, Textarea, RadioGroup, RadioButton, SelectOption, Select, InputNumber, Switch, Badge } from 'ant-design-vue';
 import { VariableType } from '@/modules/variable-module/@types';
 import { service as variableService } from '@/modules/variable-module';
 import { cloneLoop } from '@/lib/clone';
-import ExclamationCircleOutlined from '@ant-design/icons-vue/ExclamationCircleOutlined';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { RuleObject } from 'ant-design-vue/lib/form';
 
-export default defineComponent({
-  components: {},
-  methods: {
-    /** 添加新数据源 */
-    addNewDataSource(instance: DataSourceTypeItem) {
-      this.dataSourceState.dataSourceList.push({
-        id: createModelId(10),
-        type: instance.type,
-        title: `${instance.title} ${this.dataSourceState.dataSourceList.length + 1}`,
-        icon: instance.icon,
-        data: [],
-        lastTime: Date.now(),
-        enabled: true,
-      });
-    },
-    /** 移除数据源 */
-    removeDataSource(index: number) {
-      this.dataSourceState.dataSourceList.splice(index, 1);
-    },
-    /** 展示基本配置弹窗 */
-    showBasicConfig(instance: DataSource) {
-      this.showDataSourceId = instance.id;
-      this.editDataSource.type = instance.type;
-      this.editDataSource.title = instance.title;
-      this.editDataSource.remark = instance.remark;
-      this.showBasicConfigDialog = true;
-    },
-    /** 展示数据配置弹窗 */
-    showDataConfig(instance: DataSource) {
-      this.showDataSourceId = instance.id;
-      const _instance = cloneLoop(instance.data);
-      const _cb = (obj, parentId) => {
-        if (parentId) obj.parentId = parentId;
-        if (obj.children?.length) {
-          for (let i = 0; i < obj.children.length; i++) {
-            _cb(obj.children[i], obj.key);
-          }
-        }
-      };
-      _instance.forEach(i => _cb(i, ''));
+const formRef = ref<typeof Form>();
 
-      this.dataSource = _instance;
-      this.showDataConfigDialog = true;
-    },
-    /** 展示数据编辑弹窗 */
-    showDataEdit(instance?: Record<string, any>) {
-      if (instance) {
-      }
-      this.showDataEditDialog = true;
-    },
-    /** 修改数据类型 */
-    changeDataType(type: string, record) {
-      if (record.type === type) return;
-      if (record?.children?.length && ['list', 'object'].includes(record.type) && !['list', 'object'].includes(type)) {
-        Modal.confirm({
-          title: '是否要切换数据类型？',
-          icon: createVNode(ExclamationCircleOutlined),
-          content: createVNode('div', { style: 'color:red;' }, '切换数据类型将会清空当前变量的子项，是否继续操作？'),
-          onOk() {
-            record.type = type;
-            record.children = [];
-          },
-          onCancel() {},
-        });
-      } else {
-        record.type = type;
-      }
-    },
-    /** 编辑数据配置 */
-    editDataSourceInfo() {
-      this.formRef
-        .validate()
-        .then(() => {
-          let _index = this.dataSourceState.dataSourceList.findIndex((i) => i.id == this.showDataSourceId);
-          if (_index >= 0) {
-            this.dataSourceState.dataSourceList[_index].title = this.editDataSource.title;
-            this.dataSourceState.dataSourceList[_index].remark = this.editDataSource.remark;
-            this.showBasicConfigDialog = false;
-          } else {
-            message.error('未找到当前数据源');
-          }
-        })
-        .catch(({ errorFields }) => {
-          message.error(
-            errorFields
-              .map((i) => i.errors.flat())
-              .flat()
-              .join('；\n'),
-          );
-        });
-    },
-    saveVariableData() {
-      message.success('变量数据保存完成');
-      const _index = this.dataSourceState.dataSourceList.findIndex(i => i.id === this.showDataSourceId);
-      this.dataSourceState.dataSourceList[_index].data = this.dataSource;
-      this.showDataConfigDialog = false;
-
-      variableService.updateVariable();
-    },
-    /** 获取变量类型描述 */
-    getVarTypeStr(type: VariableType) {
-      return {
-        object: '对象',
-        list: '列表',
-        string: '字符串',
-        number: '数字',
-        boolean: '真/假',
-      }[type];
-    },
-    /** 获取父级变量 */
-    getParentNode(parentId: string) {
-      if (parentId === undefined) return undefined;
-      const _re = recursive(this.dataSource, {
-        filter(variable, chain) {
-          return variable.key === parentId;
-        },
-      })
-      return _re.length ? _re[0] : undefined;
-    },
-    /** 获取子级对应父级的索引（获取数组索引） */
-    getParentIndex(parentId: string, id: string) {
-      const _parentList = recursive(this.dataSource, {
-        filter(variable, chain) {
-          return variable.key === parentId;
-        },
-      });
-      if (_parentList.length) {
-        const _parent = _parentList[0];
-        return (_parent.children || []).findIndex((i, index) => i.key === id);
-      }
-      return undefined;
-    },
-    /** 移除变量子项 */
-    removeChildNode(item: Record<string, any>) {
-      if (!item.parentId) {
-        const _index = this.dataSource.findIndex(i => i.key === item.key);
-        this.dataSource.splice(_index, 1);
-      } else {
-        let _isComplete = false;
-        const _cb = (arr: Record<string, any>[]) => {
-          if (_isComplete) return;
-          for (let i = 0; i < arr.length; i++) {
-            const _el = arr[i];
-            if (_el.key === item.key) {
-              arr.splice(i, 1);
-              _isComplete = true;
-              return;
-            }
-            if (_el.children?.length) {
-              _cb(_el.children);
-            }
-          }
-        }
-        _cb(this.dataSource);
-      }
-    },
-    /** 添加变量子项 */
-    addChildNode(item: Record<string, any> | undefined) {
-      if (!item) {
-        this.dataSource.push({
-          key: createModelId(),
-          name: `newVar${this.dataSource.length + 1}`,
-          type: 'string',
-          title: `新变量${this.dataSource.length + 1}`,
-          children: [],
-        });
-      } else {
-        if (!item.children) item.children = [];
-        if (item.type === 'list') {
-          item.children.push({
-            key: createModelId(),
-            parentId: item.key,
-            type: 'string',
-            title: `新变量${this.dataSource.length + 1}`,
-          });
-        } else if (item.type === 'object') {
-          item.children.push({
-            key: createModelId(),
-            parentId: item.key,
-            name: `newVar${this.dataSource.length + 1}`,
-            type: 'string',
-            title: `新变量${this.dataSource.length + 1}`,
-          });
-        }
-        console.log('item', item);
-      }
-    },
-    /** 导入JSON文件 */
-    importJSON() {},
-  },
-  created() {},
-  mounted() {},
-  setup(props) {
-    const formRef = ref();
-
-    const state = reactive({
-      /** 是否显示基本配置界面 */
-      showBasicConfigDialog: false,
-      /** 是否显示数据配置界面 */
-      showDataConfigDialog: false,
-      /** 是否显示变量编辑界面 */
-      showDataEditDialog: false,
-      /** 展示数据源 */
-      showDataSourceId: '',
-      /** 临时编辑数据源信息 */
-      editDataSource: {} as { title: string; type: string; remark?: string },
-      /** 表格列 */
-      columns: [
-        { title: '变量名', dataIndex: 'name' },
-        { title: '类型', dataIndex: 'type', width: '12%' },
-        { title: '值', dataIndex: 'value', width: '20%' },
-        { title: '备注', dataIndex: 'title' },
-        { title: '操作', dataIndex: 'handle', width: '120px' },
-      ] as any[],
-      /** 数据源编辑校验规则 */
-      rules: {
-        title: [{ required: true, message: '请输入数据源标题', trigger: 'blur' }],
-      },
-      /** 表格数据 */
-      dataSource: [] as any[],
-      /** 已勾选数据 */
-      rowSelection: [] as any[],
-    });
-
-    const showDataSource = computed<{ title: string; type: string; remark?: string }>(() => {
-      if (state.showDataSourceId) {
-        let _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
-        if (_index >= 0) {
-          return dataSourceState.dataSourceList[_index];
-        }
-      }
-      return { title: '', type: '', remark: '' };
-    });
-
-    return {
-      ...toRefs(state),
-      formRef,
-      editorState,
-      dataSourceState,
-      dataSourceTypes,
-      /** 当前显示/编辑的数据源 */
-      showDataSource,
-    };
-  },
+const state = reactive({
+  /** 是否显示基本配置界面 */
+  showBasicConfigDialog: false,
+  /** 是否显示数据配置界面 */
+  showDataConfigDialog: false,
+  /** 是否显示变量编辑界面 */
+  showDataEditDialog: false,
+  /** 展示数据源 */
+  showDataSourceId: '',
+  /** 临时编辑数据源信息 */
+  editDataSource: {} as { title: string; type: string; remark?: string },
+  /** 表格列 */
+  columns: [
+    { title: '变量名', dataIndex: 'name' },
+    { title: '类型', dataIndex: 'type', width: '12%' },
+    { title: '值', dataIndex: 'value', width: '20%' },
+    { title: '备注', dataIndex: 'title' },
+    { title: '操作', dataIndex: 'handle', width: '120px' },
+  ] as any[],
+  /** 数据源编辑校验规则 */
+  rules: {
+    title: [{ required: true, message: '请输入数据源标题', trigger: 'blur' }],
+  } as { [k: string]: RuleObject[] },
+  /** 表格数据 */
+  dataSource: [] as any[],
+  /** 已勾选数据 */
+  rowSelection: [] as any[],
 });
+
+const showDataSource = computed<{ title: string; type: string; remark?: string }>(() => {
+  if (state.showDataSourceId) {
+    let _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
+    if (_index >= 0) {
+      return dataSourceState.dataSourceList[_index];
+    }
+  }
+  return { title: '', type: '', remark: '' };
+});
+
+/** 添加新数据源 */
+const addNewDataSource = (instance: DataSourceTypeItem) => {
+  dataSourceState.dataSourceList.push({
+    id: createModelId(10),
+    type: instance.type,
+    title: `${instance.title} ${dataSourceState.dataSourceList.length + 1}`,
+    icon: instance.icon,
+    data: [],
+    lastTime: Date.now(),
+    enabled: true,
+  });
+};
+/** 移除数据源 */
+const removeDataSource = (index: number) => {
+  dataSourceState.dataSourceList.splice(index, 1);
+};
+/** 展示基本配置弹窗 */
+const showBasicConfig = (instance: DataSource) => {
+  state.showDataSourceId = instance.id;
+  state.editDataSource.type = instance.type;
+  state.editDataSource.title = instance.title;
+  state.editDataSource.remark = instance.remark;
+  state.showBasicConfigDialog = true;
+};
+/** 展示数据配置弹窗 */
+const showDataConfig = (instance: DataSource) => {
+  state.showDataSourceId = instance.id;
+  const _instance = cloneLoop(instance.data);
+  const _cb = (obj, parentId) => {
+    if (parentId) obj.parentId = parentId;
+    if (obj.children?.length) {
+      for (let i = 0; i < obj.children.length; i++) {
+        _cb(obj.children[i], obj.key);
+      }
+    }
+  };
+  _instance.forEach(i => _cb(i, ''));
+
+  state.dataSource = _instance;
+  state.showDataConfigDialog = true;
+};
+/** 展示数据编辑弹窗 */
+const showDataEdit = (instance?: Record<string, any>) => {
+  if (instance) {
+  }
+  state.showDataEditDialog = true;
+};
+/** 修改数据类型 */
+const changeDataType = (type: string, record) => {
+  if (record.type === type) return;
+  if (record?.children?.length && ['list', 'object'].includes(record.type) && !['list', 'object'].includes(type)) {
+    Modal.confirm({
+      title: '是否要切换数据类型？',
+      icon: createVNode(ExclamationCircleOutlined),
+      content: createVNode('div', { style: 'color:red;' }, '切换数据类型将会清空当前变量的子项，是否继续操作？'),
+      onOk() {
+        record.type = type;
+        record.children = [];
+      },
+      onCancel() {},
+    });
+  } else {
+    record.type = type;
+  }
+};
+/** 编辑数据配置 */
+const editDataSourceInfo = () => {
+  formRef.value!
+    .validate()
+    .then(() => {
+      let _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
+      if (_index >= 0) {
+        dataSourceState.dataSourceList[_index].title = state.editDataSource.title;
+        dataSourceState.dataSourceList[_index].remark = state.editDataSource.remark;
+        state.showBasicConfigDialog = false;
+      } else {
+        message.error('未找到当前数据源');
+      }
+    })
+    .catch(({ errorFields }) => {
+      message.error(
+        errorFields
+          .map((i) => i.errors.flat())
+          .flat()
+          .join('；\n'),
+      );
+    });
+};
+const saveVariableData = () => {
+  message.success('变量数据保存完成');
+  const _index = dataSourceState.dataSourceList.findIndex(i => i.id === state.showDataSourceId);
+  dataSourceState.dataSourceList[_index].data = state.dataSource;
+  state.showDataConfigDialog = false;
+
+  variableService.updateVariable();
+};
+/** 获取变量类型描述 */
+const getVarTypeStr = (type: VariableType) => {
+  return {
+    object: '对象',
+    list: '列表',
+    string: '字符串',
+    number: '数字',
+    boolean: '真/假',
+  }[type];
+};
+/** 获取父级变量 */
+const getParentNode = (parentId: string) => {
+  if (parentId === undefined) return undefined;
+  const _re = recursive(state.dataSource, {
+    filter(variable, chain) {
+      return variable.key === parentId;
+    },
+  })
+  return _re.length ? _re[0] : undefined;
+};
+/** 获取子级对应父级的索引（获取数组索引） */
+const getParentIndex = (parentId: string, id: string) => {
+  const _parentList = recursive(state.dataSource, {
+    filter(variable, chain) {
+      return variable.key === parentId;
+    },
+  });
+  if (_parentList.length) {
+    const _parent = _parentList[0];
+    return (_parent.children || []).findIndex((i, index) => i.key === id);
+  }
+  return undefined;
+};
+/** 移除变量子项 */
+const removeChildNode = (item: Record<string, any>) => {
+  if (!item.parentId) {
+    const _index = state.dataSource.findIndex(i => i.key === item.key);
+    state.dataSource.splice(_index, 1);
+  } else {
+    let _isComplete = false;
+    const _cb = (arr: Record<string, any>[]) => {
+      if (_isComplete) return;
+      for (let i = 0; i < arr.length; i++) {
+        const _el = arr[i];
+        if (_el.key === item.key) {
+          arr.splice(i, 1);
+          _isComplete = true;
+          return;
+        }
+        if (_el.children?.length) {
+          _cb(_el.children);
+        }
+      }
+    }
+    _cb(state.dataSource);
+  }
+};
+/** 添加变量子项 */
+const addChildNode = (item: Record<string, any> | undefined) => {
+  if (!item) {
+    state.dataSource.push({
+      key: createModelId(),
+      name: `newVar${state.dataSource.length + 1}`,
+      type: 'string',
+      title: `新变量${state.dataSource.length + 1}`,
+      children: [],
+    });
+  } else {
+    if (!item.children) item.children = [];
+    if (item.type === 'list') {
+      item.children.push({
+        key: createModelId(),
+        parentId: item.key,
+        type: 'string',
+        title: `新变量${state.dataSource.length + 1}`,
+      });
+    } else if (item.type === 'object') {
+      item.children.push({
+        key: createModelId(),
+        parentId: item.key,
+        name: `newVar${state.dataSource.length + 1}`,
+        type: 'string',
+        title: `新变量${state.dataSource.length + 1}`,
+      });
+    }
+    console.log('item', item);
+  }
+};
+/** 导入JSON文件 */
+const importJSON = () => {};
 </script>
 
 <style lang="less" scoped>

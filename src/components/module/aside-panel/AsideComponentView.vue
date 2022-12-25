@@ -1,9 +1,9 @@
 <template>
-  <a-empty
+  <Empty
     v-if="!editorState.pages.some(i => i.children?.length)"
     description="暂无数据"
     :style="{ marginTop: '20vh' }"
-  ></a-empty>
+  ></Empty>
   <ul v-else class="aside-outline">
     <li class="aside-outline-tool">
       <span>大纲标签类型</span>
@@ -36,8 +36,8 @@
 </template>
 
 <script lang="ts" setup>
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { Switch } from 'ant-design-vue';
+import { state as editorState } from '@/modules/editor-module';
+import { Empty, Switch } from 'ant-design-vue';
 import { reactive } from 'vue';
 import AsideComponentChildView from './AsideComponentChildView.vue';
 

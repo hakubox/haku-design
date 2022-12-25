@@ -20,7 +20,7 @@
           <span class="form-design-body-property-item-label" :style="{ minWidth: props.labelWidth }" :class="{ require: prop.require, leaf: prop.leaf }">
             <span class="fullscreen-wrap">
               <span v-html="prop.title + ' '"></span>
-              <a-popover v-if="prop.remark" placement="topRight" arrow-point-at-center>
+              <Popover v-if="prop.remark" placement="topRight" arrow-point-at-center>
                 <template #content>
                   {{prop.remark}}
                 </template>
@@ -28,26 +28,26 @@
                   <span>{{prop.title}} {{prop.name}}</span>
                 </template>
                 <QuestionCircleOutlined style="font-size:12px;color: #AAA;" />
-              </a-popover>
+              </Popover>
             </span>
             <template v-if="prop.layout == 'block' || (prop.attach && prop.attach.length)">
-              <a-tooltip
+              <Tooltip
                 placement="topRight"
                 class="prop-tool-btn"
                 arrow-point-at-center
                 v-if="prop?.canFullScreen"
               >
                 <template #title>最大化</template>
-                <a-button size="small" @click="fullScreen(prop, prop)">
-                  <fullscreen-outlined size="small" />
-                </a-button>
-              </a-tooltip>
+                <Button size="small" @click="fullScreen(prop, prop)">
+                  <FullscreenOutlined size="small" />
+                </Button>
+              </Tooltip>
             </template>
             <!-- <div style="float: right;" v-show="prop.attach">
-              <a-button-group size="small">
-                <a-button :type="editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor)">常规</a-button>
-                <a-button :type="editorState.currentPropertyEditors[prop.name] == attach ? 'primary' : 'default'" v-for="attach in prop.attach" :key="attach" :value="attach" @click="changePropAttach(prop, attach);">{{ editorState.propertyEditors[attach].description }}</a-button>
-              </a-button-group>
+              <ButtonGroup size="small">
+                <Button :type="editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor)">常规</Button>
+                <Button :type="editorState.currentPropertyEditors[prop.name] == attach ? 'primary' : 'default'" v-for="attach in prop.attach" :key="attach" :value="attach" @click="changePropAttach(prop, attach);">{{ editorState.propertyEditors[attach].description }}</Button>
+              </ButtonGroup>
             </div> -->
           </span>
           <div class="form-design-body-property-item-value">
@@ -91,17 +91,17 @@
             </component> -->
           </div>
           <template v-if="!(prop.layout == 'block' || (prop.attach && prop.attach.length))">
-            <a-tooltip placement="topLeft" class="prop-tool-btn" v-if="prop?.canFullScreen">
+            <Tooltip placement="topLeft" class="prop-tool-btn" v-if="prop?.canFullScreen">
               <template #title>最大化</template>
-              <a-button size="small" @click="fullScreen(prop, prop)">
-                <fullscreen-outlined size="small" />
-              </a-button>
-            </a-tooltip>
+              <Button size="small" @click="fullScreen(prop, prop)">
+                <FullscreenOutlined size="small" />
+              </Button>
+            </Tooltip>
           </template>
         </div>
       </div>
     </div>
-    <a-modal
+    <Modal
       :centered="true" 
       :footer="false"
       :width="'80vw'" 
@@ -118,7 +118,7 @@
         :propertys="propertys"
         @change="propChangeListener"
       ></GeneralEditorItem>
-    </a-modal>
+    </Modal>
   </div>
 </template>
 
@@ -130,6 +130,8 @@ import { ComponentPropertyEditor } from "@/@types/enum";
 import GeneralEditorItem from './GeneralEditorItem.vue';
 import { GeneralProperty } from "@/@types";
 import { isBlank, isNotBlank } from "@/tools/common";
+import { Button, ButtonGroup, Modal, Popover, Tooltip } from "ant-design-vue";
+import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps({
   /** 绑定数据 */

@@ -1,5 +1,5 @@
-import { IDomEditor, IButtonMenu } from '@wangeditor/editor';
-import { createVNode, reactive, h, render, type VNode, ConcreteComponent } from 'vue';
+import type { IDomEditor, IButtonMenu } from '@wangeditor/editor';
+import { reactive, ConcreteComponent } from 'vue';
 import { Boot } from '@wangeditor/editor';
 import bus from '@/tools/bus';
 import VariablePickerDialog from './VariablePickerDialog.vue';

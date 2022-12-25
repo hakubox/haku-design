@@ -60,17 +60,17 @@
           <div class="recent-function-sort">
             <div class="recent-function-sort-label">排序</div>
             <div class="recent-function-sort-content">
-              <a-select v-model:value="state.sortType" size="small" @change="sortTypeChange">
-                <a-select-option value="time">最近使用项</a-select-option>
-                <a-select-option value="name">名称</a-select-option>
-                <a-select-option value="type">类型</a-select-option>
-              </a-select>
+              <Select v-model:value="state.sortType" size="small" @change="sortTypeChange">
+                <SelectOption value="time">最近使用项</SelectOption>
+                <SelectOption value="name">名称</SelectOption>
+                <SelectOption value="type">类型</SelectOption>
+              </Select>
               <div class="recent-function-sort-reverse">
                 <!-- <i class="iconfont icon-add reverse"></i> -->
-                <a-tooltip>
+                <Tooltip>
                   <template #title>反转排序</template>
                   <vertical-align-bottom-outlined style="font-size: 18px" />
-                </a-tooltip>
+                </Tooltip>
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@
           <div class="recent-function-filter">
             <div class="recent-function-filter-label">筛选</div>
             <div class="recent-function-filter-content">
-              <a-input v-model:value="state.filterTxt" size="small" placeholder="筛选最近的文件" />
+              <Input v-model:value="state.filterTxt" size="small" placeholder="筛选最近的文件" />
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
           </div>
         </div>
         <!-- 最近列表（列表） -->
-        <a-list
+        <List
           class="recent-list"
           v-show="state.reviewType === 'list'"
           item-layout="vertical"
@@ -117,7 +117,7 @@
         >
           <template #footer></template>
           <template #renderItem="{ item }">
-            <a-list-item key="item.title">
+            <ListItem key="item.title">
               <template #actions>
                 <div class="questionnaire-library-item-body-tools">
                   <div class="questionnaire-library-item-body-tool tool-primary" @click="selectData(item)">
@@ -131,31 +131,31 @@
                 </div>
               </template>
               <template #extra>
-                <a-tooltip overlayClassName="recent-item-preview" placement="leftTop">
+                <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
                   <template #title>
                     <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="" />
                   </template>
                   <div class="recent-item-img">
                     <img :alt="item.appTitle" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />
                   </div>
-                </a-tooltip>
+                </Tooltip>
               </template>
-              <a-list-item-meta>
+              <ListItemMeta>
                 <template #description>
-                  <a-tag color="#FF4D4F">医疗问卷</a-tag>
-                  <a-tag color="#108EE9">官方</a-tag>
-                  <a-tag color="#531DBD">焦虑症</a-tag>
+                  <Tag color="#FF4D4F">医疗问卷</Tag>
+                  <Tag color="#108EE9">官方</Tag>
+                  <Tag color="#531DBD">焦虑症</Tag>
                 </template>
                 <template #title>
                   <span style="font-size: 14px; color: #396AAD"> [{{ item.id }}] </span>
                   <a>{{ item.appTitle }}-v{{item.appVersion}}</a>
                 </template>
-                <!-- <template #avatar><a-avatar :src="item.avatar" /></template> -->
-              </a-list-item-meta>
+                <!-- <template #avatar><Avatar :src="item.avatar" /></template> -->
+              </ListItemMeta>
               {{ item.description ?? '暂无描述' }}
-            </a-list-item>
+            </ListItem>
           </template>
-        </a-list>
+        </List>
       </div>
     </div>
   </div>
@@ -163,12 +163,11 @@
 
 <script lang="ts" setup>
 import { reactive, onMounted, onUnmounted } from 'vue';
-import { state as configState, service as configService } from '@/common/config-module';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { service as editorService } from '@/modules/editor-module';
 import { service as introService } from '@/modules/intro-module';
 import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/common/questionnaire';
 import { dateFormat } from '@/tools/common';
-import { message } from 'ant-design-vue';
+import { Input, List, ListItem, ListItemMeta, Select, SelectOption, Tag, Tooltip, message } from 'ant-design-vue';
 
 const state = reactive({
   /** 预览类型 */

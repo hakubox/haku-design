@@ -32,69 +32,69 @@
       <!-- 调试器 -->
       <div class="canvas-data-editor" :style="{ height: '667px' }" v-if="editorState.currentPage.pageType === PageType.normalPage">
         <div class="canvas-data-editor-body">
-          <a-tabs v-model:activeKey="state.activeKey" type="card">
+          <Tabs v-model:activeKey="state.activeKey" type="card">
             <template #rightExtra>
-              <a-popconfirm placement="bottomRight" @confirm="eventService.clearLog()">
+              <Popconfirm placement="bottomRight" @confirm="eventService.clearLog()">
                 <template #title>是否确认清空事件日志列表？</template>
-                <a-button v-if="state.activeKey === 'event'" danger size="small" style="margin-right: 10px;">清除日志</a-button>
-              </a-popconfirm>
+                <Button v-if="state.activeKey === 'event'" danger size="small" style="margin-right: 10px;">清除日志</Button>
+              </Popconfirm>
             </template>
-            <a-tab-pane key="data" tab="表单数据" force-render>
-              <a-empty
+            <TabPane key="data" tab="表单数据" force-render>
+              <Empty
                 v-if="!formFillState.formFillList.length"
                 description="暂无填充数据"
                 :style="{ marginTop: '20vh' }"
-              ></a-empty>
+              ></Empty>
               <GeneralEditor v-else
                 :model="formFillState.formInfo"
                 :propertys="formFillProps"
                 :groups="[{ title: '基础数据', name: 'data', icon: '' }]"
               ></GeneralEditor>
-            </a-tab-pane>
-            <a-tab-pane key="event" tab="事件日志" force-render>
-              <a-list
+            </TabPane>
+            <TabPane key="event" tab="事件日志" force-render>
+              <List
                 class="event-history"
                 item-layout="horizontal"
                 :data-source="eventState.eventLogs"
               >
                 <template #renderItem="{ item }">
-                  <a-list-item style="padding: 8px 0px;">
+                  <ListItem style="padding: 8px 0px;">
                     <template #actions>
                       <a
                         key="list-loadmore-edit"
                         style="display: inline-block;margin-top: 8px;"
                         @click="executeEvent(item)"
                       >重新触发</a>
-                      <a-popover placement="topRight" trigger="click" arrowPointAtCenter>
+                      <Popover placement="topRight" trigger="click" arrowPointAtCenter>
                         <template #content>
                           <EventItem style="width: 460px;" :event="item.event" :readonly="true" :highlight="getHighlight(item)"></EventItem>
                         </template>
                         <a key="list-loadmore-more">详情</a>
-                      </a-popover>
+                      </Popover>
                     </template>
-                    <a-skeleton avatar :title="false" :loading="false" active>
-                      <a-list-item-meta :description="dateFormat(item.createTime, 'MM-dd HH:mm:ss')">
+                    <Skeleton avatar :title="false" :loading="false" active>
+                      <ListItemMeta :description="dateFormat(item.createTime, 'MM-dd HH:mm:ss')">
                         <template #title>
-                          <a-tag v-if="item.isElseAction" color="purple">反向</a-tag>
+                          <Tag v-if="item.isElseAction" color="purple">反向</Tag>
                           {{ item.title }}
                         </template>
                         <template #avatar>
-                          <a-avatar :style="{
+                          <Avatar :style="{
                             backgroundColor: '#f9b643',
                             marginTop: '8px',
                             marginRight: '-4px',
                             borderRadius: '6px'
                           }" shape="square">
                             <template #icon><i class="iconfont icon-rule"></i></template>
-                          </a-avatar>
+                          </Avatar>
                         </template>
-                      </a-list-item-meta>
-                    </a-skeleton>
-                  </a-list-item>
+                      </ListItemMeta>
+                    </Skeleton>
+                  </ListItem>
                 </template>
-              </a-list>
-            </a-tab-pane>
-          </a-tabs>
+              </List>
+            </TabPane>
+          </Tabs>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRefs, ref, watch, computed, PropType, Ref, nextTick } from "vue";
+import { reactive, watch, computed, PropType, Ref } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { state as eventState, service as eventService } from '@/modules/event-module';
@@ -116,7 +116,7 @@ import { FormInfoItem } from "@/modules/form-fill-module/@types";
 import { GeneralProperty } from "@/@types";
 import { AppEventLog } from "@/modules/event-module/@types";
 import EventItem from "@/modules/event-module/component/EventItem.vue";
-import { message } from "ant-design-vue";
+import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
 
 const props = defineProps({

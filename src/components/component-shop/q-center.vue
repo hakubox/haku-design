@@ -22,38 +22,32 @@
   </template>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
+import { PropType, computed, useAttrs } from 'vue';
 import { Component } from '@/@types';
 
-export default defineComponent({
-  name: 'q-center',
-  props: {
-    /** flex方向 */
-    direction: {
-      type: String as PropType<'column' | 'column-reverse' | 'row' | 'row-reverse'>,
-      default: 'column',
-    },
-    /** 主轴对齐方式 */
-    mainAxisAlignment: {
-      type: String,
-      default: 'flex-start',
-    },
-    /** 次轴对齐方式 */
-    crossAxisAlignment: {
-      type: String,
-      default: 'flex-start',
-    },
+const props = defineProps({
+  /** flex方向 */
+  direction: {
+    type: String as PropType<'column' | 'column-reverse' | 'row' | 'row-reverse'>,
+    default: 'column',
   },
-  computed: {
-    /** 子组件列表 */
-    components() {
-      return (this.$attrs.component as Component).children;
-    },
+  /** 主轴对齐方式 */
+  mainAxisAlignment: {
+    type: String,
+    default: 'flex-start',
   },
-  setup(props) {
-    return {};
+  /** 次轴对齐方式 */
+  crossAxisAlignment: {
+    type: String,
+    default: 'flex-start',
   },
+});
+
+const attrs = useAttrs();
+
+const components = computed(() => {
+  return (attrs.component as Component).children;
 });
 </script>
 

@@ -1,55 +1,55 @@
 <template>
   <div>
-    <a-switch
+    <Switch
       v-if="!attrs.confirm"
       :checked="value"
       :checkedChildren="checkedChildren"
       :unCheckedChildren="unCheckedChildren"
       @change="change"
     />
-    <a-popconfirm v-else placement="topRight" @confirm="change(!value)">
+    <Popconfirm v-else placement="topRight" @confirm="change(!value)">
       <template #title>
         <p>{{ typeof attrs.confirm === 'function' ? (attrs.confirm as Function)(value) : attrs.confirm }}</p>
       </template>
-      <a-switch checkedChildren="开" unCheckedChildren="关" :checked="value" />
-    </a-popconfirm>
+      <Switch checkedChildren="开" unCheckedChildren="关" :checked="value" />
+    </Popconfirm>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script lang="ts" setup>
+import { Popconfirm, Switch } from 'ant-design-vue';
+import { PropType } from 'vue';
 
-export default defineComponent({
-  name: 'SwitchEditor',
-  props: {
-    attrs: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({}),
-    },
-    value: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-    checkedChildren: {
-      type: String,
-      default: '是',
-    },
-    unCheckedChildren: {
-      type: String,
-      default: '否',
-    },
+const props = defineProps({
+  attrs: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({}),
   },
-  computed: {},
-  methods: {
-    /** 改变值 */
-    change(val) {
-      this.$emit('update:value', val);
-      this.$emit('change', val);
-    },
+  value: {
+    type: Boolean,
+    default: false,
+    required: true,
   },
-  setup() {},
+  checkedChildren: {
+    type: String,
+    default: '是',
+  },
+  unCheckedChildren: {
+    type: String,
+    default: '否',
+  },
 });
+
+const emit = defineEmits<{
+  (event: 'update:value', val: boolean): void;
+  (event: 'change', val: boolean): void;
+}>();
+
+/** 改变值 */
+const change = (val) => {
+  emit('update:value', val);
+  emit('change', val);
+};
 </script>
 
 <style lang="less" scoped></style>
