@@ -1,7 +1,12 @@
 import { ComponentCategory, PageType } from '@/@types/enum';
 import { ToolComponentItem } from '@/@types/tool-component-item';
+import { computed } from 'vue';
 
 /** 工具箱配置菜单 */
+export const getMenuComponentItems = computed(() => {
+  return menuComponentItems;
+});
+
 export let menuComponentItems: ToolComponentItem[] = [
   {
     title: '单行问答题',

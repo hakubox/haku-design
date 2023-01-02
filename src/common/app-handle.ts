@@ -13,7 +13,7 @@ export function useAppHandle() {
     const state = reactive({
       visible: true
     });
-    const PrivateQuestionnaireLibraryDialog = (await Object.values(import.meta.glob('@/components/module/PrivateQuestionnaireLibraryDialog.vue'))[0]() as any).default;
+    const PrivateQuestionnaireLibraryDialog = ((await Object.values(import.meta.glob('@/components/module/PrivateQuestionnaireLibraryDialog.vue'))[0] as any)() as any).default;
     const container = loadComponent(PrivateQuestionnaireLibraryDialog as ConcreteComponent, {
       ...toRefs(state),
       'onUpdate:visible'(value) {
@@ -30,7 +30,7 @@ export function useAppHandle() {
     const state = reactive({
       visible: true
     });
-    const PublicQuestionnaireLibraryDialog = (await Object.values(import.meta.glob('@/components/module/PublicQuestionnaireLibraryDialog.vue'))[0]() as any).default;
+    const PublicQuestionnaireLibraryDialog = ((await Object.values(import.meta.glob('@/components/module/PublicQuestionnaireLibraryDialog.vue'))[0] as any)() as any).default;
     const container = loadComponent(PublicQuestionnaireLibraryDialog as ConcreteComponent, {
       ...toRefs(state),
       'onUpdate:visible'(value) {

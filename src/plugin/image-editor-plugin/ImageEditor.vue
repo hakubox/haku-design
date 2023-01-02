@@ -1,17 +1,19 @@
 <template>
-  <div v-if="props.readonly" class="text-editor-preview editor-preview">
+  <div v-if="props.readonly" class="image-editor-preview editor-preview">
     {{ state.inputValue }}
   </div>
   <Input
     v-else
-    class="text-editor"
+    class="image-editor"
     :class="{ disabled: $attrs.disabled }"
     :disabled="($attrs.disabled as boolean)"
     :placeholder="placeholder"
     v-model:value="state.inputValue"
     @change="input"
   >
-    <slot name="suffix"></slot>
+    <template #suffix>
+      <PictureOutlined />
+    </template>
   </Input>
 </template>
 
@@ -19,6 +21,7 @@
 import { throttle } from '@/tools/common';
 import { Input } from 'ant-design-vue';
 import { onMounted, reactive, watch } from 'vue';
+import { PictureOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps({
   value: {
@@ -31,7 +34,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: '',
+    default: '请输入图片地址',
   },
   /** 是否开启节流事件 */
   openThrottle: {
@@ -74,7 +77,7 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '/src/assets/less/variable.less';
 
-.text-editor {
+.image-editor {
   position: relative;
   display: flex;
   flex-direction: row;

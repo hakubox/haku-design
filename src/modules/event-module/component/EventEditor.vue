@@ -67,7 +67,7 @@
                 <Menu :forceSubMenuRender="true">
                   <SubMenu v-for="group in triggerGroups" :key="group.value" :title="group.label">
                     <MenuItem
-                      v-for="trigger in eventTriggers.filter((i) => i.group == group.value && i.isGlobal === props.isGlobal)"
+                      v-for="trigger in getEventTriggers.filter((i) => i.group == group.value && i.isGlobal === props.isGlobal)"
                       :key="trigger.name"
                       @click="addTrigger(state.event, trigger)"
                     >
@@ -103,12 +103,12 @@
               <template #overlay>
                 <Menu :forceSubMenuRender="true">
                   <SubMenu
-                    v-for="group in eventActionGroups.filter(group => eventActions.some((i) => i.group == group.value))"
+                    v-for="group in eventActionGroups.filter(group => getEventActions.some((i) => i.group == group.value))"
                     :key="group.value"
                     :title="group.label"
                   >
                     <MenuItem
-                      v-for="action in eventActions.filter((i) => i.group == group.value)"
+                      v-for="action in getEventActions.filter((i) => i.group == group.value)"
                       :key="action.name"
                       @click="addAction(state.event, action)"
                     >
@@ -146,12 +146,12 @@
               <template #overlay>
                 <Menu :forceSubMenuRender="true">
                   <SubMenu
-                    v-for="group in eventActionGroups.filter(group => eventActions.some((i) => i.group == group.value))"
+                    v-for="group in eventActionGroups.filter(group => getEventActions.some((i) => i.group == group.value))"
                     :key="group.value"
                     :title="group.label"
                   >
                     <MenuItem
-                      v-for="action in eventActions.filter((i) => i.group == group.value)"
+                      v-for="action in getEventActions.filter((i) => i.group == group.value)"
                       :key="action.name"
                       @click="addElseAction(state.event, action)"
                     >
@@ -172,9 +172,9 @@
 import { computed, nextTick, PropType, reactive, toRaw, watch } from 'vue';
 import { state as eventState, service as eventService } from '@/modules/event-module';
 import { AppEvent, AppEventAction, AppEventTrigger } from '@/modules/event-module/@types';
-import { eventTriggers, eventTriggerGroups } from '@/modules/event-module/data/event-trigger';
+import { eventTriggerGroups, getEventTriggers } from '@/modules/event-module/data/event-trigger';
 import { createModelId } from '@/tools/common';
-import { eventActions, eventActionGroups } from '@/modules/event-module/data/event-action';
+import { getEventActions, eventActionGroups } from '@/modules/event-module/data/event-action';
 import EventFormatEditor from './EventFormatEditor.vue';
 import { Button, Dropdown, Input, Menu, MenuItem, message, Modal, Select, SelectOption, SubMenu, Tooltip } from 'ant-design-vue';
 import { DeleteOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons-vue';
@@ -207,7 +207,7 @@ const state = reactive({
 
 const triggerGroups = computed(() => {
   return eventTriggerGroups.filter(group => {
-    return eventTriggers.some((i) => i.group == group.value && i.isGlobal === props.isGlobal);
+    return getEventTriggers.value.some((i) => i.group == group.value && i.isGlobal === props.isGlobal);
   });
 });
 

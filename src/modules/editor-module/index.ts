@@ -1,18 +1,19 @@
-import { reactive, computed } from 'vue';
+import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@/lib/clone';
 import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig } from '@/@types';
 import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@/@types/enum';
 import bus from '@/tools/bus';
-import { initComponents } from '@/data/form-components';
+import { getComponents } from '@/data/form-components';
 import { initRemoteDevices } from '@/data/form-devices';
-import { initPropertyEditors } from '../../data/property-editor';
-import { menuComponentItems } from '../../data/menu-component-items';
+import { getEditors } from '../../data/property-editor';
+import { getMenuComponentItems } from '../../data/menu-component-items';
 import { state as configState, service as configService } from '@/common/config-module';
 import { state as eventState, service as eventService } from '@/modules/event-module';
 import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService } from '@/modules/form-fill-module';
 import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { state as historyState, service as historyService } from '@/common/history-module';
+import { service as pluginModule } from '@/modules/plugin-module';
 import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/common';
 import { addQuestionary, saveQuestionary } from "@/api/common/questionnaire";
 import { AppPage } from '@/@types/app-page';
@@ -104,9 +105,9 @@ export const state = reactive({
   /** 【题目页】上一次分页索引 */
   prevFormPageIndex: 0,
   /** 画板 */
-  canvasEl: {} as any,
+  canvasEl: {} as HTMLElement,
   /** 画板主面板元素 */
-  canvasPanelEl: {} as any,
+  canvasPanelEl: {} as HTMLElement,
   /** 页面列表 */
   pages: [
     { pageTitle: '主页', pageType: PageType.normalPage, children: [] },
@@ -133,9 +134,9 @@ export const state = reactive({
   /** 控件画布 */
   componentCanvas : {} as any,
   /** 工具箱列表 */
-  menuComponents: menuComponentItems,
+  menuComponents: getMenuComponentItems,
   /** 组件列表 */
-  componentList: initComponents() as Component[],
+  componentList: getComponents,
   /** 游标父元素 */
   componentCursorParentEl: undefined as any,
   /** 游标父元素前后位置 */
@@ -147,7 +148,7 @@ export const state = reactive({
   /** 设备类型列表 */
   devices: initRemoteDevices() as Record<string, RemoteDevice>,
   /** 属性编辑器库 */
-  propertyEditors: initPropertyEditors() as Record<string, PropertyEditor>,
+  propertyEditors: getEditors,
   /** Footer Dom */
   footerDom: undefined as HTMLElement | undefined,
   /** 获取计时配置 */
@@ -383,6 +384,11 @@ export const service = {
       globalState.isMobile = true;
     }
     configService.init();
+    nextTick(() => {
+      state.canvasPanelEl = document.querySelector('.form-canvas')!;
+      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      pluginModule.onAppLoad();
+    });
   },
   /** 初始化课件 */
   initFormByCourseware(form?: any, formId?: string, appConfig?: Record<string, any>) {
@@ -460,8 +466,8 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas');
-      state.canvasEl = document.querySelector('.design-form-canvas');
+      state.canvasPanelEl = document.querySelector('.form-canvas')!;
+      state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
     }, 50);
     service.init();
@@ -541,8 +547,8 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas');
-      state.canvasEl = document.querySelector('.design-form-canvas');
+      state.canvasPanelEl = document.querySelector('.form-canvas')!;
+      state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
     }, 50);
     service.init();
@@ -670,8 +676,8 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas');
-      state.canvasEl = document.querySelector('.design-form-canvas');
+      state.canvasPanelEl = document.querySelector('.form-canvas')!;
+      state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
     }, 50);
     service.init();
@@ -842,8 +848,8 @@ export const service = {
   /** 页面重绘 */
   refresh() {
     if (!state.canvasPanelEl) return;
-    state.canvasPanelEl = document.querySelector('.form-canvas');
-    state.canvasEl = document.querySelector('.design-form-canvas');
+    state.canvasPanelEl = document.querySelector('.form-canvas')!;
+    state.canvasEl = document.querySelector('.design-form-canvas')!;
     const { y, x } = state.canvasPanelEl.getBoundingClientRect();
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;
@@ -875,7 +881,7 @@ export const service = {
   },
   /** 根据Id获取表单控件（默认获取编辑模式主画板下组件） */
   getComponentElementById(componentId?: string, canvasEl?: HTMLElement): HTMLElement | undefined {
-    return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector(`[component-id="${componentId}"]`) : undefined;
+    return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector<HTMLElement>(`[component-id="${componentId}"]`) ?? undefined : undefined;
   },
   /** 显示或隐藏游标 */
   changeComponentCursor(component: HTMLElement | undefined | false, isAfter: boolean = false, isInner: boolean = true) {

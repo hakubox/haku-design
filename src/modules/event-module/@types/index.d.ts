@@ -79,7 +79,7 @@ export interface AppEventTrigger {
   /** 触发名称/类型 */
   name: string;
   /** 事件触发类型 */
-  type: EventTriggerType;
+  type: EventTriggerType | string;
   /** 事件分组 */
   group: EventTriggerGroup;
   /** 包含状态 */

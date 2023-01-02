@@ -1,5 +1,5 @@
 import { watch, reactive, computed, ConcreteComponent } from 'vue';
-import { Config } from '@/@types/config';
+import { GlobalConfig } from '@/@types/config';
 import { service as historyService } from '@/common/history-module';
 import { state as editorState } from '@/modules/editor-module';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
@@ -24,7 +24,7 @@ export const state = reactive({
     showWelcome: true,
     prevSaveTime: 0,
     showAttaProps: false,
-  } as Config,
+  } as GlobalConfig & Record<string, any>,
   /** 自动保存计时器 */
   autoSaveTimer: undefined as undefined | number,
   /** 最后一次保存记录 */

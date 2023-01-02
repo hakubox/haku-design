@@ -1,7 +1,7 @@
 import type { RouteParams, RouteRecordName } from 'vue-router';
 
-/** 设置 */
-export interface Config {
+/** 全局设置 */
+export interface GlobalConfig {
   /** 操作模式（normal普通模式 / advanced高级模式 / engineering工程模式 */
   proMode: 'easy' | 'normal' | 'advanced' | 'engineering';
   /** 是否显示欢迎界面 */

@@ -3,6 +3,7 @@ import { state as editorState } from '@/modules/editor-module';
 import { ComponentPropertyEditor, PageType } from '@/@types/enum';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { EventTriggerGroup, EventTriggerType } from '../enum';
+import { computed } from 'vue';
 
 /** 事件触发分组 */
 export const eventTriggerGroups: { label: string; value: EventTriggerGroup }[] = [
@@ -14,6 +15,11 @@ export const eventTriggerGroups: { label: string; value: EventTriggerGroup }[] =
   { label: '系统', value: EventTriggerGroup.system },
   { label: '音视频', value: EventTriggerGroup.media },
 ];
+
+/** 获取所有事件触发 */
+export let getEventTriggers = computed<AppEventTrigger[]>(() => {
+  return eventTriggers;
+});
 
 /** 事件触发 */
 export const eventTriggers: AppEventTrigger[] = [

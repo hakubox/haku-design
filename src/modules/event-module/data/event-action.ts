@@ -5,6 +5,7 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { service as variableService } from '@/modules/variable-module';
 import { EventActionGroup } from '../enum';
 import { toast } from '@/common/message';
+import { computed } from 'vue';
 
 /** 事件行为分组 */
 export const eventActionGroups: { label: string; value: EventActionGroup }[] = [
@@ -19,6 +20,11 @@ export const eventActionGroups: { label: string; value: EventActionGroup }[] = [
 
 /** 多媒体组件列表 */
 const mediaComponents = ['q-audio', 'q-video', 'q-anx-audio', 'q-anx-video'];
+
+/** 获取所有事件行为 */
+export let getEventActions = computed<AppEventAction[]>(() => {
+  return eventActions;
+});
 
 /** 事件行为 */
 export const eventActions: AppEventAction[] = [

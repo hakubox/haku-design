@@ -1,6 +1,6 @@
 import type { AppEvent, AppEventLog, TriggerState } from './@types';
-import { eventActions } from '@/modules/event-module/data/event-action';
-import { eventTriggers } from '@/modules/event-module/data/event-trigger';
+import { getEventActions } from '@/modules/event-module/data/event-action';
+import { getEventTriggers } from '@/modules/event-module/data/event-trigger';
 import { EventTriggerType } from './enum';
 import { createModelId } from '@/tools/common';
 import { cloneLoop } from '@/lib/clone';
@@ -79,7 +79,7 @@ export const service = {
             const trigger = event.triggers[o];
             let _re = false;
             if (trigger.hasState) {
-              const _condition = eventTriggers.find((i) => i.type === trigger.type)?.condition;
+              const _condition = getEventTriggers.value.find((i) => i.type === trigger.type)?.condition;
               _re =
                 trigger.type === type &&
                 trigger.target === target &&
@@ -135,7 +135,7 @@ export const service = {
   /** 直接触发事件 */
   executeEvent(event: AppEvent, triggerType: EventTriggerType, triggerTarget: string | 'global' = 'global', triggerIds: string[] = [], isElseAction: boolean = false, extraData?: Record<string, any>, addLog: boolean = true) {
     (isElseAction ? event.elseActions : event.actions).forEach((o) => {
-      const _action = eventActions.find((i) => i.name === o.name);
+      const _action = getEventActions.value.find((i) => i.name === o.name);
       if (_action) {
         _action.action(o.attrs, o, extraData);
         service.eventHook(_action.name, o.target, o.attrs);

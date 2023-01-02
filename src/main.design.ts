@@ -29,6 +29,11 @@ import FormulaEditor from '@/modules/formula-module/components/formula-editor/Fo
 import ConfigDialog from '@/components/module/ConfigDialog.vue';
 import packageInfo from '../package.json';
 import { init } from '@/lib/monitor';
+import { service as pluginModule } from '@/modules/plugin-module';
+// import { registerTestPlugin } from '@/plugin/test-plugin';
+// import { registerLogoComponent } from '@/plugin/logo-component-plugin';
+// import { registerImageEditor } from '@/plugin/image-editor-plugin';
+// import { registerImageLoadedEventTrigger } from '@/plugin/image-loaded-event-trigger';
 
 import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
 import 'monaco-editor/esm/vs/basic-languages/less/less.contribution'
@@ -111,3 +116,11 @@ app.config.globalProperties.$message = message;
 app.config.globalProperties.$packageInfo = packageInfo;
 
 app.use(Vant).use(router).mount('#app');
+
+// 加载测试插件
+// registerTestPlugin();
+// registerLogoComponent();
+// registerImageEditor();
+// registerImageLoadedEventTrigger();
+
+pluginModule.onInit();

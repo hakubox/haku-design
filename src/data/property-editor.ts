@@ -1,11 +1,12 @@
 import { icons } from '@/data/icon-editor';
 import { PropertyEditor, SetPartial } from '@/@types';
 import { ComponentPropertyEditor } from '@/@types/enum';
+import { watch, computed } from 'vue';
 
-type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
+export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
 
 /** 属性编辑器 */
-const propertyEditors: Array<InitPropertyEditor> = [
+export const propertyEditors: Array<InitPropertyEditor> = [
   {
     name: 'any',
     description: '任意',
@@ -367,6 +368,11 @@ const propertyEditors: Array<InitPropertyEditor> = [
     editor: ComponentPropertyEditor.dimension,
   },
 ];
+
+/** 获取所有编辑器 */
+export let getEditors = computed<Record<string, PropertyEditor>>(() => {
+  return initPropertyEditors();
+});
 
 export function initPropertyEditors(): Record<string, PropertyEditor> {
   const _propertyEditors = propertyEditors.map((i) => ({

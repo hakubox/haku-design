@@ -1,6 +1,7 @@
 import { Component, ComponentProperty, LayoutConfig, SetPartial } from "@/@types";
-import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment, PageType } from '@/@types/enum';
+import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment } from '@/@types/enum';
 import { createModelId } from "@/tools/common";
+import { watch, computed } from 'vue';
 
 type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component'>;
 
@@ -1916,6 +1917,11 @@ export let formComponents: InitComponent[] = [
     ]
   },
 ];
+
+/** 获取所有组件 */
+export let getComponents = computed<InitComponent[]>(() => {
+  return initComponents();
+});
 
 export function initComponents(componentList?: InitComponent[]): InitComponent[] {
   if (!componentList) {

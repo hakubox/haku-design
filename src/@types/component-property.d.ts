@@ -29,7 +29,7 @@ export declare class ComponentProperty {
   /** 属性描述 */
   description?: string;
   /** 编辑器 */
-  editor: ComponentPropertyEditor;
+  editor: ComponentPropertyEditor | string;
   /** 修改属性 */
   change?(
     prop: ComponentProperty,
