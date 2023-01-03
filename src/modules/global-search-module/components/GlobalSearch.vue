@@ -125,11 +125,29 @@
           </ul>
           <!-- 详情页标题 -->
           <div class="global-search-result-detail-title">
+            <Tag v-for="tag in state.currentItem?.tags" :color="typeof tag.color === 'function' ? tag.color() : tag.color">
+              {{ typeof tag.label === 'function' ? tag.label() : tag.label }}
+            </Tag>
             <template v-for="(fragment, i) in txtSplit(state.currentItem?.title)">
               <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
                 {{ fragment }}
               </span>
               <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment }}</span>
+            </template>
+          </div>
+          <!-- 详情页操作箱 -->
+          <div class="global-search-result-detail-actions" v-show="state.currentItem?.actions">
+            <template v-for="(action, i) in state.currentItem?.actions">
+              <Popconfirm
+                v-if="action.confirm"
+                :title="action.confirm(action)"
+                @confirm="action.action"
+                okText="确认"
+                cancelText="取消"
+              >
+                <Button :type="(action.type as any)">{{ action.label(action) }}</Button>
+              </Popconfirm>
+              <Button v-else :type="(action.type as any)" @click="action.action">{{ action.label(action) }}</Button>
             </template>
           </div>
           <!-- 详情页内容 -->
@@ -188,7 +206,7 @@ import type { GlobalSearchGroupInstance, GlobalSearchItem, GlobalSearchItemCrumb
 import { state as globalSearchState, service as globalSearchService } from '../';
 import { service as hotkeyService } from '@/modules/hotkey-module';
 import { throttle } from '@/tools/common';
-import { Empty, message } from 'ant-design-vue';
+import { Button, Empty, Popconfirm, Tag, message } from 'ant-design-vue';
 import { computed } from '@vue/reactivity';
 
 /** 全局搜索状态管理 */
@@ -893,9 +911,29 @@ onUnmounted(() => {
         }
 
         > .global-search-result-detail-title {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
           font-size: 24px;
           font-weight: 700;
-          margin-bottom: 30px;
+          margin-bottom: 20px;
+          text-align: center;
+
+          > .ant-tag {
+            font-weight: normal;
+            margin-right: 10px;
+            font-size: 12px;
+          }
+        }
+
+        > .global-search-result-detail-actions {
+          display: block;
+          width: 100%;
+          margin-top: 0px;
+          margin-bottom: 20px;
+          text-align: left;
         }
 
         > .global-search-result-detail-description {

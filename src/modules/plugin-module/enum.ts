@@ -4,15 +4,15 @@ export enum PluginType {
   /** 工具栏组件 */
   component = 'component',
   /** 事件触发 */
-  eventTrigger = 'event-trigger',
+  eventTrigger = 'eventTrigger',
   /** 事件行为 */
-  eventAction = 'event-action',
+  eventAction = 'eventAction',
   /** 配置 */
   config = 'config',
   /** 菜单工具栏 */
-  menuComponentItem = 'menu-component-item',
+  menuComponentItem = 'menuComponentItem',
   /** 基础插件 */
-  basicPlugin = 'basic-plugin',
+  basicPlugin = 'basicPlugin',
 }
 
 /** 插件状态 */

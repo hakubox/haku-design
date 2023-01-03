@@ -10,7 +10,6 @@ export async function registerPlugin(plugin: PluginConfig) {
   const _plugin: PluginInstance = {
     ...plugin,
     id: createModelId(6),
-    icon: plugin.icon ?? 'iconfont icon-plugin',
     registerDate: Date.now(),
     status: PluginStatus.unInit,
     isEnable: true,

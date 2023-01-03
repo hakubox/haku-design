@@ -43,7 +43,6 @@ const quickCrumbs = {
 
 /** 获取所有搜索项 */
 export const getSearchItems = computed<GlobalSearchItem[]>(() => {
-  console.log('pluginSearchItems.value', pluginSearchItems.value);
   return [
     ...fixedSearchItems.value,
     ...pluginSearchItems.value,
@@ -58,14 +57,33 @@ export const pluginSearchItems = computed<GlobalSearchItem[]>(() => {
     crumbs: [
       quickCrumbs.plugin,
       {
+        label: `${pluginState.typeCategorys[i.pluginType].label}`,
+        icon: `${pluginState.typeCategorys[i.pluginType].icon}`,
+      },
+      {
         label: i.title,
         icon: i.icon,
       },
     ],
     goto: () => {
-      toast(`插件${i.title}已安装`);
+      toast(`插件${i.title}已安装，将跳转到插件详情`);
+      console.error(`:> 插件详情页未实装`);
     },
     description: i.description,
+    tags: [
+      {
+        label: () => i.isEnable ? '已安装' : '未安装',
+        color: () => i.isEnable ? 'green' : 'red',
+      }
+    ],
+    actions: [
+      {
+        type: 'primary',
+        label: () => i.isEnable ? '卸载插件' : '注册插件',
+        confirm: () => i.isEnable ? `是否确认卸载「${i.title}」插件？` : `是否确认注册「${i.title}」插件？`,
+        action: () => pluginService.togglePlugin(i)
+      },
+    ]
   }));
 });
 

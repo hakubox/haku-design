@@ -11,7 +11,6 @@ export function registerEventTrigger(plugin: PluginConfig, trigger: AppEventTrig
     ...plugin,
     name: trigger.name,
     title: trigger.title,
-    icon: plugin.icon ?? 'iconfont icon-rule',
     pluginType: PluginType.eventTrigger,
   });
   eventTriggers.push(trigger);
@@ -23,7 +22,6 @@ export function registerEventAction(plugin: PluginConfig, action: AppEventAction
     ...plugin,
     name: action.name,
     title: action.title,
-    icon: plugin.icon ?? 'iconfont icon-rule',
     pluginType: PluginType.eventAction,
   });
   eventActions.push(action);

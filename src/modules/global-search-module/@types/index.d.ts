@@ -19,8 +19,12 @@ export interface GlobalSearchItem {
   id?: string;
   /** 分组 */
   group: GlobalSearchGroup;
+  /** 相关标签（参考antd/tag组件） */
+  tags?: { label: string | (() => string), color: string | (() => string) }[];
   /** 标题 */
   title: string;
+  /** 操作项（按钮列表） */
+  actions?: GlobalSearchItemAction[];
   /** 面包屑 */
   crumbs: GlobalSearchItemCrumb[];
   /** 跳转（暂定） */
@@ -43,4 +47,18 @@ export interface GlobalSearchItemCrumb {
   tooltip?: string;
   /** 跳转（暂定） */
   goto?: Function;
+}
+
+/** 全局搜索项面包屑 */
+export interface GlobalSearchItemAction {
+  /** 按钮类型（外观，参考antd/button组件） */
+  type: 'link' | 'primary' | 'default' | ((val: any) => 'link' | 'primary' | 'default');
+  /** 标签 */
+  label: (val: any) => string;
+  /** 图标 */
+  icon?: string;
+  /** 操作确认提示文本 */
+  confirm?: (val: any) => string;
+  /** 操作函数 */
+  action: Function;
 }

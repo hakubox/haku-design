@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import { PluginInstance } from './@types';
 import message from '@/common/message';
-import { PluginStatus } from './enum';
+import { PluginType, PluginStatus } from './enum';
 
 export type { PluginConfig } from './@types';
 export { PluginType, PluginStatus, PluginLoadType } from './enum';
@@ -12,6 +12,45 @@ export { registerEventTrigger, registerEventAction } from './register-event';
 
 /** 插件模块状态 */
 export const state = reactive({
+  /** 获取插件分类信息 */
+  typeCategorys: {
+    /** 工具栏组件 */
+    component: {
+      name: 'component',
+      label: '工具栏组件',
+      icon: 'iconfont icon-box3',
+    },
+    /** 事件触发 */
+    eventTrigger: {
+      name: 'event-trigger',
+      label: '事件触发',
+      icon: 'iconfont icon-rule',
+    },
+    /** 事件行为 */
+    eventAction: {
+      name: 'event-action',
+      label: '事件行为',
+      icon: 'iconfont icon-rule',
+    },
+    /** 配置 */
+    config: {
+      name: 'config',
+      label: '配置',
+      icon: 'iconfont icon-box3',
+    },
+    /** 菜单工具栏 */
+    menuComponentItem: {
+      name: 'menu-component-item',
+      label: '菜单工具栏',
+      icon: 'iconfont icon-box3',
+    },
+    /** 基础插件 */
+    basicPlugin: {
+      name: 'basic-plugin',
+      label: '基础插件',
+      icon: 'iconfont icon-plugin'
+    },
+  } as Record<string, { name: string, label: string, icon: string }>,
   /** 插件列表 */
   plugins: [] as PluginInstance[],
   /** 当前状态 */
@@ -42,6 +81,15 @@ export const service = {
       message.toast('插件加载错误');
       console.error('插件加载错误', err);
     }
+  },
+  /** 开启/关闭插件 */
+  togglePlugin(plugin: PluginInstance) {
+    if (plugin.isEnable) {
+      message.toast('插件已关闭');
+    } else if (!plugin.isEnable) {
+      message.toast('插件已开启');
+    }
+    plugin.isEnable = !plugin.isEnable;
   },
   /** 校验插件 */
   checkPlugin(plugin: PluginInstance): { isSuccess: boolean, errorContent?: string } {

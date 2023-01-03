@@ -9,7 +9,6 @@ export function registerEditor(plugin: PluginConfig, editor: InitPropertyEditor)
     ...plugin,
     name: editor.name,
     title: editor.description,
-    icon: 'iconfont icon-box2',
     pluginType: PluginType.menuComponentItem,
   });
   propertyEditors.push(editor);

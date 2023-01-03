@@ -11,7 +11,7 @@ export function registerComponent(plugin: PluginConfig, component: InitComponent
     ...plugin,
     name: component.name,
     title: component.title,
-    icon: plugin?.icon ?? menu?.icon ?? 'iconfont icon-box3',
+    icon: plugin?.icon ?? menu?.icon,
     pluginType: PluginType.component,
   });
   formComponents.push(component);
@@ -21,7 +21,7 @@ export function registerComponent(plugin: PluginConfig, component: InitComponent
       parent: `${menu.name}`,
       name: `${menu.name}`,
       title: `${menu.title}`,
-      icon: menu.icon ?? 'iconfont icon-box3',
+      icon: menu.icon,
       pluginType: PluginType.menuComponentItem,
     });
     menuComponentItems.push(menu);
@@ -34,7 +34,7 @@ export function registerMenu(plugin: PluginConfig, menu: ToolComponentItem) {
     ...plugin,
     name: menu.name,
     title: menu.title,
-    icon: menu.icon ?? 'iconfont icon-box3',
+    icon: menu.icon,
     pluginType: PluginType.menuComponentItem,
   });
   menuComponentItems.push(menu);
