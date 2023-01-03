@@ -3,10 +3,11 @@ import { timeout } from '@/tools/common';
 import { computed, ConcreteComponent, reactive } from 'vue';
 import type { GlobalSearchGroupInstance, GlobalSearchItem } from './@types';
 import GlobalSearchVue from './components/GlobalSearch.vue';
-import { searchItems } from './data/search-items';
+import { getSearchItems } from './data/search-items';
 import { service as hotkeyService } from '@/modules/hotkey-module';
 
-let container;
+/** 组件DOM */
+let _container;
 
 /** 全局搜索模块状态 */
 export const state = reactive({
@@ -27,6 +28,7 @@ export const state = reactive({
     { name: 'theme', title: '主题', icon: 'iconfont icon-theme' },
     { name: 'variable', title: '变量', icon: 'iconfont icon-code1' },
     { name: 'config', title: '配置项', icon: 'iconfont icon-config2' }, // icon-rule / icon-zidingyi
+    { name: 'plugin', title: '插件', icon: 'iconfont icon-plugin' },
   ] as GlobalSearchGroupInstance[],
   /** 查询历史 */
   searchHistory: [] as string[],
@@ -51,11 +53,11 @@ export const service = {
     if (!_txt.trim()?.length) state.resultList = [];
     else {
       await timeout(300);
-      state.resultList = searchItems.filter((item) => {
-        if (item.title.includes(_txt)) return true;
-        else if (item.crumbs.some(crumb => crumb.label.includes(_txt))) return true;
-        else if (item.description?.includes(_txt)) return true;
-        else if (item.alias?.some(alias => alias.includes(_txt))) return true;
+      state.resultList = getSearchItems.value.filter((item) => {
+        if (item.title.toLowerCase().includes(_txt.toLowerCase())) return true;
+        else if (item.crumbs.some(crumb => crumb.label.toLowerCase().includes(_txt.toLowerCase()))) return true;
+        else if (item.description?.toLowerCase().includes(_txt.toLowerCase())) return true;
+        else if (item.alias?.some(alias => alias.toLowerCase().includes(_txt.toLowerCase()))) return true;
         return false;
       });
     }
@@ -66,18 +68,18 @@ export const service = {
     state.resultList = [];
   },
   open() {
-    container = loadComponent(GlobalSearchVue as ConcreteComponent, {
+    _container = loadComponent(GlobalSearchVue as ConcreteComponent, {
       onClose() {
-        destoryComponent(container);
-        container = undefined;
+        destoryComponent(_container);
+        _container = undefined;
       },
     }).dom;
     state.isOpen = true;
   },
   close() {
     state.isOpen = false;
-    destoryComponent(container);
-    container = undefined;
+    destoryComponent(_container);
+    _container = undefined;
     service.clearList();
   },
   /** 标记组件 */

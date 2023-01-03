@@ -1,7 +1,7 @@
 
 
 /** 搜索项分组 */
-export type GlobalSearchGroup = 'guide' | 'function' | 'config' | 'components' | 'event' | 'theme' | 'variable';
+export type GlobalSearchGroup = 'guide' | 'function' | 'config' | 'components' | 'event' | 'theme' | 'variable' | 'plugin';
 
 /** 搜索项分组实例 */
 export interface GlobalSearchGroupInstance {
@@ -37,6 +37,8 @@ export interface GlobalSearchItem {
 export interface GlobalSearchItemCrumb {
   /** 标签 */
   label: string;
+  /** 图标 */
+  icon?: string;
   /** 提示 */
   tooltip?: string;
   /** 跳转（暂定） */

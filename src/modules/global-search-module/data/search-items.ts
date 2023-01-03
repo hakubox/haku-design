@@ -3,6 +3,9 @@ import { state as configState, service as configService } from '@/common/config-
 import { service as globalSearchService } from '@/modules/global-search-module';
 import type { GlobalSearchItem } from "../@types";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as pluginState, service as pluginService } from '@/modules/plugin-module';
+import { toast } from '@/common/message';
+import { computed, ref } from "vue";
 
 /** 快速面包屑列表 */
 const quickCrumbs = {
@@ -19,6 +22,10 @@ const quickCrumbs = {
     label: '预览',
     goto: () => editorState.isPreview = true
   },
+  plugin: {
+    label: '插件',
+    icon: 'iconfont icon-plugin',
+  },
   config: {
     label: '设置',
     tooltip: '打开设置界面',
@@ -34,8 +41,36 @@ const quickCrumbs = {
   })
 };
 
+/** 获取所有搜索项 */
+export const getSearchItems = computed<GlobalSearchItem[]>(() => {
+  console.log('pluginSearchItems.value', pluginSearchItems.value);
+  return [
+    ...fixedSearchItems.value,
+    ...pluginSearchItems.value,
+  ];
+});
+
+/** 插件搜索项 */
+export const pluginSearchItems = computed<GlobalSearchItem[]>(() => {
+  return pluginState.plugins.map(i => ({
+    title: i.title,
+    group: 'plugin',
+    crumbs: [
+      quickCrumbs.plugin,
+      {
+        label: i.title,
+        icon: i.icon,
+      },
+    ],
+    goto: () => {
+      toast(`插件${i.title}已安装`);
+    },
+    description: i.description,
+  }));
+});
+
 /** 固定搜索项 */
-export const searchItems: GlobalSearchItem[] = ([
+export const fixedSearchItems = ref<GlobalSearchItem[]>([
   {
     title: '打开问卷预览',
     group: 'function',

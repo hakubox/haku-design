@@ -85,6 +85,7 @@
                       :class="{ disabled: !crumb.goto }"
                       @click="clickCrumb(crumb)"
                     >
+                      <i class="crumb-item-icon" v-if="crumbIndex > 0 && crumb.icon" :class="crumb.icon"></i>
                       <template v-for="(fragment, i) in txtSplit(crumb.label)">
                         <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
                           {{ fragment }}
@@ -113,6 +114,7 @@
               :class="{ disabled: !crumb.goto }"
               @click="clickCrumb(crumb)"
             >
+              <i class="crumb-item-icon" v-if="crumbIndex > 0 && crumb.icon" :class="crumb.icon"></i>
               <template v-for="(fragment, i) in txtSplit(crumb.label)">
                 <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
                   {{ fragment }}
@@ -699,6 +701,10 @@ onUnmounted(() => {
 
                     > li {
 
+                      > .crumb-item-icon {
+                        color: white !important;
+                      }
+
                       > span {
                         color: white !important;
                       }
@@ -753,6 +759,12 @@ onUnmounted(() => {
                     white-space: nowrap;
                     font-size: 12px;
                     transition: 0.2s;
+
+                    > .crumb-item-icon {
+                      color: #777aaf;
+                      margin-right: 2px;
+                      transition: 0.2s;
+                    }
 
                     > span {
                       color: #777aaf;
@@ -842,6 +854,11 @@ onUnmounted(() => {
             font-size: 12px;
             transition: 0.2s;
 
+            > .crumb-item-icon {
+              color: #777aaf;
+              margin-right: 2px;
+            }
+
             > span {
               color: #777aaf;
               transition: 0.2s;
@@ -849,6 +866,10 @@ onUnmounted(() => {
 
             &.disabled {
               cursor: default;
+
+              > .crumb-item-icon {
+                color: #ababab;
+              }
 
               > span {
                 color: #ababab;

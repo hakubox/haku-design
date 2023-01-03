@@ -3,7 +3,7 @@ import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyG
 import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
 
-type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component'>;
+export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component'>;
 
 export let formComponents: InitComponent[] = [
 
