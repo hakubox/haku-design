@@ -1,8 +1,16 @@
 import { PluginLoadType, PluginStatus, PluginType } from '../enum';
 import { VarType } from './enum';
 
-/** 插件配置 */
-export interface PluginConfig {
+/** 插件依赖项 */
+export interface PluginDependency {
+  /** 插件名称 */
+  pluginName: string;
+  /** 版本号 */
+  version: string;
+}
+
+/** 插件基本配置信息 */
+export interface PluginInfo {
   /** 关联父级插件 */
   parent?: string;
   /** 插件名称 */
@@ -21,6 +29,12 @@ export interface PluginConfig {
   icon?: string;
   /** 插件类型 */
   pluginType: PluginType;
+  /** 是否已过期/弃用 */
+  deprecated?: boolean;
+  /** 依赖项 */
+  dependencies?: { pluginName: string, version: string }[];
+  /** 内核（设计器）版本 */
+  coreVersion?: string;
   /** 注册 */
   register?: (() => void) | (() => Promise<void>);
   /** 取消注册 */
@@ -30,7 +44,7 @@ export interface PluginConfig {
 }
 
 /** 插件实例 */
-export interface PluginInstance extends PluginConfig {
+export interface PluginInstance extends PluginInfo {
   /** 插件Id */
   id: string;
   /** 注册时间（时间戳） */

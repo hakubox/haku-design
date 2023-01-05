@@ -9,6 +9,7 @@ export function registerTestPlugin() {
     name: 'test-plugin',
     title: '测试插件',
     version: '0.0.1',
+    author: 'haku',
     description: '测试用插件，用于在界面中展示一些内容',
     pluginType: PluginType.basicPlugin,
     async onloadApp() {

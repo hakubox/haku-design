@@ -2,26 +2,26 @@ import type { AppEventAction, AppEventTrigger } from '../event-module/@types';
 import { eventTriggers } from '../event-module/data/event-trigger';
 import { eventActions } from '../event-module/data/event-action';
 import { registerPlugin } from './register-plugin';
-import { PluginConfig } from './@types';
+import { PluginInfo } from './@types';
 import { PluginLoadType, PluginType } from './enum';
 
 /** 注册事件触发 */
-export function registerEventTrigger(plugin: PluginConfig, trigger: AppEventTrigger) {
+export function registerEventTrigger(plugin: PluginInfo, trigger: AppEventTrigger) {
   registerPlugin({
     ...plugin,
     name: trigger.name,
-    title: trigger.title,
+    title: plugin.title ?? trigger.title,
     pluginType: PluginType.eventTrigger,
   });
   eventTriggers.push(trigger);
 }
 
 /** 注册事件行为 */
-export function registerEventAction(plugin: PluginConfig, action: AppEventAction) {
+export function registerEventAction(plugin: PluginInfo, action: AppEventAction) {
   registerPlugin({
     ...plugin,
     name: action.name,
-    title: action.title,
+    title: plugin.title ?? action.title,
     pluginType: PluginType.eventAction,
   });
   eventActions.push(action);

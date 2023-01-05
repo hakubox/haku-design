@@ -74,14 +74,18 @@ export const pluginSearchItems = computed<GlobalSearchItem[]>(() => {
       {
         label: () => i.isEnable ? '已安装' : '未安装',
         color: () => i.isEnable ? 'green' : 'red',
+      }, {
+        label: () => i.version,
+        color: '#108ee9',
       }
     ],
     actions: [
       {
         type: 'primary',
+        danger:  () => i.isEnable,
         label: () => i.isEnable ? '卸载插件' : '注册插件',
         confirm: () => i.isEnable ? `是否确认卸载「${i.title}」插件？` : `是否确认注册「${i.title}」插件？`,
-        action: () => pluginService.togglePlugin(i)
+        action: () => pluginService.togglePlugin(i, !i.isEnable)
       },
     ]
   }));

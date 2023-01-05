@@ -54,11 +54,13 @@ export interface GlobalSearchItemAction {
   /** 按钮类型（外观，参考antd/button组件） */
   type: 'link' | 'primary' | 'default' | ((val: any) => 'link' | 'primary' | 'default');
   /** 标签 */
-  label: (val: any) => string;
+  label: string | ((val: any) => string);
+  /** 是否为警告按钮 */
+  danger?: boolean | ((val: any) => boolean);
   /** 图标 */
   icon?: string;
   /** 操作确认提示文本 */
-  confirm?: (val: any) => string;
+  confirm?: string | ((val: any) => string);
   /** 操作函数 */
   action: Function;
 }

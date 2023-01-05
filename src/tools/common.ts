@@ -12,6 +12,36 @@ export const getQBasicProps = (props: Record<string, any>) => {
   return _props;
 };
 
+/**
+ * NPM版本号对比，前版本号是否大于后版本号
+ * 
+ * @example
+ * 
+ *  // 将返回false
+ *  compareVersion('1.1', '1.2')
+ */
+export function compareVersion(
+  curV: string,
+  reqV: string
+): boolean {
+  if (!curV || !reqV) {
+    throw new Error('对比的版本号不能为空');
+  }
+  // 将两个版本号拆成数字
+  const arr1 = curV.split('.');
+  const arr2 = reqV.split('.');
+  const minLength = Math.min(arr1.length, arr2.length);
+  let position = 0;
+  let diff = 0;
+  //依次比较版本号每一位大小，当对比得出结果后跳出循环（后文有简单介绍）
+  while(position < minLength && ((diff = parseInt(arr1[position]) - parseInt(arr2[position])) == 0)) {
+    position++;
+  }
+  diff = (diff != 0) ? diff : (arr1.length - arr2.length);
+  //若curV大于reqV，则返回true
+  return diff > 0;
+}
+
 /** 对比函数（不对比减少项） */
 export function diffNode(oldNodes: Record<string, any>[], newNodes: Record<string, any>[], {
   childField,

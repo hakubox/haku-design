@@ -1,9 +1,10 @@
-import { reactive } from 'vue';
-import { PluginInstance } from './@types';
+import { reactive, computed } from 'vue';
+import { PluginInstance, PluginDependency } from './@types';
 import message from '@/common/message';
 import { PluginType, PluginStatus } from './enum';
+import { compareVersion } from '@/tools/common';
 
-export type { PluginConfig } from './@types';
+export type { PluginInfo, PluginDependency } from './@types';
 export { PluginType, PluginStatus, PluginLoadType } from './enum';
 export { registerPlugin } from './register-plugin';
 export { registerComponent, registerMenu } from './register-component';
@@ -59,6 +60,19 @@ export const state = reactive({
 
 /** 插件模块逻辑 */
 export const service = {
+  /** 获取所有依赖项 */
+  getAllDependencies(): PluginDependency[] {
+    const _dependencies = state.plugins.map(plugin => plugin.dependencies ?? ([] as PluginDependency[]));
+    return ([] as PluginDependency[]).concat.apply([], _dependencies);
+  },
+  /** 远程获取插件被依赖项 */
+  async getDependenciesByPlugin(pluginName: string): Promise<PluginDependency[]> {
+    throw new Error('功能未完成');
+  },
+  /** 远程获取插件被依赖项 */
+  async getDependentsByPlugin(pluginName: string): Promise<PluginDependency[]> {
+    throw new Error('功能未完成');
+  },
   /** 整体插件模块初始化 */
   async onInit() {
     try {
@@ -66,8 +80,8 @@ export const service = {
       for await (const plugin of state.plugins) {
         const checkResult = this.checkPlugin(plugin);
         if (!checkResult.isSuccess) {
-          message.toast(`插件加载错误, 错误原因：${checkResult?.errorContent}`);
-          console.error(`插件加载错误, 错误原因：${checkResult?.errorContent}`);
+          message.toast(`插件加载错误, 错误原因：${checkResult.errorContent}`);
+          console.error(`插件加载错误, 错误原因：${checkResult.errorContent}`);
           plugin.status = PluginStatus.error;
         }
         if (plugin.status === PluginStatus.unInit) {
@@ -82,18 +96,86 @@ export const service = {
       console.error('插件加载错误', err);
     }
   },
-  /** 开启/关闭插件 */
-  togglePlugin(plugin: PluginInstance) {
-    if (plugin.isEnable) {
+  /** 移除插件 */
+  removePlugin(plugin: PluginInstance) {
+    this.disabledPlugin(plugin.name);
+    const _pluginIndex = state.plugins.findIndex(i => i.id === plugin.id);
+    if (_pluginIndex >= 0) {
+      state.plugins.splice(_pluginIndex, 1);
+    }
+  },
+  /** 启用插件 */
+  enablePlugin(pluginName: string) {
+    const _plugin = state.plugins.find(i => i.name === pluginName);
+    if (_plugin) {
+      if (_plugin.isEnable) return;
+      _plugin.dependencies?.forEach(dependenciesPlugin => {
+        this.enablePlugin(dependenciesPlugin.pluginName);
+      });
+      _plugin.register?.();
+      _plugin.isEnable = true;
+    } else {
+      throw new Error(`未查询到插件 [${pluginName}]`);
+    }
+  },
+  /** 禁用插件 */
+  disabledPlugin(pluginName: string) {
+    const _plugin = state.plugins.find(i => i.name === pluginName);
+    if (_plugin) {
+      if (!_plugin.isEnable) return;
+      _plugin.dependencies?.forEach(dependenciesPlugin => {
+        this.disabledPlugin(dependenciesPlugin.pluginName);
+      });
+      _plugin.unRegister?.();
+      _plugin.isEnable = false;
+    } else {
+      throw new Error(`未查询到插件 [${pluginName}]`);
+    }
+  },
+  /** 启用/禁用插件 */
+  togglePlugin(plugin: PluginInstance, enable: boolean) {
+    if (plugin.isEnable === enable) return;
+    if (!enable) {
+      this.disabledPlugin(plugin.name);
       message.toast('插件已关闭');
-    } else if (!plugin.isEnable) {
+    } else {
+      this.enablePlugin(plugin.name);
       message.toast('插件已开启');
     }
-    plugin.isEnable = !plugin.isEnable;
   },
   /** 校验插件 */
-  checkPlugin(plugin: PluginInstance): { isSuccess: boolean, errorContent?: string } {
-    return { isSuccess: true, errorContent: '' };
+  checkPlugin(plugin: PluginInstance) {
+    let _checkResult: { isSuccess: true } | { pluginId: string, isSuccess: false, errorContent: string } = { isSuccess: true };
+
+    /**
+     * 1.   校验插件是否已弃用
+     * 2.   校验所有依赖项是否已安装
+     * 2.1. 校验当前依赖项版本号是否达到要求
+     */
+    if (plugin.deprecated === false) {
+      _checkResult = {
+        pluginId: plugin.id,
+        errorContent: '当前插件已过期或弃用',
+        isSuccess: false
+      };
+    }
+
+    // 后续会收集所有相关依赖项来判断版本号
+    for (let i = 0; i < state.plugins.length; i++) {
+      const _plugin = state.plugins[i];
+      if (_plugin.dependencies) {
+
+      }
+    }
+    if (!compareVersion('99.0.0', plugin.version)) {
+      _checkResult = {
+        pluginId: plugin.id,
+        errorContent: `当前插件版本号[${plugin.version}]过低，请尽快升级`,
+        isSuccess: false
+      };
+    }
+
+    return _checkResult;
   },
   /** APP加载事件 */
   onAppLoad() {

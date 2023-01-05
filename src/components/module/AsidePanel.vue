@@ -88,6 +88,9 @@
 
       <!-- 主题模板菜单 -->
       <ThemeTemplateConfig v-show="state.activeKey === 8"></ThemeTemplateConfig>
+
+      <!-- 插件菜单 -->
+      <PluginConfig v-show="state.activeKey === 9"></PluginConfig>
     </div>
   </div>
 </template>
@@ -105,6 +108,7 @@ import AsideComponentView from '@/components/module/aside-panel/AsideComponentVi
 import HistoryLog from '@/components/module/aside-panel/HistoryLog.vue';
 import HistoryVersionConfig from '@/components/module/aside-panel/HistoryVersionConfig.vue';
 import ThemeTemplateConfig from '@/modules/theme-module/component/ThemeTemplateConfig.vue';
+import PluginConfig from '@/modules/plugin-module/component/PluginConfig.vue';
 import { Button } from 'ant-design-vue';
 
 const state = reactive({
@@ -130,6 +134,7 @@ const state = reactive({
     { key: 6, title: '记录', icon: 'iconfont icon-history-list' },
     { key: 7, title: '版本', icon: 'iconfont icon-guizeyinqing' },
     { key: 8, title: '主题', icon: 'iconfont icon-theme' },
+    { key: 9, title: '插件', icon: 'iconfont icon-plugin' },
   ],
   /** 左侧栏是否展开 */
   asideFold: false,
@@ -145,7 +150,7 @@ const getComponent = (toolitem: ToolComponentItem): Component => {
   if (!component) throw new Error('未查询到对应组件');
   if (toolitem.attrs) {
     Object.entries(toolitem.attrs).forEach(([key, value]) => {
-      component.attrs[key] = value;
+      if (component.attrs) component.attrs[key] = value;
     });
   }
   if (toolitem.answerType) {

@@ -125,9 +125,6 @@
           </ul>
           <!-- 详情页标题 -->
           <div class="global-search-result-detail-title">
-            <Tag v-for="tag in state.currentItem?.tags" :color="typeof tag.color === 'function' ? tag.color() : tag.color">
-              {{ typeof tag.label === 'function' ? tag.label() : tag.label }}
-            </Tag>
             <template v-for="(fragment, i) in txtSplit(state.currentItem?.title)">
               <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
                 {{ fragment }}
@@ -135,19 +132,29 @@
               <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment }}</span>
             </template>
           </div>
+          <div class="global-search-result-detail-tags">
+            <Tag v-for="tag in state.currentItem?.tags" :color="getDyanmicValue(tag.color)">
+              {{ getDyanmicValue(tag.label) }}
+            </Tag>
+          </div>
           <!-- 详情页操作箱 -->
           <div class="global-search-result-detail-actions" v-show="state.currentItem?.actions">
             <template v-for="(action, i) in state.currentItem?.actions">
               <Popconfirm
                 v-if="action.confirm"
-                :title="action.confirm(action)"
+                :title="getDyanmicValue(action?.confirm, action)"
                 @confirm="action.action"
                 okText="确认"
                 cancelText="取消"
               >
-                <Button :type="(action.type as any)">{{ action.label(action) }}</Button>
+                <Button
+                  :type="(action.type as any)"
+                  :danger="getDyanmicValue(action?.danger, action)"
+                >
+                  {{ getDyanmicValue(action?.label, action) }}
+                </Button>
               </Popconfirm>
-              <Button v-else :type="(action.type as any)" @click="action.action">{{ action.label(action) }}</Button>
+              <Button v-else :type="(action.type as any)" :danger="getDyanmicValue(action?.danger, action)" @click="action.action">{{ getDyanmicValue(action?.label, action) }}</Button>
             </template>
           </div>
           <!-- 详情页内容 -->
@@ -289,6 +296,16 @@ const open = () => {
     }, 200);
   }, 50);
 };
+
+/** 获取动态数据（基本数据或函数） */
+const getDyanmicValue = (val: any, params?: any) => {
+  if (val === undefined) return undefined;
+  if (typeof val === 'function') {
+    return val(params);
+  } else {
+    return val;
+  }
+} 
 
 /** 关闭预览 */
 const close = () => {
@@ -918,13 +935,37 @@ onUnmounted(() => {
           width: 100%;
           font-size: 24px;
           font-weight: 700;
+          margin-bottom: 10px;
+          text-align: center;
+
+          + .global-search-result-detail-actions {
+            margin-top: 10px;
+          }
+
+          + .global-search-result-detail-description {
+            margin-top: 20px;
+          }
+        }
+
+        > .global-search-result-detail-tags {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          font-size: 24px;
+          font-weight: 700;
           margin-bottom: 20px;
           text-align: center;
 
           > .ant-tag {
             font-weight: normal;
-            margin-right: 10px;
             font-size: 12px;
+            margin-right: 0px;
+
+            + .ant-tag {
+              margin-left: 10px;
+            }
           }
         }
 
@@ -933,7 +974,7 @@ onUnmounted(() => {
           width: 100%;
           margin-top: 0px;
           margin-bottom: 20px;
-          text-align: left;
+          text-align: center;
         }
 
         > .global-search-result-detail-description {
