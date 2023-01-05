@@ -58,6 +58,8 @@ export enum ComponentCategory {
 export enum DeviceType {
   /** 移动端 */
   mobile = 'mobile',
+  /** 平板端 */
+  tablet = 'tablet',
   /** PC端 */
   pc = 'pc',
 }

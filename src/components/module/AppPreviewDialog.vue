@@ -7,22 +7,30 @@
     }"
     @click.self.stop="closePreview"
   >
-
-    <div
-      class="preview-modal-body"
-      :style="{
+    <div class="preview-modal-body">
+      <!-- :style="{
         width: editorState.appConfig.deviceType == 'pc' ? '950px' : '400px',
         height: editorState.appConfig.deviceType == 'pc' ? '700px' : '687px',
-      }"
-    >
-      <div class="preview-modal-header">
+      }" -->
+      <!-- <div class="preview-modal-header">
         <div class="preview-modal-title">预览界面</div>
         <div class="preview-modal-tools">
           <CloseOutlined @click="closePreview" />
         </div>
-      </div>
-      <div class="preview-modal-content">
+      </div> -->
+      <div class="preview-modal-content device-info"
+        :class="[ state.previewUIConfig.useOriginScale ? 'origin-scale' : '', {
+          'pc': 'device-info-pc',
+          'tablet': 'device-info-tablet',
+          'mobile': 'device-info-mobile',
+        }[state.previewUIConfig.deviceType]]"
+        :style="{
+          '--tablet-scale': state.tabletScale,
+          '--mobile-scale': state.mobileScale,
+        }"
+      >
         <DesignCanvas
+          class="device-info-content"
           ref="componentCanvas"
           :isPreview="true"
           @refresh="editorService.refresh"
@@ -30,7 +38,7 @@
       </div>
 
       <!-- 调试器 -->
-      <div class="canvas-data-editor" :style="{ height: '667px' }" v-if="editorState.currentPage.pageType === PageType.normalPage">
+      <div class="canvas-data-editor" v-if="editorState.currentPage.pageType === PageType.normalPage">
         <div class="canvas-data-editor-body">
           <Tabs v-model:activeKey="state.activeKey" type="card">
             <template #rightExtra>
@@ -39,6 +47,13 @@
                 <Button v-if="state.activeKey === 'event'" danger size="small" style="margin-right: 10px;">清除日志</Button>
               </Popconfirm>
             </template>
+            <TabPane key="config" tab="预览配置" force-render>
+              <GeneralEditor
+                :model="state.previewUIConfig"
+                :propertys="state.previewUIConfigProps"
+                :groups="[{ title: '界面', name: 'ui', icon: '' }]"
+              ></GeneralEditor>
+            </TabPane>
             <TabPane key="data" tab="表单数据" force-render>
               <Empty
                 v-if="!formFillState.formFillList.length"
@@ -102,12 +117,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, PropType, Ref } from "vue";
+import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { state as eventState, service as eventService } from '@/modules/event-module';
 import { ComponentPropertyEditor, PageType } from '@/@types/enum';
-import CloseOutlined from "@ant-design/icons-vue/CloseOutlined";
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { cloneLoop } from "@/lib/clone";
@@ -132,9 +146,43 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive({
-  activeKey: 'data',
+  activeKey: 'config',
   /** 预览框关闭中 */
   isLeaving: false,
+  /** 各个设备缩放比 */
+  tabletScale: 1,
+  mobileScale: 1,
+  /** 预览配置 */
+  previewUIConfig: {
+    deviceType: 'pc',
+    /** 使用原始缩放比 */
+    useOriginScale: false,
+  },
+  /** 预览配置属性栏 */
+  previewUIConfigProps: [
+    {
+      name: 'deviceType',
+      title: '展现方式',
+      require: false,
+      visible: true,
+      group: 'ui',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: 'PC', value: 'pc' },
+          { label: '平板', value: 'tablet' },
+          { label: '手机', value: 'mobile' }
+        ]
+      }
+    }, {
+      name: 'useOriginScale',
+      title: '原始缩放比',
+      require: false,
+      visible: true,
+      group: 'ui',
+      editor: ComponentPropertyEditor.boolean
+    }
+  ],
 });
 
 /** 临时formFill数据模块 */
@@ -199,6 +247,7 @@ const formFillProps = computed<GeneralProperty[]>(() => {
 
 /** 开启预览 */
 const openPreview = () => {
+
 };
 
 /** 关闭预览 */
@@ -233,11 +282,27 @@ const getHighlight = (item: AppEventLog) => {
 
 watch(() => props.visible, (val) => {
   if (val) {
+    state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
     tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, FormInfoItem>;
     tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
     openPreview();
+    resetScale();
   }
 });
+
+const resetScale = () => {
+  const _windowHeight = window.innerHeight - 60;
+  state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
+  state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+};
+
+onMounted(() => {
+  state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
+  window.addEventListener('resize', resetScale);
+});
+
+onUnmounted(() => {
+})
 
 </script>
 
@@ -273,13 +338,15 @@ watch(() => props.visible, (val) => {
   align-items: center;
   top: 0px;
   left: 0px;
+  bottom: 0px;
+  right: 0px;
   width: 100vw;
   height: 100vh;
   visibility: hidden;
   background-color: rgba(0, 0, 0, 0.45);
   z-index: 1000;
   opacity: 0;
-  transition: 0.25s;
+  transition: opacity 0.25s;
 
   &.show {
     visibility: visible;
@@ -302,11 +369,7 @@ watch(() => props.visible, (val) => {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: white;
-    border-radius: 6px;
-    margin-right: 200px;
-    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
-    max-height: 100vh;
+    margin-right: 450px;
     transition: 0.25s;
     transform: translateY(-30px);
 
@@ -347,13 +410,11 @@ watch(() => props.visible, (val) => {
       flex-grow: 1;
       position: relative;
       display: block;
-      height: 100%;
       overflow: hidden;
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      transform: translateY(0px);
+      will-change: auto;
 
       > .form-canvas {
+        min-height: initial;
         > .form-canvas-body {
           position: relative;
           // display: block;
@@ -375,6 +436,8 @@ watch(() => props.visible, (val) => {
       justify-content: flex-start;
       align-items: stretch;
       top: 0px;
+      bottom: 0px;
+      margin: auto;
       left: calc(100% + 60px);
       width: 400px;
       height: 80vh;

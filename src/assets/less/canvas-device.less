@@ -1,0 +1,83 @@
+
+.device-info {
+  --mobile-scale: 1;
+  --tablet-scale: 1;
+  // aspect-ratio
+
+  // 手机样式
+  &.device-info-mobile {
+    width: 390px;
+    height: 750px;
+    // aspect-ratio: 75 / 39;
+    padding: 50px 15px;
+    border-radius: 57px;
+    background-color: #222;
+    transform: scale(var(--mobile-scale));
+
+    &:before {
+      content: "";
+      position: absolute;
+      width: 62px;
+      height: 4px;
+      top: 21px;
+      left: calc(50% - 31px);
+      background-color: #393939;
+      clip-path: path("M2 0C0.895508 0 0 0.895386 0 2C0 3.10461 0.895508 4 2 4H52C53.1045 4 54 3.10461 54 2C54 0.895386 53.1045 0 52 0H2Z M60 4C61.1045 4 62 3.10461 62 2C62 0.895386 61.1045 0 60 0C58.8955 0 58 0.895386 58 2C58 3.10461 58.8955 4 60 4Z");
+    }
+  }
+
+  // 平板样式
+  &.device-info-tablet {
+    width: 820px;
+    height: 1180px;
+    // aspect-ratio: 41 / 59;
+    padding: 30px 26px;
+    border-radius: 38px;
+    background-color: #3d3d3d;
+    transform: scale(var(--tablet-scale));
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      left: calc(50% - 84px);
+      width: 168px;
+      height: 9px;
+      background: #1f1f1f;
+      clip-path: path("M4.5 9C6.98528 9 9 6.98528 9 4.5C9 2.01472 6.98528 0 4.5 0C2.01472 0 0 2.01472 0 4.5C0 6.98528 2.01472 9 4.5 9Z M29 4.5C29 2.01472 31.0147 0 33.5 0H145.5C147.985 0 150 2.01472 150 4.5C150 6.98528 147.985 9 145.5 9H33.5C31.0147 9 29 6.98528 29 4.5Z M168 4.5C168 6.98528 165.985 9 163.5 9C161.015 9 159 6.98528 159 4.5C159 2.01472 161.015 0 163.5 0C165.985 0 168 2.01472 168 4.5Z");
+    }
+  }
+
+  // 平板样式
+  &.device-info-pc {
+    width: calc(100vw - 500px);
+    height: 1366px;
+    max-height: calc(100vh - 60px);
+    // aspect-ratio: 41 / 59;
+    padding: 24px 20px;
+    border-radius: 24px;
+    background-color: #3d3d3d;
+    transform: scale(1);
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      left: calc(50% - 84px);
+      width: 168px;
+      height: 9px;
+      background: #1f1f1f;
+      clip-path: path("M4.5 9C6.98528 9 9 6.98528 9 4.5C9 2.01472 6.98528 0 4.5 0C2.01472 0 0 2.01472 0 4.5C0 6.98528 2.01472 9 4.5 9Z M29 4.5C29 2.01472 31.0147 0 33.5 0H145.5C147.985 0 150 2.01472 150 4.5C150 6.98528 147.985 9 145.5 9H33.5C31.0147 9 29 6.98528 29 4.5Z M168 4.5C168 6.98528 165.985 9 163.5 9C161.015 9 159 6.98528 159 4.5C159 2.01472 161.015 0 163.5 0C165.985 0 168 2.01472 168 4.5Z");
+    }
+  }
+
+  &.origin-scale {
+    transform: scale(1);
+    max-height: calc(100vh - 60px);
+  }
+
+  > .device-info-content {
+    background-color: white;
+    border-radius: 6px;
+  }
+}

@@ -5,7 +5,7 @@ import { PluginType, type PluginInfo, registerEditor } from '@/modules/plugin-mo
 /** 注册图片编辑器（插件测试） */
 export function registerImageEditor() {
   const _pluginInfo: PluginInfo = {
-    name: 'logo-component',
+    name: 'image-editor',
     title: '测试用图片编辑器',
     description: '测试用图片编辑器插件',
     version: '0.0.1',

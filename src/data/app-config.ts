@@ -55,6 +55,7 @@ export const formConfigs: GeneralProperty[] = [
     attrs: {
       options: [
         { label: '移动端', value: 'mobile' },
+        // { label: '平板', value: 'tablet' },
         { label: 'PC端', value: 'pc' },
       ],
     },
