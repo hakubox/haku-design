@@ -613,6 +613,18 @@
     "@uppy/utils" "^4.1.2"
     nanoid "^3.1.25"
 
+"@use-gesture/core@10.2.23":
+  version "10.2.23"
+  resolved "https://registry.yarnpkg.com/@use-gesture/core/-/core-10.2.23.tgz#ed5892e86b4ad537613b6ab83111ca58341e40c0"
+  integrity sha512-Ynap/Uh6RX1Vgn3zNmFTyKapapdf7Av+GzAe6h+RsBZaxMF1z3cK6aohHPJP6T1hLrPyH/yehxa7RBqyESG9RA==
+
+"@use-gesture/vanilla@^10.2.23":
+  version "10.2.23"
+  resolved "https://registry.yarnpkg.com/@use-gesture/vanilla/-/vanilla-10.2.23.tgz#984cfed88326c6f4ac8909f486113a089d12356f"
+  integrity sha512-mhuRwVgYcm28VJqZr7cGFOMOietVweyqJANbLUha40IaeSKXHjZ3rQR6TwwZDzoZI3RWW9i/pQv0wJutTBHL2w==
+  dependencies:
+    "@use-gesture/core" "10.2.23"
+
 "@vant/icons@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@vant/icons/-/icons-1.8.0.tgz#36b13f2e628b533f6523a93a168cf02f07056674"
@@ -1636,6 +1648,11 @@ array-tree-filter@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/array-tree-filter/-/array-tree-filter-2.1.0.tgz#873ac00fec83749f255ac8dd083814b4f6329190"
   integrity sha512-4ROwICNlNw/Hqa9v+rk5h22KjmzB1JGTMVKP2AKJBOCgb0yL0ASf0+YvCcLNNwquOHNX48jkeZIJ3a+oOQqKcw==
+
+async-validator@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/async-validator/-/async-validator-4.0.0.tgz#d5868ef67c9e670decd6b77ea50a797d4c56433a"
+  integrity sha512-DHTFxTI5PgDZMetB/I0edjbDyrOPMnxvEBsrON48O6W4UB3uf7F+Dz1uw6LemMLjWHSL9lfM/Rz+67AKRjl3dA==
 
 async-validator@^4.0.0:
   version "4.2.5"
@@ -3012,6 +3029,11 @@ gray-matter@^4.0.3:
     kind-of "^6.0.2"
     section-matter "^1.0.0"
     strip-bom-string "^1.0.0"
+
+gsap@^3.11.4:
+  version "3.11.4"
+  resolved "https://registry.yarnpkg.com/gsap/-/gsap-3.11.4.tgz#e6d972d3509a7431b86d81d6fc3bbeb6862e5ff1"
+  integrity sha512-McHhEguHyExMMnjqKA8G+7TvxmlKQGMbjgwAilnFe1e4id7V/tFveRQ2YMZhTYu0oxHGWvbPltdVYQOu3z1SCA==
 
 has-flag@^4.0.0:
   version "4.0.0"

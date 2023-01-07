@@ -918,7 +918,7 @@ export const service = {
     /** 是否需要升级 */
     let _canUpgrade = false;
     if (historyState.saveHistoryIndex <= historyState.historyIndex) {
-      for (let i = historyState.saveHistoryIndex; i < historyState.historyIndex && i < historyState.historyData.length; i++) {
+      for (let i = historyState.saveHistoryIndex; i < historyState.historyData.length; i++) {
         if (formCommands[historyState.historyData[i].type].updatable) {
           _canUpgrade = true;
           break;
@@ -928,7 +928,7 @@ export const service = {
       _canUpgrade = true;
     }
     const hide = toast(_canUpgrade ? '问卷更新中...' : '问卷保存中...', 'loading', 0);
-    saveQuestionary(_exportData, _canUpgrade ? 'UPGRADE' : 'UPDATE').then(d => {
+    saveQuestionary(_exportData, _canUpgrade ? 'UPDATE' : 'UPGRADE').then(d => {
       historyState.saveHistoryIndex = historyState.historyIndex;
       configService.setSaveHistory(state.appConfig.id);
       configState.saveHistory;

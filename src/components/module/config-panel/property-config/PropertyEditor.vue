@@ -57,7 +57,7 @@
                 </Tooltip>
               </template>
               <ButtonGroup v-if="prop.attach" size="small">
-                <Button :type="!editorState.currentPropertyEditors[prop.name] || editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor)">常规</Button>
+                <Button :type="!editorState.currentPropertyEditors[prop.name] || editorState.currentPropertyEditors[prop.name] == prop.editor ? 'primary' : 'default'" value="default" @click="changePropAttach(prop, prop.editor as ComponentPropertyEditor)">常规</Button>
                 <Button :type="editorState.currentPropertyEditors[prop.name] == attach ? 'primary' : 'default'" v-for="attach in prop.attach" :key="attach" :value="attach" @click="changePropAttach(prop, attach);">{{ editorState.propertyEditors[attach].description }}</Button>
               </ButtonGroup>
             </div>

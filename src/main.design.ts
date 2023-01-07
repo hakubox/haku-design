@@ -26,6 +26,7 @@ import '@/common/theme';
 
 import FilePicker from '@/modules/storage-module/component/file-picker/FilePicker.vue';
 import FormulaEditor from '@/modules/formula-module/components/formula-editor/FormulaEditor.vue';
+import RulesEditor from '@/modules/validate-module/component/RulesEditor.vue';
 import ConfigDialog from '@/components/module/ConfigDialog.vue';
 import packageInfo from '../package.json';
 import { init } from '@/lib/monitor';
@@ -104,6 +105,7 @@ globalStore.install(app, router);
 app.component('FilePicker', FilePicker);
 app.component('ConfigDialog', ConfigDialog);
 app.component('FormulaEditor', FormulaEditor);
+app.component('RulesEditor', RulesEditor);
 
 changeConfig(process.env.Environment as ServerEnvironment);
 

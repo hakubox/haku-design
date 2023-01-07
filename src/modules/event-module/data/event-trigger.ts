@@ -33,7 +33,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '跳转到起始页',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return editorState.currentPage.pageType === PageType.normalPage;
     },
   },
@@ -47,7 +47,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '跳转到起始页',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return editorState.currentPage.pageType === PageType.startPage;
     },
   },
@@ -61,7 +61,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '跳转到完成页',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return editorState.currentPage.pageType === PageType.endPage;
     },
   },
@@ -78,7 +78,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '计时达到{{time}}秒',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return formFillState.timerInfo.duration >= attrs.time * 1000;
     },
   },
@@ -94,7 +94,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '每题计时达到{{time}}秒',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return formFillState.timerInfo.duration >= attrs.time * 1000;
     },
   },
@@ -133,7 +133,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '{{component}}显示',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return attrs.component == editorState.currentPage.children[editorState.currentFormPageIndex].id;
     },
   },
@@ -149,7 +149,7 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: true,
     format: '{{component}}隐藏',
-    condition(attrs, config, target) {
+    condition(attrs, config, target, data) {
       return (
         attrs.component == editorState.currentPage.children[editorState.prevFormPageIndex].id &&
         attrs.component != editorState.currentPage.children[editorState.currentFormPageIndex].id
@@ -173,7 +173,7 @@ export const eventTriggers: AppEventTrigger[] = [
       },
       value: { title: '值', required: true, default: '', editor: ComponentPropertyEditor.data, width: '50%' },
     },
-    condition: (attrs, config, target) => {
+    condition: (attrs, config, target, data) => {
       let _val: any = formFillService.getFormInfo(target);
       if (_val?.value?.value && Array.isArray(_val?.value?.value)) {
         _val = (_val?.value?.value ?? ['']).join(',');
@@ -275,7 +275,7 @@ export const eventTriggers: AppEventTrigger[] = [
   },
 
   {
-    title: '点击组件',
+    title: '点击',
     name: 'click',
     isGlobal: false,
     group: EventTriggerGroup.action,
@@ -286,6 +286,37 @@ export const eventTriggers: AppEventTrigger[] = [
     attrs: {},
     hasState: false,
     format: '点击{{component}}',
+  },
+  {
+    title: '滑动',
+    name: 'swipe',
+    isGlobal: false,
+    group: EventTriggerGroup.action,
+    type: EventTriggerType.swipe,
+    config: {
+      component: { title: '界面组件', required: true, editor: ComponentPropertyEditor.component, width: '40%' },
+      direction: {
+        title: '滑动方向',
+        required: true,
+        editor: ComponentPropertyEditor.dropdownList,
+        width: '30%',
+        default: 'right',
+        attrs: {
+          options: [
+            { label: '上', value: 'up' },
+            { label: '下', value: 'down' },
+            { label: '左', value: 'left' },
+            { label: '右', value: 'right' },
+          ]
+        }
+      },
+    },
+    attrs: {},
+    hasState: true,
+    condition(attrs, config, target, data) {
+      return data.direction === attrs.direction;
+    },
+    format: '往{{direction}}滑动{{component}}',
   },
   {
     title: '提交表单前',

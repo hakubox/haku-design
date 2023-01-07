@@ -1,6 +1,7 @@
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as eventService } from '@/modules/event-module';
 import { service as scoringService } from '@/modules/scoring-module';
+import { service as validateService } from '@/modules/validate-module';
 import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
 import type { Component, ComponentAnswerType } from '@/@types';
@@ -214,7 +215,7 @@ export const service = {
   },
   /** 校验表单 */
   validateForm(formPageIndex?: number): Promise<{ isComplete: boolean; errorComponents: any[] }> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       state.errorInfo = {};
       const _errorComponents: any[] = [];
       const _components: Component[] = [];
@@ -223,24 +224,47 @@ export const service = {
           ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
         );
       } else {
-        const _page = editorState.currentPage as AppPage;
         _components.push(...editorService.getAllFormItem());
       }
-      _components.forEach(component => {
+      for await (const component of _components) {
         if (component.isFormItem) {
-          if (component.attrs.required && component.attrs.visible) {
+          if (component.attrs.visible) {
             const _val = state?.formInfo?.[component.id]?.value;
-            if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !(_val.filter(x=>x).length)))) {
-              _errorComponents.push({ component: component, message: '问卷填写未完成' });
-              state.errorInfo[component.id] = {
-                isError: true,
-                componentId: component.id,
-                errorText: ['当前题目不能为空'],
-              };
+            // 校验必填项
+            if (component.attrs.required) {
+              if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !(_val.filter(x=>x).length)))) {
+                _errorComponents.push({ component: component, message: '问卷填写未完成' });
+                state.errorInfo[component.id] = {
+                  isError: true,
+                  componentId: component.id,
+                  errorText: ['当前题目不能为空'],
+                };
+              }
+            }
+            // 校验包含（数据校验）属性的项
+            if (component.attrs.validate) {
+              try {
+                await validateService.transformValidate(_val, component.attrs.validate).then(d => {
+                  console.log('成功');
+                }).catch(({ errors }) => {
+                  const _err = errors[0];
+                  const _errMessage = _err.message.replace('{{value}}', '');
+                  _errorComponents.push({ component: component, message: _errMessage });
+                  state.errorInfo[component.id] = {
+                    isError: true,
+                    componentId: component.id,
+                    errorText: [_errMessage],
+                  };
+                });
+                
+              } catch (err) {
+                console.error('校验失败', err);
+                debugger;
+              }
             }
           }
         }
-      });
+      }
       if (_errorComponents.length === 0) {
         resolve({
           isComplete: true,
@@ -266,7 +290,7 @@ export const service = {
     if (editorState.getTimerConfig.isOpen && editorState.getTimerConfig.isAutoTiming) service.startTime();
   },
   /** 获取选项的score */
-  getOptionScore(componentId: string, value: string) {
+  getOptionScore(componentId: string, value: string): number | undefined {
     const _component = editorService.findComponent(componentId);
     if (_component) {
       const _option = _component.attrs.options.find((i) => i.value === value);
@@ -277,7 +301,7 @@ export const service = {
     return undefined;
   },
   /** 获取选项的label */
-  getOptionLabel(componentId: string, value: string) {
+  getOptionLabel(componentId: string, value: string): string | undefined {
     const _component = editorService.findComponent(componentId);
     if (_component) {
       const _option = _component.attrs.options.find((i) => i.value === value);
@@ -287,7 +311,7 @@ export const service = {
     }
     return '——';
   },
-  // 处理音视频
+  /** 处理音视频 */
   handleMedia() {
     const _page = editorState.pages.find((page) => page.pageType === PageType.normalPage) as AppPage;
     _page.children.forEach((component) => {
@@ -303,54 +327,51 @@ export const service = {
   },
   /** 
    * 提交表单信息（完成填写）
-   * @param validate 是否需要校验
+   * @param {boolean} [validate=true] 是否需要校验
    **/
-  async submitForm(validate=true) {
+  async submitForm(validate = true) {
     eventService.emit(EventTriggerType.beforeSubmitForm, 'global');
     await nextTick();
     if (editorState.getTimerConfig.isOpen && editorState.getTimerConfig.isAutoTiming) service.completeTime();
     scoringService.countScore();
     service.handleMedia();
 
-    const _formInfo = Object.assign(
-      {},
-      ...Object.entries(state.formInfo)
-        .filter(([key, value]) => value?.value)
-        .map(([key, value]) => {
-          let _val: any = undefined;
-          let _score: any = undefined;
-          switch (value.type) {
-            case 'option':
-              _score = service.getOptionScore(key, value?.value);
-              _val = { label: service.getOptionLabel(key, value?.value), value: value?.value };
-              break;
-            case 'option-list':
-              _score = value?.value.map(i => service.getOptionScore(key, i)).reduce((a, b) => a + b, 0);
-              _val = value?.value.map(i => ({ label: service.getOptionLabel(key, i), value: i }));
-              break;
-            case 'number':
-            case 'text':
-              _val = { value: value?.value };
-              break;
-            case 'text-list':
-            case 'number-list':
-              _val = value?.value.map(i => ({ value: i }));
-              break;
-            case 'extrainfo-list':
-              _val = value?.value.map(i => i);
-              break;
-            default:
-              _val = { value: value?.value };
-              break;
-          }
-          return {
-            [key]: {
-              ...value,
-              score: _score,
-              value: Array.isArray(_val) ? _val : [_val],
-            },
-          };
-        }),
+    const _formInfo = Object.assign({},
+      ...Object.entries(state.formInfo).filter(([key, value]) => value?.value).map(([key, value]) => {
+        let _val: any;
+        let _score: any;
+        switch (value.type) {
+          case 'option':
+            _score = service.getOptionScore(key, value?.value);
+            _val = { label: service.getOptionLabel(key, value?.value), value: value?.value };
+            break;
+          case 'option-list':
+            _score = value?.value.map(i => service.getOptionScore(key, i)).reduce((a, b) => a + b, 0);
+            _val = value?.value.map(i => ({ label: service.getOptionLabel(key, i), value: i }));
+            break;
+          case 'number':
+          case 'text':
+            _val = { value: value?.value };
+            break;
+          case 'text-list':
+          case 'number-list':
+            _val = value?.value.map(i => ({ value: i }));
+            break;
+          case 'extrainfo-list':
+            _val = value?.value.map(i => i);
+            break;
+          default:
+            _val = { value: value?.value };
+            break;
+        }
+        return {
+          [key]: {
+            ...value,
+            score: _score,
+            value: Array.isArray(_val) ? _val : [_val],
+          },
+        };
+      }),
     );
 
     const _data = {

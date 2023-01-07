@@ -13,6 +13,7 @@
       'z-index': props.component.attrs.sticky ? 1 : 'initial',
     }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
+    ref="formComponent"
   >
     <component
       v-bind.prop="getAttrs(props.component.attrs)"
@@ -164,7 +165,7 @@
 <script lang="ts" setup>
 import type { Component } from '@/@types';
 import type { DragConfig } from '@/modules/draggable-module/@types';
-import { computed, nextTick, ref, type PropType } from 'vue';
+import { computed, nextTick, ref, type PropType, onMounted, onUnmounted } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { useComponentHandle } from "@/common/component-handle";
 import { service as draggableService } from '@/modules/draggable-module';
@@ -178,6 +179,7 @@ import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
+import { DragGesture } from '@use-gesture/vanilla';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -221,6 +223,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const formComponent = ref<HTMLElement>();
 
 const { componentHandle } = useComponentHandle();
 const componentRef = ref();
@@ -305,6 +309,27 @@ const score = computed({
       scoringService.setComponentScore(props.component.id, val);
     }
   },
+});
+
+let gesture: DragGesture;
+
+onMounted(() => {
+  if (formComponent.value) {
+    gesture = new DragGesture(formComponent.value, ({ active, swipe: [swipeX, swipeY], movement: [mx, my] }) => {
+      if (swipeX) {
+        const _directionX = swipeX > 0 ? 'right' : 'left';
+        eventService.emit(EventTriggerType.swipe, props.component.id, { direction: _directionX });
+      }
+      if (swipeY) {
+        const _directionY = swipeY > 0 ? 'down' : 'up';
+        eventService.emit(EventTriggerType.swipe, props.component.id, { direction: _directionY });
+      }
+    });
+  }
+});
+
+onUnmounted(() => {
+  gesture.destroy();
 });
 </script>
 

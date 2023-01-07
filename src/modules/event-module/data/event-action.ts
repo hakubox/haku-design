@@ -334,13 +334,7 @@ export const eventActions: AppEventAction[] = [
     attrs: {},
     format: '将弹出{{type}}提示{{text}}',
     action(attrs, config) {
-      if (editorState.appConfig.deviceType === DeviceType.pc) {
-        toast[attrs.type]({
-          message: attrs.text,
-        });
-      } else {
-        toast(attrs.text);
-      }
+      toast(attrs.text, attrs.type);
     },
   },
 

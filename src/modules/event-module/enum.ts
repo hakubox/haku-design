@@ -60,6 +60,8 @@ export enum EventTriggerType {
   valueChange = 'valueChange',
   /** 点击 */
   click = 'click',
+  /** 滑动 */
+  swipe = 'swipe',
   /** 上一题 */
   prevComponent = 'prev-component',
   /** 下一题 */

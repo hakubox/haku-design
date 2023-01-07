@@ -93,6 +93,7 @@ export interface AppEventTrigger {
     attrs: Record<string, any>,
     config: AppEventTrigger,
     target: string,
+    data?: any,
     extraData?: any,
   ) => boolean;
 }

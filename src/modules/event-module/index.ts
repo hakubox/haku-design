@@ -83,7 +83,7 @@ export const service = {
               _re =
                 trigger.type === type &&
                 trigger.target === target &&
-                (_condition?.(trigger.attrs, trigger, trigger.target, extraData) ?? true);
+                (_condition?.(trigger.attrs, trigger, trigger.target, data, extraData) ?? true);
             } else {
               _re = trigger.type == type && trigger.target == target;
             }

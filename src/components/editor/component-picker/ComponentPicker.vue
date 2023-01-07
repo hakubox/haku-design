@@ -75,7 +75,7 @@ const componentList = computed(() => {
         label: i.attrs.name || i.title,
         icon: editorState.menuComponents.find(o => o.name === i.name)?.icon ?? '',
       })),
-  }));
+  })) ?? [];
 });
 
 const component = computed(() => {

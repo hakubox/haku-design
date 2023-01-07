@@ -222,7 +222,7 @@ const refresh = () => {
 /** 提交表单（模拟） */
 const submitForm = () => {
   if (props.isPreview) {
-    formFillService.submitForm().then((isComplete) => {
+    formFillService.submitForm().then(({ isComplete }) => {
       if (isComplete) {
         eventService.emit(EventTriggerType.submitForm);
         toast('问卷填写完成', 'success');

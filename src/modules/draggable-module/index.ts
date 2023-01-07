@@ -300,7 +300,7 @@ export const service = {
     const _parentEl = editorService
       .getComponentElementById(parentComponent.id)
       ?.querySelector('.layout-component') as HTMLElement;
-    const _groups: HTMLElement[] = [ ..._parentEl?.querySelectorAll(parentComponent.childrenSlot!) ] as HTMLElement[];
+    const _groups: HTMLElement[] = Array.from(_parentEl?.querySelectorAll(parentComponent.childrenSlot!)) as HTMLElement[];
     /** 当前组件高度 */
     let _y = 0;
     let groupIndex = 0;
@@ -325,7 +325,7 @@ export const service = {
         _groupTopHeight = _groupRect.top + _groupRect.height - state.pagePaddingTop;
         // _y = _groupRect.height;
 
-        const _components: HTMLElement[] = [ ..._group?.querySelectorAll(parentComponent.childrenContentSlot!) ] as HTMLElement[];
+        const _components: HTMLElement[] = Array.from(_group?.querySelectorAll(parentComponent.childrenContentSlot!));
         if (
           state.dragConfig.mouseY >= _prevTopHeight &&
           state.dragConfig.mouseY <= _groupTopHeight
@@ -391,7 +391,7 @@ export const service = {
               state.dragConfig.insertSlotIndex = groupIndex;
               const _groupEl = _parentEl.querySelectorAll(parentComponent.childrenSlot!)[groupIndex] as HTMLElement;
               if (childrenIndex > 0) {
-                const _componentEl = [ ..._groupEl.querySelectorAll(parentComponent.childrenContentSlot!) ].slice(-1)[0] as HTMLElement;
+                const _componentEl = Array.from(_groupEl.querySelectorAll(parentComponent.childrenContentSlot!)).slice(-1)[0] as HTMLElement;
                 editorService.changeComponentCursor(_componentEl, true, false);
               } else {
                 editorService.changeComponentCursor(_groupEl, true, true);
@@ -415,7 +415,7 @@ export const service = {
         dragLayoutReturn.isReturn = true;
         const _groupEl = _parentEl.querySelectorAll(parentComponent.childrenSlot!)[groupIndex - 1] as HTMLElement;
         if (childrenIndex > 0) {
-          const _componentEl = [ ..._groupEl.querySelectorAll(parentComponent.childrenContentSlot!) ].slice(-1)[0] as HTMLElement;
+          const _componentEl = Array.from(_groupEl.querySelectorAll(parentComponent.childrenContentSlot!)).slice(-1)[0] as HTMLElement;
           editorService.changeComponentCursor(_componentEl, true, false);
         } else {
           editorService.changeComponentCursor(_groupEl, true, true);

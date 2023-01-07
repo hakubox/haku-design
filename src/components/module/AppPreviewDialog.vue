@@ -285,7 +285,7 @@ watch(() => props.visible, (val) => {
     state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
     tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, FormInfoItem>;
     tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
-    openPreview();
+    
     resetScale();
   }
 });
@@ -299,6 +299,7 @@ const resetScale = () => {
 onMounted(() => {
   state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
   window.addEventListener('resize', resetScale);
+  openPreview();
 });
 
 onUnmounted(() => {

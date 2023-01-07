@@ -60,7 +60,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
       }, {
         name: 'validate', title: '数据校验', default: [],
-        group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.rules
+        group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.rules, attrs: { validateType: 'text' }
       }, {
         name: 'name', title: '组件名称', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
