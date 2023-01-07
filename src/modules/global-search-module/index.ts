@@ -3,8 +3,9 @@ import { timeout } from '@/tools/common';
 import { computed, ConcreteComponent, reactive } from 'vue';
 import type { GlobalSearchGroupInstance, GlobalSearchItem } from './@types';
 import GlobalSearchVue from './components/GlobalSearch.vue';
-import { getSearchItems } from './data/search-items';
+import { search } from './data/search-items';
 import { service as hotkeyService } from '@/modules/hotkey-module';
+import type Fuse from 'fuse.js';
 
 /** 组件DOM */
 let _container;
@@ -33,12 +34,12 @@ export const state = reactive({
   /** 查询历史 */
   searchHistory: [] as string[],
   /** 结果列表 */
-  resultList: [] as GlobalSearchItem[],
+  resultList: [] as Fuse.FuseResult<GlobalSearchItem>[],
   /** 查询可显示组列表 */
   searchGroupList: computed((): GlobalSearchGroupInstance[] => {
     const _groupList = state.groupList;
     if (_groupList?.length) {
-      return _groupList.filter((i) => state.resultList.find((o) => o.group === i.name));
+      return _groupList.filter((i) => state.resultList.find((o) => o.item.group === i.name));
     }
     return [];
   }),
@@ -52,14 +53,8 @@ export const service = {
     state.isLoading = true;
     if (!_txt.trim()?.length) state.resultList = [];
     else {
-      await timeout(300);
-      state.resultList = getSearchItems.value.filter((item) => {
-        if (item.title.toLowerCase().includes(_txt.toLowerCase())) return true;
-        else if (item.crumbs.some(crumb => crumb.label.toLowerCase().includes(_txt.toLowerCase()))) return true;
-        else if (item.description?.toLowerCase().includes(_txt.toLowerCase())) return true;
-        else if (item.alias?.some(alias => alias.toLowerCase().includes(_txt.toLowerCase()))) return true;
-        return false;
-      });
+      await timeout(250);
+      state.resultList = search(_txt);
     }
     state.isLoading = false;
   },

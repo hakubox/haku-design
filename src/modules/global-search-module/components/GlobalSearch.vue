@@ -62,35 +62,35 @@
               <li
                 class="global-search-result-item"
                 :class="{ 'result-current': state.currentIndex === `${groupIndex}_${index}` }"
-                v-for="(item, index) in globalSearchState.resultList.filter(item => item.group === group.name)"
-                @click="selectItem(item)"
+                v-for="(item, index) in globalSearchState.resultList.filter(item => item.item.group === group.name)"
+                @click="selectItem(item.item)"
                 @mouseenter="setCurrentIndex(groupIndex, index, item)"
-                :key="item.id"
+                :key="item.item.id"
               >
                 <i :class="group.icon"></i>
                 <div class="global-search-result-item-body">
                   <div class="global-search-result-item-title">
-                    <template v-for="(fragment, i) in txtSplit(item.title)">
-                      <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
-                        {{ fragment }}
+                    <template v-for="(fragment, i) in txtSplit('title', item.item.title, item.matches)">
+                      <span v-if="fragment.isMatch" :key="`${i}1`" style="color: #2857ff">
+                        {{ fragment.txt }}
                       </span>
-                      <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment }}</span>
+                      <span v-else :key="`${i}2`" style="color: #36395a;">{{ fragment.txt }}</span>
                     </template>
                   </div>
-                  <ul class="global-search-result-item-crumbs" v-if="item.crumbs?.length">
+                  <ul class="global-search-result-item-crumbs" v-if="item.item.crumbs?.length">
                     <li
-                      v-for="(crumb, crumbIndex) in item.crumbs"
+                      v-for="(crumb, crumbIndex) in item.item.crumbs"
                       :key="crumbIndex"
                       :title="crumb.tooltip"
                       :class="{ disabled: !crumb.goto }"
                       @click="clickCrumb(crumb)"
                     >
                       <i class="crumb-item-icon" v-if="crumbIndex > 0 && crumb.icon" :class="crumb.icon"></i>
-                      <template v-for="(fragment, i) in txtSplit(crumb.label)">
-                        <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
-                          {{ fragment }}
+                      <template v-for="(fragment, i) in txtSplit('crumbs.label', crumb.label, item.matches)">
+                        <span v-if="fragment.isMatch" :key="`${i}1`" style="color: #2857ff">
+                          {{ fragment.txt }}
                         </span>
-                        <span v-else :key="i+'2'">{{ fragment }}</span>
+                        <span v-else :key="`${i}2`">{{ fragment.txt }}</span>
                       </template>
                     </li>
                   </ul>
@@ -106,40 +106,40 @@
           <!-- 详情页图标 -->
           <i class="global-search-result-detail-icon" :class="currentGroup?.icon"></i>
           <!-- 详情页面包屑 -->
-          <ul class="global-search-result-detail-crumbs" v-if="state.currentItem?.crumbs?.length">
+          <ul class="global-search-result-detail-crumbs" v-if="state.currentItem?.item?.crumbs?.length">
             <li
-              v-for="(crumb, crumbIndex) in state.currentItem?.crumbs"
+              v-for="(crumb, crumbIndex) in state.currentItem?.item.crumbs"
               :key="crumbIndex"
               :title="crumb.tooltip"
               :class="{ disabled: !crumb.goto }"
               @click="clickCrumb(crumb)"
             >
               <i class="crumb-item-icon" v-if="crumbIndex > 0 && crumb.icon" :class="crumb.icon"></i>
-              <template v-for="(fragment, i) in txtSplit(crumb.label)">
-                <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
-                  {{ fragment }}
+              <template v-for="(fragment, i) in txtSplit('crumbs.label', crumb.label, state.currentItem?.matches)">
+                <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
+                  {{ fragment.txt }}
                 </span>
-                <span v-else :key="i+'2'">{{ fragment }}</span>
+                <span v-else :key="i+'2'">{{ fragment.txt }}</span>
               </template>
             </li>
           </ul>
           <!-- 详情页标题 -->
           <div class="global-search-result-detail-title">
-            <template v-for="(fragment, i) in txtSplit(state.currentItem?.title)">
-              <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
-                {{ fragment }}
+            <template v-for="(fragment, i) in txtSplit('title', state.currentItem?.item.title, state.currentItem?.matches)">
+              <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
+                {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment }}</span>
+              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
             </template>
           </div>
           <div class="global-search-result-detail-tags">
-            <Tag v-for="tag in state.currentItem?.tags" :color="getDyanmicValue(tag.color)">
+            <Tag v-for="tag in state.currentItem?.item.tags" :color="getDyanmicValue(tag.color)">
               {{ getDyanmicValue(tag.label) }}
             </Tag>
           </div>
           <!-- 详情页操作箱 -->
-          <div class="global-search-result-detail-actions" v-show="state.currentItem?.actions">
-            <template v-for="(action, i) in state.currentItem?.actions">
+          <div class="global-search-result-detail-actions" v-show="state.currentItem?.item.actions">
+            <template v-for="(action, i) in state.currentItem?.item.actions">
               <Popconfirm
                 v-if="action.confirm"
                 :title="getDyanmicValue(action?.confirm, action)"
@@ -158,20 +158,26 @@
             </template>
           </div>
           <!-- 详情页内容 -->
-          <div class="global-search-result-detail-description" v-show="state.currentItem?.description">
-            <template v-for="(fragment, i) in txtSplit(state.currentItem?.description)">
-              <span v-if="fragment.toLowerCase() === globalSearchState.searchTxt.toLowerCase()" :key="i+'1'" style="color: #2857ff">
-                {{ fragment }}
+          <div class="global-search-result-detail-description" v-show="state.currentItem?.item.description">
+            <template v-for="(fragment, i) in txtSplit('description', state.currentItem?.item.description, state.currentItem?.matches)">
+              <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
+                {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment }}</span>
+              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
             </template>
           </div>
           <!-- 相关内容 -->
-          <div class="global-search-result-detail-related" v-show="state.currentItem?.related">
+          <div class="global-search-result-detail-related" v-show="state.currentItem?.item.related">
             <span>相关内容</span>
             <ul>
-              <li v-for="(related, index) in state.currentItem?.related" :key="index" @click="related?.goto?.()">
-                <span style="padding-right: 6px;">{{(index + 1) + '. '}}</span>{{ related.label }}
+              <li v-for="(related, index) in state.currentItem?.item.related" :key="index" @click="related?.goto?.()">
+                <span style="padding-right: 6px;">{{(index + 1) + '. '}}</span>
+                <template v-for="(fragment, i) in txtSplit('related.label', related.label, state.currentItem?.matches)">
+                  <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
+                    {{ fragment.txt }}
+                  </span>
+                  <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+                </template>
               </li>
             </ul>
           </div>
@@ -215,6 +221,7 @@ import { service as hotkeyService } from '@/modules/hotkey-module';
 import { throttle } from '@/tools/common';
 import { Button, Empty, Popconfirm, Tag, message } from 'ant-design-vue';
 import { computed } from '@vue/reactivity';
+import type Fuse from 'fuse.js';
 
 /** 全局搜索状态管理 */
 interface GlobalSearchState {
@@ -231,7 +238,7 @@ interface GlobalSearchState {
   /** 当前选项标记 */
   currentIndex: string;
   /** 当前选择项 */
-  currentItem: GlobalSearchItem | undefined;
+  currentItem: Fuse.FuseResult<GlobalSearchItem> | undefined;
 }
 
 const state: GlobalSearchState = reactive<GlobalSearchState>({
@@ -249,13 +256,13 @@ const searchInput = ref<HTMLInputElement>();
 const change = throttle(async () => {
   await globalSearchService.search();
   if (globalSearchState.searchGroupList?.length && globalSearchState.resultList?.length) {
-    const _item = globalSearchState.resultList.filter(i => i.group === globalSearchState.searchGroupList[0].name)?.[0];
+    const _item = globalSearchState.resultList.filter(i => i.item.group === globalSearchState.searchGroupList[0].name)?.[0];
     setCurrentIndex(0, 0, _item);
   }
 }, 300, { leading: true, trailing: true });
 
 /** 设置当前索引 */
-const setCurrentIndex = (groupIndex: number, index: number, item: GlobalSearchItem | undefined) => {
+const setCurrentIndex = (groupIndex: number, index: number, item: Fuse.FuseResult<GlobalSearchItem> | undefined) => {
   state.currentIndex = `${groupIndex}_${index}`;
   state.currentItem = item;
 };
@@ -263,7 +270,7 @@ const setCurrentIndex = (groupIndex: number, index: number, item: GlobalSearchIt
 /** 当前选择项 */
 const currentGroup = computed<GlobalSearchGroupInstance | undefined>(() => {
   if (globalSearchState.isLoading) return undefined;
-  const _name = state.currentItem?.group;
+  const _name = state.currentItem?.item.group;
   if (!_name) return undefined;
   else return globalSearchState.groupList.find(i => i.name === _name);
 })
@@ -282,9 +289,26 @@ const selectItem = (item: GlobalSearchItem) => {
 }
 
 /** 切分字符串 */
-const txtSplit = (txt?: string) => {
+const txtSplit = (key: string, txt?: string, matches?: ReadonlyArray<Fuse.FuseResultMatch>) => {
   if (!txt) return [];
-  return txt.toString().split(new RegExp(`(?<=${globalSearchState.searchTxt})|(?=${globalSearchState.searchTxt})`, 'i'));
+  else if (!matches?.length) return [{ txt: txt, isMatch: false }];
+  const _match = matches.find(i => i.key === key && txt === i.value);
+  if (!_match) return [{ txt: txt, isMatch: false }];
+  const _re: { txt: string, isMatch: boolean }[] = [];
+  let _index = 0;
+  if (_match.indices?.length) {
+    for (let i = 0; i < _match.indices.length; i++) {
+      const [startIndex, endIndex] = _match.indices[i];
+      if (_index < startIndex) {
+        _re.push({ txt: txt.substring(_index, startIndex), isMatch: false });
+        _index = startIndex;
+      }
+      _re.push({ txt: txt.substring(startIndex, endIndex + 1), isMatch: true });
+      _index = endIndex + 1;
+    }
+  }
+  _re.push({ txt: txt.substring(_index), isMatch: false });
+  return _re;
 }
 
 /** 开启弹窗 */
@@ -327,15 +351,15 @@ const prevItem = () => {
 
   if (itemIndex > 0) {
     const _group = globalSearchState.searchGroupList[groupIndex];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(groupIndex, itemIndex - 1, _groupList[itemIndex - 1]);
   } else if (groupIndex > 0) {
     const _group = globalSearchState.searchGroupList[groupIndex - 1];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(groupIndex - 1, _groupList.length - 1, _groupList[_groupList.length - 1]);
   } else if (groupIndex === 0) {
     const _group = globalSearchState.searchGroupList[globalSearchState.searchGroupList.length - 1];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(globalSearchState.searchGroupList.length - 1, _groupList.length - 1, _groupList[globalSearchState.searchGroupList.length - 1]);
   }
 };
@@ -346,30 +370,30 @@ const nextItem = () => {
 
   const [ groupIndex, itemIndex ] = state.currentIndex.split('_').map(i => +i);
 
-  const _maxResultCount = globalSearchState.resultList.filter(i => i.group === globalSearchState.searchGroupList[groupIndex].name).length;
+  const _maxResultCount = globalSearchState.resultList.filter(i => i.item.group === globalSearchState.searchGroupList[groupIndex].name).length;
 
   if (itemIndex < _maxResultCount - 1) {
     const _group = globalSearchState.searchGroupList[groupIndex];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(groupIndex, itemIndex + 1, _groupList[itemIndex + 1]);
   } else if (groupIndex < globalSearchState.searchGroupList.length - 1) {
     const _group = globalSearchState.searchGroupList[groupIndex + 1];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(groupIndex + 1, 0, _groupList[0]);
   } else if (groupIndex === globalSearchState.searchGroupList.length - 1) {
     const _group = globalSearchState.searchGroupList[0];
-    const _groupList = globalSearchState.resultList.filter(i => i.group === _group.name);
+    const _groupList = globalSearchState.resultList.filter(i => i.item.group === _group.name);
     setCurrentIndex(0, 0, _groupList[0]);
   }
 };
 
 /** 执行某一项 */
 const executeItem = () => {
-  if (state.currentItem?.goto) {
-    if (typeof state.currentItem.goto === 'string') {
+  if (state.currentItem?.item.goto) {
+    if (typeof state.currentItem.item.goto === 'string') {
       message.warn('暂未处理字符串类型命令');
     } else {
-      state.currentItem?.goto();
+      state.currentItem.item.goto();
     }
   }
 };
@@ -454,7 +478,7 @@ onUnmounted(() => {
   background-color: rgba(191, 194, 230, 0.502);
   z-index: 1000;
   opacity: 0;
-  transition: 0.2s;
+  transition: opacity 0.2s;
 
   &.show {
     visibility: visible;

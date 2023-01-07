@@ -5,7 +5,24 @@ import type { GlobalSearchItem } from "../@types";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as pluginState, service as pluginService } from '@/modules/plugin-module';
 import { toast } from '@/common/message';
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import Fuse from 'fuse.js';
+
+/** Fuse实例 */
+let fuse: Fuse<GlobalSearchItem> = new Fuse([], {
+  includeScore: true,
+  includeMatches: true,
+  minMatchCharLength: 2,
+  keys: [
+    "tags",
+    "title",
+    "description",
+    "alias",
+    "actions.label",
+    "crumbs.label",
+    "related.label",
+  ]
+});
 
 /** 快速面包屑列表 */
 const quickCrumbs = {
@@ -42,11 +59,40 @@ const quickCrumbs = {
 };
 
 /** 获取所有搜索项 */
-export const getSearchItems = computed<GlobalSearchItem[]>(() => {
-  return [
+// export const getSearchItems = computed<GlobalSearchItem[]>(() => {
+//   return [
+//     ...fixedSearchItems.value,
+//     ...pluginSearchItems.value,
+//   ];
+// });
+
+/** 搜索项 */
+export const search = (txt: string, count = 100) => {
+  return fuse.search(txt, {
+    limit: count
+  });
+}
+
+/** 添加搜索项 */
+export const addSearchItem = (...item: GlobalSearchItem[]) => {
+  for (let i = 0; i < item.length; i++) {
+    fuse.add(item[i]);
+  }
+}
+
+/** 添加搜索项 */
+export const removeSearchItem = (...ids: string[]) => {
+  fuse.remove((doc) => {
+    if (doc.id) return ids.includes(doc.id);
+    else return false;
+  });
+}
+
+watch(() => pluginState.plugins.length, () => {
+  fuse.setCollection([
     ...fixedSearchItems.value,
     ...pluginSearchItems.value,
-  ];
+  ]);
 });
 
 /** 插件搜索项 */
@@ -198,4 +244,9 @@ export const fixedSearchItems = ref<GlobalSearchItem[]>([
       { label: '切换至深色主题', goto: () => editorService.selectTheme('dark', '深色主题') },
     ]
   }, 
+]);
+
+fuse.setCollection([
+  ...fixedSearchItems.value,
+  ...pluginSearchItems.value,
 ]);
