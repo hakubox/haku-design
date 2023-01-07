@@ -1,8 +1,20 @@
 {
   "name": "haku-design",
-  "private": true,
+  "private": false,
   "version": "0.3.1",
+  "description": "白箱设计器是使用vite4.0开发的一款设计工具。",
   "type": "module",
+  "author": {
+    "name": "白箱",
+    "email": "lidian_226@outlook.com",
+    "url": "http://hakuq.com/"
+  },
+  "keywords": [
+    "questionnaire",
+    "design",
+    "editor",
+    "vue"
+  ],
   "scripts": {
     "dev": "cross-env buildProj=design buildMode=development vite --mode development",
     "build:design": "cross-env buildProj=design buildMode=development vite build",
