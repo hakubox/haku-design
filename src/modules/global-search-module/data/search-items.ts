@@ -15,7 +15,7 @@ let fuse: Fuse<GlobalSearchItem> = new Fuse([], {
   minMatchCharLength: 2,
   keys: [
     "tags",
-    "title",
+    { name: 'title', weight: 2 },
     "description",
     "alias",
     "actions.label",

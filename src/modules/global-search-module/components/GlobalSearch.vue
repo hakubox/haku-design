@@ -129,7 +129,7 @@
               <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                 {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+              <span v-else :key="i+'2'">{{ fragment.txt }}</span>
             </template>
           </div>
           <div class="global-search-result-detail-tags">
@@ -163,7 +163,7 @@
               <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                 {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+              <span v-else :key="i+'2'">{{ fragment.txt }}</span>
             </template>
           </div>
           <!-- 相关内容 -->
@@ -176,7 +176,7 @@
                   <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                     {{ fragment.txt }}
                   </span>
-                  <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+                  <span v-else :key="i+'2'">{{ fragment.txt }}</span>
                 </template>
               </li>
             </ul>

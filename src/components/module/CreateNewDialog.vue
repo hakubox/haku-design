@@ -13,7 +13,7 @@
       <template #title>
         <!-- <i class="iconfont icon-zidingyi" style="margin-right: 10px;font-size: 16px;" /> -->
         <FormOutlined style="margin-right: 10px" />
-        {{ title }} + {{ visible }}
+        {{ title }}
       </template>
       <div class="create-new-panel">
         <div class="create-new-panel-left">
@@ -122,23 +122,23 @@ const state = reactive({
       backgroundImage: new URL('@/assets/img/create-questionnaire.png', import.meta.url).href,
     },
     {
-      title: '课件',
-      type: 'courseware',
-      description: '创建新的课件',
-      backgroundImage: new URL('@/assets/img/create-courseware.png', import.meta.url).href,
-    },
-    {
-      title: '复合组件',
-      type: 'complex-component',
-      description: '创建新的可复用组件',
-      backgroundImage: new URL('@/assets/img/create-component.png', import.meta.url).href,
-    },
-    {
       title: '画布',
       type: 'canvas',
       description: '创建新的空白画布',
       backgroundImage: new URL('@/assets/img/create-canvas.png', import.meta.url).href,
     },
+    // {
+    //   title: '复合组件',
+    //   type: 'complex-component',
+    //   description: '创建新的可复用组件',
+    //   backgroundImage: new URL('@/assets/img/create-component.png', import.meta.url).href,
+    // },
+    // {
+    //   title: '课件',
+    //   type: 'courseware',
+    //   description: '创建新的课件',
+    //   backgroundImage: new URL('@/assets/img/create-courseware.png', import.meta.url).href,
+    // },
   ],
   /** 提交表单 */
   formState: {
@@ -317,7 +317,7 @@ watch(() => state.formState.type, (value, oldValue) => {
   flex-grow: 0;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   margin-bottom: -15px;
 

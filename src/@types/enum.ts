@@ -198,12 +198,12 @@ export enum CrossAxisAlignment {
 export enum AppType {
   /** 问卷 */
   questionnaire = 'questionnaire',
+  /** 画布 */
+  canvas = 'canvas',
   /** 课件 */
   courseware = 'courseware',
   /** 复合组件 */
   complexComponent = 'complex-component',
-  /** 画布 */
-  canvas = 'canvas',
 }
 
 /** 数据编辑器的值转换为答案类型 */
