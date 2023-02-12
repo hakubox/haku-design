@@ -4,18 +4,22 @@ import { state as historyState, service as historyService } from '@/common/histo
 import { cloneForce } from '@/lib/clone';
 import { createModelId, moveNodeOfTree } from '@/tools/common';
 import type { DragConfig, DragLayoutParams, DragLayoutReturn } from './@types';
-import { ComponentCategory, LayoutType } from '@/@types/enum';
+import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
 
 /** 拖拽模块状态 */
 export const state = reactive({
+  /** 对齐线列表（自动） */
+  alignLines: [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[],
+  /** 定位线列表（用户拖拽） */
+  positionLines: [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[],
   /** 拖拽配置 */
   dragConfig: {
     isPreDrag: false,
     isDrag: false,
     isDragArea: false,
     component: null,
-    insertComponentId: '',
+    insertComponentId: undefined,
     targetFormComponentId: '',
     startLoc: {
       x: 0,
@@ -26,6 +30,7 @@ export const state = reactive({
       y: 0,
     },
   } as DragConfig,
+  /** 是否已存在？ */
   isExisted: false,
   offsetAmount: 10,
 
@@ -42,6 +47,90 @@ export const state = reactive({
 });
 
 export const service = {
+  /** 获取9个组件的关键点 */
+  getComponentPoints(component: Component, config?: { x?: number, y?: number }) {
+    const _x = config?.x ?? component.attrs.x;
+    const _y = config?.y ?? component.attrs.y;
+    const points = [
+      [_x, _y],
+      [_x, _y + component.attrs.height / 2],
+      [_x, _y + component.attrs.height],
+      [_x + component.attrs.width / 2, _y],
+      [_x + component.attrs.width / 2, _y + component.attrs.height / 2],
+      [_x + component.attrs.width / 2, _y + component.attrs.height],
+      [_x + component.attrs.width, _y],
+      [_x + component.attrs.width, _y + component.attrs.height / 2],
+      [_x + component.attrs.width, _y + component.attrs.height],
+    ] as [number, number][];
+    return points;
+  },
+  /** 获取对齐线 */
+  getAlignLines(component: Component, config?: { x?: number, y?: number }) {
+    const _lines = [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[];
+    if (editorState.canvasRect) {
+      const _points = this.getComponentPoints(component, config);
+      const _parent = editorService.findParentComponent(component.id);
+      const _childrenPoints = _parent?.component.children?.filter(i => i.id !== component.id)?.map(i => this.getComponentPoints(i)) || [];
+      const _xIndexDirection = {
+        0: 'front',
+        1: 'front',
+        2: 'front',
+        3: 'center',
+        4: 'center',
+        5: 'center',
+        6: 'end',
+        7: 'end',
+        8: 'end',
+      };
+      const _yIndexDirection = {
+        0: 'front',
+        3: 'front',
+        6: 'front',
+        1: 'center',
+        4: 'center',
+        7: 'center',
+        2: 'end',
+        5: 'end',
+        8: 'end',
+      };
+      if (_parent?.level === 0) {
+        /** 添加外层组件是 */
+        _childrenPoints.push([
+          [0, 0], 
+          [0, editorState.appConfig.height / 2], 
+          [0, editorState.appConfig.height],
+          [editorState.appConfig.width / 2, 0], 
+          [editorState.appConfig.width / 2, editorState.appConfig.height / 2], 
+          [editorState.appConfig.width / 2, editorState.appConfig.height],
+          [editorState.appConfig.width, 0], 
+          [editorState.appConfig.width, editorState.appConfig.height / 2], 
+          [editorState.appConfig.width, editorState.appConfig.height],
+        ]);
+      } else {
+        /** 添加外层组件是 */
+        _childrenPoints.push(this.getComponentPoints(_parent?.component!));
+      }
+      for (let i = 0; i < _childrenPoints.length; i++) {
+        for (let o = 0; o < 9; o++) {
+          for (let p = 0; p < 9; p++) {
+            const _x = _childrenPoints[i][o][0];
+            const _y = _childrenPoints[i][o][1];
+            if (Math.abs(_x - _points[p][0]) < 6) {
+              if (_lines.findIndex(line => line.x === _x) === -1) {
+                _lines.push({ x: _x, direction: _xIndexDirection[p] });
+              }
+            }
+            if (Math.abs(_y - _points[p][1]) < 6) {
+              if (_lines.findIndex(line => line.y === _y) === -1) {
+                _lines.push({ y: _y, direction: _yIndexDirection[p] });
+              }
+            }
+          }
+        }
+      }
+    }
+    return _lines;
+  },
   /** 开始拖拽 */
   startDrag(e, component: Component, isExisted: boolean = false) {
     if (e.button != 0) return;
@@ -61,8 +150,10 @@ export const service = {
   startDragFormComponent(e, component: Component) {
     state.dragConfig.targetFormComponentId = component.id;
     const _el: HTMLElement = document.createElement('div');
-    _el.classList.add('form-design-drag-component');
-    _el.innerHTML = component?.title ?? '';
+    if (editorState.appConfig.appType === AppType.questionnaire) {
+      _el.classList.add('form-design-drag-component');
+      _el.innerHTML = component?.title ?? '';
+    }
     service.startDrag(
       {
         original: e,
@@ -110,8 +201,12 @@ export const service = {
               fromParentComponentId: fromParentComponentId,
               toParentComponentId: state.dragConfig.insertComponentId,
               toParentComponentSlotIndex: state.dragConfig.insertSlotIndex,
+              x: state.dragConfig.adsorbLoc?.x ?? (state.dragConfig.mouseX - state.dragConfig.startLoc.x),
+              y: state.dragConfig.adsorbLoc?.y ?? (state.dragConfig.mouseY - state.dragConfig.startLoc.y)
             },
           });
+          state.alignLines = [];
+          state.dragConfig.adsorbLoc = undefined;
         } else {
           // 刚刚插入界面或添加到最后处理方式
           historyService.exec('add-component', {
@@ -121,6 +216,8 @@ export const service = {
               index: state.dragConfig.insertIndex,
               parentComponentId: state.dragConfig.insertComponentId,
               parentComponentSlotIndex: state.dragConfig.insertSlotIndex,
+              x: state.dragConfig.mouseX - _newComponent.attrs.width / 2,
+              y: state.dragConfig.mouseY - _newComponent.attrs.height / 2
             },
           });
         }
@@ -129,7 +226,7 @@ export const service = {
       Object.entries({
         shadowDom: null,
         component: null,
-        insertComponentId: '',
+        insertComponentId: undefined,
         targetFormComponentId: '',
         isDrag: false,
         isPreDrag: false,
@@ -139,7 +236,7 @@ export const service = {
       }).forEach(([key, value]) => {
         state.dragConfig[key] = value;
       });
-      editorService.changeComponentCursor(false);
+      editorService.changeComponentCursorByLine(false);
 
       setTimeout(() => {
         editorService.refresh();
@@ -169,102 +266,177 @@ export const service = {
   },
   /** 组件拖拽中 */
   dragMove(e) {
-    if (state.dragConfig.isPreDrag) {
-      // 如果延迟量大于0且还没有影子节点时则创建
-      if (!state.dragConfig.shadowDom) {
-        // 判断偏移量
-        if (
-          !state.isExisted ||
-          (state.isExisted && Math.abs(e.layerY - state.dragConfig.startLoc.y) > state.offsetAmount) ||
-          Math.abs(e.layerX - state.dragConfig.startLoc.x) > state.offsetAmount
-        ) {
-          service.setShadowDom(state.tempShadowMouseState);
-          if (state.dragConfig.shadowDom !== undefined) {
-            (state.dragConfig.shadowDom as HTMLElement).classList.remove('hidden');
-          }
-          state.dragConfig.isPreDrag = false;
-          state.dragConfig.isDrag = true;
-        }
-      }
-    } else if (state.dragConfig.isDrag) {
-      state.dragConfig.endLoc.y = e.clientY - state.dragConfig.startLoc.y;
-      state.dragConfig.endLoc.x = e.clientX - state.dragConfig.startLoc.x;
-      if (state.dragConfig.shadowDom) {
-        state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';
-        state.dragConfig.shadowDom.style.left = state.dragConfig.endLoc.x + state.shadowOffsetX + 'px';
-      }
-
-      state.dragConfig.mouseX = state.dragConfig.endLoc.x + state.dragConfig.startLoc.x + editorState.canvasLocation.x;
-      state.dragConfig.mouseY = state.dragConfig.endLoc.y + state.dragConfig.startLoc.y + editorState.canvasLocation.y;
-
-      const _pageX = e.pageX;
-      const _pageY = e.pageY;
-
-      if (
-        state.dragConfig.mouseX > 0 &&
-        state.dragConfig.mouseX < editorState.appConfig.width &&
-        state.dragConfig.mouseY > -80
-      ) {
-        state.dragConfig.isDragArea = true;
-        let _y = 0;
-        // 计算应该把组件插入到什么地方
-        if (state.dragConfig.mouseY < 0) {
-          state.dragConfig.insertIndex = 0;
-          state.dragConfig.insertComponentId = undefined;
-          editorService.changeComponentCursor(undefined, false);
-        } else {
-          state.dragConfig.top = 0;
-          let index = 0;
-          let _component: Component | undefined;
-          let _prevHeight = 0;
-          for (; index < editorState.currentPage.children.length; index++) {
-            const _id = editorState.currentPage.children[index].id;
-            _component = editorState.currentPage.children[index] as Component;
-            state.dragConfig.insertIndex = index;
-            state.dragConfig.insertComponentId = undefined;
-            _prevHeight = _y;
-            _y = (editorState.canvasPanelEl.querySelector(`[component-id='${_id}']`) as HTMLElement).offsetHeight || 0;
-
-            // 注：如果超过行程过大或过小则插入到同级
-            if (
-              [ComponentCategory.complex, ComponentCategory.layout].includes(_component.type) &&
-              _id != state.dragConfig.targetFormComponentId &&
-              state.dragConfig.mouseY >= state.dragConfig.top + 10 &&
-              state.dragConfig.mouseY <= state.dragConfig.top + _y - 10
-            ) {
-              /** 根据布局组件类型不同调用函数获得插入结果 */
-              const insertResult = service.dragForChildComponent(_component, {
-                pageX: _pageX,
-                pageY: _pageY,
-                parentComponentHeight: _y,
-                parentComponentWidth: 0,
-              });
-              if (insertResult.isReturn) return;
-            } else {
-              state.dragConfig.insertComponentId = undefined;
-              if (
-                state.dragConfig.mouseY >= state.dragConfig.top - _prevHeight / 2 &&
-                state.dragConfig.mouseY <= state.dragConfig.top + _y / 2
-              ) {
-                state.dragConfig.insertIndex = index;
-                state.dragConfig.top += _y;
-                break;
-              }
+    if (editorState.appConfig.appType === AppType.questionnaire) {
+      if (state.dragConfig.isPreDrag) {
+        // 如果延迟量大于0且还没有影子节点时则创建
+        if (!state.dragConfig.shadowDom) {
+          // 判断偏移量
+          if (
+            !state.isExisted ||
+            (state.isExisted && Math.abs(e.layerY - state.dragConfig.startLoc.y) > state.offsetAmount) ||
+            Math.abs(e.layerX - state.dragConfig.startLoc.x) > state.offsetAmount
+          ) {
+            service.setShadowDom(state.tempShadowMouseState);
+            if (state.dragConfig.shadowDom !== undefined) {
+              (state.dragConfig.shadowDom as HTMLElement).classList.remove('hidden');
             }
-            state.dragConfig.top += _y;
+            state.dragConfig.isPreDrag = false;
+            state.dragConfig.isDrag = true;
           }
-          // 最终统一绘制插入游标
-          if (state.dragConfig.mouseY >= state.dragConfig.top - _y / 2 && index === editorState.currentPage.children.length) {
-            state.dragConfig.insertIndex = editorState.currentPage.children.length;
-            editorService.changeComponentCursor(undefined, true);
-          } else if (state.dragConfig.insertIndex !== undefined) {
-            editorService.changeComponentCursor(editorService.getComponentElementById(_component?.id), false, false);
-          }
-          if (state.dragConfig.insertIndex === undefined) state.dragConfig.insertIndex = 0;
         }
-      } else {
-        state.dragConfig.isDragArea = false;
-        editorService.changeComponentCursor(false);
+      } else if (state.dragConfig.isDrag) {
+        state.dragConfig.endLoc.y = e.clientY - state.dragConfig.startLoc.y;
+        state.dragConfig.endLoc.x = e.clientX - state.dragConfig.startLoc.x;
+        if (state.dragConfig.shadowDom) {
+          state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';
+          state.dragConfig.shadowDom.style.left = state.dragConfig.endLoc.x + state.shadowOffsetX + 'px';
+        }
+  
+        state.dragConfig.mouseX = state.dragConfig.endLoc.x + state.dragConfig.startLoc.x + editorState.canvasLocation.x;
+        state.dragConfig.mouseY = state.dragConfig.endLoc.y + state.dragConfig.startLoc.y + editorState.canvasLocation.y;
+  
+        const _pageX = e.pageX;
+        const _pageY = e.pageY;
+  
+        if (
+          state.dragConfig.mouseX > 0 &&
+          state.dragConfig.mouseX < editorState.appConfig.width &&
+          state.dragConfig.mouseY > -80
+        ) {
+          state.dragConfig.isDragArea = true;
+          let _y = 0;
+          // 计算应该把组件插入到什么地方
+          if (state.dragConfig.mouseY < 0) {
+            state.dragConfig.insertIndex = 0;
+            state.dragConfig.insertComponentId = undefined;
+            editorService.changeComponentCursorByLine(undefined, false);
+          } else {
+            state.dragConfig.top = 0;
+            let index = 0;
+            let _component: Component | undefined;
+            let _prevHeight = 0;
+            for (; index < editorState.currentPage.children.length; index++) {
+              const _id = editorState.currentPage.children[index].id;
+              _component = editorState.currentPage.children[index] as Component;
+              state.dragConfig.insertIndex = index;
+              state.dragConfig.insertComponentId = undefined;
+              _prevHeight = _y;
+              _y = (editorState.canvasPanelEl.querySelector(`[component-id='${_id}']`) as HTMLElement).offsetHeight || 0;
+
+              // 注：如果超过行程过大或过小则插入到同级
+              if (
+                [ComponentCategory.complex, ComponentCategory.layout].includes(_component.type) &&
+                _id != state.dragConfig.targetFormComponentId &&
+                state.dragConfig.mouseY >= state.dragConfig.top + 10 &&
+                state.dragConfig.mouseY <= state.dragConfig.top + _y - 10
+              ) {
+                /** 根据布局组件类型不同调用函数获得插入结果 */
+                const insertResult = service.dragForChildComponent(_component, {
+                  pageX: _pageX,
+                  pageY: _pageY,
+                  parentComponentHeight: _y,
+                  parentComponentWidth: 0,
+                });
+                if (insertResult.isReturn) return;
+              } else {
+                state.dragConfig.insertComponentId = undefined;
+                if (
+                  state.dragConfig.mouseY >= state.dragConfig.top - _prevHeight / 2 &&
+                  state.dragConfig.mouseY <= state.dragConfig.top + _y / 2
+                ) {
+                  state.dragConfig.insertIndex = index;
+                  state.dragConfig.top += _y;
+                  break;
+                }
+              }
+              state.dragConfig.top += _y;
+            }
+            // 最终统一绘制插入游标
+            if (state.dragConfig.mouseY >= state.dragConfig.top - _y / 2 && index === editorState.currentPage.children.length) {
+              state.dragConfig.insertIndex = editorState.currentPage.children.length;
+              editorService.changeComponentCursorByLine(undefined, true);
+            } else if (state.dragConfig.insertIndex !== undefined) {
+              editorService.changeComponentCursorByLine(editorService.getComponentElementById(_component?.id), false, false);
+            }
+            if (state.dragConfig.insertIndex === undefined) state.dragConfig.insertIndex = 0;
+          }
+        } else {
+          state.dragConfig.isDragArea = false;
+          editorService.changeComponentCursorByLine(false);
+        }
+      }
+    } else if (editorState.appConfig.appType === AppType.canvas) {
+      if (state.dragConfig.isPreDrag) {
+        // 如果延迟量大于0且还没有影子节点时则创建
+        if (!state.dragConfig.shadowDom) {
+          // 判断偏移量
+          if (
+            !state.isExisted ||
+            (state.isExisted && Math.abs(e.layerY - state.dragConfig.startLoc.y) > state.offsetAmount) ||
+            Math.abs(e.layerX - state.dragConfig.startLoc.x) > state.offsetAmount
+          ) {
+            service.setShadowDom(state.tempShadowMouseState);
+            if (state.dragConfig.shadowDom !== undefined) {
+              (state.dragConfig.shadowDom as HTMLElement).classList.remove('hidden');
+            }
+            state.dragConfig.isPreDrag = false;
+            state.dragConfig.isDrag = true;
+          }
+        }
+      } else if (state.dragConfig.isDrag) {
+        state.dragConfig.isDragArea = true;
+        state.dragConfig.endLoc.y = e.clientY - state.dragConfig.startLoc.y;
+        state.dragConfig.endLoc.x = e.clientX - state.dragConfig.startLoc.x;
+
+        state.dragConfig.mouseX = state.dragConfig.endLoc.x + state.dragConfig.startLoc.x + editorState.canvasLocation.x;
+        state.dragConfig.mouseY = state.dragConfig.endLoc.y + state.dragConfig.startLoc.y + editorState.canvasLocation.y;
+
+        // 标准拖拽（到根节点）
+        // TODO: 后续需要添加直接拖拽到父组件中的方式
+        
+        if (state.isExisted) {
+          // TODO: 拖拽吸附
+          let _x = state.dragConfig.mouseX - state.dragConfig.startLoc.x;
+          let _y = state.dragConfig.mouseY - state.dragConfig.startLoc.y;
+          state.alignLines = service.getAlignLines(state.dragConfig.component, {
+            x: _x, y: _y
+          });
+          const _xLines = state.alignLines.filter(i => i.x !== undefined);
+          if (_xLines.length) {
+            if (_xLines[0].direction === 'front') {
+              _x = _xLines[0].x!;
+            } else if (_xLines[0].direction === 'center') {
+              _x = _xLines[0].x! - state.dragConfig.component.attrs.width / 2;
+            } else if (_xLines[0].direction === 'end') {
+              _x = _xLines[0].x! - state.dragConfig.component.attrs.width;
+            }
+          }
+          const _yLines = state.alignLines.filter(i => i.y !== undefined);
+          if (_yLines.length) {
+            if (_yLines[0].direction === 'front') {
+              _y = _yLines[0].y!;
+            } else if (_yLines[0].direction === 'center') {
+              _y = _yLines[0].y! - state.dragConfig.component.attrs.height / 2;
+            } else if (_yLines[0].direction === 'end') {
+              _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
+            }
+          }
+
+          state.dragConfig.component.attrs.x = _x;
+          state.dragConfig.component.attrs.y = _y;
+          state.dragConfig.adsorbLoc = { x: _x, y: _y };
+          state.dragConfig.insertIndex = editorService.findComponentIndex(state.dragConfig.component?.id) ?? 0;
+        } else {
+          if (state.dragConfig.shadowDom) {
+            state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';
+            state.dragConfig.shadowDom.style.left = state.dragConfig.endLoc.x + state.shadowOffsetX + 'px';
+          }
+          editorService.changeComponentCursorByBlock({
+            x: state.dragConfig.mouseX,
+            y: state.dragConfig.mouseY, width: 100, height: 100
+          }, undefined);
+          state.dragConfig.insertIndex = editorState.currentPage.children.length;
+        }
       }
     }
   },
@@ -313,7 +485,7 @@ export const service = {
       dragLayoutReturn.isInsertInner = true;
       dragLayoutReturn.isReturn = true;
       state.dragConfig.insertIndex = 0;
-      editorService.changeComponentCursor(_parentEl, true, true);
+      editorService.changeComponentCursorByLine(_parentEl, true, true);
       return dragLayoutReturn;
     } else {
 
@@ -337,7 +509,7 @@ export const service = {
             dragLayoutReturn.isInsertInner = true;
             dragLayoutReturn.isReturn = true;
             state.dragConfig.insertSlotIndex = groupIndex;
-            editorService.changeComponentCursor(_group, true, true);
+            editorService.changeComponentCursorByLine(_group, true, true);
             return dragLayoutReturn;
           } else {
             for (; childrenIndex < _components.length;childrenIndex++) {
@@ -375,7 +547,7 @@ export const service = {
                   state.dragConfig.top += _y;
                   dragLayoutReturn.isInsertInner = true;
                   dragLayoutReturn.isReturn = true;
-                  editorService.changeComponentCursor(_components[childrenIndex], false, false);
+                  editorService.changeComponentCursorByLine(_components[childrenIndex], false, false);
                   return dragLayoutReturn;
                 }
               }
@@ -392,9 +564,9 @@ export const service = {
               const _groupEl = _parentEl.querySelectorAll(parentComponent.childrenSlot!)[groupIndex] as HTMLElement;
               if (childrenIndex > 0) {
                 const _componentEl = Array.from(_groupEl.querySelectorAll(parentComponent.childrenContentSlot!)).slice(-1)[0] as HTMLElement;
-                editorService.changeComponentCursor(_componentEl, true, false);
+                editorService.changeComponentCursorByLine(_componentEl, true, false);
               } else {
-                editorService.changeComponentCursor(_groupEl, true, true);
+                editorService.changeComponentCursorByLine(_groupEl, true, true);
               }
               return dragLayoutReturn;
             }
@@ -416,25 +588,25 @@ export const service = {
         const _groupEl = _parentEl.querySelectorAll(parentComponent.childrenSlot!)[groupIndex - 1] as HTMLElement;
         if (childrenIndex > 0) {
           const _componentEl = Array.from(_groupEl.querySelectorAll(parentComponent.childrenContentSlot!)).slice(-1)[0] as HTMLElement;
-          editorService.changeComponentCursor(_componentEl, true, false);
+          editorService.changeComponentCursorByLine(_componentEl, true, false);
         } else {
-          editorService.changeComponentCursor(_groupEl, true, true);
+          editorService.changeComponentCursorByLine(_groupEl, true, true);
         }
       } else if (groupIndex === _groups.length) {
         dragLayoutReturn.isInsertInner = true;
         dragLayoutReturn.isReturn = true;
         if (groupIndex > 0) {
           state.dragConfig.insertSlotIndex = groupIndex - 1;
-          editorService.changeComponentCursor(_groups[groupIndex - 1], true, true);
+          editorService.changeComponentCursorByLine(_groups[groupIndex - 1], true, true);
         } else {
           state.dragConfig.insertSlotIndex = 0;
-          editorService.changeComponentCursor(_groups[0], true, true);
+          editorService.changeComponentCursorByLine(_groups[0], true, true);
         }
       } else if (state.dragConfig.insertIndex !== undefined) {
         // const _childEl = _parentEl.querySelectorAll(parentComponent.childrenSlot!)[0] as HTMLElement;
-        // editorService.changeComponentCursor(_childEl);
+        // editorService.changeComponentCursorByLine(_childEl);
 
-        editorService.changeComponentCursor(editorService.getComponentElementById(_component?.id));
+        editorService.changeComponentCursorByLine(editorService.getComponentElementById(_component?.id));
       } else {
         console.error('错了');
       }

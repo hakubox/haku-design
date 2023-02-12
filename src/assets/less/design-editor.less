@@ -519,43 +519,51 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
 // 控件游标
 .form-canvas-cursor {
-  position: relative;
-  height: 0px;
-  left: 1px;
-  width: calc(100% - 2px);
   z-index: 9999;
   outline: 1px solid @primary-color;
 
-  &:before {
-    content: '';
+  &.cursor-block {
     position: absolute;
-    display: inline-block;
-    top: -4px;
-    left: -6px;
-    width: 0px;
-    height: 0px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid @primary-color;
-    border-top: 4px solid @primary-color;
-    border-bottom: 4px solid transparent;
-    transform: rotate(45deg);
-    z-index: 1;
+    background-color: rgba(225 239 255, 0.3);
   }
 
-  &:after {
-    content: '';
-    position: absolute;
-    display: inline-block;
-    top: -4px;
-    right: -6px;
-    width: 0px;
+  &.cursor-line {
+    position: relative;
     height: 0px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid @primary-color;
-    border-top: 4px solid @primary-color;
-    border-bottom: 4px solid transparent;
-    transform: rotate(-135deg);
-    z-index: 1;
+    left: 1px;
+    width: calc(100% - 2px);
+
+    &:before {
+      content: '';
+      position: absolute;
+      display: inline-block;
+      top: -4px;
+      left: -6px;
+      width: 0px;
+      height: 0px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid @primary-color;
+      border-top: 4px solid @primary-color;
+      border-bottom: 4px solid transparent;
+      transform: rotate(45deg);
+      z-index: 1;
+    }
+  
+    &:after {
+      content: '';
+      position: absolute;
+      display: inline-block;
+      top: -4px;
+      right: -6px;
+      width: 0px;
+      height: 0px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid @primary-color;
+      border-top: 4px solid @primary-color;
+      border-bottom: 4px solid transparent;
+      transform: rotate(-135deg);
+      z-index: 1;
+    }
   }
 }
 
@@ -771,14 +779,28 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
     > .form-canvas-mainpanel {
       position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
-      flex-grow: 1;
       will-change: auto;
       font-size: 0px;
       padding-bottom: 4px;
+
+      // 表单类型
+      &.type-flex {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        flex-grow: 1;
+      }
+
+      // 画布类型
+      &.type-canvas {
+        display: block;
+
+        .form-component {
+          position: absolute;
+          transition: none;
+        }
+      }
 
       &.readonly {
         // &:after {
@@ -1044,4 +1066,35 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
 .w-e-modal {
   position: absolute;
+}
+
+// 对齐线（横向）
+.align-line-panel-horizontal {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 0px;
+  z-index: 999;
+
+  > .align-line {
+    position: absolute;
+    width: 100%;
+    border-top: 1px solid red;
+  }
+}
+// 对齐线（纵向）
+.align-line-panel-vertical {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 0px;
+  height: 100%;
+  z-index: 999;
+
+  > .align-line {
+    position: absolute;
+    height: 100%;
+    border-left: 1px solid red;
+  }
 }

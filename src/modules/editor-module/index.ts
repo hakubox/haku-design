@@ -86,6 +86,8 @@ export const state = reactive({
     useAutoCache: true,
     autoCacheDuration: 3600000
   } as AppConfig,
+  /** 画布尺寸及边距 */
+  canvasRect: undefined as DOMRect | undefined,
   /** 预览图地址 */
   previewUrl: '',
   /** 是否预览 */
@@ -142,7 +144,7 @@ export const state = reactive({
   /** 游标父元素前后位置 */
   componentCursorIsAfter: undefined as boolean | undefined,
   /** 组件放置游标 */
-  componentCursorEl: document.createElement('div') as any,
+  componentCursorEl: document.createElement('div') as HTMLElement,
   /** 画布主panel */
   rootPanelEl: null as any,
   /** 设备类型列表 */
@@ -341,14 +343,14 @@ export const service = {
   /** 新建 */
   createNew(createConfig: CreateNewConfig, isPreview: boolean = false) {
     if (!isPreview) service.changeSelectedFormComponent();
-    if (createConfig.type === AppType.questionnaire || createConfig.type === 'questionary') {
+    if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.courseware) {
       service.initFormByCourseware(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
-      toast('开发中，敬请期待', 'warning');
+      service.initFormByCanvas(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     }
 
     themeService.changeTheme();
@@ -365,14 +367,14 @@ export const service = {
   /** 新建本地问卷 */
   createNewByLocal(createConfig: CreateNewConfig, isPreview: boolean = false) {
     if (!isPreview) service.changeSelectedFormComponent();
-    if (createConfig.type === AppType.questionnaire || createConfig.type === 'questionary') {
+    if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.courseware) {
       service.initFormByCourseware(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
-      toast('开发中，敬请期待', 'warning');
+      service.initFormByCanvas(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     }
     themeService.changeTheme();
   },
@@ -383,6 +385,7 @@ export const service = {
     } else if (state.appConfig.deviceType === 'mobile') {
       globalState.isMobile = true;
     }
+    
     configService.init();
     nextTick(() => {
       state.canvasPanelEl = document.querySelector('.form-canvas')!;
@@ -469,7 +472,7 @@ export const service = {
       state.canvasPanelEl = document.querySelector('.form-canvas')!;
       state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
-    }, 50);
+    }, 200);
     service.init();
   },
   /** 初始化复合组件 */
@@ -550,7 +553,7 @@ export const service = {
       state.canvasPanelEl = document.querySelector('.form-canvas')!;
       state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
-    }, 50);
+    }, 200);
     service.init();
   },
   /** 加载初始化组件属性列表 */
@@ -679,7 +682,87 @@ export const service = {
       state.canvasPanelEl = document.querySelector('.form-canvas')!;
       state.canvasEl = document.querySelector('.design-form-canvas')!;
       service.refresh();
-    }, 50);
+    }, 200);
+    service.init();
+  },
+  /** 初始化画布 */
+  initFormByCanvas(form?: ExportAppBody, formId?: string, appConfig?: Record<string, any>) {
+    if (form) {
+      state.appConfig = form.appConfig;
+      if (formId) state.appConfig.id = formId;
+
+      // let _componentTree = fillPropertys(form.components.children);
+      // console.log(_componentTree);
+      state.pages = form.pages;
+      eventState.allEvents = form.events;
+
+      service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
+    } else {
+      const _defaultDevice = remoteDevices.iphone678;
+      state.appConfig = {
+        id: formId || '',
+        appVersion: '1',
+        isInit: true,
+        appTitle: appConfig?.title || '测试画布',
+        description: appConfig?.description || '',
+        appType: AppType.canvas,
+        headerTags: [],
+        headerContent: '',
+        remark: '',
+        turnPageMode: 'default',
+        showPageProgress: true,
+        showPageButton: true,
+        width: _defaultDevice.width,
+        height: _defaultDevice.height,
+        headerHeight: 48,
+        deviceType: DeviceType.mobile,
+        showNo: true,
+        timerConfig: {
+          isOpen: false,
+        },
+        dimensionConfig: {
+          isOpen: false,
+          dimensionList: [],
+        },
+        footer: {
+          isShow: true,
+          submitButtonText: '提交',
+          resetButton: false,
+          resetButtonText: '重置'
+        },
+        componentIndex: 1,
+        formTheme: 'default',
+        hasScore: true,
+        isAutoToGrade: true,
+        layoutConfig: {
+          layout: LayoutType.absolute,
+          layoutDetailConfig: { }
+        } as LayoutConfig<LayoutType.absolute>,
+        startPageConfig: {
+          isOpen: false,
+        },
+        endPageConfig: {
+          isOpen: false,
+        },
+        ratingList: [
+          { startScore: 0, title: '分数正常' }
+        ],
+        useAutoCache: true,
+        autoCacheDuration: 3600000
+      };
+      state.pages[0].children = [];
+    }
+
+    state.currentSelectedComponent = undefined;
+    state.currentSelectedFirstComponentId = '';
+    state.currentSelectedComponentPropertyGroups = [];
+    state.currentSelectedComponentPropertyMap = {};
+
+    setTimeout(() => {
+      state.canvasPanelEl = document.querySelector('.form-canvas')!;
+      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      service.refresh();
+    }, 200);
     service.init();
   },
   /** 获取导出数据 */
@@ -853,6 +936,10 @@ export const service = {
     const { y, x } = state.canvasPanelEl.getBoundingClientRect();
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;
+    state.canvasRect = document.querySelector('.design-form-canvas-page')!.getBoundingClientRect();
+    console.log('canvasRect已经初始化');
+    state.canvasRect.x -= 340;
+    state.canvasRect.y -= 48;
   },
   /**
    * 合并表单数据（需要根据题目合并）
@@ -884,7 +971,8 @@ export const service = {
     return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector<HTMLElement>(`[component-id="${componentId}"]`) ?? undefined : undefined;
   },
   /** 显示或隐藏游标 */
-  changeComponentCursor(component: HTMLElement | undefined | false, isAfter: boolean = false, isInner: boolean = true) {
+  changeComponentCursorByLine(component: HTMLElement | undefined | false, isAfter: boolean = false, isInner: boolean = true) {
+    state.componentCursorEl.className = 'form-canvas-cursor cursor-line';
     if (component !== false) {
       if (!component && state.componentCursorParentEl !== state.rootPanelEl) {
         if (isAfter) {
@@ -908,6 +996,32 @@ export const service = {
       state.componentCursorParentEl = undefined;
       state.componentCursorIsAfter = undefined;
     }
+  },
+  /** 显示或隐藏组件类型游标 */
+  changeComponentCursorByBlock(config: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }, component: HTMLElement | undefined | false) {
+    // state.componentCursorEl.className = 'form-canvas-cursor cursor-block';
+    // state.componentCursorEl.setAttribute('style', `left:${config.x}px;top:${config.y}px;width:${config.width}px;height:${config.height}px;`);
+    // if (component !== false) {
+    //   state.componentCursorEl.style.width = `${config.width}px`;
+    //   state.componentCursorEl.style.height = `${config.height}px`;
+    //   if (!component && state.componentCursorParentEl !== state.rootPanelEl) {
+    //     state.rootPanelEl.insertAdjacentElement('beforeend', state.componentCursorEl);
+    //     state.componentCursorParentEl = state.rootPanelEl;
+    //   } else if (component && (state.componentCursorParentEl != component)) {
+    //     component.insertAdjacentElement('beforeend', state.componentCursorEl);
+    //     state.componentCursorParentEl = component;
+    //   }
+    //   state.componentCursorIsAfter = undefined;
+    // } else if (state.componentCursorParentEl) {
+    //   state.componentCursorEl?.remove();
+    //   state.componentCursorParentEl = undefined;
+    //   state.componentCursorIsAfter = undefined;
+    // }
   },
   /** 保存问卷 */
   saveQuestionnaire() {
@@ -1178,14 +1292,19 @@ export const service = {
   addComponent(component: Component, {
     index,
     parentComponentId,
-    parentComponentSlotIndex
+    parentComponentSlotIndex,
+    x, y
   }: {
     /** 组件插入索引 */
     index?: number,
     /** 插入父组件Id */
     parentComponentId?: string,
     /** 插入父组件插槽索引 */
-    parentComponentSlotIndex?: number
+    parentComponentSlotIndex?: number,
+    /** X坐标 */
+    x?: number,
+    /** Y坐标 */
+    y?: number,
   } = {}) {
     let _parentComponent: Component | undefined = undefined;
     if (!component.attrs.name) {
@@ -1218,11 +1337,29 @@ export const service = {
         }
       }
     }
+    if (x !== undefined) component.attrs.x = x;
+    if (y !== undefined) component.attrs.y = y;
 
     service.setParentDefaultProps(component, _parentComponent);
   },
   /** 移动组件 */
-  moveComponent(fromComponentId: string, toIndex: number, toParentComponentId?: string, toParentComponentSlotIndex?: number) {
+  moveComponent(fromComponentId: string, {
+    toIndex,
+    toParentComponentId,
+    toParentComponentSlotIndex,
+    x, y
+  }: {
+    /** 组件插入索引 */
+    toIndex: number,
+    /** 插入父组件Id */
+    toParentComponentId?: string,
+    /** 插入父组件插槽索引 */
+    toParentComponentSlotIndex?: number,
+    /** X坐标 */
+    x?: number,
+    /** Y坐标 */
+    y?: number,
+  } = { toIndex: 0 }) {
     // TODO: 需要组件移动后需要处理slotIndex属性
     let _fromChildren: Component[];
     let _toChildren: Component[];
@@ -1259,11 +1396,13 @@ export const service = {
     } else {
       _fromChildren.splice(_fromIndex, 1);
     }
-    service.changeSelectedFormComponent();
-    service.refresh();
-    setTimeout(() => {
-      service.changeSelectedFormComponent(_component);
-    }, 10);
+    if (x !== undefined) _component.attrs.x = x;
+    if (y !== undefined) _component.attrs.y = y;
+    // service.changeSelectedFormComponent();
+    // service.refresh();
+    // setTimeout(() => {
+    //   service.changeSelectedFormComponent(_component);
+    // }, 10);
   },
   /** 设置父组件默认属性值 */
   setParentDefaultProps(component: Component, parentComponent?: Component, isPush: boolean = true) {

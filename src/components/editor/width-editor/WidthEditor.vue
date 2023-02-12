@@ -1,5 +1,5 @@
 <template>
-  <div class="width-editor">
+  <div class="length-editor">
     <InputNumber size="small" style="width: 100%" v-model:value="state.inputValue" @change="change">
       <template #addonAfter>
         <Select v-model:value="state.suffix" size="small" @change="change" style="width: 60px">
@@ -80,7 +80,7 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '/src/assets/less/variable.less';
 
-.width-editor {
+.length-editor {
   :deep(.ant-input-number) {
     font-size: 12px;
   }

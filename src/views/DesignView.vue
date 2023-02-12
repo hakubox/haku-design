@@ -126,6 +126,25 @@
             @mousedown="editorService.changeSelectedFormComponent()"
             v-if="editorState.appConfig.isInit"
           >
+            <!-- 对齐线 -->
+            <div class="align-line-panel-vertical">
+              <div class="align-line" v-for="line in draggableState.alignLines.filter(i => i.x !== undefined)" :style="{ left: `${line.x! + (editorState.canvasRect?.x ?? 0)}px` }"></div>
+            </div>
+            <div class="align-line-panel-horizontal">
+              <div class="align-line" v-for="line in draggableState.alignLines.filter(i => i.y !== undefined)" :style="{ top: `${line.y! + (editorState.canvasRect?.y ?? 0)}px` }"></div>
+            </div>
+
+            <!-- 拖拽出来的定位线 -->
+
+            <!-- 导航图（暂时不启用） -->
+            <!-- <div class="svgPriview" style="position: absolute; top: 30px; left: 30px; width: 180px; height: 120px;">
+              <div class="app-canvas app-canvas-preview">
+                <DesignCanvas
+                  :isPreview="true"
+                  :isReadonly="true"
+                />
+              </div>
+            </div> -->
 
             <!-- 问卷画布 -->
             <div class="design-form-canvas-page app-canvas" :class="editorState.currentPage.pageType">
@@ -254,7 +273,7 @@ import { downLoadFile, dateFormat } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
-import { service as draggableService } from '@/modules/draggable-module';
+import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { state as configState, service as configService } from '@/common/config-module';
 import { state as versionHistoryState } from '@/modules/version-history-module';
 import { service as globalSearchService } from '@/modules/global-search-module';

@@ -91,7 +91,7 @@ export enum ComponentPropertyEditor {
   /** 浮点数 */
   float = 'float',
   /** 长度 */
-  width = 'width',
+  length = 'length',
   /** 颜色 */
   color = 'color',
   /** Json类型 */
@@ -194,6 +194,7 @@ export enum CrossAxisAlignment {
   baseline = 'baseline',
 }
 
+// questionary
 /** 应用类型 */
 export enum AppType {
   /** 问卷 */

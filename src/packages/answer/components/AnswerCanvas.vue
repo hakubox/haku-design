@@ -69,7 +69,10 @@
           </FormComponent>
         </div>
 
-        <div class="form-canvas-mainpanel">
+        <div class="form-canvas-mainpanel" :class="{
+          'type-flex': editorState.appConfig.appType === AppType.questionnaire,
+          'type-canvas': editorState.appConfig.appType === AppType.canvas,
+        }">
           <FormComponent
             v-for="(component, index) in editorState.currentPage.children.filter(i => !i.attrs.isTop && i.attrs.visible !== false)"
             v-show="editorService.showComponentInFormPage(component.id)"
@@ -148,6 +151,7 @@
 </template>
 
 <script lang="ts" setup>
+import { AppType } from '@/@types/enum';
 import { defineProps, reactive, defineEmits, PropType, onMounted, onUnmounted, watch, defineExpose, computed } from 'vue';
 import { Button, Dialog, Empty, Progress, Toast } from 'vant';
 import { state as editorState, service as editorService } from '@/modules/editor-module';

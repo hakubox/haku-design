@@ -41,7 +41,7 @@ export const themePropertys: GeneralProperty[] = [
     },
   }, {
     name: 'titleFontSize', title: '标题字体大小', default: '22px',
-    group: 'title', editor: ComponentPropertyEditor.width, attrs: {
+    group: 'title', editor: ComponentPropertyEditor.length, attrs: {
       cssVariable: 'app-title-fontsize',
     },
   }, {
@@ -56,7 +56,7 @@ export const themePropertys: GeneralProperty[] = [
     }
   }, {
     name: 'titlePadding', title: '标题边距', default: '15px',
-    group: 'title', editor: ComponentPropertyEditor.width, attrs: {
+    group: 'title', editor: ComponentPropertyEditor.length, attrs: {
       cssVariable: 'app-title-padding',
     },
   }, {
@@ -67,7 +67,7 @@ export const themePropertys: GeneralProperty[] = [
     group: 'title', editor: ComponentPropertyEditor.boolean
   }, {
     name: 'descriptionFontSize', title: '描述字体大小', default: '13px',
-    group: 'description', editor: ComponentPropertyEditor.width
+    group: 'description', editor: ComponentPropertyEditor.length
   }, {
     name: 'descriptionFontColor', title: '描述字体颜色',
     group: 'description', editor: ComponentPropertyEditor.color
@@ -137,9 +137,9 @@ export const themePropertys: GeneralProperty[] = [
     }
   }, {
     name: 'contentFontSize', title: '内容字体大小',
-    group: 'content', editor: ComponentPropertyEditor.width,
+    group: 'content', editor: ComponentPropertyEditor.length,
   }, {
     name: 'componentPadding', title: '组件间隙',
-    group: 'content', editor: ComponentPropertyEditor.width,
+    group: 'content', editor: ComponentPropertyEditor.length,
   }, 
 ];

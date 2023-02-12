@@ -65,13 +65,27 @@ export function initCommands() {
       /** 目标父组件Id */
       toParentComponentId: { type: VarType.string, required: false },
       /** 目标父节点插槽索引 */
-      toParentComponentSlotIndex: { type: VarType.number, required: false }
+      toParentComponentSlotIndex: { type: VarType.number, required: false },
+      /** X坐标 */
+      x: { type: VarType.number, required: false },
+      /** Y坐标 */
+      y: { type: VarType.number, required: false },
     },
     exec(command) {
-      editorService.moveComponent(command.newVal, command.attrs.toIndex, command.attrs.toParentComponentId, command.attrs.toParentComponentSlotIndex);
+      editorService.moveComponent(command.newVal, {
+        toIndex: command.attrs.toIndex, 
+        toParentComponentId: command.attrs.toParentComponentId,
+        toParentComponentSlotIndex: command.attrs.toParentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
+      });
     },
     undo(command) {
-      editorService.moveComponent(command.newVal, command.attrs.fromIndex, command.attrs.fromParentComponentId, command.attrs.toParentComponentSlotIndex);
+      editorService.moveComponent(command.newVal, {
+        toIndex: command.attrs.fromIndex,
+        toParentComponentId: command.attrs.fromParentComponentId,
+        toParentComponentSlotIndex: command.attrs.toParentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
+      });
     },
   });
 
@@ -89,12 +103,17 @@ export function initCommands() {
       parentComponentId: { type: VarType.string, required: false },
       /** 父组件组索引 */
       parentComponentSlotIndex: { type: VarType.number, required: false },
+      /** X坐标 */
+      x: { type: VarType.number, required: false },
+      /** Y坐标 */
+      y: { type: VarType.number, required: false },
     },
     exec(command) {
       editorService.addComponent(command.newVal, {
         index: command.attrs.index,
         parentComponentId: command.attrs.parentComponentId,
         parentComponentSlotIndex: command.attrs.parentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
       });
     },
     undo(command) {

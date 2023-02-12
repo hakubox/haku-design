@@ -68,7 +68,12 @@
       <div
         ref="form-canvas-mainpanel"
         class="form-canvas-mainpanel"
-        :class="{ readonly: props.isReadonly, printmode: props.isPrint }"
+        :class="{
+          'type-flex': editorState.appConfig.appType === AppType.questionnaire,
+          'type-canvas': editorState.appConfig.appType === AppType.canvas,
+          readonly: props.isReadonly,
+          printmode: props.isPrint
+        }"
         :style="{ minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
         <FormDesignComponent
@@ -159,6 +164,7 @@
 </template>
 
 <script lang="ts" setup>
+import { AppType } from '@/@types/enum';
 import { reactive, PropType, onMounted, nextTick, ref, provide } from 'vue';
 import { Button, Progress } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';

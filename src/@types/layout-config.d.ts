@@ -31,8 +31,8 @@ export declare interface FlexLayout extends BasicLayout {
 
 /** 绝对定位布局配置类 */
 export declare interface AbsoluteLayout extends BasicLayout {
-  /** 高度 */
-  height?: number;
+  /** 网格大小 */
+  gridSize?: number;
 }
 
 /** 绝对定位布局配置类 */

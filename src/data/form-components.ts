@@ -25,6 +25,10 @@ export let formComponents: InitComponent[] = [
       //   callback: (component) => component.attrs.visible = !component.attrs.visible,
       // }
     ],
+    attrs: {
+      width: 300,
+      height: 100
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -112,7 +116,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
       }, {
         name: 'inputWidth', title: '输入框长度', default: '60px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length,
       }, {
         name: 'min', title: '最小值',
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -231,7 +235,7 @@ export let formComponents: InitComponent[] = [
         }
       }, {
         name: 'editorHeight', title: '编辑框高度', default: '100px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length,
       }, {
         name: 'description', title: '描述', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -609,7 +613,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
       }, {
         name: 'size', title: '图标大小', default: '20px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'count', title: '最大星数', default: 5,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -671,7 +675,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
       }, {
         name: 'size', title: '图标大小', default: '20px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'count', title: '最大星数', default: 5,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -797,7 +801,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
       }, {
         name: 'size', title: '预览图片大小', default: '100px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'type', title: '功能', default: 'camcorder',
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.dropdownList,
@@ -1147,6 +1151,40 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
+   * 布局：画布
+   */
+   {
+    name: 'q-canvas',
+    isHidden: false,
+    isFormItem: false,
+    isTopLevel: false,
+    type: ComponentCategory.layout,
+    childrenSlot: '.component-canvas-item',
+    title: '自由画布',
+    layoutConfig: {
+      layout: LayoutType.absolute,
+      layoutDetailConfig: { }
+    } as LayoutConfig<LayoutType.absolute>,
+    children: [],
+    propertys: [
+      {
+        name: 'visible', title: '是否显示', default: true, visible: true,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+        remark: '是否在界面上显示。'
+      }, {
+        name: 'margin', title: '外边距', default: [0,0,0,0], 
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+      }, {
+        name: 'height', title: '最小组件高度', default: '100px', 
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
+      }, {
+        name: 'remark', title: '备注', default: '',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+      }
+    ]
+  },
+
+  /** 
    * 布局：中心布局
    */
    {
@@ -1177,7 +1215,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
       }, {
         name: 'minHeight', title: '最小组件高度', default: '100px', 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'remark', title: '备注', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
@@ -1223,7 +1261,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
       }, {
         name: 'minHeight', title: '最小组件高度', default: '100px', 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'remark', title: '备注', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
@@ -1570,7 +1608,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
       }, {
         name: 'height', title: '高度', default: '200px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'margin', title: '外边距', default: [0,0,0,0],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
@@ -1619,7 +1657,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
       }, {
         name: 'height', title: '高度', default: '200px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'padding', title: '内边距', default: [0,30,50,0],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
@@ -1672,7 +1710,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
       }, {
         name: 'height', title: '高度', default: '200px',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'padding', title: '内边距', default: [40,0,10,0],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box

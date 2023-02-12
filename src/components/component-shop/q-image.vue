@@ -37,7 +37,7 @@ import { getBoxModel } from '@/tools/common';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getQBasicProps } from '@/tools/common';
 
-let defaultImg = new URL('@/assets/img/temp/default-img.png').href;
+let defaultImg = new URL('@/assets/img/temp/default-img.webp').href;
 
 const props = defineProps({
   component: {

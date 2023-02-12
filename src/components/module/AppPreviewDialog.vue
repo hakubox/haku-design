@@ -8,16 +8,6 @@
     @click.self.stop="closePreview"
   >
     <div class="preview-modal-body">
-      <!-- :style="{
-        width: editorState.appConfig.deviceType == 'pc' ? '950px' : '400px',
-        height: editorState.appConfig.deviceType == 'pc' ? '700px' : '687px',
-      }" -->
-      <!-- <div class="preview-modal-header">
-        <div class="preview-modal-title">预览界面</div>
-        <div class="preview-modal-tools">
-          <CloseOutlined @click="closePreview" />
-        </div>
-      </div> -->
       <div class="preview-modal-content device-info"
         :class="[ state.previewUIConfig.useOriginScale ? 'origin-scale' : '', {
           'pc': 'device-info-pc',
@@ -31,7 +21,6 @@
       >
         <DesignCanvas
           class="device-info-content"
-          ref="componentCanvas"
           :isPreview="true"
           @refresh="editorService.refresh"
         />
@@ -42,9 +31,9 @@
         <div class="canvas-data-editor-body">
           <Tabs v-model:activeKey="state.activeKey" type="card">
             <template #rightExtra>
-              <Popconfirm placement="bottomRight" @confirm="eventService.clearLog()">
+              <Popconfirm v-if="state.activeKey === 'event'" placement="bottomRight" @confirm="eventService.clearLog()">
                 <template #title>是否确认清空事件日志列表？</template>
-                <Button v-if="state.activeKey === 'event'" danger size="small" style="margin-right: 10px;">清除日志</Button>
+                <Button danger size="small" style="margin-right: 10px;">清除日志</Button>
               </Popconfirm>
             </template>
             <TabPane key="config" tab="预览配置" force-render>
@@ -133,6 +122,8 @@ import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
 
+import rasterizeHTML from 'rasterizehtml';
+
 const props = defineProps({
   /** 是否显示预览框 */
   visible: {
@@ -174,6 +165,14 @@ const state = reactive({
           { label: '手机', value: 'mobile' }
         ]
       }
+    }, {
+      name: 'changeDirection',
+      title: '切换方向',
+      require: false,
+      visible: true,
+      group: 'ui',
+      editor: ComponentPropertyEditor.boolean,
+      default: false,
     }, {
       name: 'useOriginScale',
       title: '原始缩放比',

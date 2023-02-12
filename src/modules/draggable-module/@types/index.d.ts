@@ -1,3 +1,13 @@
+/** 对齐线 */
+export interface AlignLine {
+  /** 方向 */
+  // direction: 'horizontal' | 'vertical';
+  /** X坐标 */
+  x?: number; 
+  /** Y坐标 */
+  y?: number;
+}
+
 /** 简单坐标类 */
 export interface Location {
   /** X坐标 */
@@ -38,6 +48,8 @@ export class DragConfig {
   startLoc: Location;
   /** 拖拽结束坐标 */
   endLoc: Location;
+  /** 自动吸附坐标 */
+  adsorbLoc?: Location;
   /** 是否为已有组件 */
   isExisted: boolean;
   /** 拖拽偏移量（像素） */

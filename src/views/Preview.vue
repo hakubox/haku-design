@@ -3,7 +3,7 @@
   <Empty v-else-if="!state.isLoading && state.errorMsg" image="error" :description="state.errorMsg" style="margin-top: 50vh; transform: translateY(-50%);" />
   <div v-else class="app-canvas" :class="editorState.currentPage.pageType" style="height: 100vh;">
     <!-- 问卷标题 -->
-    <div class="form-header" v-show="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.appType === 'questionnaire'">
+    <div class="form-header" v-show="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.appType === AppType.questionnaire">
       <span class="form-title">{{editorState.appConfig.appTitle}}</span>
     </div>
     <DesignCanvas
@@ -19,6 +19,7 @@
 </template>
 
 <script lang="ts" setup>
+import { AppType } from '@/@types/enum';
 import { onMounted, reactive, ref } from 'vue';
 import { getQuestionary } from '@/api/common/questionnaire';
 import { state as editorState, service as editorService } from '@/modules/editor-module';

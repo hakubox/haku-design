@@ -7,7 +7,7 @@ export interface CreateNewConfig {
   /** 标题 */
   title: string;
   /** 类型 */
-  type: AppType | 'questionary';
+  type: AppType;
   /** 描述 */
   description: string;
   /** 其他参数 */

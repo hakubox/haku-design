@@ -108,7 +108,7 @@ import { state as storageState, service as storageService } from '@/modules/stor
 import { MediaEvents, setMediaPlayPosition } from '@/lib/media';
 import { EventTriggerType } from '@/modules/event-module/enum';
 
-const defaultImg = require('@/assets/img/temp/default-img.png');
+const defaultImg = require('@/assets/img/temp/default-img.webp');
 
 interface VideoInfo {
   /** 视频地址 */

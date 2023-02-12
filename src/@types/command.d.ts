@@ -71,9 +71,3 @@ export interface Command<T = any> {
   /** 执行时间（时间戳） */
   executeTime: number;
 }
-
-/** 增加组件命令 */
-export interface AddComponentCommand {
-  /**  */
-  component;
-}

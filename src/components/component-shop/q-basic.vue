@@ -1,6 +1,8 @@
 <template>
   <div
-    :style="{ margin: getBoxModel(props.margin) }"
+    :style="{
+      margin: getBoxModel(props.margin),
+    }"
     class="component-item"
     :class="[{ required: props.required }, className]"
     :layout="layout"

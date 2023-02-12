@@ -8,9 +8,13 @@
       error: isPreview && formFillService.getErrorByComponent(componentId).length,
     }"
     :style="{
-      position: isPreview ? (props.component.attrs.sticky ? 'sticky' : 'relative') : 'relative',
+      position: position,
       top: props.component.attrs.sticky ? '0px' : 'initial',
       'z-index': props.component.attrs.sticky ? 1 : 'initial',
+      width: `${component.attrs.width}px`,
+      height: `${component.attrs.height}px`,
+      top: `${component.attrs.y}px`,
+      left: `${component.attrs.x}px`
     }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
@@ -180,6 +184,7 @@ import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
+import { AppType } from '@/@types/enum';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -284,6 +289,12 @@ const mouseDownEvent = (e, component: Component) => {
     eventService.emit(EventTriggerType.click, component.id);
   }
 };
+
+/** 获取定位模式 */
+const position = computed(() => {
+  if (editorState.appConfig.appType === AppType.canvas) return 'absolute';
+  else return props.isPreview ? (props.component.attrs.sticky ? 'sticky' : 'relative') : 'relative';
+});
 
 const value = computed({
   get() {
