@@ -86,8 +86,10 @@ export const state = reactive({
     useAutoCache: true,
     autoCacheDuration: 3600000
   } as AppConfig,
+  /** 左侧栏是否展开 */
+  asideFold: false,
   /** 画布尺寸及边距 */
-  canvasRect: undefined as DOMRect | undefined,
+  canvasRect: { x: 0, y: 0 } as { x: number, y: number },
   /** 预览图地址 */
   previewUrl: '',
   /** 是否预览 */
@@ -188,6 +190,11 @@ export const state = reactive({
 
 /** 问卷编辑模块逻辑 */
 export const service = {
+  /** 展开/收起左侧侧边栏 */
+  toggleAsidePanel() {
+    state.asideFold = !state.asideFold;
+    this.refresh();
+  },
   /** 选择主题 */
   selectTheme(themeCode: string, themeTitle: string) {
     historyService.exec('change-theme', {
@@ -936,10 +943,13 @@ export const service = {
     const { y, x } = state.canvasPanelEl.getBoundingClientRect();
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;
-    state.canvasRect = document.querySelector('.design-form-canvas-page')!.getBoundingClientRect();
-    console.log('canvasRect已经初始化');
-    state.canvasRect.x -= 340;
-    state.canvasRect.y -= 48;
+
+    const _canvasPage = state.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
+    state.canvasRect = {
+      x: _canvasPage.offsetLeft ?? 0,
+      y: _canvasPage.offsetTop ?? 0
+    };
+    console.error('state.canvasRect', state.canvasRect.x, state.canvasRect.y);
   },
   /**
    * 合并表单数据（需要根据题目合并）

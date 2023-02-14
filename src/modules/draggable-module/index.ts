@@ -40,10 +40,10 @@ export const state = reactive({
   shadowOffsetX: 0,
   /** 影子节点光标纵向偏移量 */
   shadowOffsetY: 0,
-  /** 距离顶部的距离 */
-  pagePaddingTop: 180,
   /** 插入插槽（组）索引 */
   insertSlotIndex: 0,
+  /** 头部栏高度 */
+  headerHeight: 60,
 });
 
 export const service = {
@@ -240,7 +240,7 @@ export const service = {
 
       setTimeout(() => {
         editorService.refresh();
-      }, 50);
+      }, 200);
     }
   },
   /** 设置影子节点 */
@@ -494,7 +494,7 @@ export const service = {
         const _groupRect = _group.getBoundingClientRect();
 
         _prevTopHeight = _groupTopHeight;
-        _groupTopHeight = _groupRect.top + _groupRect.height - state.pagePaddingTop;
+        _groupTopHeight = _groupRect.top + _groupRect.height - editorState.canvasRect.y - state.headerHeight;
         // _y = _groupRect.height;
 
         const _components: HTMLElement[] = Array.from(_group?.querySelectorAll(parentComponent.childrenContentSlot!));
@@ -504,7 +504,7 @@ export const service = {
         ) {
           // console.log('组拖拽正确!!!', groupIndex, _groups.length, _prevTopHeight, _groupTopHeight, `||| ${_prevTopHeight} < ${service.dragConfig.mouseY} < ${_groupTopHeight}`);
           _isGroupComplete = true;
-          _groupTopHeight = _groupRect.top - state.pagePaddingTop;
+          _groupTopHeight = _groupRect.top - editorState.canvasRect.y - state.headerHeight;
           if (!_components.length) {
             dragLayoutReturn.isInsertInner = true;
             dragLayoutReturn.isReturn = true;
@@ -517,7 +517,7 @@ export const service = {
 
               _component = parentComponent?.children?.[childrenIndex] as Component | undefined;
               _prevTopHeight = _componentTopHeight;
-              _componentTopHeight = _childComponentRect.top - state.pagePaddingTop;
+              _componentTopHeight = _childComponentRect.top - editorState.canvasRect.y - state.headerHeight;
               _prevHeight = _y;
               _y = _childComponentRect.height;
 

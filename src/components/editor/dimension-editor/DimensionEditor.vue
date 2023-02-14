@@ -143,7 +143,7 @@ const componentMouseEnter = (componentId: string) => {
   }
 };
 const componentMouseOut = () => {
-  const _domList = Array.from(document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
+  const _domList = Array.from(editorState.canvasEl.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
   domCache = {};
   if (_domList?.length) _domList.forEach(i => {
     i.classList.remove('highlight');

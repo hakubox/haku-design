@@ -1,6 +1,6 @@
 <template>
-  <div class="design-form-aside" :class="{ fold: state.asideFold }" style="width: 340px">
-    <div class="expand-handle-left" :class="{ fold: state.asideFold }" @click="state.asideFold = !state.asideFold"></div>
+  <div class="design-form-aside" :class="{ fold: editorState.asideFold }" style="width: 340px">
+    <div class="expand-handle-left" :class="{ fold: editorState.asideFold }" @click="editorService.toggleAsidePanel()"></div>
     <div class="design-form-aside-group">
       <div
         class="design-form-aside-group-item"
@@ -99,7 +99,7 @@
 import { Component } from '@/@types';
 import { ComponentCategory } from '@/@types/enum';
 import { ToolComponentItem } from '@/@types/tool-component-item';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as draggableService } from '@/modules/draggable-module';
 import { reactive } from 'vue';
 import DataSourceConfig from '@/modules/data-source-module/component/DataSourceConfig.vue';
@@ -136,8 +136,6 @@ const state = reactive({
     { key: 8, title: '主题', icon: 'iconfont icon-theme' },
     { key: 9, title: '插件', icon: 'iconfont icon-plugin' },
   ],
-  /** 左侧栏是否展开 */
-  asideFold: false,
 });
 
 /** 根据分类获取组件列表 */
