@@ -109,13 +109,7 @@ export const service = {
           type: StorageServiceType.cos,
           status: StorageServiceStatus.unknown,
           title: instance ? instance.title : `腾讯云COS存储 ${state.storageServices.length + 1}`,
-          config: {
-            bucket: 'saas-private-1258165268',
-            region: 'ap-guangzhou',
-            // Uin: '100000755658',
-            secretId: 'AKIDymMhndIitpVw73jAMIyPbXEgspWx96oG',
-            secretKey: 'GG1WljcHhtqXzB8pHUSAcpnX2KPFrFPK',
-          },
+          config: {},
           headers: {},
           remark: '',
         };
