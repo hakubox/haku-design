@@ -1,6 +1,6 @@
 <template>
   <span v-if="!$attrs.isPreview && props.isBackground" class="video-tooltip">当前为背景视频模式</span>
-  <q-basic
+  <ComponentBasic
     class="component-video"
     :class="{ 'full-screen-video': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
@@ -28,7 +28,7 @@
     >
       您的浏览器不支持视频元素
     </video>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

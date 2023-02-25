@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-anx-stepper"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :componentLabel="''"
@@ -24,7 +24,7 @@
         <span class="anx-stepper__all-step">/{{ options.length }}</span>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

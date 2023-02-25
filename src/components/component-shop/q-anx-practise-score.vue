@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-anx-stepper"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :componentLabel="''"
@@ -22,7 +22,7 @@
         <img :src="storageService.getFileInfo(getCurrentStep.image)?.src" />
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <q-basic v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-table" :class="{ loading: props.loading }">
       <Loading class="component-table-loading" v-if="props.loading" />
       <Empty v-if="!dataSource.length" description="暂无数据">
@@ -76,7 +76,7 @@
         </table>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-single-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-single-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div v-if="isPrint" class="component-single-line-printmode">{{ value }}</div>
     <input
       v-else
@@ -10,7 +10,7 @@
       :value="value"
       @input="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

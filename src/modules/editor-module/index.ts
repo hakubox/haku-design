@@ -949,7 +949,6 @@ export const service = {
       x: _canvasPage.offsetLeft ?? 0,
       y: _canvasPage.offsetTop ?? 0
     };
-    console.error('state.canvasRect', state.canvasRect.x, state.canvasRect.y);
   },
   /**
    * 合并表单数据（需要根据题目合并）

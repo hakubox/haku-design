@@ -4,31 +4,94 @@
     class="form-component"
     :component-id="componentId"
     :class="{
-      visible: (!props.component.isHidden || !isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
-      error: isPreview && formFillService.getErrorByComponent(componentId).length,
+      visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
+      error: props.isPreview && formFillService.getErrorByComponent(componentId).length,
     }"
-    :style="{
+    :style="editorState.appConfig.appType === AppType.canvas ? {
       position: position,
       top: props.component.attrs.sticky ? '0px' : 'initial',
       'z-index': props.component.attrs.sticky ? 1 : 'initial',
       width: `${component.attrs.width}px`,
-      height: `${component.attrs.height}px`,
+      height: `${getComponentHeight}px`,
       top: `${component.attrs.y}px`,
-      left: `${component.attrs.x}px`
-    }"
+      left: `${component.attrs.x}px`,
+      transform: `rotate(${component.attrs.rotate || 0}deg)`
+    } : {}"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
   >
+    <CanvasNodeActionEditor
+      v-if="editorState.appConfig.appType === AppType.canvas"
+      :component="props.component"
+      :show="editorState.currentSelectedComponent?.id === props.component.id"
+      :disabledHeight="props.component.attrs.disabledHeight"
+      :disabledWidth="props.component.attrs.disabledWidth"
+    >
+      <component
+        v-bind.prop="getAttrs(props.component.attrs)"
+        :component="props.component"
+        :is="props.component.name"
+        :isFormItem="props.component.isFormItem"
+        :error-txt="props.isPreview ? formFillService.getErrorByComponent(componentId).join('\n') : undefined"
+        v-model:value.prop="value"
+        v-model:dataSource.prop="props.component!.attrs.dataSource"
+        v-model:options.prop="props.component!.attrs.options"
+        :isPreview="props.isPreview"
+        ref="componentRef"
+      >
+        <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+          <FormDesignComponent
+            :component-id="childComponent.id"
+            :ref="childComponent.id"
+            :class="{
+              'form-component-layout': ['complex', 'layout'].includes(childComponent.type),
+              active:
+                !props.isPreview &&
+                editorState.currentSelectedComponent &&
+                editorState.currentSelectedComponent.id == childComponent.id,
+                'is-drag': dragConfig && dragConfig.targetFormComponentId == childComponent.id,
+            }"
+            :children="childComponent.children"
+            :component="childComponent"
+            :isPreview="props.isPreview"
+            :isFormItem="false"
+            :index="index"
+            :isFullScreen="isFullScreen"
+          />
+        </template>
+        <!-- <template v-for="slot in Object.keys(component.slot)" #[slot]>
+          <div :key="slot">
+            <component
+              v-for="detailComponent in component.slot[slot]"
+              :key="slot + detailComponent.component.name"
+              v-bind="detailComponent.attrs"
+              :is="detailComponent.component"
+            >
+              <template v-for="defaultSlot in Object.keys(detailComponent.slot)" #[defaultSlot]>
+                <component
+                  v-for="detail2Component in detailComponent.slot[defaultSlot]"
+                  :key="defaultSlot + detail2Component.component.name"
+                  v-bind="detail2Component.attrs"
+                  :is="detail2Component.component"
+                >
+                </component>
+              </template>
+            </component>
+          </div>
+        </template> -->
+      </component>
+    </CanvasNodeActionEditor>
     <component
+      v-else
       v-bind.prop="getAttrs(props.component.attrs)"
       :component="props.component"
       :is="props.component.name"
       :isFormItem="props.component.isFormItem"
-      :error-txt="isPreview ? formFillService.getErrorByComponent(componentId).join('\n') : undefined"
+      :error-txt="props.isPreview ? formFillService.getErrorByComponent(componentId).join('\n') : undefined"
       v-model:value.prop="value"
       v-model:dataSource.prop="props.component!.attrs.dataSource"
       v-model:options.prop="props.component!.attrs.options"
-      :isPreview="isPreview"
+      :isPreview="props.isPreview"
       ref="componentRef"
     >
       <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
@@ -38,14 +101,14 @@
           :class="{
             'form-component-layout': ['complex', 'layout'].includes(childComponent.type),
             active:
-              !isPreview &&
+              !props.isPreview &&
               editorState.currentSelectedComponent &&
               editorState.currentSelectedComponent.id == childComponent.id,
               'is-drag': dragConfig && dragConfig.targetFormComponentId == childComponent.id,
           }"
           :children="childComponent.children"
           :component="childComponent"
-          :isPreview="isPreview"
+          :isPreview="props.isPreview"
           :isFormItem="false"
           :index="index"
           :isFullScreen="isFullScreen"
@@ -73,7 +136,7 @@
       </template> -->
     </component>
     <Transition name="form-component-tools">
-      <div v-if="!isPreview && editorState.currentSelectedComponent && editorState.currentSelectedComponent.id == component.id" class="form-component-tools">
+      <div v-if="!props.isPreview && editorState.currentSelectedComponent && editorState.currentSelectedComponent.id == component.id" class="form-component-tools">
         <div class="form-component-tool-item form-component-tool-item-info" @mousedown.stop="mouseDownEvent($event, props.component)">
           <i class="form-component-tool-item-icon" :class="editorState.menuComponents.find(x=>x.name===component.name)?.icon" alt="" />
           <span class="form-component-tool-item-title">{{ component.attrs.name }}</span>
@@ -107,17 +170,17 @@
               <i class="form-component-tools-item iconfont" :class="`${component.attrs.visible ? 'icon-icon_yulan' : 'icon-miwen'}`"></i>
             </Tooltip>
           </div>
-          <div class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentMovePrev', $event, component)">
+          <div v-if="editorState.appConfig.appType !== AppType.canvas" class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentMovePrev', $event, component)">
             <Tooltip placement="top" title="上移" arrowPointAtCenter>
               <ArrowUpOutlined class="form-component-tools-item" />
             </Tooltip>
           </div>
-          <div class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentMoveNext', $event, component)">
+          <div v-if="editorState.appConfig.appType !== AppType.canvas" class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentMoveNext', $event, component)">
             <Tooltip placement="top" title="下移" arrowPointAtCenter>
               <ArrowDownOutlined class="form-component-tools-item" />
             </Tooltip>
           </div>
-          <div class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentCopy', $event, component)">
+          <div v-if="editorState.appConfig.appType !== AppType.canvas" class="form-component-tool-item form-component-tool-item-btn" @mousedown.stop="componentHandle('componentCopy', $event, component)">
             <Tooltip placement="top" title="复制" arrowPointAtCenter>
               <CopyOutlined class="form-component-tools-item" />
             </Tooltip>
@@ -131,7 +194,7 @@
       </div>
     </Transition>
     <!-- 评分模块 -->
-    <div v-if="isPreview && scoringState.isScoring && formFillState.formInfo[componentId]" class="form-component-scoring">
+    <div v-if="props.isPreview && scoringState.isScoring && formFillState.formInfo[componentId]" class="form-component-scoring">
       <span class="form-component-scoring-label">
         <i class="iconfont icon-edit-file"></i>
         评分
@@ -160,7 +223,7 @@
         /> 
       </span>
     </div>
-    <div v-else-if="isPreview && scoringState.isScoring && !formFillState.formInfo[componentId]" class="form-component-scoring form-component-scoring-invalid">
+    <div v-else-if="props.isPreview && scoringState.isScoring && !formFillState.formInfo[componentId]" class="form-component-scoring form-component-scoring-invalid">
       —— 当前题目未作答，无法评分 ——
     </div>
   </div>
@@ -185,6 +248,7 @@ import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@/@types/enum';
+import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -238,6 +302,16 @@ formFillService.setRef(props.componentId, componentRef.value);
 const emit = defineEmits<{
   (event: 'setData', id: string, value: any): void;
 }>();
+
+/** 获取组件高度 */
+const getComponentHeight = computed(() => {
+  if (props.component.attrs.height) {
+    return props.component.attrs.height;
+  } else {
+    const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
+    return _el?.offsetHeight ?? 0;
+  }
+});
 
 /** 获取单个属性 */
 const getAttr = (value: any) => {

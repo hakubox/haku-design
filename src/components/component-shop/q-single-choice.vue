@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-single-choice"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :layout="globalState.isMobile ? 'layout-span-1' : props.layout"
@@ -45,7 +45,7 @@
       </div>
     </Radio>
   </RadioGroup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

@@ -1,7 +1,7 @@
 <template>
-  <q-basic class="component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height"></BaseECharts>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

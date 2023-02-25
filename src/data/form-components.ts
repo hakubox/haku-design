@@ -27,7 +27,8 @@ export let formComponents: InitComponent[] = [
     ],
     attrs: {
       width: 300,
-      height: 100
+      height: 100,
+      disabledHeight: true,
     },
     propertys: [
       {
@@ -1315,8 +1316,39 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.attachment,
     title: '文本',
+    attrs: {
+      disabledWidth: true,
+      disabledHeight: true,
+      minHeight: 50,
+    },
     propertys: [
       {
+        name: 'autowidth', title: '自动宽度', default: true, visible: true,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+        remark: '是否使用自动宽度。', change(prop, propMap, component) {
+          if (component.attrs.autowidth) {
+            component.attrs.width = undefined;
+            component.attrs.disabledWidth = true;
+          } else {
+            component.attrs.disabledWidth = false;
+            const componentDom = document.querySelector(`.form-canvas [component-id="${component.id}"] .component-item`) as HTMLElement;
+            component.attrs.width = componentDom.offsetWidth;
+          }
+        }
+      }, {
+        name: 'autoheight', title: '自动高度', default: true, visible: true,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+        remark: '是否使用自动高度。', change(prop, propMap, component) {
+          if (component.attrs.autoheight) {
+            component.attrs.height = undefined;
+            component.attrs.disabledHeight = true;
+          } else {
+            component.attrs.disabledHeight = false;
+            const componentDom = document.querySelector(`.form-canvas [component-id="${component.id}"] .component-item`) as HTMLElement;
+            component.attrs.height = componentDom.offsetHeight;
+          }
+        }
+      }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
@@ -1359,6 +1391,8 @@ export let formComponents: InitComponent[] = [
     title: '图片',
     attrs: {
       isFullScreen: false,
+      width: 300,
+      height: 100,
     },
     propertys: [
       {

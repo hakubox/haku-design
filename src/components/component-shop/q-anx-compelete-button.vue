@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-anx-stepper"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :componentLabel="''"
@@ -14,7 +14,7 @@
         <i class="arrow arrow-right"></i>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

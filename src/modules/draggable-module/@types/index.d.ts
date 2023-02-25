@@ -54,6 +54,8 @@ export class DragConfig {
   isExisted: boolean;
   /** 拖拽偏移量（像素） */
   offsetAmount: number;
+  /** 是否暂停相关功能（被其他拖拽占用） */
+  isPause: boolean;
 }
 
 /** 拖拽组件到布局组件参数 */

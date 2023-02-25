@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-score-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-score-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-score-group-item" v-for="(item, index) in options" :key="index">
       <label>{{ item.label }}</label>
       <Rate
@@ -12,7 +12,7 @@
         @change="changeValue($event, index)"
       />
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

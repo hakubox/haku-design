@@ -1,7 +1,7 @@
 <template>
-  <q-basic class="component-item-single" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-item-single" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <input type="text" :value="value" @input="changeValue" />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

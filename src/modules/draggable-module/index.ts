@@ -15,6 +15,7 @@ export const state = reactive({
   positionLines: [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[],
   /** 拖拽配置 */
   dragConfig: {
+    isPause: false,
     isPreDrag: false,
     isDrag: false,
     isDragArea: false,
@@ -48,24 +49,26 @@ export const state = reactive({
 
 export const service = {
   /** 获取9个组件的关键点 */
-  getComponentPoints(component: Component, config?: { x?: number, y?: number }) {
+  getComponentPoints(component: Component, config?: { x?: number, y?: number, width?: number, height?: number }) {
     const _x = config?.x ?? component.attrs.x;
     const _y = config?.y ?? component.attrs.y;
+    const _width = config?.width ?? component.attrs.width;
+    const _height = config?.height ?? component.attrs.height;
     const points = [
       [_x, _y],
-      [_x, _y + component.attrs.height / 2],
-      [_x, _y + component.attrs.height],
-      [_x + component.attrs.width / 2, _y],
-      [_x + component.attrs.width / 2, _y + component.attrs.height / 2],
-      [_x + component.attrs.width / 2, _y + component.attrs.height],
-      [_x + component.attrs.width, _y],
-      [_x + component.attrs.width, _y + component.attrs.height / 2],
-      [_x + component.attrs.width, _y + component.attrs.height],
+      [_x, _y + _height / 2],
+      [_x, _y + _height],
+      [_x + _width / 2, _y],
+      [_x + _width / 2, _y + _height / 2],
+      [_x + _width / 2, _y + _height],
+      [_x + _width, _y],
+      [_x + _width, _y + _height / 2],
+      [_x + _width, _y + _height],
     ] as [number, number][];
     return points;
   },
   /** 获取对齐线 */
-  getAlignLines(component: Component, config?: { x?: number, y?: number }) {
+  getAlignLines(component: Component, config?: { x?: number, y?: number, width?: number, height?: number, filter?: (direction: 'x' | 'y') => 'front' | 'center' | 'end' }) {
     const _lines = [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[];
     if (editorState.canvasRect) {
       const _points = this.getComponentPoints(component, config);
@@ -113,16 +116,20 @@ export const service = {
       for (let i = 0; i < _childrenPoints.length; i++) {
         for (let o = 0; o < 9; o++) {
           for (let p = 0; p < 9; p++) {
-            const _x = _childrenPoints[i][o][0];
-            const _y = _childrenPoints[i][o][1];
-            if (Math.abs(_x - _points[p][0]) < 6) {
-              if (_lines.findIndex(line => line.x === _x) === -1) {
-                _lines.push({ x: _x, direction: _xIndexDirection[p] });
+            if (config?.filter === undefined || (config?.filter('x') === _xIndexDirection[p])) {
+              const _x = _childrenPoints[i][o][0];
+              if (Math.abs(_x - _points[p][0]) < 4) {
+                if (_lines.findIndex(line => line.x === _x) === -1) {
+                  _lines.push({ x: _x, direction: _xIndexDirection[p] });
+                }
               }
             }
-            if (Math.abs(_y - _points[p][1]) < 6) {
-              if (_lines.findIndex(line => line.y === _y) === -1) {
-                _lines.push({ y: _y, direction: _yIndexDirection[p] });
+            if (config?.filter === undefined || (config?.filter('y') === _yIndexDirection[p])) {
+              const _y = _childrenPoints[i][o][1];
+              if (Math.abs(_y - _points[p][1]) < 4) {
+                if (_lines.findIndex(line => line.y === _y) === -1) {
+                  _lines.push({ y: _y, direction: _yIndexDirection[p] });
+                }
               }
             }
           }
@@ -133,6 +140,7 @@ export const service = {
   },
   /** 开始拖拽 */
   startDrag(e, component: Component, isExisted: boolean = false) {
+    if (state.dragConfig.isPause) return;
     if (e.button != 0) return;
     state.isExisted = isExisted;
     if (state.dragConfig.shadowDom) {
@@ -266,6 +274,7 @@ export const service = {
   },
   /** 组件拖拽中 */
   dragMove(e) {
+    if (state.dragConfig.isPause) return;
     if (editorState.appConfig.appType === AppType.questionnaire) {
       if (state.dragConfig.isPreDrag) {
         // 如果延迟量大于0且还没有影子节点时则创建

@@ -1,8 +1,8 @@
 <template>
-  <q-basic class="component-complete-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })" :componentLabel="''"
+  <ComponentBasic class="component-complete-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })" :componentLabel="''"
     :componentDescription="''">
     <label class="component-complete-score-content" v-html="parseHTML"></label>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

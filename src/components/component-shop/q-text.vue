@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-text"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :componentLabel="''"
@@ -14,7 +14,7 @@
       :style="{ marginTop: $attrs.text ? '10px' : '0px' }"
       v-html="variableService.getVarText($attrs.description as string)"
     ></label>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

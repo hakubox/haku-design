@@ -1,28 +1,27 @@
 <template>
-  <span v-if="!$attrs.isPreview && $attrs.isBackground" class="image-tooltip">当前为背景图片模式</span>
-  <q-basic
+  <!-- <span v-if="!$attrs.isPreview && $attrs.isBackground" class="image-tooltip">当前为背景图片模式</span> -->
+  <ComponentBasic
     class="component-image"
-    :class="{ 'full-screen-image': $attrs.isBackground }"
+    :class="{ 'full-screen-image': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="!$attrs.showLabel || $attrs.isBackground ? '' : $attrs.label"
-    v-else
+    :componentLabel="!props.showLabel || props.isBackground ? '' : props.label"
   >
     <div
-      v-if="$attrs.isBackground"
+      v-if="props.isBackground"
       class="full-screen-image-mask"
       :style="{ backgroundColor: $attrs.maskColor as string }"
     ></div>
     <img
       class="component-image-content"
       :src="src ? storageService.getFileInfo(src)?.src : defaultImg"
-      :padding="getBoxModel(padding as [number, number, number, number])"
+      :padding="getBoxModel(padding)"
       :style="{
-        'border-radius': $attrs.borderRadius + 'px',
+        'border-radius': props.borderRadius + 'px',
         'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
         'filter': `blur(${$attrs.blur}px)`
       }"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">
@@ -32,34 +31,55 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getBoxModel } from '@/tools/common';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getQBasicProps } from '@/tools/common';
+import ComponentBasic from '@/components/common/ComponentBasic.vue';
 
 let defaultImg = new URL('@/assets/img/temp/default-img.webp').href;
+console.log('defaultImg', defaultImg);
 
 const props = defineProps({
+  /** 是否为背景图 */
+  isBackground: {
+    type: Boolean,
+    default: false,
+  },
+  /** 是否显示标签 */
+  showLabel: {
+    type: Boolean,
+    default: false,
+  },
+  /** 标签 */
+  label: {
+    type: String,
+    default: ''
+  },
+  /** 圆角 */
+  borderRadius: {
+    type: Number,
+    default: 0,
+  },
   component: {
-      type: Object,
-      default: () => ({}),
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    padding: {
-      type: Array,
-      default: () => [0, 0, 0, 0],
-    },
-    src: {
-      type: String,
-      default: '',
-    },
+    type: Object,
+    default: () => ({}),
+  },
+  placeholder: {
+    type: String,
+    default: '',
+  },
+  padding: {
+    type: Array as PropType<number[]>,
+    default: () => [0, 0, 0, 0],
+  },
+  src: {
+    type: String,
+    default: '',
+  },
 });
 
 const state = reactive({
-  chart: null as any,
 });
 
 </script>

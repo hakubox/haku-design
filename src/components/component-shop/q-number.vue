@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-number"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
@@ -14,7 +14,7 @@
       :change="props.value"
       @change="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

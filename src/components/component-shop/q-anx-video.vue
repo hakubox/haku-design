@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-anx-video"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :componentLabel="''"
@@ -90,7 +90,7 @@
         @next="next"
       />
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

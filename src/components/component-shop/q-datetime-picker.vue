@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-datetime-picker" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-datetime-picker" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div v-if="isPrint" class="component-datetime-picker-printmode">{{ value }}</div>
     <template v-else-if="globalState.isMobile">
       <div class="component-datetime-picker-input" :disabled="props.disabled" @click="showDialogPicker()">
@@ -33,7 +33,7 @@
       :disabled-date="props.disabledDate"
       :is-range="props.isRange"
     ></VueDatepickerLocal>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

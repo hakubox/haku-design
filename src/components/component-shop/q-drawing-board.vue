@@ -1,9 +1,9 @@
 <template>
-  <q-basic class="component-drawing-board" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-drawing-board" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="q-drawing-board-clear" @click="clear">重写</div>
     <canvas class="q-drawing-board" ref="widgetRef" :style="{ height: height + 'px' }"></canvas>
     <span style="font-size: 12px; color: #aaa; padding: 5px 0px">{{ '在空白区域书写' }}</span>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

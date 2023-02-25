@@ -58,6 +58,63 @@
   font-size: 14px;
 }
 
+// 特殊处理画布拖拽组件
+.node-action-component {
+
+  > .component-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    opacity: 1;
+
+    &.required {
+      > .component-item-label {
+        &:after {
+          content: '*';
+          display: inline-block;
+          margin-left: 4px;
+          color: red;
+          font-size: 16px;
+          font-family: inherit;
+          line-height: 1;
+        }
+      }
+    }
+
+    > .component-item-label {
+      margin-bottom: 10px;
+      color: var(--content-font-color);
+  
+      > span {
+    
+        p {
+          display: inline;
+          margin-bottom: 0px;
+        }
+      }
+
+      > p {
+        display: inline;
+        margin-bottom: 0px;
+      }
+
+      > ol {
+        padding-left: 30px;
+
+        > li {
+          list-style-type: decimal;
+        }
+      }
+    }
+
+    > .component-item-description {
+      margin-bottom: 10px;
+    }
+  }
+}
+
 .form-component {
   touch-action: none;
   position: relative;

@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-photograph" :class="`component-photograph-${type}`" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-photograph" :class="`component-photograph-${type}`" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <Uploader
       class="q-photograph"
       :preview-size="size"
@@ -48,7 +48,7 @@
         <div>AAAAA</div>
       </template>
     </ImagePreview>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

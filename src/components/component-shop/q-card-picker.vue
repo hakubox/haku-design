@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-card-picker"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
@@ -53,7 +53,7 @@
         <span class="add-text">添加</span>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

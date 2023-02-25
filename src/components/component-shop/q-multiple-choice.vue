@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-item-multiple-choice"
     :layout="layout"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
@@ -50,7 +50,7 @@
         </div>
       </Checkbox>
     </CheckboxGroup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

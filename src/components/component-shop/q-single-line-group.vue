@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-single-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-single-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-single-group-item" v-for="(item, index) in options" :key="index">
       <label>{{ item.label }}</label>
       <input
@@ -11,7 +11,7 @@
         @input="changeValue($event, index)"
       />
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

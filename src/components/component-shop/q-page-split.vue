@@ -1,9 +1,9 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-page-split"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     label="分页器"
-  ></q-basic>
+  ></ComponentBasic>
 </template>
 
 <script lang="ts">

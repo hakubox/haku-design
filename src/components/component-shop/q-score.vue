@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <Rate
       :count="count"
       :disabled="disabled"
@@ -9,7 +9,7 @@
       :modelValue="value"
       @change="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

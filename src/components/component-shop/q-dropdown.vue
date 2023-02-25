@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-dropdown" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-dropdown" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-dropdown-input" :disabled="props.disabled" @click="showDialogPicker()">
       <span v-if="props.value">{{ props.value }}</span>
       <span class="placeholder" v-else>{{ props.placeholder }}</span>
@@ -11,7 +11,7 @@
         @confirm="onConfirm"
       />
     </Popup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

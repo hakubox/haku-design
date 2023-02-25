@@ -1,11 +1,11 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-item-multiple"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
     <textarea type="text" :disabled="disabled" :placeholder="placeholder" :style="{ minHeight: editorHeight }" :value="value" @input="changeValue"></textarea>
     <span v-if="max" class="component-item-multiple-count-suffix">{{ value.length }}/{{ max }}</span>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts">

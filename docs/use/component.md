@@ -29,4 +29,4 @@ pageClass: form-canvas preview
 
 #### 源代码
 
-@[code html](@src/components/component-shop/q-basic.vue)
+@[code html](@src/components/component-shop/ComponentBasic.vue)

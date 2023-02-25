@@ -6,6 +6,7 @@
 
         <div class="design-form-header-logo">
           <img src="@/assets/logo.svg" alt="">
+          {{ editorState.canvasRect }}
         </div>
         
         <!-- 标题栏右侧菜单 -->

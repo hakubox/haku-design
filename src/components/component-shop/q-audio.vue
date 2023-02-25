@@ -1,6 +1,6 @@
 <template>
   <span v-if="!$attrs.isPreview && isBackground" class="audio-tooltip">当前为背景音乐模式</span>
-  <q-basic
+  <ComponentBasic
     class="component-audio"
     v-bind="$props"
     :componentLabel="!$attrs.showLabel || isBackground ? '' : $attrs.label"
@@ -16,7 +16,7 @@
     >
       当前浏览器不支持音频元素
     </audio>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
 <script lang="ts" setup>
