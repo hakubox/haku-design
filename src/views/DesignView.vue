@@ -6,10 +6,12 @@
 
         <div class="design-form-header-logo">
           <img src="@/assets/logo.svg" alt="">
-          {{ editorState.canvasRect }}
         </div>
+
+        <!-- 中间快捷操作栏 -->
+        <CanvasQuickTools v-if="false" />
         
-        <!-- 标题栏右侧菜单 -->
+        <!-- 右侧菜单 -->
         <div class="design-form-header-menu">
           <Menu mode="horizontal" :forceSubMenuRender="true" :selectable="false">
             <SubMenu>
@@ -228,7 +230,7 @@
       v-model:visible="editorState.showAppConfigDialog"
     >
       <QuestionnaireConfig labelWidth="130px"
-        v-if="['questionnaire', 'courseware'].includes(editorState.appConfig.appType)"
+        v-if="['questionnaire', 'courseware', 'canvas'].includes(editorState.appConfig.appType)"
       ></QuestionnaireConfig>
       <ComplexComponentConfig labelWidth="130px"
         v-else-if="editorState.appConfig.appType === 'complex-component'"

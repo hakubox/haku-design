@@ -12,6 +12,29 @@ export const getQBasicProps = (props: Record<string, any>) => {
   return _props;
 };
 
+/** 保留小数位 */
+export function toDecimal(num: number | string, pos: number = 0): number {
+  let re: number;
+  if (typeof num === 'string') {
+    if (num.includes('.')) {
+      re = parseFloat(num);
+    } else {
+      return parseInt(num);
+    }
+  } else {
+    if (num.toString().includes('.')) {
+      re = num;
+    } else {
+      return num;
+    }
+  }
+  if (isNaN(re)) {
+    return NaN;
+  } else {
+    return Math.round(re * Math.pow(10, pos)) / Math.pow(10, pos);
+  }
+}
+
 /**
  * NPM版本号对比，前版本号是否大于后版本号
  * 

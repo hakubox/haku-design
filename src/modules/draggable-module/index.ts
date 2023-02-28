@@ -2,7 +2,7 @@ import { Component, LayoutConfig } from '@/@types';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { cloneForce } from '@/lib/clone';
-import { createModelId, moveNodeOfTree } from '@/tools/common';
+import { createModelId, moveNodeOfTree, toDecimal } from '@/tools/common';
 import type { DragConfig, DragLayoutParams, DragLayoutReturn } from './@types';
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
@@ -31,6 +31,13 @@ export const state = reactive({
       y: 0,
     },
   } as DragConfig,
+  /** 坐标提示文本 */
+  tipConfig: { isShow: false } as {
+    isShow: boolean,
+    x?: number,
+    y?: number,
+    text?: string
+  },
   /** 是否已存在？ */
   isExisted: false,
   offsetAmount: 10,
@@ -153,6 +160,7 @@ export const service = {
     else state.tempShadowMouseState = e;
     state.dragConfig.component = component;
     state.dragConfig.isPreDrag = true;
+    state.tipConfig.isShow = true;
   },
   /** 拖拽已存在的组件 */
   startDragFormComponent(e, component: Component) {
@@ -179,6 +187,7 @@ export const service = {
     if (state.dragConfig.isDrag || state.dragConfig.isPreDrag) {
       state.dragConfig.shadowDom?.remove();
       state.dragConfig.shadowDom = undefined;
+      state.tipConfig.isShow = false;
 
       /** 放置控件 */
       if (state.dragConfig.isDragArea) {
@@ -430,10 +439,13 @@ export const service = {
               _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
             }
           }
+          _x = toDecimal(_x);
+          _y = toDecimal(_y);
 
           state.dragConfig.component.attrs.x = _x;
           state.dragConfig.component.attrs.y = _y;
           state.dragConfig.adsorbLoc = { x: _x, y: _y };
+          state.tipConfig.text = `x: ${_x} px<br />y: ${_y} px`;
           state.dragConfig.insertIndex = editorService.findComponentIndex(state.dragConfig.component?.id) ?? 0;
         } else {
           if (state.dragConfig.shadowDom) {

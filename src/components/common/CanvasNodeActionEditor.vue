@@ -9,6 +9,17 @@
     <div class="node-action-component">
       <slot></slot>
     </div>
+    <!-- 提示文本 -->
+    <div
+      :class="{
+        show: (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
+      }"
+      :style="{
+        transform: `rotate(${-props.component.attrs.rotate ?? 0}deg)`
+      }"
+      class="node-action-tip"
+      v-html="draggableState.tipConfig.text ?? ' '"
+    ></div>
     <!-- 控制器 -->
     <div class="node-action-mark-center"></div>
     <div class="node-action-handle-rotate" @mousedown="e => onStartDrag(e, 'rotate')"></div>
@@ -28,14 +39,20 @@ import type { Component } from '@/@types';
 import { PropType, onMounted, reactive, computed, ref } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { Location } from '@/modules/draggable-module/@types'
+import { Location } from '@/modules/draggable-module/@types';
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
+import { toDecimal } from '@/tools/common';
 
+/** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
 
 /** 组件位置信息 */
 interface ComponentRect {
+  /** 初始X坐标 */
+  startX: number;
+  /** 初始Y坐标 */
+  startY: number;
   /** 组件X坐标 */
   componentX: number;
   /** 组件Y坐标 */
@@ -100,6 +117,8 @@ const onStartDrag = (e, actionType: ActionType) => {
     const _canvasPage = editorState.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
     state.pageRect = _canvasPage.getBoundingClientRect();
     state.startLoc = {
+      startX: props.component.attrs.x,
+      startY: props.component.attrs.y,
       componentX: rect.x,
       componentY: rect.y,
       x: e.pageX,
@@ -111,8 +130,10 @@ const onStartDrag = (e, actionType: ActionType) => {
     message.toast('未获取到节点定位', 'error');
   }
   state.startDrag = true;
+  setTimeout(() => {
+    draggableState.tipConfig.isShow = true;
+  }, 20);
 };
-
 
 /** 拖拽方向 */
 const actionDirection = {
@@ -122,67 +143,95 @@ const actionDirection = {
   bottom: ['bottom', 'bottomleft', 'bottomright']
 };
 
+/** 获取角度 参考：https://blog.csdn.net/qq_34887145/article/details/124584773 */
+const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
+  const dot = x1 * x2 + y1 * y2
+  const det = x1 * y2 - y1 * x2
+  const angle = Math.atan2(det, dot) / Math.PI * 180
+  return (angle + 360) % 360
+};
+
 /** 拖拽中 */
 const onMoveDrag = (e: MouseEvent) => {
   if (state.startDrag && state.actionType) {
-    /** 自动吸附坐标 */
-    // let adsorbLoc: Location;
     let _width: number = props.component.attrs.width;
     let _height: number = props.component.attrs.height;
-    let _x: number = props.component.attrs.x;
-    let _y: number = props.component.attrs.y;
-    if (actionDirection.top.includes(state.actionType)) {
-      _y = e.pageY - state.pageRect.y;
-      _height = state.startLoc.componentY + state.startLoc.height - e.pageY;
-    } else if (actionDirection.bottom.includes(state.actionType)) {
-      _height = e.pageY - state.startLoc.componentY;
-    }
-    if (actionDirection.left.includes(state.actionType)) {
-      _x = e.pageX - state.pageRect.x;
-      _width = state.startLoc.componentX + state.startLoc.width - e.pageX;
-    } else if (actionDirection.right.includes(state.actionType)) {
-      _width = e.pageX - state.startLoc.componentX;
-    }
-    
-    // 保持最小值
-    _width = _width < 10 ? 10 : _width;
-    _height = _height < 10 ? 10 : _height;
+    if (state.actionType === 'rotate') {
+      const _centerLocY = state.startLoc.componentY + state.startLoc.height / 2;
+      const _centerLocX = state.startLoc.componentX + state.startLoc.width / 2;
+      const angle = getAngle({ x: 0, y: -100 }, { x: e.pageX - _centerLocX, y: e.pageY - _centerLocY });
+      let _rotate = toDecimal(angle);
+      if (_rotate > 85 && _rotate < 95) _rotate = 90;
+      else if (_rotate > 175 && _rotate < 185) _rotate = 180;
+      else if (_rotate > 265 && _rotate < 275) _rotate = 270;
+      else if (_rotate > 355 || _rotate < 5) _rotate = 0;
+      props.component.attrs.rotate = _rotate;
+      draggableState.tipConfig.text = `${_rotate}°`;
+    } else {
+      /** 自动吸附坐标 */
+      // let adsorbLoc: Location;
+      let _x: number = props.component.attrs.x;
+      let _y: number = props.component.attrs.y;
+      if (actionDirection.top.includes(state.actionType)) {
+        _y = e.pageY - state.pageRect.y;
+        _height = state.startLoc.componentY + state.startLoc.height - e.pageY;
+      } else if (actionDirection.bottom.includes(state.actionType)) {
+        _height = e.pageY - state.startLoc.componentY;
+      }
+      if (actionDirection.left.includes(state.actionType)) {
+        _x = e.pageX - state.pageRect.x;
+        _width = state.startLoc.componentX + state.startLoc.width - e.pageX;
+      } else if (actionDirection.right.includes(state.actionType)) {
+        _width = e.pageX - state.startLoc.componentX;
+      }
+      
+      // 保持最小值
+      _width = _width < 10 ? 10 : _width;
+      _height = _height < 10 ? 10 : _height;
 
-    // 拖拽吸附
-    draggableState.alignLines = draggableService.getAlignLines(props.component, {
-      x: _x, y: _y, width: _width - 1, height: _height, filter: (direction: 'x' | 'y') => {
-        if (direction === 'x') {
-          return ['right', 'topright', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
-        } else {
-          return ['bottom', 'bottomleft', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+      // 拖拽吸附
+      draggableState.alignLines = draggableService.getAlignLines(props.component, {
+        x: _x, y: _y, width: _width - 1, height: _height, filter: (direction: 'x' | 'y') => {
+          if (direction === 'x') {
+            return ['right', 'topright', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+          } else {
+            return ['bottom', 'bottomleft', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+          }
+        }
+      });
+      const _xLines = draggableState.alignLines.filter(i => i.x !== undefined);
+      const _yLines = draggableState.alignLines.filter(i => i.y !== undefined);
+      
+      if (_yLines.length) {
+        if (actionDirection.top.includes(state.actionType)) {
+          _height = _y + _height - _yLines[0].y!;
+          _y = _yLines[0].y!;
+        } else if (actionDirection.bottom.includes(state.actionType)) {
+          _height = _yLines[_yLines.length - 1].y! - _y;
         }
       }
-    });
-    const _xLines = draggableState.alignLines.filter(i => i.x !== undefined);
-    const _yLines = draggableState.alignLines.filter(i => i.y !== undefined);
-    
-    if (_yLines.length) {
-      if (actionDirection.top.includes(state.actionType)) {
-        _height = _y + _height - _yLines[0].y!;
-        _y = _yLines[0].y!;
-      } else if (actionDirection.bottom.includes(state.actionType)) {
-        _height = _yLines[_yLines.length - 1].y! - _y;
+      if (_xLines.length) {
+        if (actionDirection.left.includes(state.actionType)) {
+          _width = _x + _width - _xLines[0].x!;
+          _x = _xLines[0].x!;
+        } else if (actionDirection.right.includes(state.actionType)) {
+          _width = _xLines[_xLines.length - 1].x! - _x;
+        }
       }
-    }
-    if (_xLines.length) {
-      if (actionDirection.left.includes(state.actionType)) {
-        _width = _x + _width - _xLines[0].x!;
-        _x = _xLines[0].x!;
-      } else if (actionDirection.right.includes(state.actionType)) {
-        _width = _xLines[_xLines.length - 1].x! - _x;
-      }
-    }
 
-    props.component.attrs.x = _x;
-    props.component.attrs.y = _y;
+      _x = toDecimal(_x);
+      _y = toDecimal(_y);
+      _width = toDecimal(_width);
+      _height = toDecimal(_height);
 
-    props.component.attrs.width = _width;
-    props.component.attrs.height = _height;
+      props.component.attrs.x = _x;
+      props.component.attrs.y = _y;
+      const _isChangeLoc = !['right', 'bottom', 'bottomright'].includes(state.actionType);
+      draggableState.tipConfig.text = (_isChangeLoc ? `x: ${_x} px<br />y: ${_y} px<br />` : '') + `宽: ${_width} px<br />高: ${_height} px`;
+
+      props.component.attrs.width = _width;
+      props.component.attrs.height = _height;
+    }
   }
 };
 
@@ -190,8 +239,12 @@ const onMoveDrag = (e: MouseEvent) => {
 const onEndDrag = (e: MouseEvent) => {
   if (state.startDrag && state.actionType) {
     state.startDrag = false;
+    draggableState.tipConfig.isShow = false;
     state.actionType = undefined;
     draggableState.dragConfig.isPause = false;
+    setTimeout(() => {
+      draggableState.tipConfig.text = undefined;
+    }, 300);
   }
 };
 
@@ -237,6 +290,7 @@ onMounted(async () => {
     left: 0;
     right: 0;
     bottom: 0;
+    white-space: nowrap;
   }
 
   > .node-action-mark-center {
@@ -272,6 +326,29 @@ onMounted(async () => {
       left: -6px;
       right: -6px;
       bottom: -6px;
+    }
+  }
+
+  > .node-action-tip {
+    position: absolute;
+    display: inline-block;
+    left: calc(100% + 6px);
+    top: calc(100% + 6px);
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    line-height: 16px;
+    font-size: 12px;
+    transform: scale(0.9);
+    transition: opacity 0.12s, visibility 0.12s;
+    opacity: 0;
+    visibility: hidden;
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
     }
   }
 
