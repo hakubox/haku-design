@@ -28,6 +28,17 @@ const state = reactive({
       icon: 'icon-arrow-top',
       get disabled() { return !editorState.currentSelectedComponents.length },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        if (parent.index === 0) {
+          message.toast('已经处于顶层', 'warning');
+          return;
+        }
+        const _children = parent.component.children!;
+        const _re = [
+          _children[parent.index],
+          ..._children.slice(0, parent.index),
+          ..._children.slice(parent.index + 1),
+        ];
+        parent.component.children = _re;
       }
     }, {
       type: 'tool',
@@ -72,8 +83,18 @@ const state = reactive({
       title: '下移到底层',
       icon: 'icon-arrow-floor',
       get disabled() { return !editorState.currentSelectedComponents.length },
-      fn: (component: Component) => {
-        console.log('下移', component.id);
+      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        if (parent.index === 0) {
+          message.toast('已经处于底层', 'warning');
+          return;
+        }
+        const _children = parent.component.children!;
+        const _re = [
+          ..._children.slice(0, parent.index),
+          ..._children.slice(parent.index + 1),
+          _children[parent.index],
+        ];
+        parent.component.children = _re;
       }
     }, {
       type: 'split',
