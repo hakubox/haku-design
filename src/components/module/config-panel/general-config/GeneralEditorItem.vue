@@ -75,20 +75,6 @@ export default defineComponent({
         console.warn('属性值包含val.target', e);
         return;
       }
-      // const _queston = this.editorState.currentSelectedComponent;
-      // if (_queston) {
-      //   this.historyService.exec('set-property', {
-      //     objectId: _queston.id,
-      //     attrs: {
-      //       property: this.prop,
-      //       propertyName: this.prop.name,
-      //       propertyTitle: this.prop.title,
-      //       componentTitle: _queston.title,
-      //     },
-      //     value: e
-      //   });
-      // }
-      // let _value = e.target ? e.target.value : e;
     },
   },
   created() {

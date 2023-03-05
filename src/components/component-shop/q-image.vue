@@ -37,8 +37,7 @@ import { state as storageState, service as storageService } from '@/modules/stor
 import { getQBasicProps } from '@/tools/common';
 import ComponentBasic from '@/components/common/ComponentBasic.vue';
 
-let defaultImg = new URL('@/assets/img/temp/default-img.webp').href;
-console.log('defaultImg', defaultImg);
+const defaultImg = new URL('@/assets/img/temp/default-img.webp', import.meta.url).href;
 
 const props = defineProps({
   /** 是否为背景图 */
@@ -92,12 +91,16 @@ const state = reactive({
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
   padding: 0px;
+  height: 100%;
 
   &.full-screen-image {
     position: relative;
+    width: 100%;
+    height: 100%;
 
     > .full-screen-image-mask {
       position: absolute;
@@ -112,14 +115,12 @@ const state = reactive({
       position: absolute;
       top: 0px;
       left: 0px;
-      width: 100%;
-      height: 100%;
     }
   }
 
   > .component-image-content {
     width: 100%;
-    min-height: 100px;
+    height: 100%;
   }
 }
 .image-tooltip {

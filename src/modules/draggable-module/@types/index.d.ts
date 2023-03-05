@@ -17,6 +17,24 @@ export interface Location {
 }
 
 /** 拖拽组件配置 */
+export class RangeSelectConfig {
+  /** 当前扫描到的Y坐标 */
+  y: number;
+  /** 当前扫描到的X坐标 */
+  x: number;
+  /** 宽度 */
+  width: number;
+  /** 高度 */
+  height: number;
+  /** 是否开始正式拖拽 */
+  isStart: boolean;
+  /** 框选的组件Id列表 */
+  componentIds: string[];
+  /** 左侧栏宽度 */
+  asideWidth: number;
+}
+
+/** 拖拽组件配置 */
 export class DragConfig {
   /** 当前扫描到的Y坐标 */
   top: number;

@@ -1392,7 +1392,7 @@ export let formComponents: InitComponent[] = [
     attrs: {
       isFullScreen: false,
       width: 300,
-      height: 100,
+      height: 200,
     },
     propertys: [
       {

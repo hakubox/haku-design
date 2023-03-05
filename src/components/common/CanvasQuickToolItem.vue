@@ -38,9 +38,11 @@ const state = reactive({
 
 /** 统一回调函数 */
 const callback = (fn) => {
-  const component = editorState.currentSelectedComponent;
-  const parent = component ? editorService.findParentComponent(component.id) : undefined;
-  if (component && parent) fn(component, parent);
+  const component = editorState.currentSelectedComponents?.[0];
+  if (component) {
+    const parent = component ? editorService.findParentComponent(component.id) : undefined;
+    if (component && parent) fn(component, parent);
+  }
 };
 </script>
 

@@ -179,21 +179,23 @@ const fullScreen = (eidtor: any, prop: any) => {
 };
 
 const closeFullScreen = ($event) => {
-  propAttaChangeListener(props.model[state.fullScreenConfig.prop.name], state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponent)
+  propAttaChangeListener(props.model[state.fullScreenConfig.prop.name], state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)
   state.fullScreenConfig.isFullScreen = false;
 } 
 /** 属性修改触发的事件 */
-const propAttaChangeListener = (value, prop, propMap, component?: Component) => {
+const propAttaChangeListener = (value, prop, propMap, components: Component[]) => {
   if (prop) {
     if (value?.target) {
       console.warn('属性值包含val.target', value);
       return;
     }
-    if (component) {
-      component.attrs['__' + prop.name] = value;
+    if (components.length) {
+      for (let i = 0; i < components.length; i++) {
+        components[i].attrs['__' + prop.name] = value;
+      }
     }
     if (prop?.change) {
-      return prop.change.call(this, prop, propMap, component, value, (editorState.componentCanvas as any).$refs);
+      return prop.change.call(this, prop, propMap, components, value, (editorState.componentCanvas as any).$refs);
     }
   }
 };
@@ -281,9 +283,9 @@ const propChangeListener = (value, prop: GeneralProperty, propMap, model?: Recor
 
 /** 切换附加属性类型 */
 const changePropAttach = (prop: GeneralProperty, editor: ComponentPropertyEditor) => {
-  // if (this.editorState.currentSelectedComponent) {
+  // if (this.editorState.currentSelectedComponents.length) {
   //   this.historyService.redo();
-  //   this.editorService.setComponentAttrType(this.editorState.currentSelectedComponent as Component, prop, editor);
+  //   this.editorService.setComponentAttrType(this.editorState.currentSelectedComponents as Component[], prop, editor);
   // }
 };
 </script>

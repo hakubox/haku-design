@@ -87,9 +87,8 @@
             'form-component-layout': ['complex', 'layout'].includes(component.type),
             active:
               !props.isPreview &&
-              editorState.currentSelectedComponent &&
-              editorState.currentSelectedComponent.id == component.id,
-            'is-drag': dragConfig && dragConfig.targetFormComponentId == component.id,
+              editorState.currentSelectedComponents.find(i => i.id === component.id),
+              'is-drag': dragConfig && dragConfig.targetFormComponentId == component.id,
           }"
           :dragConfig="dragConfig"
           :children="component.children"

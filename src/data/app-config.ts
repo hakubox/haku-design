@@ -74,7 +74,7 @@ export const formConfigs: GeneralProperty[] = [
     group: 'basic',
     editor: ComponentPropertyEditor.boolean,
     change() {
-      editorService.changeSelectedFormComponent(editorState.currentSelectedComponent, true);
+      editorService.changeSelectedFormComponent(editorState.currentSelectedComponents, true);
     },
   },
   {

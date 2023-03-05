@@ -6,6 +6,7 @@
     :class="{
       visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
       error: props.isPreview && formFillService.getErrorByComponent(componentId).length,
+      preselect: draggableState.rangeSelectConfig.componentIds.includes(componentId)
     }"
     :style="editorState.appConfig.appType === AppType.canvas ? {
       position: position,
@@ -23,7 +24,7 @@
     <CanvasNodeActionEditor
       v-if="editorState.appConfig.appType === AppType.canvas"
       :component="props.component"
-      :show="editorState.currentSelectedComponent?.id === props.component.id"
+      :show="editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedFirstComponentId === props.component.id"
       :disabledHeight="props.component.attrs.disabledHeight"
       :disabledWidth="props.component.attrs.disabledWidth"
     >
@@ -47,9 +48,8 @@
               'form-component-layout': ['complex', 'layout'].includes(childComponent.type),
               active:
                 !props.isPreview &&
-                editorState.currentSelectedComponent &&
-                editorState.currentSelectedComponent.id == childComponent.id,
-                'is-drag': dragConfig && dragConfig.targetFormComponentId == childComponent.id,
+                editorState.currentSelectedComponents.find(i => i.id === childComponent.id),
+                'is-drag': dragConfig && dragConfig.targetFormComponentId === childComponent.id,
             }"
             :children="childComponent.children"
             :component="childComponent"
@@ -102,8 +102,7 @@
             'form-component-layout': ['complex', 'layout'].includes(childComponent.type),
             active:
               !props.isPreview &&
-              editorState.currentSelectedComponent &&
-              editorState.currentSelectedComponent.id == childComponent.id,
+              editorState.currentSelectedComponents.find(i => i.id === childComponent.id),
               'is-drag': dragConfig && dragConfig.targetFormComponentId == childComponent.id,
           }"
           :children="childComponent.children"
@@ -136,7 +135,7 @@
       </template> -->
     </component>
     <Transition name="form-component-tools">
-      <div v-if="!props.isPreview && editorState.currentSelectedComponent && editorState.currentSelectedComponent.id == component.id" class="form-component-tools">
+      <div v-if="!props.isPreview && editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedFirstComponentId == component.id" class="form-component-tools">
         <div class="form-component-tool-item form-component-tool-item-info" @mousedown.stop="mouseDownEvent($event, props.component)">
           <i class="form-component-tool-item-icon" :class="editorState.menuComponents.find(x=>x.name===component.name)?.icon" alt="" />
           <span class="form-component-tool-item-title">{{ component.attrs.name }}</span>
@@ -235,7 +234,7 @@ import type { DragConfig } from '@/modules/draggable-module/@types';
 import { computed, nextTick, ref, type PropType, onMounted, onUnmounted } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { useComponentHandle } from "@/common/component-handle";
-import { service as draggableService } from '@/modules/draggable-module';
+import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { service as eventService } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as variableService } from '@/modules/variable-module';
@@ -358,7 +357,7 @@ const getAttrs = (attrs: Record<string, any>) => {
 const mouseDownEvent = (e, component: Component) => {
   if (!props.isPreview) {
     draggableService.startDragFormComponent(e, component);
-    editorService.changeSelectedFormComponent(component);
+    editorService.changeSelectedFormComponent([component]);
   } else {
     eventService.emit(EventTriggerType.click, component.id);
   }

@@ -41,7 +41,7 @@ export const state = reactive({
   /** 当前焦点事件 */
   currentEvent: {} as any,
   /** 当前已选择组件 */
-  currentSelectedComponent: undefined as Component | undefined,
+  currentSelectedComponents: [] as Component[],
   /** 当前选中的第一个控件Id */
   currentSelectedFirstComponentId: '' as string | undefined,
   /** 当前选择控件所带来的控件属性组 */
@@ -88,12 +88,25 @@ export const state = reactive({
   }),
   /** 当前控件对应的属性编辑器字典 */
   currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
-    const _selected = state.currentSelectedComponent as Component | undefined;
-    if (_selected) {
-      return _selected.propertyEditors ?? {};
-    } else {
-      return {};
+    const _selected = state.currentSelectedComponents;
+    if (_selected.length) {
+      let _propEditors: Record<string, any> = {};
+      if (_selected.length >= 1) {
+        _propEditors = _selected[0].propertyEditors ?? {};
+      }
+      for (let i = 1; i < _selected.length; i++) {
+        const component = _selected[i];
+        if (component.propertyEditors) {
+          Object.entries(component.propertyEditors).forEach(([key, value]) => {
+            if (!_propEditors[key] || _propEditors[key] !== value) {
+              delete _propEditors[key];
+            }
+          });
+        }
+      }
+      return _propEditors;
     }
+    return {};
   }),
   /** 用户设备是否处于暗模式 */
   isDarkMode: computed((): boolean => {

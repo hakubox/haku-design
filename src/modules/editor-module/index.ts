@@ -121,7 +121,7 @@ export const state = reactive({
   /** 当前焦点事件 */
   currentEvent: {} as any,
   /** 当前已选择组件 */
-  currentSelectedComponent: undefined as Component | undefined,
+  currentSelectedComponents: [] as Component[],
   /** 当前选中的第一个控件Id */
   currentSelectedFirstComponentId: '' as string | undefined,
   /** 当前选择控件所带来的控件属性组 */
@@ -169,12 +169,25 @@ export const state = reactive({
   }),
   /** 当前控件对应的属性编辑器字典 */
   currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
-    const _selected = state.currentSelectedComponent as Component | undefined;
-    if (_selected) {
-      return _selected.propertyEditors ?? {};
-    } else {
-      return {};
+    const _selected = state.currentSelectedComponents;
+    if (_selected.length) {
+      let _propEditors: Record<string, any> = {};
+      if (_selected.length >= 1) {
+        _propEditors = _selected[0].propertyEditors ?? {};
+      }
+      for (let i = 1; i < _selected.length; i++) {
+        const component = _selected[i];
+        if (component.propertyEditors) {
+          Object.entries(component.propertyEditors).forEach(([key, value]) => {
+            if (!_propEditors[key] || _propEditors[key] !== value) {
+              delete _propEditors[key];
+            }
+          });
+        }
+      }
+      return _propEditors;
     }
+    return {};
   }),
   /** 用户设备是否处于暗模式 */
   isDarkMode: computed((): boolean => {
@@ -349,7 +362,7 @@ export const service = {
   },
   /** 新建 */
   createNew(createConfig: CreateNewConfig, isPreview: boolean = false) {
-    if (!isPreview) service.changeSelectedFormComponent();
+    if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.courseware) {
@@ -373,7 +386,7 @@ export const service = {
   },
   /** 新建本地问卷 */
   createNewByLocal(createConfig: CreateNewConfig, isPreview: boolean = false) {
-    if (!isPreview) service.changeSelectedFormComponent();
+    if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.courseware) {
@@ -470,7 +483,7 @@ export const service = {
       state.pages[0].children = [];
     }
 
-    state.currentSelectedComponent = undefined;
+    state.currentSelectedComponents = [];
     state.currentSelectedFirstComponentId = '';
     state.currentSelectedComponentPropertyGroups = [];
     state.currentSelectedComponentPropertyMap = {};
@@ -551,7 +564,7 @@ export const service = {
       state.pages[0].children = [];
     }
 
-    state.currentSelectedComponent = undefined;
+    state.currentSelectedComponents = [];
     state.currentSelectedFirstComponentId = '';
     state.currentSelectedComponentPropertyGroups = [];
     state.currentSelectedComponentPropertyMap = {};
@@ -680,7 +693,7 @@ export const service = {
       state.pages[0].children = [];
     }
 
-    state.currentSelectedComponent = undefined;
+    state.currentSelectedComponents = [];
     state.currentSelectedFirstComponentId = '';
     state.currentSelectedComponentPropertyGroups = [];
     state.currentSelectedComponentPropertyMap = {};
@@ -760,7 +773,7 @@ export const service = {
       state.pages[0].children = [];
     }
 
-    state.currentSelectedComponent = undefined;
+    state.currentSelectedComponents = [];
     state.currentSelectedFirstComponentId = '';
     state.currentSelectedComponentPropertyGroups = [];
     state.currentSelectedComponentPropertyMap = {};
@@ -812,7 +825,7 @@ export const service = {
   /** 加载应用主体 */
   async loadAppBody(questionaryId: string, body: ExportAppBody, isPreview: boolean = false) {
     try {
-      if (!isPreview) service.changeSelectedFormComponent();
+      if (!isPreview) service.changeSelectedFormComponent([]);
       const hide = toast('数据加载中...', 'loading');
       if (body?.files?.length) {
         const _fileList = await getFileListByIds(...body.files);
@@ -842,11 +855,11 @@ export const service = {
     }
   },
   /** 切换当前选择的控件 */
-  async changeSelectedFormComponent(formComponent?: Component, isRefresh: boolean = false) {
+  async changeSelectedFormComponent(formComponents: Component[], isRefresh: boolean = false) {
 
     // 刷新属性栏
     if (isRefresh) {
-      await service.changeSelectedFormComponent();
+      await service.changeSelectedFormComponent([]);
       await timeout(20);
     }
     
@@ -864,12 +877,15 @@ export const service = {
     
     await timeout(20);
 
-    state.bus.$emit('component_change', formComponent);
+    state.bus.$emit('component_change', formComponents);
     state.bus.$emit('prop_change');
 
-    state.currentSelectedComponent = formComponent;
+    state.currentSelectedComponents = formComponents;
+
     
-    if (formComponent) {
+    if (formComponents.length) {
+      // TODO: 确认值改变行为
+      const formComponent = state.currentSelectedComponents?.[0];
       state.currentSelectedFirstComponentId = formComponent.id;
 
       // 获取当前选择组件的属性表
@@ -947,7 +963,7 @@ export const service = {
     const _canvasPage = state.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
     state.canvasRect = {
       x: _canvasPage.offsetLeft ?? 0,
-      y: _canvasPage.offsetTop ?? 0
+      y: _canvasPage.offsetTop ?? 0,
     };
   },
   /**

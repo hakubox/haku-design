@@ -14,6 +14,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { AppType } from '@/@types/enum';
 import CanvasQuickToolItem from './CanvasQuickToolItem.vue';
 import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
+import message from '@/common/message';
 
 const props = defineProps({
   
@@ -25,31 +26,52 @@ const state = reactive({
       type: 'tool',
       title: '上移到顶层',
       icon: 'icon-arrow-top',
-      get disabled() { return !editorState.currentSelectedComponent },
+      get disabled() { return !editorState.currentSelectedComponents.length },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        console.log('上移', component.id);
       }
     }, {
       type: 'tool',
       title: '上移一层',
       icon: 'icon-arrow-up',
-      get disabled() { return !editorState.currentSelectedComponent },
-      fn: (component: Component) => {
-        console.log('上移', component.id);
+      get disabled() { return !editorState.currentSelectedComponents.length },
+      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        if (parent.index === 0) {
+          message.toast('已经处于顶层', 'warning');
+          return;
+        }
+        const _children = parent.component.children!;
+        const _re = [
+          ..._children.slice(0, parent.index - 1),
+          _children[parent.index],
+          _children[parent.index - 1],
+          ..._children.slice(parent.index + 1),
+        ];
+        parent.component.children = _re;
       }
     }, {
       type: 'tool',
       title: '下移一层',
       icon: 'icon-arrow-down',
-      get disabled() { return !editorState.currentSelectedComponent },
-      fn: (component: Component) => {
-        console.log('下移', component.id);
+      get disabled() { return !editorState.currentSelectedComponents.length },
+      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        if (parent.index === 0) {
+          message.toast('已经处于底层', 'warning');
+          return;
+        }
+        const _children = parent.component.children!;
+        const _re = [
+          ..._children.slice(0, parent.index),
+          _children[parent.index + 1],
+          _children[parent.index],
+          ..._children.slice(parent.index + 2),
+        ];
+        parent.component.children = _re;
       }
     }, {
       type: 'tool',
       title: '下移到底层',
       icon: 'icon-arrow-floor',
-      get disabled() { return !editorState.currentSelectedComponent },
+      get disabled() { return !editorState.currentSelectedComponents.length },
       fn: (component: Component) => {
         console.log('下移', component.id);
       }

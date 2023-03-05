@@ -12,7 +12,7 @@
     <!-- 提示文本 -->
     <div
       :class="{
-        show: (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
+        show: editorState.currentSelectedFirstComponentId === props.component.id && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
       }"
       :style="{
         transform: `rotate(${-props.component.attrs.rotate ?? 0}deg)`

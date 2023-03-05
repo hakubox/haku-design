@@ -2,7 +2,7 @@
   <li class="component-view-item">
     <div
       class="component-view-item-detail"
-      :class="{ active: props.component?.id == editorState.currentSelectedComponent?.id }"
+      :class="{ active: editorState.currentSelectedComponents.find(i => i.id === props.component?.id) }"
       @click.stop="itemClick(props.component)"
     >
       <i :class="getComponentIcon(props.component.name)" alt="" />

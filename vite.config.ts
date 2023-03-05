@@ -45,6 +45,9 @@ switch (buildProj) {
           },
         ],
       },
+      server: {
+        port: 4561
+      },
       css: {
         preprocessorOptions: {
           less: {

@@ -2,8 +2,9 @@
   <div>
     <component @focus="onFocus(props.prop)"
       v-bind="Object.assign({}, getEditor.attrs, props.prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      v-if="editorState.currentSelectedComponent"
-      :component="editorState.currentSelectedComponent"
+      v-if="editorState.currentSelectedComponents.length"
+      :component="editorState.currentSelectedComponents?.[0]"
+      :components="editorState.currentSelectedComponents"
       :value="getValue"
       :attrs="Object.assign({}, getEditor.attrs, props.prop.attrs)"
       @change="propChangeListener"
@@ -64,28 +65,31 @@ const propChangeListener = (value) => {
     return;
   }
   const _propMap = editorState.currentSelectedComponentPropertyMap;
-  const _component = editorState.currentSelectedComponent as Component;
-  if (_component && _component.attrs[props.prop.name] !== value) {
-    historyService.exec('set-property', {
-      objectId: _component.id,
-      attrs: {
-        property: props.prop,
-        propertyName: props.prop.name,
-        propertyTitle: props.prop.title,
-        componentTitle: _component.title,
-      },
-      value
-    });
-    _component.attrs['__' + props.prop.name] = value;
-    if (props.prop?.change) {
-      return props.prop.change.call(this, props.prop, _propMap, _component, value, (editorState.componentCanvas as any).$refs);
+  const _components = editorState.currentSelectedComponents as Component[];
+  for (let i = 0; i < _components.length; i++) {
+    const _component = _components[i];
+    if (_component && _component.attrs[props.prop.name] !== value) {
+      historyService.exec('set-property', {
+        objectId: _component.id,
+        attrs: {
+          property: props.prop,
+          propertyName: props.prop.name,
+          propertyTitle: props.prop.title,
+          componentTitle: _component.title,
+        },
+        value
+      });
+      _component.attrs['__' + props.prop.name] = value;
+      if (props.prop?.change) {
+        return props.prop.change.call(this, props.prop, _propMap, _component, value, (editorState.componentCanvas as any).$refs);
+      }
     }
   }
 }
 
 const getValue = computed(() => {
-  if (editorState.currentSelectedComponent) {
-    return editorState.currentSelectedComponent.attrs[props.prop.name] ?? props.prop.default;
+  if (editorState.currentSelectedComponents.length) {
+    return editorState.currentSelectedComponents[0].attrs[props.prop.name] ?? props.prop.default;
   } else {
     return undefined;
   }

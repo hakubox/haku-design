@@ -1099,3 +1099,31 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
     border-left: 1px solid @primary-color;
   }
 }
+
+// 框选DOM
+.range-select-dom {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  background-color: rgba(77, 140, 228, 0.2);
+  border-radius: 3px;
+  border: 1px solid @primary-color;
+  user-select: none;
+  pointer-events: none;
+  will-change: top, left, transform, width, height;
+  z-index: 99999;
+
+  &:after {
+    content: '';
+    cursor: crosshair;
+    position: absolute;
+    display: block;
+    top: -20px;
+    left: -20px;
+    bottom: -20px;
+    right: -20px;
+    z-index: 99999;
+    // background-color: rgba(48, 166, 121, 0.3);
+  }
+}

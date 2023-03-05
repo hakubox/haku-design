@@ -2,8 +2,8 @@ import { Component, LayoutConfig } from '@/@types';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { cloneForce } from '@/lib/clone';
-import { createModelId, moveNodeOfTree, toDecimal } from '@/tools/common';
-import type { DragConfig, DragLayoutParams, DragLayoutReturn } from './@types';
+import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tools/common';
+import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './@types';
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
 
@@ -52,7 +52,25 @@ export const state = reactive({
   insertSlotIndex: 0,
   /** 头部栏高度 */
   headerHeight: 60,
+
+  
+  /** 范围框选配置 */
+  rangeSelectConfig: {
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    isStart: false,
+    componentIds: [],
+    asideWidth: 0,
+  } as RangeSelectConfig,
+  /** 范围框选的框选节点 */
+  rangeSelectDom: document.createElement('div') as HTMLElement,
 });
+
+const init = () => {
+  state.rangeSelectDom.className = 'range-select-dom';
+};
 
 export const service = {
   /** 获取9个组件的关键点 */
@@ -145,7 +163,81 @@ export const service = {
     }
     return _lines;
   },
-  /** 开始拖拽 */
+  /** 开始范围框选 */
+  startRangeSelect(e: MouseEvent) {
+    if (state.dragConfig.isDrag || state.dragConfig.isPreDrag) return;
+    if (e.button != 0) return;
+    editorService.changeSelectedFormComponent([]);
+    state.rangeSelectConfig.isStart = true;
+    state.rangeSelectConfig.x = e.pageX;
+    state.rangeSelectConfig.y = e.pageY;
+    state.rangeSelectConfig.asideWidth = (document.querySelector('.design-form-aside') as HTMLElement).offsetWidth;
+    const _target = e.target as HTMLElement;
+    // state.rangeSelectDom.style.left = `0px`;
+    // state.rangeSelectDom.style.top = `0px`;
+    state.rangeSelectDom.style.transform = `translate(${state.rangeSelectConfig.x}px, ${state.rangeSelectConfig.y}px)`;
+    document.body.appendChild(state.rangeSelectDom);
+  },
+  /** 范围框选鼠标移动中 */
+  moveRangeSelect(e: MouseEvent) {
+    if (state.rangeSelectConfig.isStart) {
+      let _x = state.rangeSelectConfig.x;
+      let _y = state.rangeSelectConfig.y;
+      if (e.pageX < _x) {
+        _x = e.pageX;
+        state.rangeSelectConfig.width = state.rangeSelectConfig.x - _x;
+      } else {
+        state.rangeSelectConfig.width = e.pageX - state.rangeSelectConfig.x;
+      }
+      if (e.pageY < state.rangeSelectConfig.y) {
+        _y = e.pageY;
+        state.rangeSelectConfig.height = state.rangeSelectConfig.y - _y;
+      } else {
+        state.rangeSelectConfig.height = e.pageY - state.rangeSelectConfig.y;
+      }
+      
+      state.rangeSelectDom.style.transform = `translate(${_x}px, ${_y}px)`;
+      // state.rangeSelectDom.style.left = `${_x}px`;
+      // state.rangeSelectDom.style.top = `${_y}px`;
+      state.rangeSelectDom.style.width = `${state.rangeSelectConfig.width}px`;
+      state.rangeSelectDom.style.height = `${state.rangeSelectConfig.height}px`;
+
+      const _componetIds: string[] = [];
+      const _rectX = _x - editorState.canvasRect.x - state.rangeSelectConfig.asideWidth;
+      const _rectY = _y - editorState.canvasRect.y - 40;
+      editorState.currentPage.children.forEach(i => {
+        if (intersectsRect(
+          _rectX, _rectY, state.rangeSelectConfig.width, state.rangeSelectConfig.height,
+          i.attrs.x, i.attrs.y, i.attrs.width, i.attrs.height
+        )) {
+          _componetIds.push(i.id);
+        }
+      });
+      state.rangeSelectConfig.componentIds = _componetIds;
+    }
+  },
+  /** 结束范围框选 */
+  endRangeSelect(e: MouseEvent) {
+    if (state.rangeSelectConfig.isStart) {
+      state.rangeSelectConfig = {
+        ...state.rangeSelectConfig,
+        isStart: false,
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+      };
+      state.rangeSelectDom.style.transform = `translate(0px, 0px)`;
+      // state.rangeSelectDom.style.left = `0px`;
+      // state.rangeSelectDom.style.top = `0px`;
+      state.rangeSelectDom.style.width = `0px`;
+      state.rangeSelectDom.style.height = `0px`;
+      editorService.changeSelectedFormComponent(editorState.currentPage.children.filter(i => state.rangeSelectConfig.componentIds.includes(i.id)));
+      state.rangeSelectConfig.componentIds = [];
+      state.rangeSelectDom.remove();
+    }
+  },
+  /** 从左侧组件库开始拖拽 */
   startDrag(e, component: Component, isExisted: boolean = false) {
     if (state.dragConfig.isPause) return;
     if (e.button != 0) return;
@@ -647,6 +739,8 @@ export const service = {
     return {} as DragLayoutReturn;
   },
 };
+
+init();
 
 export default {
   state,

@@ -12,6 +12,18 @@ export const getQBasicProps = (props: Record<string, any>) => {
   return _props;
 };
 
+/** 判断两个矩形是否相交 */
+export function intersectsRect(x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+  let maxX, maxY, minX, minY;
+ 
+  maxX = x1+w1 >= x2+w2 ? x1+w1 : x2+w2;
+  maxY = y1+h1 >= y2+h2 ? y1+h1 : y2+h2;
+  minX = x1 <= x2 ? x1 : x2;
+  minY = y1 <= y2 ? y1 : y2;
+ 
+  return maxX - minX <= w1 + w2 && maxY - minY <= h1 + h2;
+}
+
 /** 保留小数位 */
 export function toDecimal(num: number | string, pos: number = 0): number {
   let re: number;

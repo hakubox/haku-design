@@ -16,7 +16,7 @@
           :class="{ 'form-design-body-property-item-block': prop.layout == 'block' || (prop.attach && prop.attach.length) }"
           v-for="prop in propGroup.propertys.filter(i => i.visible !== false)"
           :key="prop.name"
-          v-show="propShowListener(prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponent)"
+          v-show="propShowListener(prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)"
         >
           <span class="form-design-body-property-item-label" :class="{ require: prop.require, leaf: prop.leaf }">
             <div>
@@ -70,12 +70,14 @@
             <component 
               v-else-if="prop.attach && prop.attach.length && editorState.currentPropertyEditors[prop.name] && editorState.currentPropertyEditors[prop.name] !== prop.editor"
               :is="editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]].component"
-              :component="editorState.currentSelectedComponent"
+              :component="editorState.currentSelectedComponents?.[0]"
+              :components="editorState.currentSelectedComponents"
               @focus="editorState.currentProp = prop"
-              @change="propAttaChangeListener($event, prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponent)"
+              @change="propAttaChangeListener($event, prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)"
               v-bind="Object.assign({}, editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]]?.attrs ?? {}, prop.attrs)" 
-              v-model:value.lazy="editorState.currentSelectedComponent!.attrs['__' + prop.name]" 
+              v-model:value.lazy="editorState.currentSelectedComponents[0].attrs['__' + prop.name]" 
             >
+              <!-- TODO: 需要处理值改变问题 v-model:value.lazy 怎样处理 -->
               {{editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]].html}}
               <template v-for="slot in Object.keys(editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]].slot)" #[slot]>
                 <component 
@@ -129,11 +131,12 @@
       <component 
         v-else-if="state.fullScreenConfig.prop.attach && state.fullScreenConfig.prop.attach.length && editorState.currentPropertyEditors[state.fullScreenConfig.prop.name] && editorState.currentPropertyEditors[state.fullScreenConfig.prop.name] !== state.fullScreenConfig.prop.editor"
         :is="editorState.propertyEditors[editorState.currentPropertyEditors[state.fullScreenConfig.prop.name]].component"
-        :component="editorState.currentSelectedComponent"
+        :component="editorState.currentSelectedComponents?.[0]"
+        :components="editorState.currentSelectedComponents"
         @focus="editorState.currentProp = state.fullScreenConfig.prop"
-        @change="propAttaChangeListener($event, state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponent)"
+        @change="propAttaChangeListener($event, state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)"
         v-bind="Object.assign({ height: '500px' }, editorState.propertyEditors[editorState.currentPropertyEditors[state.fullScreenConfig.prop.name]]?.attrs ?? {}, state.fullScreenConfig.prop.attrs)" 
-        v-model:value.lazy="editorState.currentSelectedComponent!.attrs['__' + state.fullScreenConfig.prop.name]" 
+        v-model:value.lazy="editorState.currentSelectedComponents[0].attrs['__' + state.fullScreenConfig.prop.name]" 
       >
         {{editorState.propertyEditors[editorState.currentPropertyEditors[state.fullScreenConfig.prop.name]].html}}
         <template v-for="slot in Object.keys(editorState.propertyEditors[editorState.currentPropertyEditors[state.fullScreenConfig.prop.name]].slot)" #[slot]>
@@ -184,9 +187,14 @@ const state = reactive({
   },
 });
 
-const propShowListener = (prop, propMap, component?: Component) => {
-  if (prop?.showCondition && component) {
-    return prop.showCondition.call(this, prop, propMap, component, component.attrs[prop.name], (editorState.componentCanvas as any).$refs);
+const propShowListener = (prop, propMap, components: Component[]) => {
+  if (prop?.showCondition && components.length) {
+    // TODO: 待处理，第五个参数需要确认怎样处理
+    if (components.length === 1) {
+      return prop.showCondition.call(this, prop, propMap, components, components[0].attrs[prop.name], (editorState.componentCanvas as any).$refs);
+    } else {
+      return prop.showCondition.call(this, prop, propMap, components, undefined, (editorState.componentCanvas as any).$refs);
+    }
   } else {
     return true;
   }
@@ -194,20 +202,24 @@ const propShowListener = (prop, propMap, component?: Component) => {
 
 /** 切换附加属性类型 */
 const changePropAttach = (prop: ComponentProperty, editor: ComponentPropertyEditor) => {
-  if (editorState.currentSelectedComponent) {
+  if (editorState.currentSelectedComponents.length) {
     historyService.redo();
-    editorService.setComponentAttrType(editorState.currentSelectedComponent as Component, prop, editor);
+    editorState.currentSelectedComponents.forEach(component => {
+      editorService.setComponentAttrType(component, prop, editor);
+    });
   }
 };
 
 /** 将当前组件标题设为组件名称 */
 const resetComponentName = () => {
-  const _component = editorState.currentSelectedComponent;
-  if (_component && _component.attrs.label !== undefined) {
-    const _dom = document.createElement('div');
-    _dom.innerHTML = _component.attrs.label;
-    _component.attrs.name = _dom.innerText;
-    _dom.remove();
+  if (editorState.currentSelectedComponents.length) {
+    const _component = editorState.currentSelectedComponents[0];
+    if (_component && _component.attrs.label !== undefined) {
+      const _dom = document.createElement('div');
+      _dom.innerHTML = _component.attrs.label;
+      _component.attrs.name = _dom.innerText;
+      _dom.remove();
+    }
   }
 }
 
@@ -217,22 +229,25 @@ const fullScreen = (eidtor: any, prop: any) => {
 };
 
 const closeFullScreen = ($event) => {
-  propAttaChangeListener(editorState.currentSelectedComponent!.attrs[state.fullScreenConfig.prop.name], state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponent)
+  
+  propAttaChangeListener(editorState.currentSelectedComponents.map(i => i.attrs[state.fullScreenConfig.prop.name]), state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)
   state.fullScreenConfig.isFullScreen = false;
 } 
 
 /** 附加属性修改触发的事件 */
-const propAttaChangeListener = (value, prop, propMap, component?: Component) => {
+const propAttaChangeListener = (value, prop, propMap, components: Component[]) => {
   if (prop) {
     if (value?.target) {
       console.warn('属性值包含val.target', value);
       return;
     }
-    if (component) {
-      component.attrs['__' + prop.name] = value;
+    if (components.length) {
+      for (let i = 0; i < components.length; i++) {
+        components[i].attrs['__' + prop.name] = value;
+      }
     }
     if (prop?.change) {
-      return prop.change.call(this, prop, propMap, component, value, (editorState.componentCanvas as any).$refs);
+      return prop.change.call(this, prop, propMap, components, value, (editorState.componentCanvas as any).$refs);
     }
   }
 };

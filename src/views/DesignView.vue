@@ -9,7 +9,7 @@
         </div>
 
         <!-- 中间快捷操作栏 -->
-        <CanvasQuickTools v-if="false" />
+        <CanvasQuickTools />
         
         <!-- 右侧菜单 -->
         <div class="design-form-header-menu">
@@ -126,7 +126,7 @@
           <!-- 画布 -->
           <div class="design-form-canvas"
             :class="editorState.appConfig.deviceType"
-            @mousedown="editorService.changeSelectedFormComponent()"
+            @mousedown="draggableService.startRangeSelect"
             v-if="editorState.appConfig.isInit"
           >
             <!-- 对齐线 -->
@@ -397,20 +397,29 @@ versionHistoryState.bus.$on('version_change', () => {
   getDataById(route.query.qid);
 });
 
+const globalMouseMove = (e: MouseEvent) => {
+  draggableService.dragMove(e);
+  draggableService.moveRangeSelect(e);
+}
+const globalMouseUp = (e: MouseEvent) => {
+  draggableService.endDrag(e);
+  draggableService.endRangeSelect(e);
+}
+
 onMounted(() => {
   window.onresize = () => {
     editorService.onPageSize();
   };
-  document.body.addEventListener('mousemove', draggableService.dragMove);
-  document.body.addEventListener('mouseup', draggableService.endDrag);
+  document.body.addEventListener('mousemove', globalMouseMove);
+  document.body.addEventListener('mouseup', globalMouseUp);
   if (route.query.qid) {
     getDataById(route.query.qid);
   }
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mousemove', draggableService.dragMove);
-  document.body.removeEventListener('mouseup', draggableService.endDrag);
+  document.body.removeEventListener('mousemove', globalMouseMove);
+  document.body.removeEventListener('mouseup', globalMouseUp);
 });
 
 watch(() => route.fullPath, (newPath, oldPath) => {
