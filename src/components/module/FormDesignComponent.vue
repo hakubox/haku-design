@@ -6,7 +6,8 @@
     :class="{
       visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
       error: props.isPreview && formFillService.getErrorByComponent(componentId).length,
-      preselect: draggableState.rangeSelectConfig.componentIds.includes(componentId)
+      preselect: draggableState.rangeSelectConfig.componentIds.includes(componentId),
+      lock: props.component.attrs.lock
     }"
     :style="editorState.appConfig.appType === AppType.canvas ? {
       position: position,
@@ -135,7 +136,7 @@
       </template> -->
     </component>
     <Transition name="form-component-tools">
-      <div v-if="!props.isPreview && editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedFirstComponentId == component.id" class="form-component-tools">
+      <div v-if="!props.isPreview && editorState.currentSelectedIds.includes(component.id)" class="form-component-tools">
         <div class="form-component-tool-item form-component-tool-item-info" @mousedown.stop="mouseDownEvent($event, props.component)">
           <i class="form-component-tool-item-icon" :class="editorState.menuComponents.find(x=>x.name===component.name)?.icon" alt="" />
           <span class="form-component-tool-item-title">{{ component.attrs.name }}</span>

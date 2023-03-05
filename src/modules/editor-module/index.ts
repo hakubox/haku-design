@@ -155,6 +155,10 @@ export const state = reactive({
   propertyEditors: getEditors,
   /** Footer Dom */
   footerDom: undefined as HTMLElement | undefined,
+  /** 已选择的所有组件Id列表 */
+  currentSelectedIds: computed((): string[] => {
+    return state.currentSelectedComponents.map(i => i.id);
+  }),
   /** 获取计时配置 */
   getTimerConfig: computed((): FormTimerConfig => {
     return state.appConfig?.timerConfig || {};

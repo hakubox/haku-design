@@ -3,7 +3,7 @@
   <div
     ref="nodeEditorEl"
     class="canvas-node-action-editor"
-    :class="{ show: props.show }"
+    :class="{ show: props.show && !props.component.attrs.lock }"
   >
     <!-- 组件 -->
     <div class="node-action-component">

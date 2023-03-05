@@ -846,6 +846,12 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
   &:hover,
   &.active {
+
+    &.lock {
+      &:after {
+        background-color: rgba(183, 183, 183, 0.2) !important;
+      }
+    }
     &:after {
       background-color: rgba(51, 122, 183, 0.2);
     }
@@ -870,6 +876,13 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
     background-color: rgba(255, 255, 255, 0.8);
   }
 
+  &.lock {
+
+    &:after {
+      cursor: default !important;
+    }
+  }
+
   &:not(.form-component-layout):after {
     .user-select();
     content: '';
@@ -885,7 +898,7 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
   &.active {
     cursor: grab;
-    box-shadow: 0px 0px 1px 0px rgba(48, 166, 121, 0.8), 0 3px 14px 3px rgba(40, 120, 255, 0.08),
+    box-shadow: 0px 0px 1px 0px rgba(48, 85, 166, 0.8), 0 3px 14px 3px rgba(40, 120, 255, 0.08),
       0 8px 10px 1px rgba(0, 0, 0, 0.05);
     z-index: 1;
 

@@ -249,16 +249,16 @@ const state = reactive({
     }, {
       type: 'tool',
       title: '组合',
-      icon: 'icon-arrow-top',
-      get disabled() { return !editorState.currentSelectedComponents.length },
+      icon: 'icon-link-device',
+      get disabled() { return editorState.currentSelectedComponents.length < 2 },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
         console.log('执行组合逻辑');
       }
     }, {
       type: 'tool',
       title: '拆分',
-      icon: 'icon-arrow-top',
-      get disabled() { return !editorState.currentSelectedComponents.length },
+      icon: 'icon-link-device',
+      get disabled() { return editorState.currentSelectedComponents.length < 2 },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
         console.log('执行拆分逻辑');
       }

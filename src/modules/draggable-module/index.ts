@@ -257,6 +257,9 @@ export const service = {
   /** 拖拽已存在的组件 */
   startDragFormComponent(e, component: Component) {
     state.dragConfig.targetFormComponentId = component.id;
+    if (component.attrs.lock) {
+      return;
+    }
     const _el: HTMLElement = document.createElement('div');
     if (editorState.appConfig.appType === AppType.questionnaire) {
       _el.classList.add('form-design-drag-component');
