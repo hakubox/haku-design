@@ -24,140 +24,244 @@ const state = reactive({
   toolList: [
     {
       type: 'tool',
-      title: '上移到顶层',
-      icon: 'icon-arrow-top',
-      get disabled() { return !editorState.currentSelectedComponents.length },
-      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        if (parent.index === 0) {
-          message.toast('已经处于顶层', 'warning');
-          return;
+      title: '层级',
+      icon: 'icon-shape-rect',
+      children: [{
+        type: 'tool',
+        title: '置顶',
+        icon: 'icon-arrow-top',
+        get disabled() { return !editorState.currentSelectedComponents.length },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          if (parent.index === 0) {
+            message.toast('已经处于顶层', 'warning');
+            return;
+          }
+          const _children = parent.component.children!;
+          const _re = [
+            _children[parent.index],
+            ..._children.slice(0, parent.index),
+            ..._children.slice(parent.index + 1),
+          ];
+          parent.component.children = _re;
         }
-        const _children = parent.component.children!;
-        const _re = [
-          _children[parent.index],
-          ..._children.slice(0, parent.index),
-          ..._children.slice(parent.index + 1),
-        ];
-        parent.component.children = _re;
-      }
-    }, {
-      type: 'tool',
-      title: '上移一层',
-      icon: 'icon-arrow-up',
-      get disabled() { return !editorState.currentSelectedComponents.length },
-      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        if (parent.index === 0) {
-          message.toast('已经处于顶层', 'warning');
-          return;
+      }, {
+        type: 'tool',
+        title: '置底',
+        icon: 'icon-arrow-floor',
+        get disabled() { return !editorState.currentSelectedComponents.length },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          if (parent.index === 0) {
+            message.toast('已经处于底层', 'warning');
+            return;
+          }
+          const _children = parent.component.children!;
+          const _re = [
+            ..._children.slice(0, parent.index),
+            ..._children.slice(parent.index + 1),
+            _children[parent.index],
+          ];
+          parent.component.children = _re;
         }
-        const _children = parent.component.children!;
-        const _re = [
-          ..._children.slice(0, parent.index - 1),
-          _children[parent.index],
-          _children[parent.index - 1],
-          ..._children.slice(parent.index + 1),
-        ];
-        parent.component.children = _re;
-      }
-    }, {
-      type: 'tool',
-      title: '下移一层',
-      icon: 'icon-arrow-down',
-      get disabled() { return !editorState.currentSelectedComponents.length },
-      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        if (parent.index === 0) {
-          message.toast('已经处于底层', 'warning');
-          return;
+      }, {
+        type: 'tool',
+        title: '上移',
+        icon: 'icon-arrow-up',
+        get disabled() { return !editorState.currentSelectedComponents.length },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          if (parent.index === 0) {
+            message.toast('已经处于顶层', 'warning');
+            return;
+          }
+          const _children = parent.component.children!;
+          const _re = [
+            ..._children.slice(0, parent.index - 1),
+            _children[parent.index],
+            _children[parent.index - 1],
+            ..._children.slice(parent.index + 1),
+          ];
+          parent.component.children = _re;
         }
-        const _children = parent.component.children!;
-        const _re = [
-          ..._children.slice(0, parent.index),
-          _children[parent.index + 1],
-          _children[parent.index],
-          ..._children.slice(parent.index + 2),
-        ];
-        parent.component.children = _re;
-      }
-    }, {
-      type: 'tool',
-      title: '下移到底层',
-      icon: 'icon-arrow-floor',
-      get disabled() { return !editorState.currentSelectedComponents.length },
-      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        if (parent.index === 0) {
-          message.toast('已经处于底层', 'warning');
-          return;
+      }, {
+        type: 'tool',
+        title: '下移',
+        icon: 'icon-arrow-down',
+        get disabled() { return !editorState.currentSelectedComponents.length },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          if (parent.index === 0) {
+            message.toast('已经处于底层', 'warning');
+            return;
+          }
+          const _children = parent.component.children!;
+          const _re = [
+            ..._children.slice(0, parent.index),
+            _children[parent.index + 1],
+            _children[parent.index],
+            ..._children.slice(parent.index + 2),
+          ];
+          parent.component.children = _re;
         }
-        const _children = parent.component.children!;
-        const _re = [
-          ..._children.slice(0, parent.index),
-          ..._children.slice(parent.index + 1),
-          _children[parent.index],
-        ];
-        parent.component.children = _re;
       }
-    }, {
+    ]}, {
       type: 'split',
     }, {
       type: 'tool',
-      title: '水平对齐',
+      title: '对齐',
       icon: 'icon-shape-rect',
       children: [{
         type: 'tool',
         title: '左侧对齐',
         icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _minX = Number.MAX_VALUE;
+          _components.forEach(i => {
+            if (_minX > i.attrs.x)  _minX = i.attrs.x;
+          });
+          _components.forEach(i => {
+            if (i.attrs.x !== _minX) i.attrs.x = _minX;
+          });
         }
       }, {
         type: 'tool',
         title: '居中对齐',
         icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _minX = Number.MAX_VALUE;
+          let _maxX = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_minX > i.attrs.x) _minX = i.attrs.x;
+            if (_maxX < i.attrs.x + i.attrs.width) _maxX = i.attrs.x + i.attrs.width;
+          });
+          let _centerX = _minX + (_maxX - _minX) / 2;
+          _components.forEach(i => {
+            if (i.attrs.x !== _centerX - i.attrs.width / 2) {
+              i.attrs.x = _centerX - i.attrs.width / 2;
+            }
+          });
         }
       }, {
         type: 'tool',
         title: '右侧对齐',
         icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _maxX = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_maxX < i.attrs.x + i.attrs.width) _maxX = i.attrs.x + i.attrs.width;
+          });
+          _components.forEach(i => {
+            if (i.attrs.x !== _maxX) i.attrs.x = _maxX - i.attrs.width;
+          });
+        }
+      }, {
+        type: 'tool',
+        title: '顶部对齐',
+        icon: 'icon-shape-rect',
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _minY = Number.MAX_VALUE;
+          _components.forEach(i => {
+            if (_minY > i.attrs.y)  _minY = i.attrs.y;
+          });
+          _components.forEach(i => {
+            if (i.attrs.y !== _minY) i.attrs.y = _minY;
+          });
+        }
+      }, {
+        type: 'tool',
+        title: '居中对齐',
+        icon: 'icon-shape-rect',
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _minY = Number.MAX_VALUE;
+          let _maxY = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_minY > i.attrs.y) _minY = i.attrs.y;
+            if (_maxY < i.attrs.y + i.attrs.height) _maxY = i.attrs.y + i.attrs.height;
+          });
+          let _centerY = _minY + (_maxY - _minY) / 2;
+          _components.forEach(i => {
+            if (i.attrs.y !== _centerY - i.attrs.height / 2) {
+              i.attrs.y = _centerY - i.attrs.height / 2;
+            }
+          });
+        }
+      }, {
+        type: 'tool',
+        title: '底部对齐',
+        icon: 'icon-shape-rect',
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents;
+          let _maxY = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_maxY < i.attrs.y + i.attrs.height) _maxY = i.attrs.y + i.attrs.height;
+          });
+          _components.forEach(i => {
+            if (i.attrs.y !== _maxY) i.attrs.y = _maxY - i.attrs.height;
+          });
+        }
+      }, {
+        type: 'tool',
+        title: '水平等间距',
+        icon: 'icon-shape-rect',
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents.sort((a, b) => a.attrs.x - b.attrs.x);
+          let _minX = Number.MAX_VALUE;
+          let _maxX = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_minX > i.attrs.x) _minX = i.attrs.x;
+            if (_maxX < i.attrs.x) _maxX = i.attrs.x;
+          });
+          let _average = (_maxX - _minX) / (_components.length - 1);
+          _components.forEach((i, index) => {
+            if (i.attrs.x !== _minX + index * _average) i.attrs.x = _minX + index * _average;
+          });
+        }
+      }, {
+        type: 'tool',
+        title: '垂直等间距',
+        icon: 'icon-shape-rect',
+        get disabled() { return editorState.currentSelectedComponents.length < 2 },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          const _components = editorState.currentSelectedComponents.sort((a, b) => a.attrs.y - b.attrs.y);
+          let _minY = Number.MAX_VALUE;
+          let _maxY = Number.MIN_VALUE;
+          _components.forEach(i => {
+            if (_minY > i.attrs.y) _minY = i.attrs.y;
+            if (_maxY < i.attrs.y) _maxY = i.attrs.y;
+          });
+          let _average = (_maxY - _minY) / (_components.length - 1);
+          _components.forEach((i, index) => {
+            if (i.attrs.y !== _minY + index * _average) i.attrs.y = _minY + index * _average;
+          });
         }
       }]
     }, {
       type: 'split',
     }, {
       type: 'tool',
-      title: '垂直对齐',
-      icon: 'icon-shape-rect',
-      children: [{
-        type: 'tool',
-        title: '顶部对齐',
-        icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
-        }
-      }, {
-        type: 'tool',
-        title: '居中对齐',
-        icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
-        }
-      }, {
-        type: 'tool',
-        title: '底部对齐',
-        icon: 'icon-shape-rect',
-        get disabled() { return true },
-        fn: (component: Component) => {
-          console.log('下移', component.id);
-        }
-      }]
+      title: '组合',
+      icon: 'icon-arrow-top',
+      get disabled() { return !editorState.currentSelectedComponents.length },
+      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        console.log('执行组合逻辑');
+      }
+    }, {
+      type: 'tool',
+      title: '拆分',
+      icon: 'icon-arrow-top',
+      get disabled() { return !editorState.currentSelectedComponents.length },
+      fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+        console.log('执行拆分逻辑');
+      }
     }
   ] as CanvasQuickTool[]
 });

@@ -357,7 +357,18 @@ const getAttrs = (attrs: Record<string, any>) => {
 const mouseDownEvent = (e, component: Component) => {
   if (!props.isPreview) {
     draggableService.startDragFormComponent(e, component);
-    editorService.changeSelectedFormComponent([component]);
+    let _components = editorState.currentSelectedComponents;
+    if (e.ctrlKey) {
+      const _index = editorState.currentSelectedComponents.findIndex(i => i.id === component.id);
+      if (_index >= 0) {
+        _components.splice(_index, 1);
+      } else {
+        _components.push(component);
+      }
+    } else {
+      _components = [component];
+    }
+    editorService.changeSelectedFormComponent(_components);
   } else {
     eventService.emit(EventTriggerType.click, component.id);
   }

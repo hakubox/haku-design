@@ -4,7 +4,7 @@
       disabled: props.config.disabled,
       haschild: props.config.children?.length
     }]"
-    @click="callback(props.config.fn)"
+    @click="callback(props.config.fn, props.config.disabled)"
   >
     <i class="iconfont" :class="props.config.icon"></i>
     <span v-if="props.config.title && !props.config.children?.length" class="canvas-quick-tool-title">{{ props.config.title }}</span>
@@ -25,6 +25,7 @@ import { reactive, computed, type PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { AppType } from '@/@types/enum';
 import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
+import message from '@/common/message';
 
 const props = defineProps({
   config: {
@@ -37,7 +38,8 @@ const state = reactive({
 });
 
 /** 统一回调函数 */
-const callback = (fn) => {
+const callback = (fn, disabled: boolean) => {
+  if (disabled) return;
   const component = editorState.currentSelectedComponents?.[0];
   if (component) {
     const parent = component ? editorService.findParentComponent(component.id) : undefined;

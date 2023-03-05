@@ -53,7 +53,7 @@ const getComponentIcon = (componentName: string): string => {
 }
 
 const itemClick = async (item: Component) => {
-  editorService.changeSelectedFormComponent(item);
+  editorService.changeSelectedFormComponent([item]);
   if (editorState.currentPageIndex !== props.pageIndex) {
     await nextTick();
     editorService.gotoAppPage(props.pageIndex);
