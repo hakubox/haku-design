@@ -26,6 +26,10 @@ export const state = reactive({
       x: 0,
       y: 0,
     },
+    startComponentLoc: {
+      x: 0,
+      y: 0
+    },
     endLoc: {
       x: 0,
       y: 0,
@@ -98,7 +102,7 @@ export const service = {
     if (editorState.canvasRect) {
       const _points = this.getComponentPoints(component, config);
       const _parent = editorService.findParentComponent(component.id);
-      const _childrenPoints = _parent?.component.children?.filter(i => i.id !== component.id)?.map(i => this.getComponentPoints(i)) || [];
+      const _childrenPoints = _parent?.component.children?.filter(i => i.id !== component.id && !editorState.currentSelectedIds.includes(i.id))?.map(i => this.getComponentPoints(i)) || [];
       const _xIndexDirection = {
         0: 'front',
         1: 'front',
@@ -246,8 +250,17 @@ export const service = {
       state.dragConfig.shadowDom.remove();
       state.dragConfig.shadowDom = undefined;
     }
-    state.dragConfig.startLoc.y = e['layerY'];
     state.dragConfig.startLoc.x = e['layerX'];
+    state.dragConfig.startLoc.y = e['layerY'];
+    state.dragConfig.startComponentLoc.x = component.attrs.x;
+    state.dragConfig.startComponentLoc.y = component.attrs.y;
+    if (editorState.currentSelectedComponents.length > 1) {
+      state.dragConfig.startComponentLocs = editorState.currentSelectedComponents.map(i => ({
+        x: i.attrs.x,
+        y: i.attrs.y,
+        id: i.id
+      }));
+    }
     if (state.offsetAmount <= 0) service.setShadowDom(e);
     else state.tempShadowMouseState = e;
     state.dragConfig.component = component;
@@ -344,7 +357,9 @@ export const service = {
         isPreDrag: false,
         isDragArea: false,
         startLoc: { x: 0, y: 0 },
+        startComponentLoc: { x: 0, y: 0 },
         endLoc: { x: 0, y: 0 },
+        startComponentLocs: [],
       }).forEach(([key, value]) => {
         state.dragConfig[key] = value;
       });
@@ -542,6 +557,17 @@ export const service = {
           state.dragConfig.adsorbLoc = { x: _x, y: _y };
           state.tipConfig.text = `x: ${_x} px<br />y: ${_y} px`;
           state.dragConfig.insertIndex = editorService.findComponentIndex(state.dragConfig.component?.id) ?? 0;
+
+          if (editorState.currentSelectedComponents.length > 1) {
+            editorState.currentSelectedComponents.forEach(i => {
+              if (i.id === state.dragConfig.component.id) return;
+              const _loc = state.dragConfig.startComponentLocs.find(o => o.id === i.id);
+              if (_loc) {
+                i.attrs.x = _loc.x + _x - state.dragConfig.startComponentLoc.x;
+                i.attrs.y = _loc.y + _y - state.dragConfig.startComponentLoc.y;
+              }
+            });
+          }
         } else {
           if (state.dragConfig.shadowDom) {
             state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';

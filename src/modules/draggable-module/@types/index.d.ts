@@ -1,3 +1,5 @@
+import { Component } from "@/@types";
+
 /** 对齐线 */
 export interface AlignLine {
   /** 方向 */
@@ -54,6 +56,8 @@ export class DragConfig {
   isDragArea: boolean;
   /** 正在拖拽的组件 */
   component: any;
+  /** 记录所有组件开始拖拽坐标（多个组件同时拖拽） */
+  startComponentLocs: { id: string, x: number, y: number }[];
   /** 插入索引 */
   insertIndex: number;
   /** 插入的父组件Id（插入最外层时为undefined） */
@@ -64,6 +68,8 @@ export class DragConfig {
   targetFormComponentId: string;
   /** 拖拽开始坐标 */
   startLoc: Location;
+  /** 拖拽开始时的组件坐标 */
+  startComponentLoc: Location;
   /** 拖拽结束坐标 */
   endLoc: Location;
   /** 自动吸附坐标 */

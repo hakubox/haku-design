@@ -161,10 +161,14 @@ const onMoveDrag = (e: MouseEvent) => {
       const _centerLocX = state.startLoc.componentX + state.startLoc.width / 2;
       const angle = getAngle({ x: 0, y: -100 }, { x: e.pageX - _centerLocX, y: e.pageY - _centerLocY });
       let _rotate = toDecimal(angle);
-      if (_rotate > 85 && _rotate < 95) _rotate = 90;
-      else if (_rotate > 175 && _rotate < 185) _rotate = 180;
-      else if (_rotate > 265 && _rotate < 275) _rotate = 270;
-      else if (_rotate > 355 || _rotate < 5) _rotate = 0;
+      if (_rotate > 42 && _rotate < 48) _rotate = 45;
+      else if (_rotate > 87 && _rotate < 93) _rotate = 90;
+      else if (_rotate > 132 && _rotate < 138) _rotate = 135;
+      else if (_rotate > 177 && _rotate < 183) _rotate = 180;
+      else if (_rotate > 222 && _rotate < 228) _rotate = 225;
+      else if (_rotate > 267 && _rotate < 273) _rotate = 270;
+      else if (_rotate > 312 && _rotate < 318) _rotate = 315;
+      else if (_rotate > 357 || _rotate < 3) _rotate = 0;
       props.component.attrs.rotate = _rotate;
       draggableState.tipConfig.text = `${_rotate}°`;
     } else {

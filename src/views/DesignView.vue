@@ -101,7 +101,7 @@
       <!-- 主体部分 -->
       <div class="design-form-body">
 
-        <!-- 主体中部 -->
+        <!-- 主体中部 @mousedown="blankMouseDown" @mouseup="blankMouseUp" -->
         <div class="design-form-center">
 
           <!-- 全局搜索按钮 -->
@@ -390,6 +390,17 @@ const getDataById = id => {
   }).finally(() => {
     hide();
   });
+}
+
+const clickLoc = { x: 0, y: 0 };
+const blankMouseDown = (e) => {
+  clickLoc.x = e.pageX;
+  clickLoc.y = e.pageY;
+}
+const blankMouseUp = (e) => {
+  if (Math.abs(clickLoc.x - e.pageX) < 10 && Math.abs(clickLoc.y - e.pageY) < 10) {
+    editorService.changeSelectedFormComponent([]);
+  }
 }
 
 /** 监听问卷版本切换 */
