@@ -78,11 +78,11 @@ const init = () => {
 
 export const service = {
   /** 获取9个组件的关键点 */
-  getComponentPoints(component: Component, config?: { x?: number, y?: number, width?: number, height?: number }) {
-    const _x = config?.x ?? component.attrs.x;
-    const _y = config?.y ?? component.attrs.y;
-    const _width = config?.width ?? component.attrs.width;
-    const _height = config?.height ?? component.attrs.height;
+  getComponentPoints(component?: Component, config?: { x?: number, y?: number, width?: number, height?: number }) {
+    const _x = config?.x ?? component?.attrs.x;
+    const _y = config?.y ?? component?.attrs.y;
+    const _width = config?.width ?? component?.attrs.width;
+    const _height = config?.height ?? component?.attrs.height;
     const points = [
       [_x, _y],
       [_x, _y + _height / 2],
@@ -126,7 +126,6 @@ export const service = {
         8: 'end',
       };
       if (_parent?.level === 0) {
-        /** 添加外层组件是 */
         _childrenPoints.push([
           [0, 0], 
           [0, editorState.appConfig.height / 2], 
@@ -139,9 +138,76 @@ export const service = {
           [editorState.appConfig.width, editorState.appConfig.height],
         ]);
       } else {
-        /** 添加外层组件是 */
         _childrenPoints.push(this.getComponentPoints(_parent?.component!));
       }
+      // 判断是否靠近吸附线（目前4像素吸附）
+      for (let i = 0; i < _childrenPoints.length; i++) {
+        for (let o = 0; o < 9; o++) {
+          for (let p = 0; p < 9; p++) {
+            if (config?.filter === undefined || (config?.filter('x') === _xIndexDirection[p])) {
+              const _x = _childrenPoints[i][o][0];
+              if (Math.abs(_x - _points[p][0]) < 4) {
+                if (_lines.findIndex(line => line.x === _x) === -1) {
+                  _lines.push({ x: _x, direction: _xIndexDirection[p] });
+                }
+              }
+            }
+            if (config?.filter === undefined || (config?.filter('y') === _yIndexDirection[p])) {
+              const _y = _childrenPoints[i][o][1];
+              if (Math.abs(_y - _points[p][1]) < 4) {
+                if (_lines.findIndex(line => line.y === _y) === -1) {
+                  _lines.push({ y: _y, direction: _yIndexDirection[p] });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return _lines;
+  },
+  /** 获取对齐线 */
+  getAlignLinesByRect(config: { x?: number, y?: number, width?: number, height?: number, filter?: (direction: 'x' | 'y') => 'front' | 'center' | 'end' }) {
+    const _lines = [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[];
+    if (editorState.canvasRect) {
+      const _points = this.getComponentPoints(undefined, config);
+      // console.log('对齐组件', editorState.currentPage.children?.filter(i => !editorState.currentSelectedIds.includes(i.id)).map(i => i.id));
+      const _childrenPoints = editorState.currentPage.children?.filter(i => !editorState.currentSelectedIds.includes(i.id))?.map(i => this.getComponentPoints(i)) || [];
+      const _xIndexDirection = {
+        0: 'front',
+        1: 'front',
+        2: 'front',
+        3: 'center',
+        4: 'center',
+        5: 'center',
+        6: 'end',
+        7: 'end',
+        8: 'end',
+      };
+      const _yIndexDirection = {
+        0: 'front',
+        3: 'front',
+        6: 'front',
+        1: 'center',
+        4: 'center',
+        7: 'center',
+        2: 'end',
+        5: 'end',
+        8: 'end',
+      };
+      // 添加外层组件（目前一定是页面）
+      _childrenPoints.push([
+        [0, 0], 
+        [0, editorState.appConfig.height / 2], 
+        [0, editorState.appConfig.height],
+        [editorState.appConfig.width / 2, 0], 
+        [editorState.appConfig.width / 2, editorState.appConfig.height / 2], 
+        [editorState.appConfig.width / 2, editorState.appConfig.height],
+        [editorState.appConfig.width, 0], 
+        [editorState.appConfig.width, editorState.appConfig.height / 2], 
+        [editorState.appConfig.width, editorState.appConfig.height],
+      ]);
+      // 判断是否靠近吸附线（目前4像素吸附）
       for (let i = 0; i < _childrenPoints.length; i++) {
         for (let o = 0; o < 9; o++) {
           for (let p = 0; p < 9; p++) {
@@ -523,51 +589,87 @@ export const service = {
         // TODO: 后续需要添加直接拖拽到父组件中的方式
         
         if (state.isExisted) {
-          // TODO: 拖拽吸附
+          // TODO: 拖拽吸附还需继续扩展
           let _x = state.dragConfig.mouseX - state.dragConfig.startLoc.x;
           let _y = state.dragConfig.mouseY - state.dragConfig.startLoc.y;
-          state.alignLines = service.getAlignLines(state.dragConfig.component, {
-            x: _x, y: _y
-          });
-          const _xLines = state.alignLines.filter(i => i.x !== undefined);
-          if (_xLines.length) {
-            if (_xLines[0].direction === 'front') {
-              _x = _xLines[0].x!;
-            } else if (_xLines[0].direction === 'center') {
-              _x = _xLines[0].x! - state.dragConfig.component.attrs.width / 2;
-            } else if (_xLines[0].direction === 'end') {
-              _x = _xLines[0].x! - state.dragConfig.component.attrs.width;
-            }
-          }
-          const _yLines = state.alignLines.filter(i => i.y !== undefined);
-          if (_yLines.length) {
-            if (_yLines[0].direction === 'front') {
-              _y = _yLines[0].y!;
-            } else if (_yLines[0].direction === 'center') {
-              _y = _yLines[0].y! - state.dragConfig.component.attrs.height / 2;
-            } else if (_yLines[0].direction === 'end') {
-              _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
-            }
-          }
-          _x = toDecimal(_x);
-          _y = toDecimal(_y);
 
-          state.dragConfig.component.attrs.x = _x;
-          state.dragConfig.component.attrs.y = _y;
+          // 单个拖拽和多个拖拽采用不同的逻辑
+          if (editorState.currentSelectedComponents.length === 1) {
+            state.alignLines = service.getAlignLines(state.dragConfig.component, {
+              x: _x, y: _y
+            });
+            const _xLines = state.alignLines.filter(i => i.x !== undefined);
+            if (_xLines.length) {
+              if (_xLines[0].direction === 'front') {
+                _x = _xLines[0].x!;
+              } else if (_xLines[0].direction === 'center') {
+                _x = _xLines[0].x! - state.dragConfig.component.attrs.width / 2;
+              } else if (_xLines[0].direction === 'end') {
+                _x = _xLines[0].x! - state.dragConfig.component.attrs.width;
+              }
+            }
+            const _yLines = state.alignLines.filter(i => i.y !== undefined);
+            if (_yLines.length) {
+              if (_yLines[0].direction === 'front') {
+                _y = _yLines[0].y!;
+              } else if (_yLines[0].direction === 'center') {
+                _y = _yLines[0].y! - state.dragConfig.component.attrs.height / 2;
+              } else if (_yLines[0].direction === 'end') {
+                _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
+              }
+            }
+            _x = toDecimal(_x);
+            _y = toDecimal(_y);
+            state.dragConfig.component.attrs.x = _x;
+            state.dragConfig.component.attrs.y = _y;
+          } else if (editorState.currentSelectedComponents.length > 1) {
+            const rangeSelector = editorService.getSelectedComponentRect();
+            state.alignLines = service.getAlignLinesByRect({
+              x: _x, y: _y,
+              width: rangeSelector.width,
+              height: rangeSelector.height
+            });
+            const _xLines = state.alignLines.filter(i => i.x !== undefined);
+            if (_xLines.length) {
+              if (_xLines[0].direction === 'front') {
+                _x = _xLines[0].x!;
+              } else if (_xLines[0].direction === 'center') {
+                _x = _xLines[0].x! - editorState.currentRangeEditorRect.width / 2;
+              } else if (_xLines[0].direction === 'end') {
+                _x = _xLines[0].x! - editorState.currentRangeEditorRect.width;
+              }
+            }
+            const _yLines = state.alignLines.filter(i => i.y !== undefined);
+            if (_yLines.length) {
+              if (_yLines[0].direction === 'front') {
+                _y = _yLines[0].y!;
+              } else if (_yLines[0].direction === 'center') {
+                _y = _yLines[0].y! - editorState.currentRangeEditorRect.height / 2;
+              } else if (_yLines[0].direction === 'end') {
+                _y = _yLines[0].y! - editorState.currentRangeEditorRect.height;
+              }
+            }
+            _x = toDecimal(_x);
+            _y = toDecimal(_y);
+
+            for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
+              const item = editorState.currentSelectedComponents[i];
+              const _loc = state.dragConfig.startComponentLocs.find(o => o.id === item.id);
+              if (_loc) {
+                item.attrs.x = _loc.x + _x - state.dragConfig.startComponentLoc.x;
+                item.attrs.y = _loc.y + _y - state.dragConfig.startComponentLoc.y;
+              }
+            }
+
+            editorState.currentRangeEditorRect.x = rangeSelector.x;
+            editorState.currentRangeEditorRect.y = rangeSelector.y;
+            editorState.currentRangeEditorRect.width = rangeSelector.width;
+            editorState.currentRangeEditorRect.height = rangeSelector.height;
+          }
+
           state.dragConfig.adsorbLoc = { x: _x, y: _y };
           state.tipConfig.text = `x: ${_x} px<br />y: ${_y} px`;
           state.dragConfig.insertIndex = editorService.findComponentIndex(state.dragConfig.component?.id) ?? 0;
-
-          if (editorState.currentSelectedComponents.length > 1) {
-            editorState.currentSelectedComponents.forEach(i => {
-              if (i.id === state.dragConfig.component.id) return;
-              const _loc = state.dragConfig.startComponentLocs.find(o => o.id === i.id);
-              if (_loc) {
-                i.attrs.x = _loc.x + _x - state.dragConfig.startComponentLoc.x;
-                i.attrs.y = _loc.y + _y - state.dragConfig.startComponentLoc.y;
-              }
-            });
-          }
         } else {
           if (state.dragConfig.shadowDom) {
             state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';

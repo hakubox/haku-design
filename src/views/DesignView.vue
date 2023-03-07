@@ -126,7 +126,7 @@
           <!-- 画布 -->
           <div class="design-form-canvas"
             :class="editorState.appConfig.deviceType"
-            @mousedown="draggableService.startRangeSelect"
+            @mousedown.stop="draggableService.startRangeSelect"
             v-if="editorState.appConfig.isInit"
           >
             <!-- 对齐线 -->
@@ -390,17 +390,6 @@ const getDataById = id => {
   }).finally(() => {
     hide();
   });
-}
-
-const clickLoc = { x: 0, y: 0 };
-const blankMouseDown = (e) => {
-  clickLoc.x = e.pageX;
-  clickLoc.y = e.pageY;
-}
-const blankMouseUp = (e) => {
-  if (Math.abs(clickLoc.x - e.pageX) < 10 && Math.abs(clickLoc.y - e.pageY) < 10) {
-    editorService.changeSelectedFormComponent([]);
-  }
 }
 
 /** 监听问卷版本切换 */

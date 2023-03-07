@@ -120,6 +120,10 @@ export const state = reactive({
   currentProp: {} as any,
   /** 当前焦点事件 */
   currentEvent: {} as any,
+  /** 范围选择器范围 */
+  currentRangeEditorRect: {
+    x: 0, y: 0, width: 0, height: 0, rotate: 0
+  },
   /** 当前已选择组件 */
   currentSelectedComponents: [] as Component[],
   /** 当前选中的第一个控件Id */
@@ -218,6 +222,23 @@ export const service = {
       value: themeCode,
       attrs: { themeTitle: themeTitle }
     });
+  },
+  /** 获取选择的组件范围 */
+  getSelectedComponentRect() {
+    let minX = Number.MAX_VALUE;
+    let minY = Number.MAX_VALUE;
+    let maxX = Number.MIN_VALUE;
+    let maxY = Number.MIN_VALUE;
+
+    for (let i = 0; i < state.currentSelectedComponents.length; i++) {
+      const _component = state.currentSelectedComponents[i];
+      if (_component.attrs.x < minX) minX = _component.attrs.x;
+      if (_component.attrs.y < minY) minY = _component.attrs.y;
+      if (_component.attrs.x + _component.attrs.width > maxX) maxX = _component.attrs.x + _component.attrs.width;
+      if (_component.attrs.y + _component.attrs.height > maxY) maxY = _component.attrs.y + _component.attrs.height;
+    }
+
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY, x2: maxX, y2: maxY };
   },
   /** 显示组件 */
   showComponentInFormPage(componentId: string): boolean {

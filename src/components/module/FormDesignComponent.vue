@@ -11,20 +11,20 @@
     }"
     :style="editorState.appConfig.appType === AppType.canvas ? {
       position: position,
-      top: props.component.attrs.sticky ? '0px' : 'initial',
       'z-index': props.component.attrs.sticky ? 1 : 'initial',
       width: `${component.attrs.width}px`,
       height: `${getComponentHeight}px`,
-      top: `${component.attrs.y}px`,
+      top: `${editorState.appConfig.appType === AppType.canvas ? component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
       left: `${component.attrs.x}px`,
       transform: `rotate(${component.attrs.rotate || 0}deg)`
     } : {}"
     @mousedown.stop="mouseDownEvent($event, props.component)"
+    @mouseup="blankMouseUp($event)"
     ref="formComponent"
   >
     <CanvasNodeActionEditor
       v-if="editorState.appConfig.appType === AppType.canvas"
-      :component="props.component"
+      :components="[props.component]"
       :show="editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedFirstComponentId === props.component.id"
       :disabledHeight="props.component.attrs.disabledHeight"
       :disabledWidth="props.component.attrs.disabledWidth"
@@ -354,6 +354,15 @@ const getAttrs = (attrs: Record<string, any>) => {
   );
 };
 
+const clickLoc = { x: 0, y: 0 };
+const blankMouseUp = (e) => {
+  if (Math.abs(clickLoc.x - e.pageX) < 10 && Math.abs(clickLoc.y - e.pageY) < 10) {
+    editorService.changeSelectedFormComponent([]);
+  }
+  clickLoc.x = 0;
+  clickLoc.y = 0;
+}
+
 /** 鼠标按下事件 */
 const mouseDownEvent = (e, component: Component) => {
   if (!props.isPreview) {
@@ -367,7 +376,6 @@ const mouseDownEvent = (e, component: Component) => {
         _components.push(component);
       }
     } else if (_index >= 0) {
-
     } else {
       _components = [component];
       editorService.changeSelectedFormComponent(_components);
@@ -375,6 +383,10 @@ const mouseDownEvent = (e, component: Component) => {
   } else {
     eventService.emit(EventTriggerType.click, component.id);
   }
+  clickLoc.x = e.pageX;
+  clickLoc.y = e.pageY;
+  e.stopPropagation(); 
+  e.preventDefault();
 };
 
 /** 获取定位模式 */

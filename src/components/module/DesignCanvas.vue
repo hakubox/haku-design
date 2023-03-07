@@ -76,6 +76,11 @@
         }"
         :style="{ minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
+        <CanvasNodeActionEditor :global="true" :disabledRotate="true"
+          v-if="editorState.appConfig.appType === AppType.canvas"
+          :components="editorState.currentSelectedComponents"
+          :show="editorState.currentSelectedComponents.length > 1"
+        />
         <FormDesignComponent
           v-for="(component, index) in editorState.currentPage.children.filter(
             (i) => !props.isPreview || (props.isPreview && !i.attrs.isTop && i.attrs.visible !== false),
@@ -99,14 +104,6 @@
         >
           {{ component }}
         </FormDesignComponent>
-        <!-- <template v-if="isPreview">
-          <component
-            :is="component.component"
-            v-for="(component, index) in editorState.children"
-            :component-id="component.id"
-            :key="'hidden_' + index"
-          />
-        </template> -->
       </div>
 
       <div
@@ -172,6 +169,7 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { DragConfig } from '@/modules/draggable-module/@types';
 import { EventTriggerType } from '@/modules/event-module/enum';
 import FormDesignComponent from './FormDesignComponent.vue';
+import CanvasNodeActionEditor from '@/components/common/CanvasNodeActionEditor.vue';
 import { toast } from '@/common/message';
 
 const props = defineProps({

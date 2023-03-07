@@ -3,7 +3,14 @@
   <div
     ref="nodeEditorEl"
     class="canvas-node-action-editor"
-    :class="{ show: props.show && !props.component.attrs.lock }"
+    :class="{ global: props.global, show: props.show && (props.global || !props.global && !props.components[0].attrs.lock) }"
+    :style="props.global ? {
+      width: `${editorState.currentRangeEditorRect.width}px`,
+      height: `${editorState.currentRangeEditorRect.height}px`,
+      top: `${editorState.currentRangeEditorRect.y}px`,
+      left: `${editorState.currentRangeEditorRect.x}px`,
+      transform: `rotate(${editorState.currentRangeEditorRect.rotate || 0}deg)`
+    } : {}"
   >
     <!-- 组件 -->
     <div class="node-action-component">
@@ -12,17 +19,18 @@
     <!-- 提示文本 -->
     <div
       :class="{
-        show: editorState.currentSelectedFirstComponentId === props.component.id && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
+        show: ((props.global && !isSingle) || (!isSingle && !props.global && editorState.currentSelectedFirstComponentId === props.components[0].id))
+          && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
       }"
       :style="{
-        transform: `rotate(${-props.component.attrs.rotate ?? 0}deg)`
+        transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`
       }"
       class="node-action-tip"
       v-html="draggableState.tipConfig.text ?? ' '"
     ></div>
     <!-- 控制器 -->
     <div class="node-action-mark-center"></div>
-    <div class="node-action-handle-rotate" @mousedown="e => onStartDrag(e, 'rotate')"></div>
+    <div v-show="props.disabledRotate !== true" class="node-action-handle-rotate" @mousedown="e => onStartDrag(e, 'rotate')"></div>
     <div v-show="props.disabledHeight !== true" class="node-action-handle direction-top" @mousedown="e => onStartDrag(e, 'top')"></div>
     <div v-show="props.disabledWidth !== true" class="node-action-handle direction-left" @mousedown="e => onStartDrag(e, 'left')"></div>
     <div v-show="props.disabledWidth !== true" class="node-action-handle direction-right" @mousedown="e => onStartDrag(e, 'right')"></div>
@@ -33,13 +41,11 @@
     <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-right" @mousedown="e => onStartDrag(e, 'bottomright')"></div>
   </div>
 </template>
-
 <script lang="ts" setup>
 import type { Component } from '@/@types';
-import { PropType, onMounted, reactive, computed, ref } from 'vue';
+import { PropType, onMounted, reactive, computed, ref, watch } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { Location } from '@/modules/draggable-module/@types';
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
 import { toDecimal } from '@/tools/common';
@@ -68,9 +74,9 @@ interface ComponentRect {
 }
 
 const props = defineProps({
-  /** 组件Id */
-  component: {
-    type: Object as PropType<Component>,
+  /** 对应组件 */
+  components: {
+    type: Array as PropType<Component[]>,
     required: true,
   },
   /** 是否显示 */
@@ -85,6 +91,16 @@ const props = defineProps({
   },
   /** 禁用宽度 */
   disabledWidth: {
+    type: Boolean,
+    default: false,
+  },
+  /** 禁用旋转 */
+  disabledRotate: {
+    type: Boolean,
+    default: false,
+  },
+  /** 是否为公共选框（多选） */
+  global: {
     type: Boolean,
     default: false,
   }
@@ -107,6 +123,37 @@ const state = reactive({
 
 const nodeEditorEl = ref<HTMLElement>();
 
+const isSingle = computed(() => props.components.length === 1);
+
+const getX = computed(() => {
+  if (isSingle.value) {
+    return props.components[0].attrs.x;
+  } else {
+    return editorState.currentRangeEditorRect.x;
+  }
+});
+const getY = computed(() => {
+  if (isSingle.value) {
+    return props.components[0].attrs.y;
+  } else {
+    return editorState.currentRangeEditorRect.y;
+  }
+});
+const getWidth = computed(() => {
+  if (isSingle.value) {
+    return props.components[0].attrs.width;
+  } else {
+    return editorState.currentRangeEditorRect.width;
+  }
+});
+const getHeight = computed(() => {
+  if (isSingle.value) {
+    return props.components[0].attrs.height;
+  } else {
+    return editorState.currentRangeEditorRect.height;
+  }
+});
+
 /** 开始拖拽 */
 const onStartDrag = (e, actionType: ActionType) => {
   state.actionType = actionType;
@@ -117,8 +164,8 @@ const onStartDrag = (e, actionType: ActionType) => {
     const _canvasPage = editorState.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
     state.pageRect = _canvasPage.getBoundingClientRect();
     state.startLoc = {
-      startX: props.component.attrs.x,
-      startY: props.component.attrs.y,
+      startX: getX.value,
+      startY: getY.value,
       componentX: rect.x,
       componentY: rect.y,
       x: e.pageX,
@@ -154,8 +201,8 @@ const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
 /** 拖拽中 */
 const onMoveDrag = (e: MouseEvent) => {
   if (state.startDrag && state.actionType) {
-    let _width: number = props.component.attrs.width;
-    let _height: number = props.component.attrs.height;
+    let _width: number = getWidth.value;
+    let _height: number = getHeight.value;
     if (state.actionType === 'rotate') {
       const _centerLocY = state.startLoc.componentY + state.startLoc.height / 2;
       const _centerLocX = state.startLoc.componentX + state.startLoc.width / 2;
@@ -169,13 +216,13 @@ const onMoveDrag = (e: MouseEvent) => {
       else if (_rotate > 267 && _rotate < 273) _rotate = 270;
       else if (_rotate > 312 && _rotate < 318) _rotate = 315;
       else if (_rotate > 357 || _rotate < 3) _rotate = 0;
-      props.component.attrs.rotate = _rotate;
+      editorState.currentRangeEditorRect.rotate = _rotate;
       draggableState.tipConfig.text = `${_rotate}°`;
     } else {
       /** 自动吸附坐标 */
       // let adsorbLoc: Location;
-      let _x: number = props.component.attrs.x;
-      let _y: number = props.component.attrs.y;
+      let _x: number = getX.value;
+      let _y: number = getY.value;
       if (actionDirection.top.includes(state.actionType)) {
         _y = e.pageY - state.pageRect.y;
         _height = state.startLoc.componentY + state.startLoc.height - e.pageY;
@@ -194,15 +241,27 @@ const onMoveDrag = (e: MouseEvent) => {
       _height = _height < 10 ? 10 : _height;
 
       // 拖拽吸附
-      draggableState.alignLines = draggableService.getAlignLines(props.component, {
-        x: _x, y: _y, width: _width - 1, height: _height, filter: (direction: 'x' | 'y') => {
-          if (direction === 'x') {
-            return ['right', 'topright', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
-          } else {
-            return ['bottom', 'bottomleft', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+      if (props.components.length === 1) {
+        draggableState.alignLines = draggableService.getAlignLines(props.components[0], {
+          x: _x, y: _y, width: _width - 1, height: _height, filter: (direction: 'x' | 'y') => {
+            if (direction === 'x') {
+              return ['right', 'topright', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+            } else {
+              return ['bottom', 'bottomleft', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+            }
           }
-        }
-      });
+        });
+      } else {
+        draggableState.alignLines = draggableService.getAlignLinesByRect({
+          x: _x, y: _y, width: _width - 1, height: _height, filter: (direction: 'x' | 'y') => {
+            if (direction === 'x') {
+              return ['right', 'topright', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+            } else {
+              return ['bottom', 'bottomleft', 'bottomright'].includes(state.actionType!) ? 'end' : 'front';
+            }
+          }
+        });
+      }
       const _xLines = draggableState.alignLines.filter(i => i.x !== undefined);
       const _yLines = draggableState.alignLines.filter(i => i.y !== undefined);
       
@@ -227,14 +286,20 @@ const onMoveDrag = (e: MouseEvent) => {
       _y = toDecimal(_y);
       _width = toDecimal(_width);
       _height = toDecimal(_height);
-
-      props.component.attrs.x = _x;
-      props.component.attrs.y = _y;
       const _isChangeLoc = !['right', 'bottom', 'bottomright'].includes(state.actionType);
       draggableState.tipConfig.text = (_isChangeLoc ? `x: ${_x} px<br />y: ${_y} px<br />` : '') + `宽: ${_width} px<br />高: ${_height} px`;
 
-      props.component.attrs.width = _width;
-      props.component.attrs.height = _height;
+      if (isSingle.value) {
+        props.components[0].attrs.x = _x;
+        props.components[0].attrs.y = _y;
+        props.components[0].attrs.width = _width;
+        props.components[0].attrs.height = _height;
+      } else {
+        editorState.currentRangeEditorRect.x = _x;
+        editorState.currentRangeEditorRect.y = _y;
+        editorState.currentRangeEditorRect.width = _width;
+        editorState.currentRangeEditorRect.height = _height;
+      }
     }
   }
 };
@@ -251,6 +316,21 @@ const onEndDrag = (e: MouseEvent) => {
     }, 300);
   }
 };
+
+watch(() => editorState.currentSelectedIds, (newVal, oldVal) => {
+  if (newVal.length > 1) {
+    const { x, y, width, height } = editorService.getSelectedComponentRect();
+    editorState.currentRangeEditorRect.x = x;
+    editorState.currentRangeEditorRect.y = y;
+    editorState.currentRangeEditorRect.width = width;
+    editorState.currentRangeEditorRect.height = height;
+  } else {
+    editorState.currentRangeEditorRect.x = 0;
+    editorState.currentRangeEditorRect.y = 0;
+    editorState.currentRangeEditorRect.width = 0;
+    editorState.currentRangeEditorRect.height = 0;
+  }
+});
 
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', onMoveDrag);
@@ -272,6 +352,14 @@ onMounted(async () => {
   right: 0;
   bottom: 0;
   outline: 1px solid transparent;
+
+  // 多选时的样式
+  &.global {
+    top: initial;
+    left: initial;
+    right: initial;
+    bottom: initial;
+  }
 
   &.show {
     outline-color: #5F81F9;
