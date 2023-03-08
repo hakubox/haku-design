@@ -652,6 +652,11 @@ export const service = {
             _x = toDecimal(_x);
             _y = toDecimal(_y);
 
+            let minX = Number.MAX_VALUE;
+            let minY = Number.MAX_VALUE;
+            let maxX = Number.MIN_VALUE;
+            let maxY = Number.MIN_VALUE;
+
             for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
               const item = editorState.currentSelectedComponents[i];
               const _loc = state.dragConfig.startComponentLocs.find(o => o.id === item.id);
@@ -659,12 +664,18 @@ export const service = {
                 item.attrs.x = _loc.x + _x - state.dragConfig.startComponentLoc.x;
                 item.attrs.y = _loc.y + _y - state.dragConfig.startComponentLoc.y;
               }
+              
+              if (item.attrs.x < minX) minX = item.attrs.x;
+              if (item.attrs.y < minY) minY = item.attrs.y;
+              if (item.attrs.x + item.attrs.width > maxX) maxX = item.attrs.x + item.attrs.width;
+              if (item.attrs.y + item.attrs.height > maxY) maxY = item.attrs.y + item.attrs.height;
             }
 
-            editorState.currentRangeEditorRect.x = rangeSelector.x;
-            editorState.currentRangeEditorRect.y = rangeSelector.y;
-            editorState.currentRangeEditorRect.width = rangeSelector.width;
-            editorState.currentRangeEditorRect.height = rangeSelector.height;
+            // 最后处理整体选择框
+            editorState.currentRangeEditorRect.x = minX;
+            editorState.currentRangeEditorRect.y = minY;
+            editorState.currentRangeEditorRect.width = maxX - minX;
+            editorState.currentRangeEditorRect.height = maxY - minY;
           }
 
           state.dragConfig.adsorbLoc = { x: _x, y: _y };

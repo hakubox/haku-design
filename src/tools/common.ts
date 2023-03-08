@@ -12,6 +12,14 @@ export const getQBasicProps = (props: Record<string, any>) => {
   return _props;
 };
 
+/** 根据两个坐标点获取夹角度数 参考：https://blog.csdn.net/qq_34887145/article/details/124584773 */
+export function getAngle({ x: x1, y: y1 }, { x: x2, y: y2 }) {
+  const dot = x1 * x2 + y1 * y2
+  const det = x1 * y2 - y1 * x2
+  const angle = Math.atan2(det, dot) / Math.PI * 180
+  return (angle + 360) % 360
+};
+
 /** 判断两个矩形是否相交 */
 export function intersectsRect(x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
   let maxX, maxY, minX, minY;

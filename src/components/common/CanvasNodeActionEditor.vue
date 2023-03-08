@@ -30,15 +30,15 @@
     ></div>
     <!-- 控制器 -->
     <div class="node-action-mark-center"></div>
-    <div v-show="props.disabledRotate !== true" class="node-action-handle-rotate" @mousedown="e => onStartDrag(e, 'rotate')"></div>
-    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-top" @mousedown="e => onStartDrag(e, 'top')"></div>
-    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-left" @mousedown="e => onStartDrag(e, 'left')"></div>
-    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-right" @mousedown="e => onStartDrag(e, 'right')"></div>
-    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-bottom" @mousedown="e => onStartDrag(e, 'bottom')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-left" @mousedown="e => onStartDrag(e, 'topleft')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-right" @mousedown="e => onStartDrag(e, 'topright')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-left" @mousedown="e => onStartDrag(e, 'bottomleft')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-right" @mousedown="e => onStartDrag(e, 'bottomright')"></div>
+    <div v-show="props.disabledRotate !== true" class="node-action-handle-rotate" @mousedown.stop="e => onStartDrag(e, 'rotate')"></div>
+    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-top" @mousedown.stop="e => onStartDrag(e, 'top')"></div>
+    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-left" @mousedown.stop="e => onStartDrag(e, 'left')"></div>
+    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-right" @mousedown.stop="e => onStartDrag(e, 'right')"></div>
+    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-bottom" @mousedown.stop="e => onStartDrag(e, 'bottom')"></div>
+    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-left" @mousedown.stop="e => onStartDrag(e, 'topleft')"></div>
+    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-right" @mousedown.stop="e => onStartDrag(e, 'topright')"></div>
+    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-left" @mousedown.stop="e => onStartDrag(e, 'bottomleft')"></div>
+    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-right" @mousedown.stop="e => onStartDrag(e, 'bottomright')"></div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -48,7 +48,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
-import { toDecimal } from '@/tools/common';
+import { getAngle, toDecimal } from '@/tools/common';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
@@ -63,14 +63,12 @@ interface ComponentRect {
   componentX: number;
   /** 组件Y坐标 */
   componentY: number;
-  /** 光标X坐标 */
-  x: number;
-  /** 光标Y坐标 */
-  y: number;
   /** 宽度 */
   width: number;
   /** 高度 */
   height: number;
+  /** 已选择组件坐标集合 */
+  componentRects: { id: string, x: number, y: number, width: number, height: number, rotate: number }[];
 }
 
 const props = defineProps({
@@ -121,6 +119,14 @@ const state = reactive({
   pageRect: {} as DOMRect,
 });
 
+/** 拖拽方向 */
+const actionDirection = {
+  top: ['top', 'topleft', 'topright'],
+  left: ['left', 'topleft', 'bottomleft'],
+  right: ['right', 'topright', 'bottomright'],
+  bottom: ['bottom', 'bottomleft', 'bottomright']
+};
+
 const nodeEditorEl = ref<HTMLElement>();
 
 const isSingle = computed(() => props.components.length === 1);
@@ -168,10 +174,11 @@ const onStartDrag = (e, actionType: ActionType) => {
       startY: getY.value,
       componentX: rect.x,
       componentY: rect.y,
-      x: e.pageX,
-      y: e.pageY,
       width: rect.width,
-      height: rect.height
+      height: rect.height,
+      componentRects: editorState.currentSelectedComponents.map(i => ({
+        id: i.id, x: i.attrs.x, y: i.attrs.y, width: i.attrs.width, height: i.attrs.height, rotate: i.attrs.rotate
+      }))
     };
   } else {
     message.toast('未获取到节点定位', 'error');
@@ -180,22 +187,6 @@ const onStartDrag = (e, actionType: ActionType) => {
   setTimeout(() => {
     draggableState.tipConfig.isShow = true;
   }, 20);
-};
-
-/** 拖拽方向 */
-const actionDirection = {
-  top: ['top', 'topleft', 'topright'],
-  left: ['left', 'topleft', 'bottomleft'],
-  right: ['right', 'topright', 'bottomright'],
-  bottom: ['bottom', 'bottomleft', 'bottomright']
-};
-
-/** 获取角度 参考：https://blog.csdn.net/qq_34887145/article/details/124584773 */
-const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
-  const dot = x1 * x2 + y1 * y2
-  const det = x1 * y2 - y1 * x2
-  const angle = Math.atan2(det, dot) / Math.PI * 180
-  return (angle + 360) % 360
 };
 
 /** 拖拽中 */
@@ -287,18 +278,39 @@ const onMoveDrag = (e: MouseEvent) => {
       _width = toDecimal(_width);
       _height = toDecimal(_height);
       const _isChangeLoc = !['right', 'bottom', 'bottomright'].includes(state.actionType);
-      draggableState.tipConfig.text = (_isChangeLoc ? `x: ${_x} px<br />y: ${_y} px<br />` : '') + `宽: ${_width} px<br />高: ${_height} px`;
 
-      if (isSingle.value) {
-        props.components[0].attrs.x = _x;
-        props.components[0].attrs.y = _y;
-        props.components[0].attrs.width = _width;
-        props.components[0].attrs.height = _height;
-      } else {
+      const xRatio = _x / state.startLoc.startX;
+      const yRatio = _y / state.startLoc.startY;
+      const widthRatio = _width / state.startLoc.width;
+      const heightRatio = _height / state.startLoc.height;
+
+      if (props.global) {
+        for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
+          const _component = editorState.currentSelectedComponents[i];
+          const _rect = state.startLoc.componentRects[i];
+
+          _component.attrs.x = _x + (_rect.x - _x) * widthRatio;
+          _component.attrs.y = _y + (_rect.y - _y) * heightRatio;
+          _component.attrs.width = _rect.width * widthRatio;
+          _component.attrs.height = _rect.height * heightRatio;
+        }
+
         editorState.currentRangeEditorRect.x = _x;
         editorState.currentRangeEditorRect.y = _y;
         editorState.currentRangeEditorRect.width = _width;
         editorState.currentRangeEditorRect.height = _height;
+        draggableState.tipConfig.text = (_isChangeLoc ? `
+        x: ${_x} px<br />
+        y: ${_y} px<br />` : '') + `
+        宽: ${_width} px<br />
+        高: ${_height} px`;
+
+      } else {
+        props.components[0].attrs.x = _x;
+        props.components[0].attrs.y = _y;
+        props.components[0].attrs.width = _width;
+        props.components[0].attrs.height = _height;
+        draggableState.tipConfig.text = (_isChangeLoc ? `x: ${_x} px<br />y: ${_y} px<br />` : '') + `宽: ${_width} px<br />高: ${_height} px`;
       }
     }
   }
@@ -422,6 +434,7 @@ onMounted(async () => {
   }
 
   > .node-action-tip {
+    user-select: none;
     position: absolute;
     display: inline-block;
     left: calc(100% + 6px);
