@@ -2,6 +2,7 @@
   <div
     class="component-item component-canvas layout-component"
     :class="{ required: $attrs.required, 'has-children': components?.length }"
+    v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     tip="canvas"
   >
     <slot></slot>
@@ -17,6 +18,7 @@
 
 <script lang="ts" setup>
 import { computed, useAttrs } from 'vue';
+import { getQBasicProps } from '@/tools/common';
 import { Component } from '@/@types';
 
 const props = defineProps({

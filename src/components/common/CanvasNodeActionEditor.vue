@@ -13,7 +13,10 @@
     } : {}"
   >
     <!-- 组件 -->
-    <div class="node-action-component">
+    <div class="node-action-component" :class="{
+      'auto-width': !props.global && props.components[0].attrs.autowidth,
+      'auto-height': !props.global && props.components[0].attrs.autoheight,
+    }">
       <slot></slot>
     </div>
     <!-- 提示文本 -->
@@ -49,6 +52,7 @@ import { state as draggableState, service as draggableService } from '@/modules/
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
 import { getAngle, toDecimal } from '@/tools/common';
+import { getHeight, getWidth } from '@/common/component-handle';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
@@ -145,16 +149,16 @@ const getY = computed(() => {
     return editorState.currentRangeEditorRect.y;
   }
 });
-const getWidth = computed(() => {
+const getComponentWidth = computed(() => {
   if (isSingle.value) {
-    return props.components[0].attrs.width;
+    return getWidth(props.components[0]);
   } else {
     return editorState.currentRangeEditorRect.width;
   }
 });
-const getHeight = computed(() => {
+const getComponentHeight = computed(() => {
   if (isSingle.value) {
-    return props.components[0].attrs.height;
+    return getHeight(props.components[0]);
   } else {
     return editorState.currentRangeEditorRect.height;
   }
@@ -192,8 +196,8 @@ const onStartDrag = (e, actionType: ActionType) => {
 /** 拖拽中 */
 const onMoveDrag = (e: MouseEvent) => {
   if (state.startDrag && state.actionType) {
-    let _width: number = getWidth.value;
-    let _height: number = getHeight.value;
+    let _width: number = getComponentWidth.value;
+    let _height: number = getComponentHeight.value;
     if (state.actionType === 'rotate') {
       const _centerLocY = state.startLoc.componentY + state.startLoc.height / 2;
       const _centerLocX = state.startLoc.componentX + state.startLoc.width / 2;
@@ -279,8 +283,6 @@ const onMoveDrag = (e: MouseEvent) => {
       _height = toDecimal(_height);
       const _isChangeLoc = !['right', 'bottom', 'bottomright'].includes(state.actionType);
 
-      const xRatio = _x / state.startLoc.startX;
-      const yRatio = _y / state.startLoc.startY;
       const widthRatio = _width / state.startLoc.width;
       const heightRatio = _height / state.startLoc.height;
 
@@ -389,12 +391,26 @@ onMounted(async () => {
 
   > .node-action-component {
     position: absolute;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    white-space: nowrap;
+
+    &.auto-width {
+      align-items: flex-start;
+      white-space: nowrap;
+    }
+    &.auto-height {
+      justify-content: flex-start;
+
+      > :deep(.component-item) {
+        height: initial;
+      }
+    }
   }
 
   > .node-action-mark-center {

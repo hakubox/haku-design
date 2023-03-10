@@ -157,6 +157,14 @@ export let menuComponentItems: ToolComponentItem[] = [
     isNew: true,
     pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
+  {
+    title: '画布',
+    name: 'q-canvas',
+    icon: 'iconfont icon-edit',
+    category: ComponentCategory.layout,
+    isNew: true,
+    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
+  },
 
   // 附加内容
 

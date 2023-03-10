@@ -148,11 +148,11 @@ export function initCommands() {
         parentComponentId: command.attrs.parentComponentId,
         parentComponentSlotIndex: command.attrs.parentComponentSlotIndex,
       });
-      editorService.changeSelectedFormComponent(component);
+      editorService.changeSelectedFormComponent([component]);
     },
     undo(command) {
       editorService.removeComponent(command.newVal);
-      editorService.changeSelectedFormComponent();
+      editorService.changeSelectedFormComponent([]);
     },
   });
 
@@ -170,7 +170,7 @@ export function initCommands() {
     },
     exec(command) {
       editorService.removeComponent(command.newVal);
-      editorService.changeSelectedFormComponent();
+      editorService.changeSelectedFormComponent([]);
     },
     undo(command) {
       editorService.addComponent(command.newVal, { index: command.attrs.index });

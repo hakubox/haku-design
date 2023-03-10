@@ -2,6 +2,7 @@ import { Component, ComponentProperty, LayoutConfig, SetPartial } from "@/@types
 import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment } from '@/@types/enum';
 import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
+import bus from '@/tools/bus';
 
 export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component'>;
 
@@ -1167,6 +1168,11 @@ export let formComponents: InitComponent[] = [
       layoutDetailConfig: { }
     } as LayoutConfig<LayoutType.absolute>,
     children: [],
+    attrs: {
+      width: 300,
+      height: 102,
+      minHeight: 102,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1176,7 +1182,7 @@ export let formComponents: InitComponent[] = [
         name: 'margin', title: '外边距', default: [0,0,0,0], 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
       }, {
-        name: 'height', title: '最小组件高度', default: '100px', 
+        name: 'height', title: '最小组件高度', default: 100, 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
         name: 'remark', title: '备注', default: '',
@@ -1319,10 +1325,15 @@ export let formComponents: InitComponent[] = [
     attrs: {
       disabledWidth: true,
       disabledHeight: true,
+      _width: 58,
+      _height: 50,
       minHeight: 50,
     },
     propertys: [
       {
+        name: 'width', title: '宽度', visible: true,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int
+      }, {
         name: 'autowidth', title: '自动宽度', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否使用自动宽度。', change(prop, propMap, component) {
@@ -1331,9 +1342,8 @@ export let formComponents: InitComponent[] = [
             component.attrs.disabledWidth = true;
           } else {
             component.attrs.disabledWidth = false;
-            const componentDom = document.querySelector(`.form-canvas [component-id="${component.id}"] .component-item`) as HTMLElement;
-            component.attrs.width = componentDom.offsetWidth;
           }
+          bus.$emit('onAutoSizeChange', component);
         }
       }, {
         name: 'autoheight', title: '自动高度', default: true, visible: true,
@@ -1344,9 +1354,8 @@ export let formComponents: InitComponent[] = [
             component.attrs.disabledHeight = true;
           } else {
             component.attrs.disabledHeight = false;
-            const componentDom = document.querySelector(`.form-canvas [component-id="${component.id}"] .component-item`) as HTMLElement;
-            component.attrs.height = componentDom.offsetHeight;
           }
+          bus.$emit('onAutoSizeChange', component);
         }
       }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1363,9 +1372,15 @@ export let formComponents: InitComponent[] = [
       }, {
         name: 'text', title: '内容', default: '文本',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.multiLine,
+        change(prop, propMap, component) {
+          bus.$emit('onAutoSizeChange', component);
+        }
       }, {
         name: 'description', title: '富文本内容', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
+        change(prop, propMap, component) {
+          bus.$emit('onAutoSizeChange', component);
+        }
       }, {
         name: 'margin', title: '外边距', default: [0,0,0,0],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
@@ -2010,7 +2025,7 @@ export function initComponents(componentList?: InitComponent[]): InitComponent[]
           i.propertys.filter(o => o.attach?.length).map(o => ({[o.name]: o.editor}))
         ) as [object, ...ComponentProperty[]]
       ),
-      attrs: Object.assign({}, i.attrs ?? {}, ..._propertys)
+      attrs: Object.assign({}, ..._propertys, i.attrs ?? {})
     };
     return component;
   });

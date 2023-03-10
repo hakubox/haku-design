@@ -12,7 +12,7 @@
     :style="editorState.appConfig.appType === AppType.canvas ? {
       position: position,
       'z-index': props.component.attrs.sticky ? 1 : 'initial',
-      width: `${component.attrs.width}px`,
+      width: `${getComponentWidth}px`,
       height: `${getComponentHeight}px`,
       top: `${editorState.appConfig.appType === AppType.canvas ? component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
       left: `${component.attrs.x}px`,
@@ -234,7 +234,6 @@ import type { Component } from '@/@types';
 import type { DragConfig } from '@/modules/draggable-module/@types';
 import { computed, nextTick, ref, type PropType, onMounted, onUnmounted } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { useComponentHandle } from "@/common/component-handle";
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { service as eventService } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
@@ -242,12 +241,14 @@ import { service as variableService } from '@/modules/variable-module';
 import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
 import { EventTriggerType } from '@/modules/event-module/enum';
+import { useComponentHandle } from "@/common/component-handle";
 import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@/@types/enum';
+import bus from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 
 const props = defineProps({
@@ -303,13 +304,63 @@ const emit = defineEmits<{
   (event: 'setData', id: string, value: any): void;
 }>();
 
-/** 获取组件高度 */
-const getComponentHeight = computed(() => {
-  if (props.component.attrs.height) {
-    return props.component.attrs.height;
+/** 获取组件宽度 */
+const getComponentWidth = computed(() => {
+  let width = 0;
+  if (props.component.attrs.width) {
+    width = props.component.attrs.width;
+    props.component.attrs._width = undefined;
+  } else if (props.component.attrs._width) {
+    width = props.component.attrs._width;
   } else {
     const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
-    return _el?.offsetHeight ?? 0;
+    width = _el?.offsetWidth;
+    if (width) {
+      props.component.attrs._width = width;
+    } else {
+      return undefined;
+    }
+  }
+  if (props.component.attrs.minWidth && props.component.attrs.minWidth > width) {
+    width = props.component.attrs.minWidth;
+    // props.component.attrs._width = width;
+  }
+  return width;
+});
+
+/** 获取组件高度 */
+const getComponentHeight = computed(() => {
+  let height = 0;
+  if (props.component.attrs.height) {
+    height = props.component.attrs.height;
+    props.component.attrs._height = undefined;
+  } else if (props.component.attrs._height) {
+    height = props.component.attrs._height;
+  } else {
+    const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
+    height = _el?.offsetHeight ?? 0;
+    if (height) {
+      // props.component.attrs._height = height;
+    } else {
+      return undefined;
+    }
+  }
+  if (props.component.attrs.minHeight && props.component.attrs.minHeight > height) {
+    height = props.component.attrs.minHeight;
+    // props.component.attrs.height = height;
+  }
+  return height;
+});
+
+bus.$on('onAutoSizeChange', (component: Component) => {
+  if (props.componentId === component.id) {
+    if (component.attrs.autowidth || component.attrs.autoheight) {
+      nextTick(() => {
+        const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
+        if (component.attrs.autowidth) props.component.attrs._width = _el?.offsetWidth + 4;
+        if (component.attrs.autoheight) props.component.attrs._height = _el?.offsetHeight;
+      });
+    }
   }
 });
 

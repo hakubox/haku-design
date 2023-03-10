@@ -7,6 +7,21 @@ import { service as historyService } from './history-module';
 /** 模块操作类型 */
 export type HandleType = 'componentMovePrev' | 'componentMoveNext' | 'componentCopy' | 'componentRemove';
 
+/** 获取组件宽度 */
+export function getWidth(component: Component) {
+  return component.attrs.width || component.attrs._width || component.attrs.minWidth || 0;
+}
+
+/** 获取组件高度 */
+export function getHeight(component: Component) {
+  return component.attrs.height || component.attrs._width || component.attrs.minHeight || 0;
+}
+
+/** 合并组件 */
+export function mergeComponent(component: Component) {
+  
+}
+
 /** 控件操作模块 */
 export function useComponentHandle() {
   const state: UnwrapRef<any> = reactive({});

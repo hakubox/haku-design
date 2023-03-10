@@ -6,6 +6,7 @@ import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tool
 import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './@types';
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
+import { getHeight, getWidth } from '@/common/component-handle';
 
 /** 拖拽模块状态 */
 export const state = reactive({
@@ -278,11 +279,12 @@ export const service = {
       editorState.currentPage.children.forEach(i => {
         if (intersectsRect(
           _rectX, _rectY, state.rangeSelectConfig.width, state.rangeSelectConfig.height,
-          i.attrs.x, i.attrs.y, i.attrs.width, i.attrs.height
+          i.attrs.x, i.attrs.y, getWidth(i), getHeight(i)
         )) {
           _componetIds.push(i.id);
         }
       });
+      console.log('_componetIds', _componetIds);
       state.rangeSelectConfig.componentIds = _componetIds;
     }
   },
@@ -407,10 +409,11 @@ export const service = {
               index: state.dragConfig.insertIndex,
               parentComponentId: state.dragConfig.insertComponentId,
               parentComponentSlotIndex: state.dragConfig.insertSlotIndex,
-              x: state.dragConfig.mouseX - _newComponent.attrs.width / 2,
-              y: state.dragConfig.mouseY - _newComponent.attrs.height / 2
+              x: state.dragConfig.mouseX - parseInt(getWidth(_newComponent)) / 2,
+              y: state.dragConfig.mouseY - parseInt(getHeight(_newComponent)) / 2
             },
           });
+          
         }
       }
 
