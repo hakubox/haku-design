@@ -2,11 +2,14 @@
   <li class="component-view-item">
     <div
       class="component-view-item-detail"
-      :class="{ active: editorState.currentSelectedComponents.find(i => i.id === props.component?.id) }"
+      :class="{ active: editorState.currentSelectedIds.includes(props.component?.id) }"
     >
       <div class="component-view-item-detail-title" @click.stop="itemClick(props.component)">
-        <i :class="getComponentIcon(props.component.name)" alt="" />
-        <span v-if="editorState.appConfig.showNo && component.isFormItem">{{ editorState.appConfig.showNo && component.isFormItem ? serialNumberService.getQuestionNo(props.component?.id) : '' }}</span>
+        <i :class="getIcon"></i>
+        <span v-if="props.component.isGroup">{{ props.component.isGroup && props.component.label }}</span>
+        <span v-else-if="editorState.appConfig.showNo && !props.component.isGroup && props.component.isFormItem">
+          {{ editorState.appConfig.showNo && props.component.isFormItem ? serialNumberService.getQuestionNo(props.component?.id) : '' }}
+        </span>
         <span v-html="labelType === 'component' ? props.component.attrs.name : props.component.attrs.label"></span>
       </div>
 
@@ -14,18 +17,18 @@
         <li
           class="component-view-item-tool"
           title="锁定"
-          :class="{ 'error show': component.attrs.lock }"
-          @click="component.attrs.lock = !component.attrs.lock"
+          :class="{ 'error show': props.component.attrs.lock }"
+          @click="props.component.attrs.lock = !props.component.attrs.lock"
         >
-          <i class="iconfont" :class="component.attrs.lock !== false ? 'icon-lock' : 'icon-unlock'"></i>
+          <i class="iconfont" :class="props.component.attrs.lock !== false ? 'icon-lock' : 'icon-unlock'"></i>
         </li>
         <li
           class="component-view-item-tool"
           title="显示"
-          :class="{ 'warning show': !component.attrs.visible }"
-          @click="component.attrs.visible = !component.attrs.visible"
+          :class="{ 'warning show': !props.component.attrs.visible }"
+          @click="props.component.attrs.visible = !props.component.attrs.visible"
         >
-          <i class="iconfont" :class="component.attrs.visible !== false ? 'icon-eye' : 'icon-eye-close'"></i>
+          <i class="iconfont" :class="props.component.attrs.visible !== false ? 'icon-eye' : 'icon-eye-close'"></i>
         </li>
       </ul>
     </div>
@@ -35,23 +38,24 @@
         v-for="(item, index) in props.component.children"
         @click.stop="itemClick(item)"
         :pageIndex="pageIndex"
-        :key="index"
+        :key="item.id"
         :component="item"
+        :labelType="props.labelType"
       />
     </ul>
   </li>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, PropType } from 'vue';
+import { computed, nextTick, PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as serialNumberService } from '@/modules/serial-number-module';
-import { Component } from '@/@types';
+import { Component, ComponentGroup } from '@/@types';
 
 const props = defineProps({
   /** 组件 */
   component: {
-    type: Object as PropType<Component>,
+    type: Object as PropType<Component | ComponentGroup>,
     required: true,
   },
   /** 页索引 */
@@ -67,12 +71,16 @@ const props = defineProps({
 });
 
 /** 查询项图标 */
-const getComponentIcon = (componentName: string): string => {
-  const component = editorState.menuComponents.find((i) => i.name == componentName);
-  return component ? component.icon : '';
-}
+const getIcon = computed(() => {
+  if (props.component.isGroup) {
+    return 'iconfont icon-wenjianjia';
+  } else {
+    const _component = editorState.menuComponents.find((i) => i.name == props.component.name);
+    return _component ? _component.icon : '';
+  }
+});
 
-const itemClick = async (item: Component) => {
+const itemClick = async (item: Component | ComponentGroup) => {
   editorService.changeSelectedFormComponent([item]);
   if (editorState.currentPageIndex !== props.pageIndex) {
     await nextTick();

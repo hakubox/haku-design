@@ -8,13 +8,14 @@
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
+import { Component, ComponentGroup } from '@/@types';
 import { reactive, computed } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { AppType } from '@/@types/enum';
 import CanvasQuickToolItem from './CanvasQuickToolItem.vue';
 import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
 import message from '@/common/message';
+import { mergeComponent, splitComponent } from '@/common/component-handle';
 
 const props = defineProps({
   
@@ -252,15 +253,15 @@ const state = reactive({
       icon: 'icon-link-device',
       get disabled() { return editorState.currentSelectedComponents.length < 2 },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        console.log('执行组合逻辑');
+        mergeComponent(editorState.currentSelectedComponents);
       }
     }, {
       type: 'tool',
       title: '拆分',
       icon: 'icon-link-device',
-      get disabled() { return editorState.currentSelectedComponents.length < 2 },
+      get disabled() { return editorState.currentSelectedComponents.length !== 1 || !editorState.currentSelectedComponents[0].isGroup },
       fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-        console.log('执行拆分逻辑');
+        splitComponent(editorState.currentSelectedComponents[0] as ComponentGroup);
       }
     }
   ] as CanvasQuickTool[]

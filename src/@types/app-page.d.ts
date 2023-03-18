@@ -1,4 +1,5 @@
 import { Component } from './component';
+import { ComponentGroup } from './component-group';
 import { PageType } from './enum';
 
 /** 表单下的页面 */
@@ -8,5 +9,5 @@ export interface AppPage {
   /** 页面类型 */
   pageType: PageType;
   /** 组件列表 */
-  children: Component[];
+  children: (Component | ComponentGroup)[];
 }

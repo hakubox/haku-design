@@ -4,7 +4,7 @@ import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
 import bus from '@/tools/bus';
 
-export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component'>;
+export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component' | 'isGroup'>;
 
 export let formComponents: InitComponent[] = [
 
@@ -2025,8 +2025,9 @@ export function initComponents(componentList?: InitComponent[]): InitComponent[]
           i.propertys.filter(o => o.attach?.length).map(o => ({[o.name]: o.editor}))
         ) as [object, ...ComponentProperty[]]
       ),
-      attrs: Object.assign({}, ..._propertys, i.attrs ?? {})
-    };
+      isGroup: false,
+      attrs: Object.assign({}, ..._propertys, i.attrs ?? {}),
+    } as InitComponent;
     return component;
   });
 }

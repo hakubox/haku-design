@@ -68,8 +68,10 @@ export class DragConfig {
   targetFormComponentId: string;
   /** 拖拽开始坐标 */
   startLoc: Location;
-  /** 拖拽开始时的组件坐标 */
-  startComponentLoc: Location;
+  /** 拖拽开始时的组件X坐标 */
+  startComponentX: number;
+  /** 拖拽开始时的组件Y坐标 */
+  startComponentY: number;
   /** 拖拽结束坐标 */
   endLoc: Location;
   /** 自动吸附坐标 */

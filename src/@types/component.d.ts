@@ -7,7 +7,7 @@ import {
   ComponentPropertyGroup,
   PageType,
 } from '@/@types/enum';
-import { LayoutConfig, ComponentQuickTool } from '.';
+import { LayoutConfig, ComponentQuickTool, ComponentGroup } from '.';
 
 /** 组件答案类型 */
 export type ComponentAnswerType =
@@ -35,6 +35,8 @@ export interface Component {
   id: string;
   /** 组件名 */
   name: string;
+  /** 是否为组合（否） */
+  isGroup: false;
   /** 是否（在答题中）不显示 */
   isHidden: boolean;
   /** 是否为表单项（问题 or 装饰） */
@@ -54,7 +56,12 @@ export interface Component {
   /** 组件类型（组件tagName） */
   component: string;
   /** 组件属性 */
-  attrs: Record<string, any>;
+  attrs: {
+    /** 是否锁定 */
+    lock: boolean;
+    /** 是否显示 */
+    visible: boolean;
+  } & Record<string, any>;
   /** 组件事件 */
   events?: Record<string, any>;
   /** 默认组件属性编辑器 */
@@ -64,7 +71,7 @@ export interface Component {
   /** [NEW]子组件属性 */
   childPropertys?: ComponentProperty[];
   /** 子组件 */
-  children?: Component[];
+  children?: (Component | ComponentGroup)[];
   /** 子组件区域选择器（与插槽无关） */
   childrenSlot?: string;
   /** 子组件区域内容选择器（与插槽无关） */

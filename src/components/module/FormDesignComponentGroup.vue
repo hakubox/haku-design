@@ -1,23 +1,20 @@
 <template>
   <!-- TODO: 需要移除visible类，换成hidden -->
   <div
-    class="form-component"
+    class="form-component form-component-group"
     :component-id="componentId"
     :class="{
       visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
-      error: props.isPreview && formFillService.getErrorByComponent(componentId).length,
       preselect: draggableState.rangeSelectConfig.componentIds.includes(componentId),
       lock: props.component.attrs.lock
     }"
-    :style="editorState.appConfig.appType === AppType.canvas ? {
-      position: position,
-      zIndex: props.component.attrs.sticky ? 1 : 'initial',
+    :style="{
       width: `${getComponentWidth}px`,
       height: `${getComponentHeight}px`,
-      top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
+      top: `${props.component.attrs.y}px`,
       left: `${props.component.attrs.x}px`,
       transform: `rotate(${props.component.attrs.rotate || 0}deg)`
-    }: {}"
+    }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
   >
@@ -29,6 +26,7 @@
       :disabledHeight="props.component.attrs.disabledHeight"
       :disabledWidth="props.component.attrs.disabledWidth"
     >
+    {{ `child_${component.children![0]?.slotIndex}_${component.children![0]?.id}` }}
       <component
         v-bind.prop="getAttrs(props.component.attrs)"
         :component="props.component"
@@ -139,7 +137,7 @@
       <div v-if="!props.isPreview && editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedIds.includes(component.id)" class="form-component-tools">
         <div class="form-component-tool-item form-component-tool-item-info" @mousedown.stop="mouseDownEvent($event, props.component)">
           <i class="form-component-tool-item-icon" :class="editorState.menuComponents.find(x=>x.name===component.name)?.icon" alt="" />
-          <span class="form-component-tool-item-title">{{ component.attrs.name }}</span>
+          <span class="form-component-tool-item-title">群组</span>
         </div>
         <div v-if="componentQuickTools?.length" class="form-component-tool-group">
           <template :key="index" v-for="(item, index) in componentQuickTools">
@@ -223,9 +221,6 @@
         /> 
       </span>
     </div>
-    <div v-else-if="props.isPreview && scoringState.isScoring && !formFillState.formInfo[componentId]" class="form-component-scoring form-component-scoring-invalid">
-      —— 当前题目未作答，无法评分 ——
-    </div>
   </div>
 </template>
 
@@ -303,27 +298,6 @@ formFillService.setRef(props.componentId, componentRef.value);
 const emit = defineEmits<{
   (event: 'setData', id: string, value: any): void;
 }>();
-
-const getStyle = () => {
-  if (editorState.appConfig.appType === AppType.canvas) {
-    if (props.component.isGroup) {
-      return getComponentsRectStyle(props.component.children, {
-        position: position
-      });
-    } else {
-      return {
-        position: position,
-        zIndex: props.component.attrs.sticky ? 1 : 'initial',
-        width: `${getComponentWidth}px`,
-        height: `${getComponentHeight}px`,
-        top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
-        left: `${props.component.attrs.x}px`,
-        transform: `rotate(${props.component.attrs.rotate || 0}deg)`
-      } as unknown as StyleValue;
-    }
-  }
-  return {};
-};
 
 /** 获取组件宽度 */
 const getComponentWidth = computed(() => {

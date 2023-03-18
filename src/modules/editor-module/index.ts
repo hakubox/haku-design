@@ -1,6 +1,6 @@
 import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@/lib/clone';
-import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig } from '@/@types';
+import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect } from '@/@types';
 import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@/@types/enum';
 import bus from '@/tools/bus';
 import { getComponents } from '@/data/form-components';
@@ -125,7 +125,7 @@ export const state = reactive({
     x: 0, y: 0, width: 0, height: 0, rotate: 0
   },
   /** 当前已选择组件 */
-  currentSelectedComponents: [] as Component[],
+  currentSelectedComponents: [] as (Component | ComponentGroup)[],
   /** 当前选中的第一个控件Id */
   currentSelectedFirstComponentId: '' as string | undefined,
   /** 当前选择控件所带来的控件属性组 */
@@ -180,12 +180,12 @@ export const state = reactive({
     const _selected = state.currentSelectedComponents;
     if (_selected.length) {
       let _propEditors: Record<string, any> = {};
-      if (_selected.length >= 1) {
+      if (_selected.length >= 1 && !_selected[0].isGroup) {
         _propEditors = _selected[0].propertyEditors ?? {};
       }
       for (let i = 1; i < _selected.length; i++) {
         const component = _selected[i];
-        if (component.propertyEditors) {
+        if (!component.isGroup && component.propertyEditors) {
           Object.entries(component.propertyEditors).forEach(([key, value]) => {
             if (!_propEditors[key] || _propEditors[key] !== value) {
               delete _propEditors[key];
@@ -205,7 +205,13 @@ export const state = reactive({
   maxFormPageCount: computed((): number => {
     if (state.appConfig.turnPageMode === 'no-page') return 1;
     else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
-    else return state.currentPage.children.filter(i => i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen).length + 1;
+    else return state.currentPage.children.filter(i => {
+      if (i.isGroup) {
+        return false;
+      } else {
+        return i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen;
+      }
+    }).length + 1;
   }),
 });
 
@@ -224,7 +230,7 @@ export const service = {
     });
   },
   /** 获取选择的组件范围 */
-  getSelectedComponentRect() {
+  getSelectedComponentRect(): ComponentRect {
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
     let maxX = Number.MIN_VALUE;
@@ -238,17 +244,17 @@ export const service = {
       if (_component.attrs.y + _component.attrs.height > maxY) maxY = _component.attrs.y + _component.attrs.height;
     }
 
-    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY, x2: maxX, y2: maxY };
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY, x2: maxX, y2: maxY, rotate: 0 };
   },
   /** 显示组件 */
   showComponentInFormPage(componentId: string): boolean {
     let componentIndex: number | undefined = undefined;
-    let component: Component | undefined = undefined;
+    let component: Component | ComponentGroup | undefined = undefined;
     let _index = 0;
     for (let i = 0; i < state.currentPage.children.length; i++) {
       const _componet = state.currentPage.children[i];
       if (!_componet.attrs.isTop) {
-        if (componentId === _componet.id) {
+        if ( componentId === _componet.id) {
           componentIndex = _index;
           component = _componet;
           break;
@@ -880,7 +886,7 @@ export const service = {
     }
   },
   /** 切换当前选择的控件 */
-  async changeSelectedFormComponent(formComponents: Component[], isRefresh: boolean = false) {
+  async changeSelectedFormComponent(formComponents: (Component | ComponentGroup)[], isRefresh: boolean = false) {
 
     // 刷新属性栏
     if (isRefresh) {
@@ -913,62 +919,67 @@ export const service = {
       const formComponent = state.currentSelectedComponents?.[0];
       state.currentSelectedFirstComponentId = formComponent.id;
 
-      // 获取当前选择组件的属性表
-      const _propertys = cloneLoop(formComponent.propertys) as ComponentProperty[];
+      if (!formComponent.isGroup) {
+        // 获取当前选择组件的属性表
+        const _propertys = cloneLoop(formComponent.propertys) as ComponentProperty[];
 
-      // 判断题型组件是否需要评分，是的话添加评分属性，并给子项添加子项评分
-      if ([ComponentCategory.normal, ComponentCategory.complex].includes(formComponent.type) && state.appConfig.hasScore) {
-        const _propIndex = formComponent.propertys.findIndex(prop => prop.name === 'options' && prop.editor === ComponentPropertyEditor.modelList);
-        if (_propIndex >= 0) {
-          const _propOptions = _propertys[_propIndex]?.attrs?.columns;
-          if (_propOptions) {
-            _propOptions.push({
-              name: 'score', width: '80px', title: '分数', default: 1, editor: ComponentPropertyEditor.int, attrs: { min: 1, max: 100 }
-            });
+        // 判断题型组件是否需要评分，是的话添加评分属性，并给子项添加子项评分
+        if ([ComponentCategory.normal, ComponentCategory.complex].includes(formComponent.type) && state.appConfig.hasScore) {
+          const _propIndex = formComponent.propertys.findIndex(prop => prop.name === 'options' && prop.editor === ComponentPropertyEditor.modelList);
+          if (_propIndex >= 0) {
+            const _propOptions = _propertys[_propIndex]?.attrs?.columns;
+            if (_propOptions) {
+              _propOptions.push({
+                name: 'score', width: '80px', title: '分数', default: 1, editor: ComponentPropertyEditor.int, attrs: { min: 1, max: 100 }
+              });
+            }
           }
+          _propertys.push({
+            name: 'score', title: '分数', default: 1,
+            group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int, attrs: { suffix: '分', min: 1, max: 100 }
+          });
         }
+
+        // 判断是否为子组件，是的话看父组件有没有子组件属性
+        const parentComponentInfo = service.findParentComponent(formComponent.id);
+        if (parentComponentInfo?.component?.childPropertys) {
+          _propertys.push(...parentComponentInfo?.component.childPropertys);
+        }
+
+        // 所有组件添加上置顶功能
         _propertys.push({
-          name: 'score', title: '分数', default: 1,
-          group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int, attrs: { suffix: '分', min: 1, max: 100 }
+          name: 'isTop', title: '是否置顶', default: false,
+          group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         });
-      }
 
-      // 判断是否为子组件，是的话看父组件有没有子组件属性
-      const parentComponentInfo = service.findParentComponent(formComponent.id);
-      if (parentComponentInfo?.component?.childPropertys) {
-        _propertys.push(...parentComponentInfo?.component.childPropertys);
-      }
+        // 所有组件添加额外数据功能
+        if (configState.config.showAttaProps) {
+          _propertys.push({
+            name: 'attaProps', title: '额外属性', default: {}, layout: PropertyLayout.block,
+            group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.json, attrs: { height: '200px' }
+          });
+        }
 
-      // 所有组件添加上置顶功能
-      _propertys.push({
-        name: 'isTop', title: '是否置顶', default: false,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-      });
-
-      // 所有组件添加额外数据功能
-      if (configState.config.showAttaProps) {
-        _propertys.push({
-          name: 'attaProps', title: '额外属性', default: {}, layout: PropertyLayout.block,
-          group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.json, attrs: { height: '200px' }
-        });
-      }
-
-      _propertys.forEach(prop => {
-        const _default = prop.default;
-        if (isNotBlank(_default) && isBlank(formComponent.attrs[prop.name])) {
-          if (typeof _default === 'function') {
-            formComponent.attrs[prop.name] = _default();
-          } else {
-            formComponent.attrs[prop.name] = _default;
+        _propertys.forEach(prop => {
+          const _default = prop.default;
+          if (isNotBlank(_default) && isBlank(formComponent.attrs[prop.name])) {
+            if (typeof _default === 'function') {
+              formComponent.attrs[prop.name] = _default();
+            } else {
+              formComponent.attrs[prop.name] = _default;
+            }
           }
-        }
-      })
+        });
 
-      state.currentSelectedComponentPropertyMap = Object.assign({}, ..._propertys.map(i => ({[i.name]: i})));
-      state.currentSelectedComponentPropertyGroups = Object.entries(ComponentPropertyGroup).map(([key, value]) => ({
-        title: value,
-        propertys: _propertys.filter(i => i.group === value) as ComponentProperty[]
-      })).filter(i => i.propertys.length);
+        state.currentSelectedComponentPropertyMap = Object.assign({}, ..._propertys.map(i => ({[i.name]: i})));
+        state.currentSelectedComponentPropertyGroups = Object.entries(ComponentPropertyGroup).map(([key, value]) => ({
+          title: value,
+          propertys: _propertys.filter(i => i.group === value) as ComponentProperty[]
+        })).filter(i => i.propertys.length);
+      } else {
+        state.currentSelectedComponentPropertyMap = {};
+        state.currentSelectedComponentPropertyGroups = [];
+      }
     } else {
       state.currentProp = {};
       state.currentSelectedFirstComponentId = undefined;
@@ -1000,8 +1011,8 @@ export const service = {
   mergeFormData(newComponents: Component[], formdata: Record<string, FormInfoItem>): Record<string, FormInfoItem> {
     const _re: Record<string, FormInfoItem> = {};
     // 1、将传入的组件树及当前组件树铺平，并且只取题目类型（isFormItem）
-    const newComponentList: Component[] = service.getAllFormItem(newComponents);
-    const oldComponentList: Component[] = service.getAllFormItem();
+    const newComponentList: (Component | ComponentGroup)[] = service.getAllFormItem(newComponents);
+    const oldComponentList: (Component | ComponentGroup)[] = service.getAllFormItem();
     // 2、将两个组件列表做对比，判断并对比出删除/改变的题目列表
     for (let i = 0; i < newComponentList.length; i++) {
       const newComponent = newComponentList[i];
@@ -1204,16 +1215,16 @@ export const service = {
     }
   },
   /** 根据组件列表（树）查询所有表单项，返回列表，如果不传则默认查询普通页面下所有组件 */
-  getAllFormItem(rootComponents?: Component[], filter?: (component: Component) => boolean) {
-    const _rootComponents: Component[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
-    const _components: Component[] = [];
-    const _cb = (parentComponent: Component) => {
+  getAllFormItem(rootComponents?: Component[], filter?: (component: (Component | ComponentGroup)) => boolean) {
+    const _rootComponents: (Component | ComponentGroup)[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
+    const _components: (Component | ComponentGroup)[] = [];
+    const _cb = (parentComponent: (Component | ComponentGroup)) => {
       if (filter) {
         if (filter(parentComponent)) _components.push({
           ...parentComponent,
           children: []
         });
-      } else if (parentComponent.isFormItem) {
+      } else if (parentComponent.isGroup) {
         _components.push({
           ...parentComponent,
           children: []
@@ -1230,10 +1241,10 @@ export const service = {
     return _components;
   },
   /** 查询组件 */
-  findComponent(componentId: string | undefined): Component | undefined {
+  findComponent(componentId: string | undefined): Component | ComponentGroup | undefined {
     if (!componentId) return undefined;
-    let _component: Component | undefined = undefined;
-    const _cb = (parentComponent: Component) => {
+    let _component: Component | ComponentGroup | undefined = undefined;
+    const _cb = (parentComponent: Component | ComponentGroup) => {
       if (parentComponent.id === componentId) {
         _component = parentComponent;
         return;
@@ -1255,7 +1266,7 @@ export const service = {
   /** 查询组件索引 */
   findComponentIndex(componentId: string): number | undefined {
     let _index: number | undefined = undefined;
-    const _cb = (parentComponent: Component, parentIndex: number) => {
+    const _cb = (parentComponent: Component | ComponentGroup, parentIndex: number) => {
       if (parentComponent.id === componentId) {
         _index = parentIndex;
         return;
@@ -1283,12 +1294,12 @@ export const service = {
     /** 指定查询页面 */
     appPage?: AppPage
   } = { ignoreHidden: false, ignoreNotForm: false, appPage: undefined }): { component: Component, originComponent: Component, index: number, level: number } | undefined {
-    let _component: Component | undefined;
-    let _originComponent: Component | undefined;
+    let _component: Component | ComponentGroup | undefined;
+    let _originComponent: Component | ComponentGroup | undefined;
     let _index: number | undefined = undefined;
     let _level: number = 0;
     const _page = appPage ?? state.currentPage;
-    const _cb = (component: Component, index: number, parentComponent: Component, level: number) => {
+    const _cb = (component: (Component | ComponentGroup), index: number, parentComponent: (Component | ComponentGroup), level: number) => {
       if (_index !== undefined) return;
       if (component.id === componentId) {
         _index = index;
@@ -1310,7 +1321,7 @@ export const service = {
           }
           else _cb(item, index, component, level + 1);
           if (!ignoreHidden || ignoreHidden && item.attrs.visible) {
-            if (!ignoreNotForm || ignoreNotForm && item.isFormItem) {
+            if (!ignoreNotForm || ignoreNotForm && !item.isGroup && item.isFormItem) {
               index++;
             }
           }
@@ -1320,9 +1331,9 @@ export const service = {
     };
     let index = 0;
     _page.children.forEach(item => {
-      _cb(item, index, _page as unknown as Component, 0);
+      _cb(item, index, _page as unknown as (Component | ComponentGroup), 0);
       if (!ignoreHidden || ignoreHidden && item.attrs.visible) {
-        if (!ignoreNotForm || ignoreNotForm && item.isFormItem) {
+        if (!ignoreNotForm || ignoreNotForm && !item.isGroup && item.isFormItem) {
           index++;
         }
       }
@@ -1356,7 +1367,7 @@ export const service = {
     /** Y坐标 */
     y?: number,
   } = {}) {
-    let _parentComponent: Component | undefined = undefined;
+    let _parentComponent: Component | ComponentGroup | undefined = undefined;
     if (!component.attrs.name) {
       if (!state.globalComponentIndexMap[component.component]) state.globalComponentIndexMap[component.component] = 1;
       component.attrs.name = `${component.title}${state.globalComponentIndexMap[component.component]}`;
@@ -1411,9 +1422,9 @@ export const service = {
     y?: number,
   } = { toIndex: 0 }) {
     // TODO: 需要组件移动后需要处理slotIndex属性
-    let _fromChildren: Component[];
-    let _toChildren: Component[];
-    let _toComponent: Component | undefined = undefined;
+    let _fromChildren: (Component | ComponentGroup)[];
+    let _toChildren: (Component | ComponentGroup)[];
+    let _toComponent: Component | ComponentGroup | undefined = undefined;
     const _fromParent = service.findParentComponent(fromComponentId);
     const _fromIndex = _fromParent?.index;
     if (_fromIndex === undefined) throw new Error('未查询到组件索引');
@@ -1455,8 +1466,8 @@ export const service = {
     // }, 10);
   },
   /** 设置父组件默认属性值 */
-  setParentDefaultProps(component: Component, parentComponent?: Component, isPush: boolean = true) {
-    if (parentComponent && parentComponent.childPropertys?.length) {
+  setParentDefaultProps(component: Component | ComponentGroup, parentComponent?: Component | ComponentGroup, isPush: boolean = true) {
+    if (parentComponent && !parentComponent.isGroup && parentComponent.childPropertys?.length) {
       parentComponent.childPropertys.forEach(prop => {
         if (isPush) {
           if (isNotBlank(prop.default) && isBlank(component.attrs[prop.name])) {

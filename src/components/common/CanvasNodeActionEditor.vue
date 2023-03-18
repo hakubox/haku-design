@@ -22,8 +22,15 @@
     <!-- 提示文本 -->
     <div
       :class="{
-        show: ((props.global && !isSingle) || (!isSingle && !props.global && editorState.currentSelectedFirstComponentId === props.components[0].id))
-          && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
+        show: (
+          (props.global && !isSingle) || 
+          (
+            editorState.currentSelectedComponents.length === 1 && 
+            isSingle && 
+            !props.global && 
+            editorState.currentSelectedFirstComponentId === props.components[0].id
+          )
+        ) && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
       }"
       :style="{
         transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`
@@ -45,14 +52,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { Component } from '@/@types';
+import type { Component, ComponentGroup } from '@/@types';
 import { PropType, onMounted, reactive, computed, ref, watch } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
 import { getAngle, toDecimal } from '@/tools/common';
-import { getHeight, getWidth } from '@/common/component-handle';
+import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
@@ -78,7 +85,7 @@ interface ComponentRect {
 const props = defineProps({
   /** 对应组件 */
   components: {
-    type: Array as PropType<Component[]>,
+    type: Array as PropType<(Component | ComponentGroup)[]>,
     required: true,
   },
   /** 是否显示 */
@@ -211,7 +218,19 @@ const onMoveDrag = (e: MouseEvent) => {
       else if (_rotate > 267 && _rotate < 273) _rotate = 270;
       else if (_rotate > 312 && _rotate < 318) _rotate = 315;
       else if (_rotate > 357 || _rotate < 3) _rotate = 0;
-      editorState.currentRangeEditorRect.rotate = _rotate;
+
+      if (props.global) {
+        editorState.currentRangeEditorRect.rotate = _rotate;
+        for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
+          const _component = editorState.currentSelectedComponents[i];
+          const _rect = state.startLoc.componentRects[i];
+
+          // TODO: 未完成的组合旋转
+          _component.attrs.rotate = _rotate;
+        }
+      } else {
+        props.components[0].attrs.rotate = _rotate;
+      }
       draggableState.tipConfig.text = `${_rotate}°`;
     } else {
       /** 自动吸附坐标 */
@@ -286,9 +305,12 @@ const onMoveDrag = (e: MouseEvent) => {
       const widthRatio = _width / state.startLoc.width;
       const heightRatio = _height / state.startLoc.height;
 
-      if (props.global) {
-        for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
-          const _component = editorState.currentSelectedComponents[i];
+      if (props.global || props.components[0].isGroup) {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        let _components = [] as (Component | ComponentGroup)[];
+        _components = editorState.currentSelectedComponents;
+        for (let i = 0; i < _components.length; i++) {
+          const _component = _components[i];
           const _rect = state.startLoc.componentRects[i];
 
           _component.attrs.x = _x + (_rect.x - _x) * widthRatio;

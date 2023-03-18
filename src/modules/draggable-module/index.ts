@@ -1,4 +1,4 @@
-import { Component, LayoutConfig } from '@/@types';
+import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@/@types';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
 import { cloneForce } from '@/lib/clone';
@@ -6,7 +6,9 @@ import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tool
 import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './@types';
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
-import { getHeight, getWidth } from '@/common/component-handle';
+import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
+import { number } from 'echarts';
+
 
 /** 拖拽模块状态 */
 export const state = reactive({
@@ -27,10 +29,8 @@ export const state = reactive({
       x: 0,
       y: 0,
     },
-    startComponentLoc: {
-      x: 0,
-      y: 0
-    },
+    startComponentX: 0,
+    startComponentY: 0,
     endLoc: {
       x: 0,
       y: 0,
@@ -79,11 +79,23 @@ const init = () => {
 
 export const service = {
   /** 获取9个组件的关键点 */
-  getComponentPoints(component?: Component, config?: { x?: number, y?: number, width?: number, height?: number }) {
-    const _x = config?.x ?? component?.attrs.x;
-    const _y = config?.y ?? component?.attrs.y;
-    const _width = config?.width ?? component?.attrs.width;
-    const _height = config?.height ?? component?.attrs.height;
+  getComponentPoints(component?: (Component | ComponentGroup), config?: { x?: number, y?: number, width?: number, height?: number }) {
+    let _x = config?.x as number;
+    let _y = config?.y as number;
+    let _width = config?.width as number;
+    let _height = config?.height as number;
+    if (!component) {
+      if (!config) throw new Error('缺少参数config');
+      _x = config?.x as number;
+      _y = config?.y as number;
+      _width = config?.width as number;
+      _height = config?.height as number;
+    } else {
+      if (_x === undefined) _x = component.attrs.x;
+      if (_y === undefined) _y = component.attrs.y;
+      if (_width === undefined) _width = component.attrs.width;
+      if (_height === undefined)_height = component.attrs.height;
+    }
     const points = [
       [_x, _y],
       [_x, _y + _height / 2],
@@ -98,7 +110,7 @@ export const service = {
     return points;
   },
   /** 获取对齐线 */
-  getAlignLines(component: Component, config?: { x?: number, y?: number, width?: number, height?: number, filter?: (direction: 'x' | 'y') => 'front' | 'center' | 'end' }) {
+  getAlignLines(component: Component | ComponentGroup, config?: { x?: number, y?: number, width?: number, height?: number, filter?: (direction: 'x' | 'y') => 'front' | 'center' | 'end' }) {
     const _lines = [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[];
     if (editorState.canvasRect) {
       const _points = this.getComponentPoints(component, config);
@@ -284,7 +296,6 @@ export const service = {
           _componetIds.push(i.id);
         }
       });
-      console.log('_componetIds', _componetIds);
       state.rangeSelectConfig.componentIds = _componetIds;
     }
   },
@@ -310,7 +321,7 @@ export const service = {
     }
   },
   /** 从左侧组件库开始拖拽 */
-  startDrag(e, component: Component, isExisted: boolean = false) {
+  startDrag(e, component: Component | ComponentGroup, isExisted: boolean = false) {
     if (state.dragConfig.isPause) return;
     if (e.button != 0) return;
     state.isExisted = isExisted;
@@ -320,15 +331,8 @@ export const service = {
     }
     state.dragConfig.startLoc.x = e['layerX'];
     state.dragConfig.startLoc.y = e['layerY'];
-    state.dragConfig.startComponentLoc.x = component.attrs.x;
-    state.dragConfig.startComponentLoc.y = component.attrs.y;
-    if (editorState.currentSelectedComponents.length > 1) {
-      state.dragConfig.startComponentLocs = editorState.currentSelectedComponents.map(i => ({
-        x: i.attrs.x,
-        y: i.attrs.y,
-        id: i.id
-      }));
-    }
+    state.dragConfig.startComponentX = component.attrs.x;
+    state.dragConfig.startComponentY = component.attrs.y;
     if (state.offsetAmount <= 0) service.setShadowDom(e);
     else state.tempShadowMouseState = e;
     state.dragConfig.component = component;
@@ -336,15 +340,24 @@ export const service = {
     state.tipConfig.isShow = true;
   },
   /** 拖拽已存在的组件 */
-  startDragFormComponent(e, component: Component) {
+  startDragFormComponent(e, component: Component | ComponentGroup) {
     state.dragConfig.targetFormComponentId = component.id;
     if (component.attrs.lock) {
       return;
     }
     const _el: HTMLElement = document.createElement('div');
-    if (editorState.appConfig.appType === AppType.questionnaire) {
+    if (editorState.appConfig.appType === AppType.questionnaire && !component.isGroup) {
       _el.classList.add('form-design-drag-component');
       _el.innerHTML = component?.title ?? '';
+    } else {
+      const rect = editorService.getSelectedComponentRect();
+      state.dragConfig.startComponentX = rect.x;
+      state.dragConfig.startComponentY = rect.y;
+      state.dragConfig.startComponentLocs = editorState.currentSelectedComponents.map(i => ({
+        x: i.attrs.x,
+        y: i.attrs.y,
+        id: i.id
+      }));
     }
     service.startDrag(
       {
@@ -367,19 +380,6 @@ export const service = {
 
       /** 放置控件 */
       if (state.dragConfig.isDragArea) {
-        const _newComponent: Component = cloneForce({
-          ...editorState.componentList.find(
-            (i) => i.name == state.dragConfig.component.name && i.title == state.dragConfig.component.title,
-          ),
-          height: 0,
-        });
-
-        if (!state.dragConfig.targetFormComponentId) {
-          _newComponent.id = createModelId(10);
-        } else {
-          _newComponent.id = state.dragConfig.targetFormComponentId;
-        }
-        _newComponent.attrs.id = _newComponent.id;
 
         // 移动组件 or 新增组件
         if (state.dragConfig.targetFormComponentId) {
@@ -401,6 +401,19 @@ export const service = {
           state.alignLines = [];
           state.dragConfig.adsorbLoc = undefined;
         } else {
+          const _newComponent: Component = cloneForce({
+            ...editorState.componentList.find(
+              (i) => i.name == state.dragConfig.component.name && i.title == state.dragConfig.component.title,
+            ),
+            height: 0,
+          });
+  
+          if (!state.dragConfig.targetFormComponentId) {
+            _newComponent.id = createModelId(10);
+          } else {
+            _newComponent.id = state.dragConfig.targetFormComponentId;
+          }
+          _newComponent.attrs.id = _newComponent.id;
           // 刚刚插入界面或添加到最后处理方式
           historyService.exec('add-component', {
             objectId: _newComponent.id,
@@ -597,40 +610,13 @@ export const service = {
           let _y = state.dragConfig.mouseY - state.dragConfig.startLoc.y;
 
           // 单个拖拽和多个拖拽采用不同的逻辑
-          if (editorState.currentSelectedComponents.length === 1) {
-            state.alignLines = service.getAlignLines(state.dragConfig.component, {
-              x: _x, y: _y
-            });
-            const _xLines = state.alignLines.filter(i => i.x !== undefined);
-            if (_xLines.length) {
-              if (_xLines[0].direction === 'front') {
-                _x = _xLines[0].x!;
-              } else if (_xLines[0].direction === 'center') {
-                _x = _xLines[0].x! - state.dragConfig.component.attrs.width / 2;
-              } else if (_xLines[0].direction === 'end') {
-                _x = _xLines[0].x! - state.dragConfig.component.attrs.width;
-              }
-            }
-            const _yLines = state.alignLines.filter(i => i.y !== undefined);
-            if (_yLines.length) {
-              if (_yLines[0].direction === 'front') {
-                _y = _yLines[0].y!;
-              } else if (_yLines[0].direction === 'center') {
-                _y = _yLines[0].y! - state.dragConfig.component.attrs.height / 2;
-              } else if (_yLines[0].direction === 'end') {
-                _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
-              }
-            }
-            _x = toDecimal(_x);
-            _y = toDecimal(_y);
-            state.dragConfig.component.attrs.x = _x;
-            state.dragConfig.component.attrs.y = _y;
-          } else if (editorState.currentSelectedComponents.length > 1) {
-            const rangeSelector = editorService.getSelectedComponentRect();
+          if (editorState.currentSelectedComponents.length > 1) {
+            let _components = editorState.currentSelectedComponents as (Component | ComponentGroup)[];
+            let _rangeSelector = editorService.getSelectedComponentRect() as ComponentRect;
             state.alignLines = service.getAlignLinesByRect({
               x: _x, y: _y,
-              width: rangeSelector.width,
-              height: rangeSelector.height
+              width: _rangeSelector.width,
+              height: _rangeSelector.height
             });
             const _xLines = state.alignLines.filter(i => i.x !== undefined);
             if (_xLines.length) {
@@ -660,12 +646,12 @@ export const service = {
             let maxX = Number.MIN_VALUE;
             let maxY = Number.MIN_VALUE;
 
-            for (let i = 0; i < editorState.currentSelectedComponents.length; i++) {
-              const item = editorState.currentSelectedComponents[i];
+            for (let i = 0; i < _components.length; i++) {
+              const item = _components[i];
               const _loc = state.dragConfig.startComponentLocs.find(o => o.id === item.id);
               if (_loc) {
-                item.attrs.x = _loc.x + _x - state.dragConfig.startComponentLoc.x;
-                item.attrs.y = _loc.y + _y - state.dragConfig.startComponentLoc.y;
+                item.attrs.x = _loc.x + _x - state.dragConfig.startComponentX;
+                item.attrs.y = _loc.y + _y - state.dragConfig.startComponentY;
               }
               
               if (item.attrs.x < minX) minX = item.attrs.x;
@@ -679,6 +665,34 @@ export const service = {
             editorState.currentRangeEditorRect.y = minY;
             editorState.currentRangeEditorRect.width = maxX - minX;
             editorState.currentRangeEditorRect.height = maxY - minY;
+          } else if (editorState.currentSelectedComponents.length === 1) {
+            state.alignLines = service.getAlignLines(state.dragConfig.component, {
+              x: _x, y: _y
+            });
+            const _xLines = state.alignLines.filter(i => i.x !== undefined);
+            if (_xLines.length) {
+              if (_xLines[0].direction === 'front') {
+                _x = _xLines[0].x!;
+              } else if (_xLines[0].direction === 'center') {
+                _x = _xLines[0].x! - state.dragConfig.component.attrs.width / 2;
+              } else if (_xLines[0].direction === 'end') {
+                _x = _xLines[0].x! - state.dragConfig.component.attrs.width;
+              }
+            }
+            const _yLines = state.alignLines.filter(i => i.y !== undefined);
+            if (_yLines.length) {
+              if (_yLines[0].direction === 'front') {
+                _y = _yLines[0].y!;
+              } else if (_yLines[0].direction === 'center') {
+                _y = _yLines[0].y! - state.dragConfig.component.attrs.height / 2;
+              } else if (_yLines[0].direction === 'end') {
+                _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
+              }
+            }
+            _x = toDecimal(_x);
+            _y = toDecimal(_y);
+            state.dragConfig.component.attrs.x = _x;
+            state.dragConfig.component.attrs.y = _y;
           }
 
           state.dragConfig.adsorbLoc = { x: _x, y: _y };
