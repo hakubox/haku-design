@@ -4,15 +4,15 @@
     height: `${props.height}px`
   }" class="thumbnail">
     <div :style="{
-      width: `${props.contentWidth * scale}px`,
-      height: `${props.contentHeight * scale}px`
+      width: `${props.contentWidth * props.canvasScale * scale}px`,
+      height: `${props.contentHeight * props.canvasScale * scale}px`
     }" class="thumbnail-content">
       <!-- 显示内容列表 -->
       <div :style="{
-        top: `${item.attrs.y * scale}px`,
-        left: `${item.attrs.x * scale}px`,
-        width: `${item.attrs.width * scale}px`,
-        height: `${item.attrs.height * scale}px`
+        top: `${item.attrs.y * props.canvasScale * scale}px`,
+        left: `${item.attrs.x * props.canvasScale * scale}px`,
+        width: `${item.attrs.width * props.canvasScale * scale}px`,
+        height: `${item.attrs.height * props.canvasScale * scale}px`
       }" class="thumbnail-content-item" v-for="item in props.contentList">
       </div>
       
@@ -39,6 +39,11 @@ export interface Rect {
 }
 
 const props = defineProps({
+  /** 画布缩放倍数 */
+  canvasScale: {
+    type: Number,
+    default: 1
+  },
   /** 预览图宽度 */
   width: {
     type: Number,
@@ -88,8 +93,8 @@ const props = defineProps({
 
 /** 综合缩放比 */
 const scale = computed(() => {
-  const widthScale = props.width / props.contentWidth;
-  const heightScale = props.height / props.contentHeight;
+  const widthScale = props.width / props.contentWidth / props.canvasScale;
+  const heightScale = props.height / props.contentHeight / props.canvasScale;
   return widthScale < heightScale ? widthScale : heightScale;
 });
 

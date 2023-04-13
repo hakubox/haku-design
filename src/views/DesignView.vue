@@ -110,9 +110,10 @@
             :content-height="editorState.appConfig.height + 40"
             :range-left="draggableState.scrollLeft"
             :range-top="draggableState.scrollTop"
-            :range-width="draggableState.canvasViewportWidth / draggableState.scale"
-            :range-height="draggableState.canvasViewportHeight / draggableState.scale"
+            :range-width="draggableState.canvasViewportWidth"
+            :range-height="draggableState.canvasViewportHeight"
             :content-list="editorState.currentPage.children"
+            :canvas-scale="draggableState.scale"
             v-if="editorState.appConfig.isInit"
           ></Thumbnail>
 
@@ -213,6 +214,7 @@
             <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
           </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
+          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-fullscreen"></i>画布尺寸：{{editorState.appConfig.width}}×{{editorState.appConfig.height}}</label>
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-print-view"></i>放大倍数：x{{draggableState.scale.toFixed(1)}}</label>
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
@@ -311,7 +313,7 @@ import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
 import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
-import Thumbnail, { Rect } from '@/modules/thumbnail-module/component/Thumbnail.vue';
+import Thumbnail from '@/components/common/Thumbnail.vue';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
@@ -330,12 +332,12 @@ const onScroll = (e) => {
 const onResize = (e) => {
   if (e.ctrlKey) {
     if (e.deltaY > 0 || e.deltaX > 0) {
-      if (draggableState.scale <= 1.5) {
-        draggableState.scale += 0.1;
-      }
-    } else {
       if (draggableState.scale >= 0.6) {
         draggableState.scale -= 0.1;
+      }
+    } else {
+      if (draggableState.scale <= 1.5) {
+        draggableState.scale += 0.1;
       }
     }
     e.preventDefault();
