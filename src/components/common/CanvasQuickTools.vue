@@ -26,11 +26,11 @@ const state = reactive({
     {
       type: 'tool',
       title: '层级',
-      icon: 'icon-shape-rect',
+      icon: 'icon-zhiding',
       children: [{
         type: 'tool',
         title: '置顶',
-        icon: 'icon-arrow-top',
+        icon: 'icon-zhiding',
         get disabled() { return !editorState.currentSelectedComponents.length },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           if (parent.index === 0) {
@@ -47,26 +47,8 @@ const state = reactive({
         }
       }, {
         type: 'tool',
-        title: '置底',
-        icon: 'icon-arrow-floor',
-        get disabled() { return !editorState.currentSelectedComponents.length },
-        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
-          if (parent.index === 0) {
-            message.toast('已经处于底层', 'warning');
-            return;
-          }
-          const _children = parent.component.children!;
-          const _re = [
-            ..._children.slice(0, parent.index),
-            ..._children.slice(parent.index + 1),
-            _children[parent.index],
-          ];
-          parent.component.children = _re;
-        }
-      }, {
-        type: 'tool',
         title: '上移',
-        icon: 'icon-arrow-up',
+        icon: 'icon-shangyi',
         get disabled() { return !editorState.currentSelectedComponents.length },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           if (parent.index === 0) {
@@ -85,7 +67,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '下移',
-        icon: 'icon-arrow-down',
+        icon: 'icon-xiayi',
         get disabled() { return !editorState.currentSelectedComponents.length },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           if (parent.index === 0) {
@@ -101,17 +83,35 @@ const state = reactive({
           ];
           parent.component.children = _re;
         }
+      }, {
+        type: 'tool',
+        title: '置底',
+        icon: 'icon-zhidi',
+        get disabled() { return !editorState.currentSelectedComponents.length },
+        fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
+          if (parent.index === 0) {
+            message.toast('已经处于底层', 'warning');
+            return;
+          }
+          const _children = parent.component.children!;
+          const _re = [
+            ..._children.slice(0, parent.index),
+            ..._children.slice(parent.index + 1),
+            _children[parent.index],
+          ];
+          parent.component.children = _re;
+        }
       }
     ]}, {
       type: 'split',
     }, {
       type: 'tool',
       title: '对齐',
-      icon: 'icon-shape-rect',
+      icon: 'icon-zuoceduiqi',
       children: [{
         type: 'tool',
         title: '左侧对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-zuoceduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -126,7 +126,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '居中对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-chuizhijuzhongduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -146,7 +146,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '右侧对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-youceduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -161,7 +161,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '顶部对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-dingbuduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -176,7 +176,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '居中对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-shuipingjuzhongduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -196,7 +196,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '底部对齐',
-        icon: 'icon-shape-rect',
+        icon: 'icon-dibuduiqi',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents;
@@ -211,7 +211,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '水平等间距',
-        icon: 'icon-shape-rect',
+        icon: 'icon-shuipingdengjianju',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents.sort((a, b) => a.attrs.x - b.attrs.x);
@@ -229,7 +229,7 @@ const state = reactive({
       }, {
         type: 'tool',
         title: '垂直等间距',
-        icon: 'icon-shape-rect',
+        icon: 'icon-chuizhidengjianju',
         get disabled() { return editorState.currentSelectedComponents.length < 2 },
         fn: (component: Component, parent: { component: Component, originComponent: Component, index: number, level: number }) => {
           const _components = editorState.currentSelectedComponents.sort((a, b) => a.attrs.y - b.attrs.y);

@@ -16,6 +16,16 @@ export const state = reactive({
   alignLines: [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[],
   /** 定位线列表（用户拖拽） */
   positionLines: [] as { x?: number, y?: number, direction: 'front' | 'center' | 'end' }[],
+  /** 画布视口宽度 */
+  canvasViewportWidth: 0,
+  /** 画布视口宽度 */
+  canvasViewportHeight: 0,
+  /** 界面缩放比 */
+  scale: 1,
+  /** 距离上部滚动距离 */
+  scrollTop: 0,
+  /** 距离左侧滚动距离 */
+  scrollLeft: 0,
   /** 拖拽配置 */
   dragConfig: {
     isPause: false,
@@ -58,7 +68,16 @@ export const state = reactive({
   /** 头部栏高度 */
   headerHeight: 60,
 
-  
+  /** 按下空格键 */
+  pressSpaceKey: false,
+  /** 拖拽画布配置 */
+  dragCanvasConfig: {
+    isStart: false,
+    x: 0,
+    y: 0,
+    canvasTop: 0,
+    canvasLeft: 0,
+  },
   /** 范围框选配置 */
   rangeSelectConfig: {
     x: 0,
@@ -250,20 +269,33 @@ export const service = {
   startRangeSelect(e: MouseEvent) {
     if (state.dragConfig.isDrag || state.dragConfig.isPreDrag) return;
     if (e.button != 0) return;
-    editorService.changeSelectedFormComponent([]);
-    state.rangeSelectConfig.isStart = true;
-    state.rangeSelectConfig.x = e.pageX;
-    state.rangeSelectConfig.y = e.pageY;
-    state.rangeSelectConfig.asideWidth = (document.querySelector('.design-form-aside') as HTMLElement).offsetWidth;
-    const _target = e.target as HTMLElement;
-    // state.rangeSelectDom.style.left = `0px`;
-    // state.rangeSelectDom.style.top = `0px`;
-    state.rangeSelectDom.style.transform = `translate(${state.rangeSelectConfig.x}px, ${state.rangeSelectConfig.y}px)`;
-    document.body.appendChild(state.rangeSelectDom);
+    if (state.pressSpaceKey) {
+      state.dragCanvasConfig.isStart = true;
+      state.dragCanvasConfig.x = e.pageX;
+      state.dragCanvasConfig.y = e.pageY;
+      state.dragCanvasConfig.canvasTop = state.scrollTop;
+      state.dragCanvasConfig.canvasLeft = state.scrollLeft;
+    } else {
+      editorService.changeSelectedFormComponent([]);
+      state.rangeSelectConfig.isStart = true;
+      state.rangeSelectConfig.x = e.pageX;
+      state.rangeSelectConfig.y = e.pageY;
+      state.rangeSelectConfig.asideWidth = (document.querySelector('.design-form-aside') as HTMLElement).offsetWidth;
+      // const _target = e.target as HTMLElement;
+      // state.rangeSelectDom.style.left = `0px`;
+      // state.rangeSelectDom.style.top = `0px`;
+      state.rangeSelectDom.style.transform = `translate(${state.rangeSelectConfig.x}px, ${state.rangeSelectConfig.y}px)`;
+      document.body.appendChild(state.rangeSelectDom);
+    }
   },
   /** 范围框选鼠标移动中 */
   moveRangeSelect(e: MouseEvent) {
-    if (state.rangeSelectConfig.isStart) {
+    if (state.dragCanvasConfig.isStart && state.pressSpaceKey) {
+      editorState.canvasEl.scrollTo(
+        state.dragCanvasConfig.canvasLeft - e.pageX + state.dragCanvasConfig.x,
+        state.dragCanvasConfig.canvasTop - e.pageY + state.dragCanvasConfig.y
+      );
+    } else if (state.rangeSelectConfig.isStart) {
       let _x = state.rangeSelectConfig.x;
       let _y = state.rangeSelectConfig.y;
       if (e.pageX < _x) {
@@ -301,7 +333,13 @@ export const service = {
   },
   /** 结束范围框选 */
   endRangeSelect(e: MouseEvent) {
-    if (state.rangeSelectConfig.isStart) {
+    if (state.dragCanvasConfig.isStart) {
+      state.dragCanvasConfig.isStart = false;
+      state.dragCanvasConfig.x = 0;
+      state.dragCanvasConfig.y = 0;
+      state.dragCanvasConfig.canvasTop = 0;
+      state.dragCanvasConfig.canvasLeft = 0;
+    } else if (state.rangeSelectConfig.isStart) {
       state.rangeSelectConfig = {
         ...state.rangeSelectConfig,
         isStart: false,

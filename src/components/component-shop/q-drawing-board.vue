@@ -65,10 +65,9 @@ watch(() => props.padding, (val, oldVal) => {
 });
 
 const init = () => {
-  console.log('widgetRef', widgetRef);
-      let _canvas: HTMLCanvasElement = widgetRef as HTMLCanvasElement;
-      state.canvas = new signature(_canvas);
-      state.canvas.penColor = 'black';
+  let _canvas: HTMLCanvasElement = widgetRef.value as HTMLCanvasElement;
+  state.canvas = new signature(_canvas);
+  state.canvas.penColor = 'black';
 }
 
 const clear = () => {

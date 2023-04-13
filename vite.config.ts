@@ -46,6 +46,7 @@ switch (buildProj) {
         ],
       },
       server: {
+        host: '0.0.0.0',
         port: 4561
       },
       css: {
@@ -166,6 +167,10 @@ switch (buildProj) {
             replacement: '/src/packages/answer/',
           },
         ],
+      },
+      server: {
+        host: '0.0.0.0',
+        port: 4561
       },
       css: {
         preprocessorOptions: {

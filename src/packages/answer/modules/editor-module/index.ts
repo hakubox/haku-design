@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue';
-import { LayoutConfig, PropertyGroup, ComponentProperty, AppConfig, ExportAppBody, FormTimerConfig, Component } from '@/@types';
+import { LayoutConfig, PropertyGroup, ComponentProperty, AppConfig, ExportAppBody, FormTimerConfig, Component, ComponentGroup } from '@/@types';
 import { CrossAxisAlignment, LayoutType, MainAxisAlignment, ComponentPropertyEditor, PageType } from '@/@types/enum';
 import bus from '@/tools/bus';
 import { state as eventState, service as eventService } from '@/modules/event-module';
@@ -356,11 +356,11 @@ export const service = {
     }
   },
   /** 根据组件列表（树）查询所有表单项，返回列表，如果不传则默认查询普通页面下所有组件 */
-  getAllFormItem(rootComponents?: Component[], filter?: (component: Component) => boolean) {
+  getAllFormItem(rootComponents?: Component[], filter?: (component: Component | ComponentGroup) => boolean): Component[] {
     const _rootComponents: Component[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
     const _components: Component[] = [];
-    const _cb = (parentComponent: Component) => {
-      if (filter) {
+    const _cb = (parentComponent: Component | ComponentGroup) => {
+      if (filter && !parentComponent.isGroup) {
         if (filter(parentComponent)) _components.push({
           ...parentComponent,
           children: []
@@ -382,10 +382,10 @@ export const service = {
     return _components;
   },
   /** 查询组件 */
-  findComponent(componentId: string | undefined): Component | undefined {
+  findComponent(componentId: string | undefined): Component | ComponentGroup | undefined {
     if (!componentId) return undefined;
-    let _component: Component | undefined = undefined;
-    const _cb = (parentComponent: Component) => {
+    let _component: Component | ComponentGroup | undefined = undefined;
+    const _cb = (parentComponent: Component | ComponentGroup) => {
       if (parentComponent.id === componentId) {
         _component = parentComponent;
         return;
@@ -407,7 +407,7 @@ export const service = {
   /** 查询组件索引 */
   findComponentIndex(componentId: string): number | undefined {
     let _index: number | undefined = undefined;
-    const _cb = (parentComponent: Component, parentIndex: number) => {
+    const _cb = (parentComponent: Component | ComponentGroup, parentIndex: number) => {
       if (parentComponent.id === componentId) {
         _index = parentIndex;
         return;
@@ -428,11 +428,11 @@ export const service = {
   },
   /** 查询父组件及索引 */
   findParentComponent(componentId: string, { ignoreHidden, ignoreNotForm } = { ignoreHidden: false, ignoreNotForm: false }): { component: Component, originComponent: Component, index: number, level: number } | undefined {
-    let _component: Component | undefined;
-    let _originComponent: Component | undefined;
+    let _component: Component | ComponentGroup | undefined;
+    let _originComponent: Component | ComponentGroup | undefined;
     let _index: number | undefined = undefined;
     let _level: number = 0;
-    const _cb = (component: Component, index: number, parentComponent: Component, level: number) => {
+    const _cb = (component: Component | ComponentGroup, index: number, parentComponent: Component | ComponentGroup, level: number) => {
       if (_index !== undefined) return;
       if (component.id === componentId) {
         _index = index;

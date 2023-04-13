@@ -99,10 +99,22 @@
       </div>
 
       <!-- 主体部分 -->
-      <div class="design-form-body">
+      <div class="design-form-body" @wheel="onResize">
 
         <!-- 主体中部 @mousedown="blankMouseDown" @mouseup="blankMouseUp" -->
         <div class="design-form-center">
+
+          <!-- 缩略图组件 -->
+          <Thumbnail
+            :content-width="editorState.appConfig.width + 40"
+            :content-height="editorState.appConfig.height + 40"
+            :range-left="draggableState.scrollLeft"
+            :range-top="draggableState.scrollTop"
+            :range-width="draggableState.canvasViewportWidth / draggableState.scale"
+            :range-height="draggableState.canvasViewportHeight / draggableState.scale"
+            :content-list="editorState.currentPage.children"
+            v-if="editorState.appConfig.isInit"
+          ></Thumbnail>
 
           <!-- 全局搜索按钮 -->
           <div class="design-form-center-question">
@@ -127,6 +139,7 @@
           <div class="design-form-canvas"
             :class="editorState.appConfig.deviceType"
             @mousedown.stop="draggableService.startRangeSelect"
+            @scroll="onScroll"
             v-if="editorState.appConfig.isInit"
           >
             <!-- 对齐线 -->
@@ -150,7 +163,7 @@
             </div> -->
 
             <!-- 问卷画布 -->
-            <div class="design-form-canvas-page app-canvas" :class="editorState.currentPage.pageType">
+            <div class="design-form-canvas-page app-canvas" :style="getCanvasRect()" :class="editorState.currentPage.pageType">
               <!-- 画布页面名称 -->
               <div class="design-form-canvas-page-title">{{ editorState.currentPage.pageTitle }}</div>
               <!-- 问卷标题 -->
@@ -200,6 +213,7 @@
             <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
           </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
+          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-print-view"></i>放大倍数：x{{draggableState.scale.toFixed(1)}}</label>
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
           <label :class="configState.config.proMode ? 'pro-mode' : 'normal-mode'">
@@ -297,6 +311,7 @@ import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
 import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
+import Thumbnail, { Rect } from '@/modules/thumbnail-module/component/Thumbnail.vue';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
@@ -306,6 +321,41 @@ const {
 /** 保存记录pop弹窗 */
 const saveHistoryVisible = ref<boolean>(false);
 
+/** 画布滚动条滚动事件 */
+const onScroll = (e) => {
+  draggableState.scrollTop = e.target.scrollTop;
+  draggableState.scrollLeft = e.target.scrollLeft;
+};
+/** 画布缩放事件 */
+const onResize = (e) => {
+  if (e.ctrlKey) {
+    if (e.deltaY > 0 || e.deltaX > 0) {
+      if (draggableState.scale <= 1.5) {
+        draggableState.scale += 0.1;
+      }
+    } else {
+      if (draggableState.scale >= 0.6) {
+        draggableState.scale -= 0.1;
+      }
+    }
+    e.preventDefault();
+    e.stopPropagation()
+  }
+};
+
+/** 获取画布样式 */
+const getCanvasRect = () => {
+  const _style = {
+    width: `${editorState.appConfig.width}px`,
+    minHeight: 'initial',
+    zoom: draggableState.scale,
+  } as Record<string, any>;
+
+  if (!editorState.isPreview) {
+    _style.minHeight = `${editorState.appConfig.height}px`;
+  }
+  return _style;
+}
 /** 从欢迎界面创建 */
 const welcomeCreate = (type) => {
   state.visibleCreateNewDialog = true;
@@ -352,12 +402,6 @@ const menu_exportJSON = () => {
 const save = () => {
   historyService.exec('save', { value: 'save' });
 };
-
-onMounted(() => {
-  editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
-    componentHandle(eventName, params, component);
-  });
-});
     
 const instance = getCurrentInstance();
 const { componentHandle } = useComponentHandle();
@@ -406,10 +450,33 @@ const globalMouseUp = (e: MouseEvent) => {
   draggableService.endRangeSelect(e);
 }
 
+const onKeyDownStopPress = (e) => {
+  if (e.code.toLowerCase() === 'space') {
+    if (!draggableState.pressSpaceKey) {
+      draggableState.pressSpaceKey = true;
+    }
+    e.preventDefault();
+  }
+};
+const onKeyUpStopPress = (e) => {
+  if (e.code.toLowerCase() === 'space') {
+    if (draggableState.pressSpaceKey) {
+      draggableState.pressSpaceKey = false;
+    }
+    e.preventDefault();
+  }
+};
+
 onMounted(() => {
+  window.addEventListener('keydown', onKeyDownStopPress);
+  window.addEventListener('keyup', onKeyUpStopPress);
+  window.onkeydown = onKeyDownStopPress;
   window.onresize = () => {
     editorService.onPageSize();
   };
+  editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
+    componentHandle(eventName, params, component);
+  });
   document.body.addEventListener('mousemove', globalMouseMove);
   document.body.addEventListener('mouseup', globalMouseUp);
   if (route.query.qid) {

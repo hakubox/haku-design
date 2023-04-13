@@ -13,6 +13,7 @@ import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService } from '@/modules/form-fill-module';
 import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { service as pluginModule } from '@/modules/plugin-module';
 import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/common';
 import { addQuestionary, saveQuestionary } from "@/api/common/questionnaire";
@@ -31,192 +32,88 @@ import { formCommands } from '@/data/form-commands';
 import { FormInfoItem } from '@/modules/form-fill-module/@types';
 import { toast } from '@/common/message';
 
-/** 问卷编辑模块状态 */
-export const state = reactive({
-  /** 应用配置 */
-  appConfig: {
-    id: '',
-    appVersion: '1',
-    isInit: false,
-    formComponentLib: 'ant-design',
-    appType: AppType.questionnaire,
-    turnPageMode: 'default',
-    showPageProgress: true,
-    showPageButton: true,
-    appTitle: '测试问卷',
-    description: '',
-    headerTags: [],
-    headerContent: '',
-    remark: '',
-    width: 0,
-    height: 0,
-    headerHeight: 48,
-    componentIndex: 1,
-    deviceType: 'mobile',
-    formTheme: 'default',
-    showNo: true,
-    hasScore: true,
-    isAutoToGrade: true,
-    layoutConfig: {
-      layout: LayoutType.flex,
-      layoutDetailConfig: {
-        direction: 'column',
-      }
-    } as LayoutConfig<LayoutType.flex>,
-    dimensionConfig: {
-      isOpen: false,
-      dimensionList: [],
-    },
-    timerConfig: {
-      isOpen: false,
-    },
-    footer: {
-      isShow: true,
-      submitButtonText: '提交',
-      resetButton: false,
-      resetButtonText: '取消'
-    },
-    startPageConfig: {
-      isOpen: false,
-    },
-    endPageConfig: {
-      isOpen: false,
-    },
-    ratingList: [],
-    useAutoCache: true,
-    autoCacheDuration: 3600000
-  } as AppConfig,
-  /** 左侧栏是否展开 */
-  asideFold: false,
-  /** 画布尺寸及边距 */
-  canvasRect: { x: 0, y: 0 } as { x: number, y: number },
-  /** 预览图地址 */
-  previewUrl: '',
-  /** 是否预览 */
-  isPreview: false,
-  /** 是否显示样式配置弹出框 */
-  showAppStyleDialog: false,
-  /** 是否显示应用配置弹出框 */
-  showAppConfigDialog: false,
-  /** 全局组件索引（新增组件自增） */
-  globalComponentIndexMap: {} as Record<string, number>,
-  /** 当前应用页索引 */
-  currentPageIndex: 0,
-  /** 上一次应用页索引 */
-  prevPageIndex: 0,
-  /** 【题目页】当前分页索引 */
-  currentFormPageIndex: 0,
-  /** 【题目页】上一次分页索引 */
-  prevFormPageIndex: 0,
-  /** 画板 */
-  canvasEl: {} as HTMLElement,
-  /** 画板主面板元素 */
-  canvasPanelEl: {} as HTMLElement,
-  /** 页面列表 */
-  pages: [
-    { pageTitle: '主页', pageType: PageType.normalPage, children: [] },
-  ] as AppPage[],
-  /** 当前焦点属性 */
-  currentProp: {} as any,
-  /** 当前焦点事件 */
-  currentEvent: {} as any,
-  /** 范围选择器范围 */
-  currentRangeEditorRect: {
-    x: 0, y: 0, width: 0, height: 0, rotate: 0
-  },
-  /** 当前已选择组件 */
-  currentSelectedComponents: [] as (Component | ComponentGroup)[],
-  /** 当前选中的第一个控件Id */
-  currentSelectedFirstComponentId: '' as string | undefined,
-  /** 当前选择控件所带来的控件属性组 */
-  currentSelectedComponentPropertyGroups: [] as PropertyGroup[],
-  /** 当前选择控件所带来的控件属性哈希表 */
-  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty>,
-  /** 画板滚动坐标 */
-  canvasLocation: {
-    x: 0,
-    y: 0
-  },
-  /** 事件总线 */
-  bus,
-  /** 控件画布 */
-  componentCanvas : {} as any,
-  /** 工具箱列表 */
-  menuComponents: getMenuComponentItems,
-  /** 组件列表 */
-  componentList: getComponents,
-  /** 游标父元素 */
-  componentCursorParentEl: undefined as any,
-  /** 游标父元素前后位置 */
-  componentCursorIsAfter: undefined as boolean | undefined,
-  /** 组件放置游标 */
-  componentCursorEl: document.createElement('div') as HTMLElement,
-  /** 画布主panel */
-  rootPanelEl: null as any,
-  /** 设备类型列表 */
-  devices: initRemoteDevices() as Record<string, RemoteDevice>,
-  /** 属性编辑器库 */
-  propertyEditors: getEditors,
-  /** Footer Dom */
-  footerDom: undefined as HTMLElement | undefined,
-  /** 已选择的所有组件Id列表 */
-  currentSelectedIds: computed((): string[] => {
-    return state.currentSelectedComponents.map(i => i.id);
-  }),
-  /** 获取计时配置 */
-  getTimerConfig: computed((): FormTimerConfig => {
-    return state.appConfig?.timerConfig || {};
-  }),
-  /** 主页 */
-  mainPage: computed((): AppPage => {
-    return state.pages.find(i => i.pageType === PageType.normalPage)!;
-  }),
-  /** 当前页 */
-  currentPage: computed((): AppPage => {
-    return state.pages[state.currentPageIndex];
-  }),
-  /** 当前控件对应的属性编辑器字典 */
-  currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
-    const _selected = state.currentSelectedComponents;
-    if (_selected.length) {
-      let _propEditors: Record<string, any> = {};
-      if (_selected.length >= 1 && !_selected[0].isGroup) {
-        _propEditors = _selected[0].propertyEditors ?? {};
-      }
-      for (let i = 1; i < _selected.length; i++) {
-        const component = _selected[i];
-        if (!component.isGroup && component.propertyEditors) {
-          Object.entries(component.propertyEditors).forEach(([key, value]) => {
-            if (!_propEditors[key] || _propEditors[key] !== value) {
-              delete _propEditors[key];
-            }
-          });
-        }
-      }
-      return _propEditors;
-    }
-    return {};
-  }),
-  /** 用户设备是否处于暗模式 */
-  isDarkMode: computed((): boolean => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }),
-  /** 总页数 */
-  maxFormPageCount: computed((): number => {
-    if (state.appConfig.turnPageMode === 'no-page') return 1;
-    else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
-    else return state.currentPage.children.filter(i => {
-      if (i.isGroup) {
-        return false;
-      } else {
-        return i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen;
-      }
-    }).length + 1;
-  }),
-});
 
 /** 问卷编辑模块逻辑 */
 export const service = {
+  /** 创建AppConfig */
+  createAppConfig({
+    appType,
+    isInit,
+    formId,
+    appTitle,
+    width,
+    height,
+    description,
+    layoutConfig,
+    deviceType,
+  }: {
+    appType: AppType,
+    isInit: boolean,
+    formId?: string,
+    appTitle?: string,
+    width?: number,
+    height?: number,
+    description?: string,
+    layoutConfig?: LayoutConfig<LayoutType.flex | LayoutType.absolute>,
+    deviceType?: DeviceType,
+  }): AppConfig {
+    return {
+      appTitle: appTitle || '',
+      appType: appType,
+      description: description || '',
+      id: formId || '',
+      deviceType: deviceType ?? DeviceType.mobile,
+      appVersion: '1',
+      isInit: isInit,
+      headerTags: [],
+      headerContent: '',
+      remark: '',
+      turnPageMode: 'default',
+      showPageProgress: true,
+      showPageButton: true,
+      width: width,
+      height: height,
+      scale: 1,
+      headerHeight: 48,
+      showNo: true,
+      timerConfig: {
+        isOpen: false,
+      },
+      dimensionConfig: {
+        isOpen: false,
+        dimensionList: [],
+      },
+      footer: {
+        isShow: false,
+        submitButtonText: '提交',
+        resetButton: false,
+        resetButtonText: '重置'
+      },
+      componentIndex: 1,
+      formTheme: 'default',
+      hasScore: true,
+      isAutoToGrade: true,
+      layoutConfig: layoutConfig ?? {
+        layout: LayoutType.flex,
+        layoutDetailConfig: {
+          direction: 'column',
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center
+        },
+      },
+      startPageConfig: {
+        isOpen: false,
+      },
+      endPageConfig: {
+        isOpen: false,
+      },
+      ratingList: [
+        { startScore: 0, title: '分数正常' }
+      ],
+      useAutoCache: true,
+      autoCacheDuration: 3600000
+    } as AppConfig;
+  },
   /** 展开/收起左侧侧边栏 */
   toggleAsidePanel() {
     state.asideFold = !state.asideFold;
@@ -456,61 +353,21 @@ export const service = {
       service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
     } else {
       const _defaultDevice = remoteDevices.iphone678;
-      state.appConfig = {
-        id: formId || '',
-        appVersion: '1',
+      state.appConfig = service.createAppConfig({
+        appType: AppType.courseware,
         isInit: true,
         appTitle: appConfig?.title || '',
         description: appConfig?.description || '',
-        appType: AppType.courseware,
-        headerTags: [],
-        headerContent: '',
-        remark: '',
-        turnPageMode: 'default',
-        showPageProgress: true,
-        showPageButton: true,
         width: _defaultDevice.width,
         height: _defaultDevice.height,
-        headerHeight: 48,
         deviceType: DeviceType.mobile,
-        showNo: true,
-        timerConfig: {
-          isOpen: false,
-        },
-        dimensionConfig: {
-          isOpen: false,
-          dimensionList: [],
-        },
-        footer: {
-          isShow: false,
-          submitButtonText: '提交',
-          resetButton: false,
-          resetButtonText: '重置'
-        },
-        componentIndex: 1,
-        formTheme: 'default',
-        hasScore: true,
-        isAutoToGrade: true,
         layoutConfig: {
           layout: LayoutType.flex,
           layoutDetailConfig: {
             direction: 'column',
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center
           }
-        },
-        startPageConfig: {
-          isOpen: false,
-        },
-        endPageConfig: {
-          isOpen: false,
-        },
-        ratingList: [
-          { startScore: 0, title: '分数正常' }
-        ],
-        useAutoCache: true,
-        autoCacheDuration: 3600000
-      } as AppConfig;
+        } as LayoutConfig<LayoutType.flex>,
+      });
       state.pages[0].children = [];
     }
 
@@ -537,61 +394,21 @@ export const service = {
       state.pages = form.pages;
     } else {
       const _defaultDevice = remoteDevices.iphone678;
-      state.appConfig = {
-        id: formId || '',
-        appVersion: '1',
+      state.appConfig = service.createAppConfig({
+        appType: AppType.complexComponent,
         isInit: true,
         appTitle: appConfig?.title || '',
         description: appConfig?.description || '',
-        appType: AppType.complexComponent,
-        headerTags: [],
-        headerContent: '',
-        remark: '',
-        turnPageMode: 'default',
-        showPageProgress: true,
-        showPageButton: true,
         width: _defaultDevice.width,
         height: _defaultDevice.height,
-        headerHeight: 48,
         deviceType: DeviceType.mobile,
-        showNo: true,
-        timerConfig: {
-          isOpen: false,
-        },
-        dimensionConfig: {
-          isOpen: false,
-          dimensionList: [],
-        },
-        footer: {
-          isShow: false,
-          submitButtonText: '提交',
-          resetButton: false,
-          resetButtonText: '重置'
-        },
-        componentIndex: 1,
-        formTheme: 'default',
-        hasScore: true,
-        isAutoToGrade: true,
         layoutConfig: {
           layout: LayoutType.flex,
           layoutDetailConfig: {
             direction: 'column',
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center
           }
-        },
-        startPageConfig: {
-          isOpen: false,
-        },
-        endPageConfig: {
-          isOpen: false,
-        },
-        ratingList: [
-          { startScore: 0, title: '分数正常' }
-        ],
-        useAutoCache: true,
-        autoCacheDuration: 3600000
-      } as AppConfig;
+        } as LayoutConfig<LayoutType.flex>,
+      });
       state.pages[0].children = [];
     }
 
@@ -666,61 +483,21 @@ export const service = {
       service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
     } else {
       const _defaultDevice = remoteDevices.iphone678;
-      state.appConfig = {
-        id: formId || '',
-        appVersion: '1',
+      state.appConfig = service.createAppConfig({
+        appType: AppType.questionnaire,
         isInit: true,
         appTitle: appConfig?.title || '测试问卷',
         description: appConfig?.description || '',
-        appType: AppType.questionnaire,
-        headerTags: [],
-        headerContent: '',
-        remark: '',
-        turnPageMode: 'default',
-        showPageProgress: true,
-        showPageButton: true,
         width: _defaultDevice.width,
         height: _defaultDevice.height,
-        headerHeight: 48,
         deviceType: DeviceType.mobile,
-        showNo: true,
-        timerConfig: {
-          isOpen: false,
-        },
-        dimensionConfig: {
-          isOpen: false,
-          dimensionList: [],
-        },
-        footer: {
-          isShow: true,
-          submitButtonText: '提交',
-          resetButton: false,
-          resetButtonText: '重置'
-        },
-        componentIndex: 1,
-        formTheme: 'default',
-        hasScore: true,
-        isAutoToGrade: true,
         layoutConfig: {
           layout: LayoutType.flex,
           layoutDetailConfig: {
             direction: 'column',
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center
           }
         } as LayoutConfig<LayoutType.flex>,
-        startPageConfig: {
-          isOpen: false,
-        },
-        endPageConfig: {
-          isOpen: false,
-        },
-        ratingList: [
-          { startScore: 0, title: '分数正常' }
-        ],
-        useAutoCache: true,
-        autoCacheDuration: 3600000
-      };
+      });
       state.pages[0].children = [];
     }
 
@@ -749,58 +526,22 @@ export const service = {
 
       service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
     } else {
-      const _defaultDevice = remoteDevices.iphone678;
-      state.appConfig = {
-        id: formId || '',
-        appVersion: '1',
+      const _defaultDevice = remoteDevices['2kpc'];
+      state.appConfig = service.createAppConfig({
+        appType: AppType.canvas,
         isInit: true,
         appTitle: appConfig?.title || '测试画布',
         description: appConfig?.description || '',
-        appType: AppType.canvas,
-        headerTags: [],
-        headerContent: '',
-        remark: '',
-        turnPageMode: 'default',
-        showPageProgress: true,
-        showPageButton: true,
         width: _defaultDevice.width,
         height: _defaultDevice.height,
-        headerHeight: 48,
-        deviceType: DeviceType.mobile,
-        showNo: true,
-        timerConfig: {
-          isOpen: false,
-        },
-        dimensionConfig: {
-          isOpen: false,
-          dimensionList: [],
-        },
-        footer: {
-          isShow: true,
-          submitButtonText: '提交',
-          resetButton: false,
-          resetButtonText: '重置'
-        },
-        componentIndex: 1,
-        formTheme: 'default',
-        hasScore: true,
-        isAutoToGrade: true,
+        deviceType: DeviceType.pc,
         layoutConfig: {
-          layout: LayoutType.absolute,
-          layoutDetailConfig: { }
-        } as LayoutConfig<LayoutType.absolute>,
-        startPageConfig: {
-          isOpen: false,
-        },
-        endPageConfig: {
-          isOpen: false,
-        },
-        ratingList: [
-          { startScore: 0, title: '分数正常' }
-        ],
-        useAutoCache: true,
-        autoCacheDuration: 3600000
-      };
+          layout: LayoutType.flex,
+          layoutDetailConfig: {
+            direction: 'column',
+          }
+        } as LayoutConfig<LayoutType.flex>,
+      });
       state.pages[0].children = [];
     }
 
@@ -996,11 +737,15 @@ export const service = {
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;
 
-    const _canvasPage = state.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
-    state.canvasRect = {
-      x: _canvasPage.offsetLeft ?? 0,
-      y: _canvasPage.offsetTop ?? 0,
-    };
+    if (state.canvasEl) {
+      const _canvasPage = state.canvasEl.querySelector('.design-form-canvas-page')! as HTMLElement;
+      state.canvasRect = {
+        x: _canvasPage.offsetLeft ?? 0,
+        y: _canvasPage.offsetTop ?? 0,
+      };
+      draggableState.canvasViewportWidth = state.canvasEl.offsetWidth;
+      draggableState.canvasViewportHeight = state.canvasEl.offsetHeight;
+    }
   },
   /**
    * 合并表单数据（需要根据题目合并）
@@ -1124,6 +869,9 @@ export const service = {
       if (_dom) {
         state.appConfig.width = _dom.clientWidth;
       }
+      if (!state.canvasEl) state.canvasEl = document.querySelector('.design-form-canvas')!;
+      draggableState.canvasViewportWidth = state.canvasEl.offsetWidth;
+      draggableState.canvasViewportHeight = state.canvasEl.offsetHeight;
     }, 210);
   },
   /** 跳转到上一页（问卷分页） */
@@ -1503,6 +1251,153 @@ export const service = {
     }
   },
 };
+
+/** 问卷编辑模块状态 */
+export const state = reactive({
+  /** 应用配置 */
+  appConfig: service.createAppConfig({
+    appType: AppType.questionnaire,
+    isInit: false,
+    appTitle: '测试问卷',
+    description: '',
+    width: 0,
+    height: 0,
+    deviceType: DeviceType.mobile,
+    layoutConfig: {
+      layout: LayoutType.flex,
+      layoutDetailConfig: {
+        direction: 'column',
+      }
+    } as LayoutConfig<LayoutType.flex>,
+  }),
+  /** 左侧栏是否展开 */
+  asideFold: false,
+  /** 画布尺寸及边距 */
+  canvasRect: { x: 0, y: 0 } as { x: number, y: number },
+  /** 预览图地址 */
+  previewUrl: '',
+  /** 是否预览 */
+  isPreview: false,
+  /** 是否显示样式配置弹出框 */
+  showAppStyleDialog: false,
+  /** 是否显示应用配置弹出框 */
+  showAppConfigDialog: false,
+  /** 全局组件索引（新增组件自增） */
+  globalComponentIndexMap: {} as Record<string, number>,
+  /** 当前应用页索引 */
+  currentPageIndex: 0,
+  /** 上一次应用页索引 */
+  prevPageIndex: 0,
+  /** 【题目页】当前分页索引 */
+  currentFormPageIndex: 0,
+  /** 【题目页】上一次分页索引 */
+  prevFormPageIndex: 0,
+  /** 画板 */
+  canvasEl: {} as HTMLElement,
+  /** 画板主面板元素 */
+  canvasPanelEl: {} as HTMLElement,
+  /** 页面列表 */
+  pages: [
+    { pageTitle: '主页', pageType: PageType.normalPage, children: [] },
+  ] as AppPage[],
+  /** 当前焦点属性 */
+  currentProp: {} as any,
+  /** 当前焦点事件 */
+  currentEvent: {} as any,
+  /** 范围选择器范围 */
+  currentRangeEditorRect: {
+    x: 0, y: 0, width: 0, height: 0, rotate: 0
+  },
+  /** 当前已选择组件 */
+  currentSelectedComponents: [] as (Component | ComponentGroup)[],
+  /** 当前选中的第一个控件Id */
+  currentSelectedFirstComponentId: '' as string | undefined,
+  /** 当前选择控件所带来的控件属性组 */
+  currentSelectedComponentPropertyGroups: [] as PropertyGroup[],
+  /** 当前选择控件所带来的控件属性哈希表 */
+  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty>,
+  /** 画板滚动坐标 */
+  canvasLocation: {
+    x: 0,
+    y: 0
+  },
+  /** 事件总线 */
+  bus,
+  /** 控件画布 */
+  componentCanvas : {} as any,
+  /** 工具箱列表 */
+  menuComponents: getMenuComponentItems,
+  /** 组件列表 */
+  componentList: getComponents,
+  /** 游标父元素 */
+  componentCursorParentEl: undefined as any,
+  /** 游标父元素前后位置 */
+  componentCursorIsAfter: undefined as boolean | undefined,
+  /** 组件放置游标 */
+  componentCursorEl: document.createElement('div') as HTMLElement,
+  /** 画布主panel */
+  rootPanelEl: null as any,
+  /** 设备类型列表 */
+  devices: initRemoteDevices() as Record<string, RemoteDevice>,
+  /** 属性编辑器库 */
+  propertyEditors: getEditors,
+  /** Footer Dom */
+  footerDom: undefined as HTMLElement | undefined,
+  /** 已选择的所有组件Id列表 */
+  currentSelectedIds: computed((): string[] => {
+    return state.currentSelectedComponents.map(i => i.id);
+  }),
+  /** 获取计时配置 */
+  getTimerConfig: computed((): FormTimerConfig => {
+    return state.appConfig?.timerConfig || {};
+  }),
+  /** 主页 */
+  mainPage: computed((): AppPage => {
+    return state.pages.find(i => i.pageType === PageType.normalPage)!;
+  }),
+  /** 当前页 */
+  currentPage: computed((): AppPage => {
+    return state.pages[state.currentPageIndex];
+  }),
+  /** 当前控件对应的属性编辑器字典 */
+  currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
+    const _selected = state.currentSelectedComponents;
+    if (_selected.length) {
+      let _propEditors: Record<string, any> = {};
+      if (_selected.length >= 1 && !_selected[0].isGroup) {
+        _propEditors = _selected[0].propertyEditors ?? {};
+      }
+      for (let i = 1; i < _selected.length; i++) {
+        const component = _selected[i];
+        if (!component.isGroup && component.propertyEditors) {
+          Object.entries(component.propertyEditors).forEach(([key, value]) => {
+            if (!_propEditors[key] || _propEditors[key] !== value) {
+              delete _propEditors[key];
+            }
+          });
+        }
+      }
+      return _propEditors;
+    }
+    return {};
+  }),
+  /** 用户设备是否处于暗模式 */
+  isDarkMode: computed((): boolean => {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }),
+  /** 总页数 */
+  maxFormPageCount: computed((): number => {
+    if (state.appConfig.turnPageMode === 'no-page') return 1;
+    else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
+    else return state.currentPage.children.filter(i => {
+      if (i.isGroup) {
+        return false;
+      } else {
+        return i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen;
+      }
+    }).length + 1;
+  }),
+});
 
 window['editorModule'] = state;
 

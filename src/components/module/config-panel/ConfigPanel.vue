@@ -7,11 +7,11 @@
       @change="changeMainPropertyPanel($event)"
     >
       <TabPane key="prop">
-        <template #tab><ProfileOutlined />组件属性</template>
+        <template #tab><ProfileOutlined />属性</template>
         <PropertyEditor></PropertyEditor>
       </TabPane>
       <TabPane key="event">
-        <template #tab><span><ThunderboltOutlined />组件逻辑</span></template>
+        <template #tab><span><ThunderboltOutlined />逻辑</span></template>
         <EventConfig :target="editorState.currentSelectedFirstComponentId"></EventConfig>
       </TabPane>
 

@@ -31,6 +31,8 @@ export declare class AppConfig {
   width: number;
   /** 高度 */
   height: number;
+  /** 缩放比 */
+  scale: number;
   /** 头部高度 */
   headerHeight: number;
   /** 设备类型 */

@@ -15,8 +15,9 @@
             <template #title>新增行</template>
             <Button type="primary" @click="addRow(value?.length)" size="small">
               <template #icon><plus-outlined /></template>
-            </Button> </Tooltip>&nbsp;
-          <Tooltip v-if="state.fullscreen">
+            </Button>
+          </Tooltip>
+          <!-- &nbsp; <Tooltip v-if="state.fullscreen">
             <template #title>还原</template>
             <Button @click="state.fullscreen = false" size="small">
               <template #icon><fullscreen-exit-outlined /></template>
@@ -27,7 +28,7 @@
             <Button @click="state.fullscreen = true" size="small">
               <template #icon><fullscreen-outlined /></template>
             </Button>
-          </Tooltip>
+          </Tooltip> -->
         </template>
         <template v-else>
           {{ title }}
@@ -341,29 +342,41 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-:deep(.ant-table.ant-table-small) {
-  > .ant-table-content {
-    .ant-table-body {
-      margin: 0px;
+:deep(.ant-table) {
+  .ant-table-content {
+    // .ant-table-body {
+      // margin: 0px;
 
-      > table {
-        > thead.ant-table-thead {
-          > tr {
-            > th {
-              padding: 4px;
-            }
+    > table {
+      > thead.ant-table-thead {
+        > tr {
+          > th {
+            padding: 4px;
           }
         }
+      }
 
-        > tbody.ant-table-tbody {
-          > tr.ant-table-row {
-            > td {
-              padding: 4px;
+      > tbody.ant-table-tbody {
+        > tr.ant-table-row {
+          > td {
+            padding: 4px 2px;
+
+            .ant-input.text-editor {
+              padding: 4px 6px;
+            }
+
+            .ant-input-number {
+              > .ant-input-number-input-wrap {
+                > .ant-input-number-input {
+                  padding: 0 6px;
+                }
+              }
             }
           }
         }
       }
     }
+    // }
 
     table.ant-table-fixed {
       > thead.ant-table-thead {

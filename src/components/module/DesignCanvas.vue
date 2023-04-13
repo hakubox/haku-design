@@ -64,7 +64,6 @@
           {{ component }}
         </FormDesignComponent>
       </div>
-
       <div
         ref="form-canvas-mainpanel"
         class="form-canvas-mainpanel"
@@ -89,7 +88,7 @@
           :component-id="component.id"
           :isPreview="props.isPreview"
           :class="{
-            'form-component-layout': ['complex', 'layout'].includes(component.type),
+            'form-component-layout': ['complex', 'layout'].includes(!component.isGroup ? component.type : '-'),
             active:
               !props.isPreview &&
               editorState.currentSelectedComponents.find(i => i.id === component.id),

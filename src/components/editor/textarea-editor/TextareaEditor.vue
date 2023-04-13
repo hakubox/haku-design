@@ -59,6 +59,8 @@ onMounted(() => {
 @import '/src/assets/less/variable.less';
 
 :deep(.textarea-editor) {
+  background-color: #f7f9fc;
+  border: 1px solid #f7f9fc;
 
   &:hover {
     &:not(.disabled) {

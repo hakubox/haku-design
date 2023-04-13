@@ -95,11 +95,54 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '/src/assets/less/variable.less';
 
-:deep(.number-editor) {
-  &:hover {
-    &:not(.disabled) {
-      border-color: fadeout(@primary-color, 20%) !important;
-      border-width: 1px !important;
+.number-editor {
+
+  &.ant-input-number {
+    background-color: #f7f9fc;
+    border: 1px solid #f7f9fc;
+  
+    &:hover {
+      &:not(.disabled) {
+        border-color: fadeout(@primary-color, 20%) !important;
+        border-width: 1px !important;
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
+    }
+  }
+
+  :deep(.ant-input-number) {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    background-color: #f7f9fc;
+    border: 1px solid #f7f9fc;
+    border-radius: 3px;
+    height: 30px;
+    width: calc(100%);
+    transition: 0.3s;
+
+    .ant-input-number-input-wrap {
+      width: 100%;
+
+      > .ant-input-number-input {
+        width: 100%;
+      }
+    }
+  
+    &:hover {
+      &:not(.disabled) {
+        border-color: fadeout(@primary-color, 20%) !important;
+        border-width: 1px !important;
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
     }
   }
 }
