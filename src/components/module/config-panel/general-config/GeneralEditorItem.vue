@@ -33,93 +33,81 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, computed } from "vue";
+<script lang="ts" setup>
+import { PropType, computed } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { state as historyState, service as historyService } from "@/common/history-module";
-import { Component, GeneralProperty } from "@/@types";
+import type { GeneralProperty } from "@/@types";
 
-export default defineComponent({
-  name: "GeneralEditorItem",
-  components: {},
-  props: {
-    /** 属性 */
-    prop: {
-      type: Object as PropType<GeneralProperty>,
-      required: true,
-      default: () => ({})
-    },
-    /** 属性列表 */
-    propertys: {
-      type: Array as PropType<GeneralProperty[]>,
-      default: () => []
-    },
-    /** 绑定主数据 */
-    model: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({})
-    },
-    /** 是否全屏状态 */
-    isFullScreen: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  /** 属性 */
+  prop: {
+    type: Object as PropType<GeneralProperty>,
+    required: true,
+    default: () => ({})
   },
-  methods: {
-    onFocus(prop) {
-      editorState.currentProp = prop;
-    },
-    /** 属性修改触发的事件 */
-    propChangeListener(e, prop, propMap, target?: Record<string, any>) {
-      if (e.target) {
-        console.warn('属性值包含val.target', e);
-        return;
-      }
-    },
+  /** 属性列表 */
+  propertys: {
+    type: Array as PropType<GeneralProperty[]>,
+    default: () => []
   },
-  created() {
+  /** 绑定主数据 */
+  model: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({})
   },
-  mounted() {
-  },
-  setup(props, { emit }) {
-
-    const getEditor = computed(() => {
-      return editorState.propertyEditors[props.prop.editor];
-    });
-    
-    /** 值改变 */
-    const onChange = (value, prop, propertys, model) => {
-      if (value?.target) return;
-      emit('change', value, prop, propertys, model);
-    };
-
-    /** 获取值 */
-    const getValue = computed(() => {
-      let _returnValue;
-      if (typeof props.prop.name === 'string') {
-        _returnValue = props.model[props.prop.name];
-      } else {
-        let _value = props.model;
-        props.prop.name.forEach(name => {
-          if (_value) _value = _value[name];
-        });
-        _returnValue = _value;
-      }
-
-      if (_returnValue?.value !== undefined) {
-        _returnValue = _returnValue.value;
-      }
-
-      return _returnValue;
-    });
-
-    return {
-      editorState,
-      getEditor,
-      historyService,
-      getValue,
-      onChange
-    };
+  /** 是否全屏状态 */
+  isFullScreen: {
+    type: Boolean,
+    default: false
   }
+});
+
+const emit = defineEmits<{
+  (event: 'change', value: any, prop: GeneralProperty, propertys: GeneralProperty[], model: Record<string, any>): void;
+}>();
+
+const onFocus = (prop) => {
+  editorState.currentProp = prop;
+};
+/** 属性修改触发的事件 */
+const propChangeListener = (e, prop, propMap, target?: Record<string, any>) => {
+  if (e.target) {
+    console.warn('属性值包含val.target', e);
+    return;
+  }
+};
+
+const getEditor = computed(() => {
+  return editorState.propertyEditors[props.prop.editor];
+});
+
+/** 值改变 */
+const onChange = (value, prop: GeneralProperty, propertys: GeneralProperty[], model: Record<string, any>) => {
+  if (value?.target) return;
+  emit('change', value, prop, propertys, model);
+};
+
+/** 获取值 */
+const getValue = computed(() => {
+  let _returnValue;
+  if (props.prop.names) {
+    _returnValue = props.prop.names.map(name => props.model[name]);
+  } else {
+    if (typeof props.prop.name === 'string') {
+      _returnValue = props.model[props.prop.name];
+    } else {
+      let _value = props.model;
+      props.prop.name.forEach(name => {
+        if (_value) _value = _value[name];
+      });
+      _returnValue = _value;
+    }
+  }
+
+  if (_returnValue?.value !== undefined) {
+    _returnValue = _returnValue.value;
+  }
+
+  return _returnValue;
 });
 </script>

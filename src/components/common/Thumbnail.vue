@@ -16,19 +16,24 @@
       }" class="thumbnail-content-item" v-for="item in props.contentList">
       </div>
       
-      <div :style="{
-        top: `${props.rangeTop * scale}px`,
-        left: `${props.rangeLeft * scale}px`,
-        width: `${props.rangeWidth * scale}px`,
-        height: `${props.rangeHeight * scale}px`
-      }" class="thumbnail-bar"></div>
+      <div
+        :style="{
+          top: `${props.rangeTop * scale}px`,
+          left: `${props.rangeLeft * scale}px`,
+          width: `${getRangeWidth * scale}px`,
+          height: `${getRangeHeight * scale}px`
+        }"
+        class="thumbnail-bar"
+        @mousedown.stop.prevent="onMouseDown"
+        @mousemove.stop.prevent="onMouseMove"
+      ></div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Component, ComponentGroup } from '@/@types';
-import { computed, PropType, reactive } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive } from 'vue';
 
 export interface Rect {
   left: number;
@@ -91,6 +96,29 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits<{
+  (event: 'scroll', x: number, y: number): void;
+  (event: 'update:rangeTop', value: any): void;
+  (event: 'update:rangeLeft', value: any): void;
+}>();
+
+const state = reactive({
+  /** 拖拽状态 */
+  dragState: {
+    isStart: false,
+    x: 0,
+    y: 0,
+  },
+});
+
+const getRangeWidth = computed(() => {
+  return props.rangeWidth > props.contentWidth * props.canvasScale ? props.contentWidth * props.canvasScale : props.rangeWidth;
+});
+
+const getRangeHeight = computed(() => {
+  return props.rangeHeight > props.contentHeight * props.canvasScale ? props.contentHeight * props.canvasScale : props.rangeHeight;
+});
+
 /** 综合缩放比 */
 const scale = computed(() => {
   const widthScale = props.width / props.contentWidth / props.canvasScale;
@@ -98,7 +126,36 @@ const scale = computed(() => {
   return widthScale < heightScale ? widthScale : heightScale;
 });
 
-const state = reactive({
+const onMouseDown = (e: MouseEvent) => {
+  state.dragState.isStart = true;
+  state.dragState.x = e.pageX;
+  state.dragState.y = e.pageY;
+};
+
+const onMouseMove = (e: MouseEvent) => {
+  if (state.dragState.isStart) {
+    const _x = (e.pageX - state.dragState.x) / scale.value;
+    const _y = (e.pageY - state.dragState.y) / scale.value;
+    // emit('update:rangeLeft', _x);
+    // emit('update:rangeTop', _y);
+    emit('scroll', _x, _y);
+  }
+};
+
+const onMouseUp = (e: MouseEvent) => {
+  state.dragState.isStart = false;
+  state.dragState.x = 0;
+  state.dragState.y = 0;
+};
+
+onMounted(() => {
+  document.body.addEventListener('mousemove', onMouseMove);
+  document.body.addEventListener('mouseup', onMouseUp);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('mousemove', onMouseMove);
+  document.body.removeEventListener('mouseup', onMouseUp);
 });
 
 </script>
@@ -135,6 +192,7 @@ const state = reactive({
     }
 
     > .thumbnail-bar {
+      cursor: grab;
       position: absolute;
       display: block;
       left: 0;
@@ -142,6 +200,10 @@ const state = reactive({
       outline: 1px solid #4d8ce4;
       background-color: rgba(51, 122, 183, 0.2);
       border-radius: 2px;
+
+      &:active {
+        cursor: grabbing;
+      }
     }
   }
 }

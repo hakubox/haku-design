@@ -61,4 +61,7 @@ export declare class GeneralProperty {
   canFullScreen?: boolean;
   /** 属性当前的编辑器 */
   // currentEditor?: ComponentPropertyEditor;
+
+  /** 属性名 */
+  names?: string[];
 }

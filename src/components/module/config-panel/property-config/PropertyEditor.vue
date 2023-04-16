@@ -1,6 +1,13 @@
 <template>
-  <Empty v-if="!editorState.currentSelectedComponentPropertyGroups.length" description="暂未选择组件" :style="{ marginTop: '20vh' }"></Empty>
-  <div v-else class="property-collapse">
+  <!-- <Empty v-if="!editorState.currentSelectedComponentPropertyGroups.length" description="暂未选择组件" :style="{ marginTop: '20vh' }"></Empty> -->
+  <div class="property-collapse" v-if="!editorState.currentSelectedComponentPropertyGroups.length">
+    <GeneralEditor
+      :model="editorState.appConfig"
+      :propertys="state.pageConfigProps"
+      :groups="[{ title: '页面', name: 'page', icon: '' }]"
+    ></GeneralEditor>
+  </div>
+  <div class="property-collapse" v-else>
     <div
       class="property-collapse-item"
       v-for="(propGroup, index) in editorState.currentSelectedComponentPropertyGroups"
@@ -75,7 +82,7 @@
               @focus="editorState.currentProp = prop"
               @change="propAttaChangeListener($event, prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)"
               v-bind="Object.assign({}, editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]]?.attrs ?? {}, prop.attrs)" 
-              v-model:value.lazy="editorState.currentSelectedComponents[0].attrs['__' + prop.name]" 
+              v-model:value.lazy="editorState.currentSelectedComponents[0].attrs['__' + prop.name]"
             >
               <!-- TODO: 需要处理值改变问题 v-model:value.lazy 怎样处理 -->
               {{editorState.propertyEditors[editorState.currentPropertyEditors[prop.name]].html}}
@@ -172,9 +179,10 @@ import type { ComponentProperty } from "@/@types/component-property";
 import { initPropertyEditors } from '@/data/property-editor';
 import { ComponentPropertyEditor } from "@/@types/enum";
 import PropertyEditorItem from './PropertyEditorItem.vue';
-import type { Component } from "@/@types";
+import type { Component, ComponentGroup } from "@/@types";
 import { Button, ButtonGroup, Empty, Modal, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
+import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 
 const state = reactive({
   /** 默认属性编辑器哈希表 */
@@ -185,9 +193,24 @@ const state = reactive({
     value: undefined as any,
     isFullScreen: false,
   },
+  /** 预览配置属性栏 */
+  pageConfigProps: [
+    {
+      name: 'size',
+      names: ['width', 'height'],
+      title: '尺寸',
+      require: false,
+      visible: true,
+      group: 'page',
+      editor: ComponentPropertyEditor.numbers,
+      attrs: {
+        options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+      }
+    }
+  ],
 });
 
-const propShowListener = (prop, propMap, components: Component[]) => {
+const propShowListener = (prop, propMap, components: (Component | ComponentGroup)[]) => {
   if (prop?.showCondition && components.length) {
     // TODO: 待处理，第五个参数需要确认怎样处理
     if (components.length === 1) {
@@ -205,7 +228,9 @@ const changePropAttach = (prop: ComponentProperty, editor: ComponentPropertyEdit
   if (editorState.currentSelectedComponents.length) {
     historyService.redo();
     editorState.currentSelectedComponents.forEach(component => {
-      editorService.setComponentAttrType(component, prop, editor);
+      if (!component.isGroup) {
+        editorService.setComponentAttrType(component, prop, editor);
+      }
     });
   }
 };
@@ -235,7 +260,7 @@ const closeFullScreen = ($event) => {
 } 
 
 /** 附加属性修改触发的事件 */
-const propAttaChangeListener = (value, prop, propMap, components: Component[]) => {
+const propAttaChangeListener = (value, prop, propMap, components: (Component | ComponentGroup)[]) => {
   if (prop) {
     if (value?.target) {
       console.warn('属性值包含val.target', value);

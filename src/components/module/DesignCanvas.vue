@@ -73,7 +73,7 @@
           readonly: props.isReadonly,
           printmode: props.isPrint
         }"
-        :style="{ minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
+        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
         <CanvasNodeActionEditor :global="true" :disabledRotate="true"
           v-if="editorState.appConfig.appType === AppType.canvas"
@@ -109,6 +109,7 @@
         v-if="
           props.isPreview &&
           showButton &&
+          editorState.appConfig.appType === AppType.questionnaire &&
           editorState.appConfig?.showPageButton !== false &&
           editorState.currentPage.pageType === 'normal-page'
         "

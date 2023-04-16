@@ -1,6 +1,5 @@
 // import { Component } from '@/@types';
 import { cloneLoop } from '@/lib/clone';
-// import * as rasterizeHTML from 'rasterizehtml';
 import { toRaw } from 'vue';
 
 /** QBasic属性名称列表 */
@@ -36,20 +35,26 @@ export function intersectsRect(x1: number, y1: number, w1: number, h1: number, x
 export function toDecimal(num: number | string, pos: number = 0): number {
   let re: number;
   if (typeof num === 'string') {
-    if (num.includes('.')) {
+    if (num === '') {
+      return 0;
+    } else if (num.includes('.')) {
       re = parseFloat(num);
     } else {
       return parseInt(num);
     }
   } else {
-    if (num.toString().includes('.')) {
+    if (pos === 0) {
+      return Math.round(num);
+    } else if (num.toString().includes('.')) {
       re = num;
     } else {
       return num;
     }
   }
   if (isNaN(re)) {
-    return NaN;
+    return 0;
+  } else if (pos === 0) {
+    return Math.round(re);
   } else {
     return Math.round(re * Math.pow(10, pos)) / Math.pow(10, pos);
   }
@@ -216,22 +221,6 @@ export const toggleFullScreen = (el: HTMLElement, exitCallback?: () => void) => 
   }
   return !isFullscreen;
 };
-
-/** 页面截图 */
-// export function screenshot(dom: HTMLElement) {
-//   const canvas = document.createElement('canvas') as HTMLCanvasElement;
-//   document.body.appendChild(canvas);
-
-//   canvas.width = dom.offsetWidth;
-//   canvas.height = dom.offsetHeight;
-//   canvas.style.width = dom.offsetWidth + 'px';
-//   canvas.style.height = dom.offsetHeight + 'px';
-
-//   rasterizeHTML.drawHTML(dom.innerHTML, canvas, {
-//     width: dom.offsetWidth,
-//     height: dom.offsetHeight,
-//   });
-// }
 
 /** 延时函数 */
 export function timeout(time = 10) {

@@ -1,0 +1,162 @@
+<template>
+  <div class="numbers-editor" :class="{ disabled: props.disabled }">
+    <div class="numbers-editor-item" v-for="(item, index) in options">
+      <span class="numbers-editor-label">{{ item.label ?? item.prop }}</span>
+      <input :disabled="props.disabled" v-model.number="state.vals[index]" @input="change" type="number" />
+      <span v-if="item.unit !== ''" class="numbers-editor-unit">{{ item.unit ?? 'px' }}</span>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { throttle, toDecimal } from '@/tools/common';
+import { computed, onMounted, PropType, reactive, watch } from 'vue';
+
+const props = defineProps({
+  value: {
+    type: Object as PropType<number[]>,
+    default: () => [0, 0] as number[],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  options: {
+    type: Array as PropType<{ label?: string, prop: string, unit?: string }[]>,
+    default: () => []
+  },
+  /** 最小值 */
+  min: {
+    type: Number,
+    default: 0,
+  }
+});
+
+const emit = defineEmits<{
+  (event: 'change', val: number[]): void;
+}>();
+
+const state = reactive({
+  vals: [] as number[],
+});
+
+const valueToArray = computed<(number | string)[]>(() => {
+  return state.vals.map(i => toDecimal(i));
+});
+
+/** 初始化 */
+const init = () => {
+  state.vals = props.value.map(i => toDecimal(i));
+};
+
+/** 改变值 */
+const change = throttle(() => {
+  if (valueToArray.value.join(',') != props.value.join(',')) {
+    const isError = (state.vals as (number | string)[]).some(i => i === '' || isNaN(i as number) || i < props.min);
+    if (!isError) {
+      emit('change', valueToArray.value as number[]);
+    } else {
+      state.vals = props.value;
+    }
+  }
+});
+
+watch(() => props.value, () => {
+  init();
+}, {
+  deep: true
+});
+
+onMounted(() => {
+  init();
+});
+</script>
+
+<style lang="less" scoped>
+@import '/src/assets/less/variable.less';
+
+.numbers-editor {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  // &:before {
+  //     content: '';
+  //     position: absolute;
+  //     top: 24px;
+  //     left: 32%;
+  //     width: 36%;
+  //     height: 12px;
+  //     border: 1px solid #CCC;
+  // }
+
+  &.disabled {
+
+    input {
+      color: #AAA;
+    }
+  }
+
+  > div {
+    position: relative;
+    height: 24px;
+    padding: 0px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    + div {
+      margin-left: 10px;
+    }
+
+    > .numbers-editor-label {
+      display: inline-block;
+      vertical-align: top;
+      line-height: 24px;
+      margin-right: 5px;
+      white-space: nowrap;
+    }
+
+    > .numbers-editor-unit {
+      position: absolute;
+      top: 0px;
+      right: 12px;
+      color: #bbb;
+      font-size: 12px;
+      display: inline-block;
+      vertical-align: top;
+      line-height: 24px;
+      margin-left: 5px;
+    }
+
+    > input {
+      background-color: #f7f9fc;
+      border: 1px solid #f7f9fc;
+      border-radius: 4px;
+      height: 24px;
+      width: calc(100% - 15px);
+      vertical-align: top;
+      line-height: 18px;
+      padding-right: 30px;
+      padding-left: 5px;
+      color: #666;
+      font-size: 12px;
+      transition: 0.3s;
+
+      &:hover {
+        border-color: fadeout(@primary-color, 20%);
+        border-right-width: 1px !important;
+      }
+
+      &:focus {
+        box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
+      }
+    }
+  }
+}
+</style>

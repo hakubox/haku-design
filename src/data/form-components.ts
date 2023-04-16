@@ -30,9 +30,17 @@ export let formComponents: InitComponent[] = [
       width: 300,
       height: 100,
       disabledHeight: true,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {
+        name: 'location', title: '位置', default: true, visible: true, names: ['x', 'y'],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
+        attrs: {
+          options: [ { label: 'x', prop: 'x' }, { label: 'y', prop: 'y' } ]
+        }
+      }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。', attrs: {
@@ -1172,6 +1180,8 @@ export let formComponents: InitComponent[] = [
       width: 300,
       height: 102,
       minHeight: 102,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {
@@ -1299,6 +1309,7 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '分页器',
     attrs: {
+      lock: false,
       visible: true,
     },
     propertys: [
@@ -1328,6 +1339,8 @@ export let formComponents: InitComponent[] = [
       _width: 58,
       _height: 50,
       minHeight: 50,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {
@@ -1408,6 +1421,8 @@ export let formComponents: InitComponent[] = [
       isFullScreen: false,
       width: 300,
       height: 200,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {
@@ -1482,6 +1497,8 @@ export let formComponents: InitComponent[] = [
     title: '音频',
     attrs: {
       isFullScreen: false,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {
@@ -1531,6 +1548,8 @@ export let formComponents: InitComponent[] = [
     title: '视频',
     attrs: {
       isFullScreen: false,
+      lock: false,
+      visible: true,
     },
     propertys: [
       {

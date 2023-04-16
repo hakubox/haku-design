@@ -450,6 +450,10 @@ onUnmounted(() => {
               display: inline-block;
               color: #396AAD;
               font-size: 12px;
+              max-width: 80px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              vertical-align: bottom;
             }
 
             > .recent-item-version {

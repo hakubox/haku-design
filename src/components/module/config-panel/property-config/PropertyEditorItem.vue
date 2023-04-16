@@ -7,6 +7,7 @@
       :components="editorState.currentSelectedComponents"
       :value="getValue"
       :attrs="Object.assign({}, getEditor.attrs, props.prop.attrs)"
+      :disabled="disabledCondition"
       @change="propChangeListener"
       :is="getEditor.component"
     >
@@ -58,6 +59,12 @@ const props = defineProps({
 const onFocus = (prop) => {
   editorState.currentProp = prop;
 }
+
+/** 禁用编辑功能条件 */
+const disabledCondition = computed(() => {
+  return editorState.currentSelectedComponents.length > 1 && props.prop.names?.includes('x');
+});
+
 /** 属性修改触发的事件 */
 const propChangeListener = (value) => {
   if (value?.target) {
@@ -66,22 +73,46 @@ const propChangeListener = (value) => {
   }
   const _propMap = editorState.currentSelectedComponentPropertyMap;
   const _components = editorState.currentSelectedComponents as Component[];
+  if (disabledCondition.value) {
+    return;
+  }
   for (let i = 0; i < _components.length; i++) {
     const _component = _components[i];
-    if (_component && _component.attrs[props.prop.name] !== value) {
-      historyService.exec('set-property', {
-        objectId: _component.id,
-        attrs: {
-          property: props.prop,
-          propertyName: props.prop.name,
-          propertyTitle: props.prop.title,
-          componentTitle: _component.title,
-        },
-        value
+    if (props.prop.names) {
+      props.prop.names.forEach((name, index) => {
+        if (_component && _component.attrs[name] !== value[index]) {
+          historyService.exec('set-property', {
+            objectId: _component.id,
+            attrs: {
+              property: props.prop,
+              propertyName: name,
+              propertyTitle: props.prop.title,
+              componentTitle: _component.title,
+            },
+            value: value[index]
+          });
+          _component.attrs['__' + name] = value;
+          if (props.prop?.change) {
+            return props.prop.change.call(this, props.prop, _propMap, _component, value[index], (editorState.componentCanvas as any).$refs);
+          }
+        }
       });
-      _component.attrs['__' + props.prop.name] = value;
-      if (props.prop?.change) {
-        return props.prop.change.call(this, props.prop, _propMap, _component, value, (editorState.componentCanvas as any).$refs);
+    } else {
+      if (_component && _component.attrs[props.prop.name] !== value) {
+        historyService.exec('set-property', {
+          objectId: _component.id,
+          attrs: {
+            property: props.prop,
+            propertyName: props.prop.name,
+            propertyTitle: props.prop.title,
+            componentTitle: _component.title,
+          },
+          value
+        });
+        _component.attrs['__' + props.prop.name] = value;
+        if (props.prop?.change) {
+          return props.prop.change.call(this, props.prop, _propMap, _component, value, (editorState.componentCanvas as any).$refs);
+        }
       }
     }
   }
@@ -89,7 +120,11 @@ const propChangeListener = (value) => {
 
 const getValue = computed(() => {
   if (editorState.currentSelectedComponents.length) {
-    return editorState.currentSelectedComponents[0].attrs[props.prop.name] ?? props.prop.default;
+    if (props.prop.names) {
+      return props.prop.names.map(name => editorState.currentSelectedComponents[0].attrs[name]) ?? props.prop.default;
+    } else {
+      return editorState.currentSelectedComponents[0].attrs[props.prop.name] ?? props.prop.default;
+    }
   } else {
     return undefined;
   }

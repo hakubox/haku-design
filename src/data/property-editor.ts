@@ -365,6 +365,14 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     },
     editor: ComponentPropertyEditor.dimension,
   },
+  {
+    name: 'numbers',
+    description: '位置',
+    component: 'numbers-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.numbers,
+  },
 ];
 
 /** 获取所有编辑器 */

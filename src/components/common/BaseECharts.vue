@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
 import { init as echartInit, type ECharts } from 'echarts';
-import { defineProps, watch, ref, reactive, onMounted, nextTick } from 'vue';
+import { watch, ref, reactive, onMounted, nextTick } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import { Empty } from 'vant';
 

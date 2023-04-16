@@ -58,4 +58,7 @@ export declare class ComponentProperty {
 
   /** 属性当前的编辑器 */
   // currentEditor?: ComponentPropertyEditor;
+
+  /** 绑定多个属性，会自动忽略name属性 */
+  names?: string[];
 }

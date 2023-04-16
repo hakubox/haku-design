@@ -126,6 +126,9 @@ export enum ComponentPropertyEditor {
   dimension = 'dimension',
   /** 公式 */
   formula = 'formula',
+
+  /** 数字组合 */
+  numbers = 'numbers',
 }
 
 /** 控件属性组 */

@@ -128,7 +128,7 @@ import { state as editorState } from "@/modules/editor-module";
 import { Component } from "@/@types/component";
 import { ComponentPropertyEditor } from "@/@types/enum";
 import GeneralEditorItem from './GeneralEditorItem.vue';
-import { GeneralProperty } from "@/@types";
+import { ComponentGroup, GeneralProperty } from "@/@types";
 import { isBlank, isNotBlank } from "@/tools/common";
 import { Button, ButtonGroup, Modal, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
@@ -183,7 +183,7 @@ const closeFullScreen = ($event) => {
   state.fullScreenConfig.isFullScreen = false;
 } 
 /** 属性修改触发的事件 */
-const propAttaChangeListener = (value, prop, propMap, components: Component[]) => {
+const propAttaChangeListener = (value, prop, propMap, components: (Component | ComponentGroup)[]) => {
   if (prop) {
     if (value?.target) {
       console.warn('属性值包含val.target', value);
@@ -200,7 +200,7 @@ const propAttaChangeListener = (value, prop, propMap, components: Component[]) =
   }
 };
 /** 获取值 */
-const getValue = (prop) => {
+const getValue = (prop: GeneralProperty) => {
   if (typeof prop.name === 'string') {
     return props.model[prop.name];
   } else {
@@ -213,20 +213,30 @@ const getValue = (prop) => {
 };
 
 /** 设置值 */
-const setValue = (prop, model, value) => {
-  if (typeof prop.name === 'string') {
-    if (model[prop.name].type) {
-      model[prop.name].value = value;
-    } else {
-      model[prop.name] = value;
-    }
+const setValue = (prop: GeneralProperty, model: Record<string, any>, value) => {
+  if (prop.names) {
+    prop.names.forEach((name, index) => {
+      if (model[name].type) {
+        model[name].value = value[index];
+      } else {
+        model[name] = value[index];
+      }
+    });
   } else {
-    let _value = model;
-    for (let i = 0; i < prop.name.length - 1; i++) {
-      if (!_value[prop.name[i]]) _value[prop.name[i]] = {};
-      if (_value) _value = _value[prop.name[i]];
+    if (typeof prop.name === 'string') {
+      if (model[prop.name].type) {
+        model[prop.name].value = value;
+      } else {
+        model[prop.name] = value;
+      }
+    } else {
+      let _value = model;
+      for (let i = 0; i < prop.name.length - 1; i++) {
+        if (!_value[prop.name[i]]) _value[prop.name[i]] = {};
+        if (_value) _value = _value[prop.name[i]];
+      }
+      if (_value) _value[prop.name[prop.name.length - 1]] = value;
     }
-    if (_value) _value[prop.name[prop.name.length - 1]] = value;
   }
   return model;
 };

@@ -24,9 +24,9 @@
                   <i class="iconfont icon-file menu-iconfont"></i>JSON文件
                 </MenuItem>
               </SubMenu> -->
-              <MenuItem key="create" @click="showCreateNewDialog">
+              <!-- <MenuItem key="create" @click="showCreateNewDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建
-              </MenuItem>
+              </MenuItem> -->
               <MenuItem key="createByLocal" @click="showCreateNewByLocalDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建本地
               </MenuItem>
@@ -93,7 +93,7 @@
             <MenuItem v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
             <!-- <MenuItem><template #icon><ScanOutlined /></template>二维码</MenuItem> -->
             <MenuItem v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
-            <!-- <MenuItem v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem> -->
+            <MenuItem v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem>
           </Menu>
         </div>
       </div>
@@ -106,15 +106,16 @@
 
           <!-- 缩略图组件 -->
           <Thumbnail
-            :content-width="editorState.appConfig.width + 40"
-            :content-height="editorState.appConfig.height + 40"
+            :content-width="editorState.appConfig.width + getWidthPadding"
+            :content-height="editorState.appConfig.height + getHeightPadding"
             :range-left="draggableState.scrollLeft"
             :range-top="draggableState.scrollTop"
             :range-width="draggableState.canvasViewportWidth"
             :range-height="draggableState.canvasViewportHeight"
             :content-list="editorState.currentPage.children"
             :canvas-scale="draggableState.scale"
-            v-if="editorState.appConfig.isInit"
+            v-if="editorState.appConfig.isInit && editorState.appConfig.appType === AppType.canvas"
+            @scroll="toScroll"
           ></Thumbnail>
 
           <!-- 全局搜索按钮 -->
@@ -286,7 +287,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue';
+import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
 import { downLoadFile, dateFormat } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
@@ -345,6 +346,22 @@ const onResize = (e) => {
   }
 };
 
+const getWidthPadding = computed<number>(() => {
+  switch (editorState.appConfig.appType) {
+    case AppType.questionnaire: return 40;
+    case AppType.canvas: return 40;
+    default: return 0;
+  }
+});
+
+const getHeightPadding = computed<number>(() => {
+  switch (editorState.appConfig.appType) {
+    case AppType.questionnaire: return 105;
+    case AppType.canvas: return 40;
+    default: return 0;
+  }
+});
+
 /** 获取画布样式 */
 const getCanvasRect = () => {
   const _style = {
@@ -381,6 +398,10 @@ const showPublishDialog = () => {
 const saveConfig = () => {
 
 };
+/**  */
+const toScroll = (x: number, y: number) => {
+  editorState.canvasEl.scrollTo(x, y);
+}
 /** 设置JSON */
 const setEditorJson = () => {
   const _layout = JSON.stringify(editorService.getExportData(), undefined, '  ');

@@ -9,17 +9,27 @@
   >
     <div class="preview-modal-body">
       <div class="preview-modal-content device-info"
+        ref="deviceInfo"
         :class="[ state.previewUIConfig.useOriginScale ? 'origin-scale' : '', {
           'pc': 'device-info-pc',
           'tablet': 'device-info-tablet',
           'mobile': 'device-info-mobile',
-        }[state.previewUIConfig.deviceType]]"
+        }[state.previewUIConfig.deviceType], 
+        `app-type-${editorState.appConfig.appType}`]"
         :style="{
           '--tablet-scale': state.tabletScale,
+          '--tablet-content-scale': state.tabletContentScale,
           '--mobile-scale': state.mobileScale,
+          '--mobile-content-scale': state.mobileContentScale,
+          '--pc-scale': state.pcScale,
+          '--pc-content-scale': state.pcContentScale,
         }"
       >
         <DesignCanvas
+          :style="{
+            width: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.width}px` : '',
+            height: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.height}px` : '',
+          }"
           class="device-info-content"
           :isPreview="true"
           @refresh="editorService.refresh"
@@ -35,8 +45,9 @@
                 <template #title>是否确认清空事件日志列表？</template>
                 <Button danger size="small" style="margin-right: 10px;">清除日志</Button>
               </Popconfirm>
+              <Button v-if="state.activeKey === 'preview'" type="primary" ghost size="small" style="margin-right: 10px;">新页面打开</Button>
             </template>
-            <TabPane key="config" tab="预览配置" force-render>
+            <TabPane key="preview" tab="预览配置" force-render>
               <GeneralEditor
                 :model="state.previewUIConfig"
                 :propertys="state.previewUIConfigProps"
@@ -106,11 +117,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted } from "vue";
+import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { state as eventState, service as eventService } from '@/modules/event-module';
-import { ComponentPropertyEditor, PageType } from '@/@types/enum';
+import { AppType, ComponentPropertyEditor, PageType } from '@/@types/enum';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { cloneLoop } from "@/lib/clone";
@@ -122,7 +133,7 @@ import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
 
-import rasterizeHTML from 'rasterizehtml';
+const deviceInfo = ref<HTMLElement>();
 
 const props = defineProps({
   /** 是否显示预览框 */
@@ -137,17 +148,38 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive({
-  activeKey: 'config',
+  activeKey: 'preview',
   /** 预览框关闭中 */
   isLeaving: false,
   /** 各个设备缩放比 */
   tabletScale: 1,
+  tabletContentScale: 1,
   mobileScale: 1,
+  mobileContentScale: 1,
+  pcScale: 1,
+  pcContentScale: 1,
   /** 预览配置 */
   previewUIConfig: {
     deviceType: 'pc',
     /** 使用原始缩放比 */
     useOriginScale: false,
+    /** 设备方向（landscape横向/vertical纵向） */
+    direction: 'vertical' as 'landscape' | 'vertical',
+  },
+  /** 设备屏幕信息（默认竖屏） */
+  deviceScreenInfos: {
+    /** 默认平板屏幕 */
+    tablet: {
+      width: 820,
+      height: 1180,
+      padding: [30, 26, 30, 26],
+    },
+    /** 默认手机屏幕 */
+    mobile: {
+      width: 390,
+      height: 750,
+      padding: [50, 15, 50, 15],
+    }
   },
   /** 预览配置属性栏 */
   previewUIConfigProps: [
@@ -166,13 +198,18 @@ const state = reactive({
         ]
       }
     }, {
-      name: 'changeDirection',
+      name: 'direction',
       title: '切换方向',
       require: false,
       visible: true,
       group: 'ui',
-      editor: ComponentPropertyEditor.boolean,
-      default: false,
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '纵向', value: 'vertical' },
+          { label: '横向', value: 'landscape' }
+        ]
+      },
     }, {
       name: 'useOriginScale',
       title: '原始缩放比',
@@ -246,7 +283,11 @@ const formFillProps = computed<GeneralProperty[]>(() => {
 
 /** 开启预览 */
 const openPreview = () => {
-
+  if (editorState.appConfig.appType === AppType.questionnaire) {
+    state.previewUIConfig.direction = 'vertical';
+  } else if (editorState.appConfig.appType === AppType.canvas) {
+    state.previewUIConfig.direction = 'landscape';
+  }
 };
 
 /** 关闭预览 */
@@ -281,24 +322,35 @@ const getHighlight = (item: AppEventLog) => {
 
 watch(() => props.visible, (val) => {
   if (val) {
+    openPreview();
     state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
     tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, FormInfoItem>;
     tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
-    
     resetScale();
   }
 });
 
 const resetScale = () => {
   const _windowHeight = window.innerHeight - 60;
-  state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
-  state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+  if (editorState.appConfig.appType === AppType.questionnaire) {
+    state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
+    state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+  } else if (editorState.appConfig.appType === AppType.canvas) {
+    const _width = window.innerWidth - 500 - 40;
+    const _height = window.innerHeight - 60 - 48;
+    const _scale = Math.min(_width / editorState.appConfig.width, _height / editorState.appConfig.height);
+    state.pcContentScale = _scale;
+
+    state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
+    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.height, (820 - 54) / editorState.appConfig.width);
+    state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+    state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.height, (390 - 30) / editorState.appConfig.width);
+  }
 };
 
 onMounted(() => {
   state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
   window.addEventListener('resize', resetScale);
-  openPreview();
 });
 
 onUnmounted(() => {
@@ -415,6 +467,8 @@ onUnmounted(() => {
 
       > .form-canvas {
         min-height: initial;
+        margin: auto;
+        
         > .form-canvas-body {
           position: relative;
           // display: block;
