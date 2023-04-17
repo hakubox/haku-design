@@ -6,7 +6,7 @@ export interface ComponentGroup {
   id: string;
   /** 组件 */
   name: 'ComponentGroup';
-  /** 是否为组合（是） */
+  /** 是否为组合 */
   isGroup: true;
   /** 是否为表单项（问题 or 装饰） */
   isFormItem: false;

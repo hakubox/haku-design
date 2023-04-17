@@ -97,15 +97,15 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (event: 'scroll', x: number, y: number): void;
-  (event: 'update:rangeTop', value: any): void;
-  (event: 'update:rangeLeft', value: any): void;
+  (event: 'drag', x: number, y: number): void;
 }>();
 
 const state = reactive({
   /** 拖拽状态 */
   dragState: {
     isStart: false,
+    originX: 0,
+    originY: 0,
     x: 0,
     y: 0,
   },
@@ -128,17 +128,17 @@ const scale = computed(() => {
 
 const onMouseDown = (e: MouseEvent) => {
   state.dragState.isStart = true;
+  state.dragState.originX = props.rangeLeft;
+  state.dragState.originY = props.rangeTop;
   state.dragState.x = e.pageX;
   state.dragState.y = e.pageY;
 };
 
 const onMouseMove = (e: MouseEvent) => {
   if (state.dragState.isStart) {
-    const _x = (e.pageX - state.dragState.x) / scale.value;
-    const _y = (e.pageY - state.dragState.y) / scale.value;
-    // emit('update:rangeLeft', _x);
-    // emit('update:rangeTop', _y);
-    emit('scroll', _x, _y);
+    const _x = state.dragState.originX + (e.pageX - state.dragState.x) / scale.value;
+    const _y = state.dragState.originY + (e.pageY - state.dragState.y) / scale.value;
+    emit('drag', _x, _y);
   }
 };
 
@@ -146,6 +146,8 @@ const onMouseUp = (e: MouseEvent) => {
   state.dragState.isStart = false;
   state.dragState.x = 0;
   state.dragState.y = 0;
+  state.dragState.originX = 0;
+  state.dragState.originY = 0;
 };
 
 onMounted(() => {

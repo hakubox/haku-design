@@ -33,7 +33,8 @@
         ) && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
       }"
       :style="{
-        transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`
+        transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`,
+        zoom: `${1 / draggableState.scale}`
       }"
       class="node-action-tip"
       v-html="draggableState.tipConfig.text ?? ' '"
@@ -436,6 +437,7 @@ onMounted(async () => {
   }
 
   > .node-action-mark-center {
+    pointer-events: none;
     cursor: crosshair;
     position: absolute;
     display: none;

@@ -127,14 +127,15 @@ export const service = {
     });
   },
   /** 获取选择的组件范围 */
-  getSelectedComponentRect(): ComponentRect {
+  getSelectedComponentRect(selected?: (Component | ComponentGroup)[]): ComponentRect {
+    const _selected = selected ?? state.currentSelectedComponents;
     let minX = Number.MAX_VALUE;
     let minY = Number.MAX_VALUE;
     let maxX = Number.MIN_VALUE;
     let maxY = Number.MIN_VALUE;
 
-    for (let i = 0; i < state.currentSelectedComponents.length; i++) {
-      const _component = state.currentSelectedComponents[i];
+    for (let i = 0; i < _selected.length; i++) {
+      const _component = _selected[i];
       if (_component.attrs.x < minX) minX = _component.attrs.x;
       if (_component.attrs.y < minY) minY = _component.attrs.y;
       if (_component.attrs.x + _component.attrs.width > maxX) maxX = _component.attrs.x + _component.attrs.width;
@@ -293,8 +294,8 @@ export const service = {
     if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
-    } else if (createConfig.type === AppType.courseware) {
-      service.initFormByCourseware(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
+    } else if (createConfig.type === AppType.powerpoint) {
+      service.initFormByPowerpoint(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
@@ -317,8 +318,8 @@ export const service = {
     if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
-    } else if (createConfig.type === AppType.courseware) {
-      service.initFormByCourseware(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
+    } else if (createConfig.type === AppType.powerpoint) {
+      service.initFormByPowerpoint(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
@@ -341,8 +342,8 @@ export const service = {
       pluginModule.onAppLoad();
     });
   },
-  /** 初始化课件 */
-  initFormByCourseware(form?: any, formId?: string, appConfig?: Record<string, any>) {
+  /** 初始化幻灯片/演示文稿 */
+  initFormByPowerpoint(form?: any, formId?: string, appConfig?: Record<string, any>) {
     if (form) {
       state.appConfig = form.appConfig;
       if (formId) state.appConfig.id = formId;
@@ -352,15 +353,15 @@ export const service = {
       state.pages = form.pages;
       service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
     } else {
-      const _defaultDevice = remoteDevices.iphone678;
+      const _defaultDevice = remoteDevices['largepc'];
       state.appConfig = service.createAppConfig({
-        appType: AppType.courseware,
+        appType: AppType.powerpoint,
         isInit: true,
         appTitle: appConfig?.title || '',
         description: appConfig?.description || '',
         width: _defaultDevice.width,
         height: _defaultDevice.height,
-        deviceType: DeviceType.mobile,
+        deviceType: DeviceType.pc,
         layoutConfig: {
           layout: LayoutType.flex,
           layoutDetailConfig: {
@@ -607,8 +608,8 @@ export const service = {
         case AppType.questionnaire:
           service.initFormByForm(body);
           break;
-        case AppType.courseware:
-          service.initFormByCourseware(body);
+        case AppType.powerpoint:
+          service.initFormByPowerpoint(body);
           break;
         default:
           break;

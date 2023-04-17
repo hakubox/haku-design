@@ -204,8 +204,8 @@ export enum AppType {
   questionnaire = 'questionnaire',
   /** 画布 */
   canvas = 'canvas',
-  /** 课件 */
-  courseware = 'courseware',
+  /** 幻灯片/演示文稿 */
+  powerpoint = 'powerpoint',
   /** 复合组件 */
   complexComponent = 'complex-component',
 }

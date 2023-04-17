@@ -115,7 +115,7 @@
             :content-list="editorState.currentPage.children"
             :canvas-scale="draggableState.scale"
             v-if="editorState.appConfig.isInit && editorState.appConfig.appType === AppType.canvas"
-            @scroll="toScroll"
+            @drag="toThumbnailDrag"
           ></Thumbnail>
 
           <!-- 全局搜索按钮 -->
@@ -216,7 +216,7 @@
           </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-fullscreen"></i>画布尺寸：{{editorState.appConfig.width}}×{{editorState.appConfig.height}}</label>
-          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-print-view"></i>放大倍数：x{{draggableState.scale.toFixed(1)}}</label>
+          <label v-if="editorState.appConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-print-view"></i>放大倍数：x{{draggableState.scale.toFixed(1)}}</label>
           <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
           <label :class="configState.config.proMode ? 'pro-mode' : 'normal-mode'">
@@ -289,7 +289,7 @@
 <script lang="ts" setup>
 import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
-import { downLoadFile, dateFormat } from '@/tools/common';
+import { downLoadFile, dateFormat, throttle } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/common/history-module';
@@ -325,13 +325,17 @@ const {
 const saveHistoryVisible = ref<boolean>(false);
 
 /** 画布滚动条滚动事件 */
-const onScroll = (e) => {
+const onScroll = throttle((e) => {
   draggableState.scrollTop = e.target.scrollTop;
   draggableState.scrollLeft = e.target.scrollLeft;
-};
+  const { y, x } = editorState.canvasPanelEl.getBoundingClientRect();
+  editorState.canvasLocation.y = editorState.canvasPanelEl.scrollTop - y;
+  editorState.canvasLocation.x = editorState.canvasPanelEl.scrollLeft - x;
+}, 150);
+
 /** 画布缩放事件 */
 const onResize = (e) => {
-  if (e.ctrlKey) {
+  if (editorState.appConfig.appType !== AppType.questionnaire && e.ctrlKey) {
     if (e.deltaY > 0 || e.deltaX > 0) {
       if (draggableState.scale >= 0.6) {
         draggableState.scale -= 0.1;
@@ -398,8 +402,8 @@ const showPublishDialog = () => {
 const saveConfig = () => {
 
 };
-/**  */
-const toScroll = (x: number, y: number) => {
+/** 拖拽缩略图位置 */
+const toThumbnailDrag = (x: number, y: number) => {
   editorState.canvasEl.scrollTo(x, y);
 }
 /** 设置JSON */

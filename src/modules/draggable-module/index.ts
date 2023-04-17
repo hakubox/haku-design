@@ -388,10 +388,11 @@ export const service = {
       _el.classList.add('form-design-drag-component');
       _el.innerHTML = component?.title ?? '';
     } else {
-      const rect = editorService.getSelectedComponentRect();
+      const _selected = editorState.currentSelectedComponents.length ? editorState.currentSelectedComponents : [component];
+      const rect = editorService.getSelectedComponentRect(_selected);
       state.dragConfig.startComponentX = rect.x;
       state.dragConfig.startComponentY = rect.y;
-      state.dragConfig.startComponentLocs = editorState.currentSelectedComponents.map(i => ({
+      state.dragConfig.startComponentLocs = _selected.map(i => ({
         x: i.attrs.x,
         y: i.attrs.y,
         id: i.id
@@ -402,8 +403,8 @@ export const service = {
         original: e,
         target: _el,
         button: e.button,
-        layerY: e.layerY,
-        layerX: e.layerX,
+        layerY: e.layerY / state.scale,
+        layerX: e.layerX / state.scale,
       },
       component,
       true,
@@ -633,8 +634,8 @@ export const service = {
         }
       } else if (state.dragConfig.isDrag) {
         state.dragConfig.isDragArea = true;
-        state.dragConfig.endLoc.y = e.clientY - state.dragConfig.startLoc.y;
-        state.dragConfig.endLoc.x = e.clientX - state.dragConfig.startLoc.x;
+        state.dragConfig.endLoc.y = e.clientY / state.scale - state.dragConfig.startLoc.y;
+        state.dragConfig.endLoc.x = e.clientX / state.scale - state.dragConfig.startLoc.x;
 
         state.dragConfig.mouseX = state.dragConfig.endLoc.x + state.dragConfig.startLoc.x + editorState.canvasLocation.x;
         state.dragConfig.mouseY = state.dragConfig.endLoc.y + state.dragConfig.startLoc.y + editorState.canvasLocation.y;

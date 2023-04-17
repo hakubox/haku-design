@@ -35,7 +35,7 @@ export interface Component {
   id: string;
   /** 组件名 */
   name: string;
-  /** 是否为组合（否） */
+  /** 是否为组合 */
   isGroup: false;
   /** 是否（在答题中）不显示 */
   isHidden: boolean;
