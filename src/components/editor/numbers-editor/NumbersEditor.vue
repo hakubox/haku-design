@@ -22,13 +22,8 @@ const props = defineProps({
     default: false,
   },
   options: {
-    type: Array as PropType<{ label?: string, prop: string, unit?: string }[]>,
+    type: Array as PropType<{ label?: string, prop: string, min?: number, unit?: string }[]>,
     default: () => []
-  },
-  /** 最小值 */
-  min: {
-    type: Number,
-    default: 0,
   }
 });
 
@@ -52,9 +47,17 @@ const init = () => {
 /** 改变值 */
 const change = throttle(() => {
   if (valueToArray.value.join(',') != props.value.join(',')) {
-    const isError = (state.vals as (number | string)[]).some(i => i === '' || isNaN(i as number) || i < props.min);
+    const isError = (state.vals as (number | string)[]).some((i, index) => {
+      return i === '' || 
+        isNaN(i as number);
+    });
     if (!isError) {
-      emit('change', valueToArray.value as number[]);
+      state.vals = state.vals.map((i, index) => {
+        const _min = props.options[index].min;
+        if (_min !== undefined && i < _min) return _min;
+        else return toDecimal(i);
+      });
+      emit('change', state.vals);
     } else {
       state.vals = props.value;
     }

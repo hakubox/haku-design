@@ -6,14 +6,20 @@
     <div :style="{
       width: `${props.contentWidth * props.canvasScale * scale}px`,
       height: `${props.contentHeight * props.canvasScale * scale}px`
-    }" class="thumbnail-content">
-      <!-- 显示内容列表 -->
-      <div :style="{
-        top: `${item.attrs.y * props.canvasScale * scale}px`,
-        left: `${item.attrs.x * props.canvasScale * scale}px`,
-        width: `${item.attrs.width * props.canvasScale * scale}px`,
-        height: `${item.attrs.height * props.canvasScale * scale}px`
-      }" class="thumbnail-content-item" v-for="item in props.contentList">
+    }" class="thumbnail-body">
+      <div class="thumbnail-content" :style="{
+        zoom: scale,
+      }">
+        <DesignCanvas
+          :style="{
+            width: `${editorState.appConfig.width}px`,
+            height: `${editorState.appConfig.height}px`,
+          }"
+          :isPreview="true"
+          :isReadonly="true"
+          :showEditor="false"
+          :showButton="false"
+        />
       </div>
       
       <div
@@ -33,6 +39,8 @@
 <script lang="ts" setup>
 import { Component, ComponentGroup } from '@/@types';
 import { computed, onMounted, onUnmounted, PropType, reactive } from 'vue';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
+import DesignCanvas from "@/components/module/DesignCanvas.vue";
 
 export interface Rect {
   left: number;
@@ -114,8 +122,8 @@ const state = reactive({
 
 /** 综合缩放比 */
 const scale = computed(() => {
-  const widthScale = props.width / props.contentWidth / props.canvasScale;
-  const heightScale = props.height / props.contentHeight / props.canvasScale;
+  const widthScale = (props.width - 2) / props.contentWidth / props.canvasScale;
+  const heightScale = (props.height - 2) / props.contentHeight / props.canvasScale;
   return widthScale < heightScale ? widthScale : heightScale;
 });
 
@@ -178,26 +186,32 @@ onUnmounted(() => {
   align-items: center;
   right: 30px;
   top: 20px;
-  background-color: rgba(0,0,0,0.1);
+  background-color: #E5E5E5;
   border-radius: 4px;
   border: 1px solid rgba(0,0,0,0.2);
   box-shadow: 0px 0px 10px 4px rgba(0,0,0,0.2);
   z-index: 1;
 
-  > .thumbnail-content {
+  > .thumbnail-body {
     position: relative;
     display: block;
     left: 0;
     right: 0;
     background-color: white;
 
-    > .thumbnail-content-item {
-      position: absolute;
+    > .thumbnail-content {
+      position: relative;
       display: block;
-      left: 0;
-      right: 0;
-      border-radius: 2px;
-      background-color: rgba(51, 122, 183, 0.4);
+
+      &:after {
+        content: '';
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
     }
 
     > .thumbnail-bar {

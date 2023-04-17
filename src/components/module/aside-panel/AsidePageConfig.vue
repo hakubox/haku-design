@@ -20,7 +20,6 @@
                 width: `${editorState.appConfig.width}px`,
                 height: `${editorState.appConfig.height}px`,
               }"
-              class="device-info-content"
               :pageIndex="index"
               :isPreview="true"
               :isReadonly="true"

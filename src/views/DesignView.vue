@@ -104,20 +104,6 @@
         <!-- 主体中部 @mousedown="blankMouseDown" @mouseup="blankMouseUp" -->
         <div class="design-form-center">
 
-          <!-- 缩略图组件 -->
-          <Thumbnail
-            :content-width="editorState.appConfig.width + getWidthPadding"
-            :content-height="editorState.appConfig.height + getHeightPadding"
-            v-model:range-left="draggableState.scrollLeft"
-            v-model:range-top="draggableState.scrollTop"
-            :range-width="draggableState.canvasViewportWidth"
-            :range-height="draggableState.canvasViewportHeight"
-            :content-list="editorState.currentPage.children"
-            :canvas-scale="draggableState.scale"
-            v-if="editorState.appConfig.isInit && editorState.appConfig.appType === AppType.canvas"
-            @drag="toThumbnailDrag"
-          ></Thumbnail>
-
           <!-- 全局搜索按钮 -->
           <div class="design-form-center-question">
             <Tooltip placement="top">
@@ -193,6 +179,20 @@
             </template>
             <Button type="primary" @click="showCreateNewDialog">创建问卷</Button>
           </Empty>
+
+          <!-- 缩略图组件 -->
+          <Thumbnail
+            :content-width="editorState.appConfig.width + getWidthPadding"
+            :content-height="editorState.appConfig.height + getHeightPadding"
+            v-model:range-left="draggableState.scrollLeft"
+            v-model:range-top="draggableState.scrollTop"
+            :range-width="draggableState.canvasViewportWidth"
+            :range-height="draggableState.canvasViewportHeight"
+            :content-list="editorState.currentPage.children"
+            :canvas-scale="draggableState.scale"
+            v-if="editorState.appConfig.isInit && editorState.appConfig.appType === AppType.canvas"
+            @drag="toThumbnailDrag"
+          ></Thumbnail>
         </div>
 
         <!-- 主体左侧菜单栏 -->

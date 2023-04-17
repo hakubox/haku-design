@@ -206,7 +206,7 @@ const state = reactive({
       group: 'page',
       editor: ComponentPropertyEditor.numbers,
       attrs: {
-        options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+        options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
       }
     }
   ],
