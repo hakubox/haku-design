@@ -145,12 +145,13 @@ export const service = {
     return { x: minX, y: minY, width: maxX - minX, height: maxY - minY, x2: maxX, y2: maxY, rotate: 0 };
   },
   /** 显示组件 */
-  showComponentInFormPage(componentId: string): boolean {
+  showComponentInFormPage(componentId: string, pageIndex?: number): boolean {
+    let _pageIndex = pageIndex ?? state.currentPageIndex;
     let componentIndex: number | undefined = undefined;
     let component: Component | ComponentGroup | undefined = undefined;
     let _index = 0;
-    for (let i = 0; i < state.currentPage.children.length; i++) {
-      const _componet = state.currentPage.children[i];
+    for (let i = 0; i < state.pages[_pageIndex].children.length; i++) {
+      const _componet = state.pages[_pageIndex].children[i];
       if (!_componet.attrs.isTop) {
         if ( componentId === _componet.id) {
           componentIndex = _index;
@@ -161,7 +162,7 @@ export const service = {
       }
     }
     if (componentIndex !== undefined) {
-      if (state.currentPage.pageType === PageType.normalPage && component) {
+      if (state.pages[_pageIndex].pageType === PageType.normalPage && component) {
         if (component.attrs.isTop) {
           return false;
         }
@@ -173,7 +174,7 @@ export const service = {
             return componentIndex === state.currentFormPageIndex;
           } else if (state.appConfig.turnPageMode === 'default') {
             // 默认的情况，默认则根据分页器决定如何分页
-            const _splitIndexList = (state.pages[state.currentPageIndex].children as Component[])
+            const _splitIndexList = (state.pages[_pageIndex].children as Component[])
               .map((i, index) => i.name === 'q-page-split' ? index : undefined)
               .filter(i => i) as number[];
             if (_splitIndexList.length === 0) return true;
@@ -1386,7 +1387,7 @@ export const state = reactive({
   isDarkMode: computed((): boolean => {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   }),
-  /** 总页数 */
+  /** 总分页页数 */
   maxFormPageCount: computed((): number => {
     if (state.appConfig.turnPageMode === 'no-page') return 1;
     else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;

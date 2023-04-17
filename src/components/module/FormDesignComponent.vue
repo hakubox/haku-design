@@ -23,7 +23,7 @@
   >
     <!-- @mouseup="blankMouseUp($event)" -->
     <CanvasNodeActionEditor
-      v-if="editorState.appConfig.appType === AppType.canvas"
+      v-if="!props.isPreview && editorState.appConfig.appType === AppType.canvas"
       :components="[props.component]"
       :show="editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedFirstComponentId === props.component.id"
       :disabledHeight="props.component.attrs.disabledHeight"

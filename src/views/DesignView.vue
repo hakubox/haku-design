@@ -108,8 +108,8 @@
           <Thumbnail
             :content-width="editorState.appConfig.width + getWidthPadding"
             :content-height="editorState.appConfig.height + getHeightPadding"
-            :range-left="draggableState.scrollLeft"
-            :range-top="draggableState.scrollTop"
+            v-model:range-left="draggableState.scrollLeft"
+            v-model:range-top="draggableState.scrollTop"
             :range-width="draggableState.canvasViewportWidth"
             :range-height="draggableState.canvasViewportHeight"
             :content-list="editorState.currentPage.children"
@@ -131,7 +131,7 @@
           </div>
 
           <!-- 切换页面单选组 -->
-          <div v-if="editorState.pages.length > 1" class="design-form-page-change">
+          <div v-if="editorState.appConfig.appType === AppType.questionnaire && editorState.pages.length > 1" class="design-form-page-change">
             <RadioGroup button-style="solid" v-model:value="editorState.currentPageIndex">
               <RadioButton v-for="(page, pageIndex) in editorState.pages" :key="pageIndex" :value="pageIndex">{{ page.pageTitle }}</RadioButton>
             </RadioGroup>

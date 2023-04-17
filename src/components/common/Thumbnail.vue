@@ -25,7 +25,6 @@
         }"
         class="thumbnail-bar"
         @mousedown.stop.prevent="onMouseDown"
-        @mousemove.stop.prevent="onMouseMove"
       ></div>
     </div>
   </div>
@@ -98,6 +97,8 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (event: 'drag', x: number, y: number): void;
+  (event: 'update:rangeTop', value: number): void;
+  (event: 'update:rangeLeft', value: number): void;
 }>();
 
 const state = reactive({
@@ -109,14 +110,6 @@ const state = reactive({
     x: 0,
     y: 0,
   },
-});
-
-const getRangeWidth = computed(() => {
-  return props.rangeWidth > props.contentWidth * props.canvasScale ? props.contentWidth * props.canvasScale : props.rangeWidth;
-});
-
-const getRangeHeight = computed(() => {
-  return props.rangeHeight > props.contentHeight * props.canvasScale ? props.contentHeight * props.canvasScale : props.rangeHeight;
 });
 
 /** 综合缩放比 */
@@ -136,11 +129,25 @@ const onMouseDown = (e: MouseEvent) => {
 
 const onMouseMove = (e: MouseEvent) => {
   if (state.dragState.isStart) {
-    const _x = state.dragState.originX + (e.pageX - state.dragState.x) / scale.value;
-    const _y = state.dragState.originY + (e.pageY - state.dragState.y) / scale.value;
+    let _x = state.dragState.originX + (e.pageX - state.dragState.x) / scale.value;
+    let _y = state.dragState.originY + (e.pageY - state.dragState.y) / scale.value;
+    if (_x < 0) _x = 0;
+    else if (_x > props.contentWidth * props.canvasScale - getRangeWidth.value) _x = props.contentWidth * props.canvasScale - getRangeWidth.value;
+    if (_y < 0) _y = 0;
+    else if (_y > props.contentHeight * props.canvasScale - getRangeHeight.value) _y = props.contentHeight * props.canvasScale - getRangeHeight.value;
+    emit('update:rangeLeft', _x);
+    emit('update:rangeTop', _y);
     emit('drag', _x, _y);
   }
 };
+
+const getRangeWidth = computed(() => {
+  return props.rangeWidth > props.contentWidth * props.canvasScale ? props.contentWidth * props.canvasScale : props.rangeWidth;
+});
+
+const getRangeHeight = computed(() => {
+  return props.rangeHeight > props.contentHeight * props.canvasScale ? props.contentHeight * props.canvasScale : props.rangeHeight;
+});
 
 const onMouseUp = (e: MouseEvent) => {
   state.dragState.isStart = false;

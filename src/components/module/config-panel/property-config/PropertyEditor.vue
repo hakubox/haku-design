@@ -5,6 +5,7 @@
       :model="editorState.appConfig"
       :propertys="state.pageConfigProps"
       :groups="[{ title: '页面', name: 'page', icon: '' }]"
+      @change="changePageProps"
     ></GeneralEditor>
   </div>
   <div class="property-collapse" v-else>
@@ -179,9 +180,10 @@ import type { ComponentProperty } from "@/@types/component-property";
 import { initPropertyEditors } from '@/data/property-editor';
 import { ComponentPropertyEditor } from "@/@types/enum";
 import PropertyEditorItem from './PropertyEditorItem.vue';
-import type { Component, ComponentGroup } from "@/@types";
+import type { Component, ComponentGroup, GeneralProperty } from "@/@types";
 import { Button, ButtonGroup, Empty, Modal, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
+import bus from '@/tools/bus';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 
 const state = reactive({
@@ -209,6 +211,12 @@ const state = reactive({
     }
   ],
 });
+
+const changePageProps = (val: Record<string, any>, prop: GeneralProperty, propMap: any, model?: Record<string, any> | undefined) => {
+  if (prop.names?.includes('width')) {
+    bus.$emit('onRefresh');
+  }
+}
 
 const propShowListener = (prop, propMap, components: (Component | ComponentGroup)[]) => {
   if (prop?.showCondition && components.length) {
