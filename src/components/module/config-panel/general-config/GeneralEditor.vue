@@ -13,7 +13,7 @@
         <div
           class="form-design-body-property-item"
           :class="{ 'form-design-body-property-item-block': prop.layout == 'block' || (prop.attach && prop.attach.length) }"
-          v-for="prop in propertys.filter(i => i.group === propGroup.name && i.visible !== false)"
+          v-for="prop in propertys.filter(i => i.group === propGroup.name && checkVisible(i))"
           :key="Array.isArray(prop.name) ? prop.name.join('.') : prop.name"
           v-show="propShowListener(prop, editorState.currentSelectedComponentPropertyMap, model)"
         >
@@ -172,6 +172,15 @@ const emit = defineEmits<{
   (event: 'beforeChange', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
   (event: 'change', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
 }>();
+
+const checkVisible = (i: GeneralProperty) => {
+  if (i.visible === undefined) return true;
+  if (typeof i.visible === 'function') {
+    return i.visible(props.model ?? {});
+  } else {
+    return i.visible !== false;
+  }
+};
 
 const fullScreen = (eidtor: any, prop: any) => {
   state.fullScreenConfig.isFullScreen = true;

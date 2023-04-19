@@ -965,8 +965,8 @@ export const service = {
     }
   },
   /** 根据组件列表（树）查询所有表单项，返回列表，如果不传则默认查询普通页面下所有组件 */
-  getAllFormItem(rootComponents?: Component[], filter?: (component: (Component | ComponentGroup)) => boolean) {
-    const _rootComponents: (Component | ComponentGroup)[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
+  getAllFormItem(rootComponents?: (Component | ComponentGroup)[], filter?: (component: (Component | ComponentGroup)) => boolean) {
+    const _rootComponents: (Component | ComponentGroup)[] = rootComponents ?? (state.pages.filter((i) => i.pageType === PageType.normalPage).map(i => i.children) || []).flat();
     const _components: (Component | ComponentGroup)[] = [];
     const _cb = (parentComponent: (Component | ComponentGroup)) => {
       if (filter) {
@@ -974,7 +974,7 @@ export const service = {
           ...parentComponent,
           children: []
         });
-      } else if (parentComponent.isGroup) {
+      } else {
         _components.push({
           ...parentComponent,
           children: []

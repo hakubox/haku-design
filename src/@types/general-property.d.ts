@@ -21,7 +21,7 @@ export declare class GeneralProperty {
   /** 是否必填 */
   require?: boolean;
   /** 是否显示 */
-  visible?: boolean;
+  visible?: boolean | ((attrs: Record<string, any>) => boolean);
   /** 是否子级 */
   leaf?: boolean;
   /** 是否为可变属性 */

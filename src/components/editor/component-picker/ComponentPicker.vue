@@ -72,7 +72,7 @@ const componentList = computed(() => {
       })
       .map((i) => ({
         value: i.attrs.id,
-        label: i.attrs.name || i.title,
+        label: i.attrs.name || (i.isGroup ? i.label : i.title),
         icon: editorState.menuComponents.find(o => o.name === i.name)?.icon ?? '',
       })),
   })) ?? [];

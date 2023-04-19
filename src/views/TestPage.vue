@@ -10,6 +10,27 @@
     123
     <RulesEditor v-model:value="state.value" :validateType="'text'"></RulesEditor>
     456
+
+    <ul class="anime-list" style="margin-top: 50px;margin-left: 50px;">
+      <li class="anime-item"
+        v-for="(anime, index) in simpleAnimeList"
+        :key="index"
+        :class="{ current: state.currentAnimeIndex === index }"
+        @click="setAnime(index)"
+        @mouseenter="$event => startAnime($event, anime)"
+      >
+        <img class="aab" src="@/modules/anime-module/assets/img/block.png" />
+        <span>{{ anime.animeTitle }}</span>
+      </li>
+    </ul>
+
+    <GeneralEditor
+      style="width: 300px; margin-left: 50px;"
+      labelWidth="80px"
+      :model="state.animeConfig"
+      :propertys="state.animeConfigList"
+      :groups="[{ title: '动画配置', name: 'anime', icon: '' }]"
+    ></GeneralEditor>
   </div>
 </template>
 
@@ -19,33 +40,88 @@ import { Gesture, DragGesture } from '@use-gesture/vanilla';
 import { gsap } from 'gsap';
 import { message } from 'ant-design-vue';
 import RulesEditor from '@/modules/validate-module/component/RulesEditor.vue';
+import { simpleAnimeList } from '@/modules/anime-module';
+import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module/@types';
+import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
+import { GeneralProperty } from '@/@types';
+import { ComponentPropertyEditor } from '@/@types/enum';
+
+const defaultImg = new URL('@/modules/anime-module/assets/img/block.png', import.meta.url).href;
 
 const state = reactive({
   index: 200,
   editorJson: '',
   /** 是否焦点 */
   isDrag: false,
-
-  value: []
+  value: [],
+  /** 当前动画索引 */
+  currentAnimeIndex: 0,
+  /** 当前动画名称 */
+  currentAnimeName: '',
+  /** 动画配置 */
+  animeConfig: {} as Record<string, any>,
+  /** 动画配置列表 */
+  animeConfigList: [] as GeneralProperty[]
 });
 
-const valueChange = (val: string) => {
-  console.log('值改变', val);
-};
-const setValue = () => {
-  state.editorJson = `{ "a": ${state.index++} }`;
-};
-
-const doSomethingWith = (state, eventType: string) => {
-  console.log('state', state.swipe);
-  if (state.swipe[0] > 10) {
-    console.log('往右拖拽');
-  } else if (state.swipe[0] < -10) {
-    console.log('往左拖拽');
+const startAnime = (e: MouseEvent, anime: SimpleAnime) => {
+  const _dom = (e.target as HTMLElement)?.firstChild as HTMLElement;
+  if (anime.animeFn) {
+    const defaultAttrs = getDefaultProps(anime);
+    const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
+    anime.animeFn(_dom, {
+      loop: 10,
+      ...attrs,
+      duration: state.animeConfig.duration ?? 1000,
+    })?.play();
   }
 };
 
+const getDefaultProps = (anime: SimpleAnime) => {
+  const _attrs = {} as Record<string, any>;
+  anime.propertys?.forEach(item => {
+    if (item.default) {
+      if (typeof item.name === 'string') {
+        _attrs[item.name] = item.default;
+      }
+    }
+  });
+  return _attrs;
+}
+
+const setAnime = (index: number) => {
+  const _props = simpleAnimeList[index].propertys;
+  state.currentAnimeIndex = index;
+  state.currentAnimeName = simpleAnimeList[index].animeName;
+  state.animeConfigList = [
+    {
+      name: 'animeName', title: '动画名称', group: 'anime',
+      editor: ComponentPropertyEditor.label,
+    }, {
+      name: 'duration', title: '时长', group: 'anime',
+      editor: ComponentPropertyEditor.int,
+      attrs: {
+        unit: 'ms',
+        min: 100
+      }
+    },
+    ...(_props ?? [])
+  ];
+  state.animeConfig = {
+    animeName: state.currentAnimeName,
+    duration: state.animeConfig.duration ?? 1000,
+  };
+  state.animeConfigList.forEach(item => {
+    if (item.default) {
+      if (typeof item.name === 'string') {
+        state.animeConfig[item.name] = item.default;
+      }
+    }
+  });
+}
+
 onMounted(() => {
+  setAnime(0);
   const el = document.querySelector('.my-drag-box')!;
   const gesture = new DragGesture(el, ({ active, swipe: [swipeX, swipeY], movement: [mx, my] }) => {
     state.isDrag = active;
@@ -104,6 +180,49 @@ onMounted(() => {
   &.isdrag {
     background-color: blueviolet;
     cursor: grabbing;
+  }
+}
+
+.anime-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 500px;
+
+  > .anime-item {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    outline: 1px solid #DDD;
+    padding-top: 10px;
+    background-color: white;
+
+    &.current {
+      outline: 2px solid #4079F7;
+      transform: scale(1.05);
+      border-radius: 4px;
+    }
+
+    > img {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      padding: 0px;
+      font-size: 13px;
+      color: #666666;
+    }
+
+    > span {
+      display: block;
+      margin-top: 10px;
+    }
   }
 }
 </style>
