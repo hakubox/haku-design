@@ -6,20 +6,18 @@
     <!-- <button @click="setValue">值改变</button>
     {{ state.editorJson }} -->
 
-    <div class="my-drag-box" :class="{ isdrag: state.isDrag }"></div>
-    123
-    <RulesEditor v-model:value="state.value" :validateType="'text'"></RulesEditor>
-    456
+    <!-- <div class="my-drag-box" :class="{ isdrag: state.isDrag }"></div> -->
 
-    <ul class="anime-list" style="margin-top: 50px;margin-left: 50px;">
+    <ul class="anime-list" ref="animeList" style="margin-top: 50px;margin-left: 50px;">
       <li class="anime-item"
         v-for="(anime, index) in simpleAnimeList"
         :key="index"
+        :anime="anime.animeName"
         :class="{ current: state.currentAnimeIndex === index }"
         @click="setAnime(index)"
         @mouseenter="$event => startAnime($event, anime)"
       >
-        <img class="aab" src="@/modules/anime-module/assets/img/block.png" />
+        <img src="@/modules/anime-module/assets/img/block.png" />
         <span>{{ anime.animeTitle }}</span>
       </li>
     </ul>
@@ -30,16 +28,16 @@
       :model="state.animeConfig"
       :propertys="state.animeConfigList"
       :groups="[{ title: '动画配置', name: 'anime', icon: '' }]"
+      @change="replay"
     ></GeneralEditor>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { Gesture, DragGesture } from '@use-gesture/vanilla';
 import { gsap } from 'gsap';
 import { message } from 'ant-design-vue';
-import RulesEditor from '@/modules/validate-module/component/RulesEditor.vue';
 import { simpleAnimeList } from '@/modules/anime-module';
 import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module/@types';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
@@ -64,8 +62,10 @@ const state = reactive({
   animeConfigList: [] as GeneralProperty[]
 });
 
-const startAnime = (e: MouseEvent, anime: SimpleAnime) => {
-  const _dom = (e.target as HTMLElement)?.firstChild as HTMLElement;
+const animeList = ref<HTMLElement>();
+
+const startAnime = ({ target }, anime: SimpleAnime) => {
+  const _dom = (target as HTMLElement)?.firstChild as HTMLElement;
   if (anime.animeFn) {
     const defaultAttrs = getDefaultProps(anime);
     const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
@@ -89,6 +89,11 @@ const getDefaultProps = (anime: SimpleAnime) => {
   return _attrs;
 }
 
+const replay = () => {
+  const _dom = animeList.value?.querySelector(`[anime='${state.currentAnimeName}']`) as HTMLElement;
+  startAnime({ target: _dom }, simpleAnimeList[state.currentAnimeIndex]);
+};
+
 const setAnime = (index: number) => {
   const _props = simpleAnimeList[index].propertys;
   state.currentAnimeIndex = index;
@@ -101,7 +106,7 @@ const setAnime = (index: number) => {
       name: 'duration', title: '时长', group: 'anime',
       editor: ComponentPropertyEditor.int,
       attrs: {
-        unit: 'ms',
+        suffix: 'ms',
         min: 100
       }
     },
@@ -122,25 +127,25 @@ const setAnime = (index: number) => {
 
 onMounted(() => {
   setAnime(0);
-  const el = document.querySelector('.my-drag-box')!;
-  const gesture = new DragGesture(el, ({ active, swipe: [swipeX, swipeY], movement: [mx, my] }) => {
-    state.isDrag = active;
-    gsap.to(el, {
-      x: active ? mx : 0,
-      y: active ? my : 0,
-      // duration: active ? 0 : 1000
-    });
-    if (swipeX > 0) {
-      message.success('往右拖拽');
-    } else if (swipeX < 0) {
-      message.success('往左拖拽');
-    }
-    if (swipeY > 0) {
-      message.success('往下拖拽');
-    } else if (swipeY < 0) {
-      message.success('往上拖拽');
-    }
-  })
+  // const el = document.querySelector('.my-drag-box')!;
+  // const gesture = new DragGesture(el, ({ active, swipe: [swipeX, swipeY], movement: [mx, my] }) => {
+  //   state.isDrag = active;
+  //   gsap.to(el, {
+  //     x: active ? mx : 0,
+  //     y: active ? my : 0,
+  //     // duration: active ? 0 : 1000
+  //   });
+  //   if (swipeX > 0) {
+  //     message.success('往右拖拽');
+  //   } else if (swipeX < 0) {
+  //     message.success('往左拖拽');
+  //   }
+  //   if (swipeY > 0) {
+  //     message.success('往下拖拽');
+  //   } else if (swipeY < 0) {
+  //     message.success('往上拖拽');
+  //   }
+  // })
 
   // const gesture1 = new Gesture(el, {
   //   onDrag: (state) => doSomethingWith(state, 'onDrag'),

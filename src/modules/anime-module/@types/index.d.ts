@@ -23,7 +23,7 @@ export interface SimpleAnime {
   propertys?: GeneralProperty[];
 }
 
-/** 简单动画 */
+/** 简单动画配置项 */
 export interface SimpleAnimeConfig {
   /** 动画名称 */
   animeName: string;
