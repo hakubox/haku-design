@@ -121,4 +121,200 @@ export const animes: SimpleAnime[] = [
       }
     }
   },
+
+  { animeName: 'dance', animeTitle: '晃动', animeType: 'emphasize', onText: false, attrs: { duration: 1 }, propertys: [
+    {
+      name: 'direction', title: '方位', group: 'anime', default: 'top',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '上方', value: 'top' },
+          { label: '中部', value: 'middle' },
+          { label: '下方', value: 'bottom' },
+        ]
+      }
+    }
+  ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
+      let tl = gsap.timeline();
+      switch (attrs.direction) {
+        case 'top':
+          return tl.to(el, { duration: 0, skewX: '0deg', transformOrigin: 'top' })
+            .to(el, { duration: 0.16, skewX: '-14deg' })
+            .to(el, { duration: 0.33, skewX: '12deg' })  
+            .to(el, { duration: 0.49, skewX: '-8deg' })
+            .to(el, { duration: 0.66, skewX: '6deg' })
+            .to(el, { duration: 0.83, skewX: '-4deg' })
+            .to(el, { duration: 1, skewX: '0deg' });
+        case 'middle':
+          return tl.to(el, { duration: 0, skewX: '0deg', transformOrigin: 'center' })
+            .to(el, { duration: 0.16, skewX: '-14deg' })
+            .to(el, { duration: 0.33, skewX: '12deg' })  
+            .to(el, { duration: 0.49, skewX: '-8deg' })
+            .to(el, { duration: 0.66, skewX: '6deg' })
+            .to(el, { duration: 0.83, skewX: '-4deg' })
+            .to(el, { duration: 1, skewX: '0deg' });
+        case 'bottom':
+          return tl.to(el, { duration: 0, skewX: '0deg', transformOrigin: 'bottom' })
+            .to(el, { duration: 0.16, skewX: '-14deg' })
+            .to(el, { duration: 0.33, skewX: '12deg' })  
+            .to(el, { duration: 0.49, skewX: '-8deg' })
+            .to(el, { duration: 0.66, skewX: '6deg' })
+            .to(el, { duration: 0.83, skewX: '-4deg' })
+            .to(el, { duration: 1, skewX: '0deg' });
+      }
+    }
+  },
+
+  { animeName: 'rotate', animeTitle: '旋转', animeType: 'emphasize', onText: false, attrs: { duration: 1 }, propertys: [
+    {
+      name: 'type', title: '类型', group: 'anime', default: 'z',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: 'Z轴', value: 'z' },
+          { label: 'X轴', value: 'x' },
+          { label: 'Y轴', value: 'y' },
+        ]
+      }
+    }
+  ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
+      switch (attrs.type) {
+        case 'z':
+          return gsap.fromTo(el, 
+            { rotateZ: '0deg' }, 
+            { rotateZ: '360deg' }
+          );
+        case 'x':
+          return gsap.fromTo(el, 
+            { rotateX: '0deg' }, 
+            { rotateX: '360deg' }
+          );
+        case 'y':
+          return gsap.fromTo(el, 
+            { rotateY: '0deg' }, 
+            { rotateY: '360deg' }
+          );
+      }
+    }
+  },
+
+  { animeName: 'shake', animeTitle: '抖动', animeType: 'emphasize', onText: false, attrs: { duration: 1 }, propertys: [
+    {
+      name: 'type', title: '类型', group: 'anime', default: 'pulse',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '脉冲', value: 'pulse' },
+          { label: '横向', value: 'horizontal' },
+          { label: '纵向', value: 'vertical' },
+          { label: '生气', value: 'mad' },
+          { label: '震动', value: 'vibration' },
+        ]
+      }
+    }, {
+      name: 'distance', title: '距离', group: 'anime', default: 5,
+      editor: ComponentPropertyEditor.int,
+      attrs: {
+        suffix: 'px',
+      },
+      visible: (attrs) => !['vibration', 'pulse'].includes(attrs.direction),
+    }
+  ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
+      let tl = gsap.timeline();
+      switch (attrs.type) {
+        case 'pulse':
+          return tl.to(el, { duration: 0.1, scale: 1 })
+            .to(el, { duration: 0.02, scale: 1.2 })  
+            .to(el, { duration: 0.04, scale: 1 })
+            .to(el, { duration: 0.02, scale: 1.1 })
+            .to(el, { duration: 0.02, scale: 1 })
+            .to(el, { duration: 0.8, scale: 1 });
+        case 'horizontal':
+          return tl.to(el, { duration: 0, x: `0px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, x: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, x: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, x: `-${attrs.distance}px` })
+            .to(el, { duration: 0.02, x: `0px` });
+        case 'vertical':
+          return tl.to(el, { duration: 0, y: `0px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px` })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px` })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px` })
+            .to(el, { duration: 0.02, y: `0px` });
+        case 'mad':
+          return tl.to(el, { duration: 0, y: `0px`, scale: 1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.12, y: `${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.3, y: `${attrs.distance * 0.6}px`, scale: 0.8 })
+            .to(el, { duration: 0.3, y: `-${attrs.distance}px`, scale: 1.1 })
+            .to(el, { duration: 0.02, y: `0px`, scale: 1 });
+        case 'vibration':
+          return tl.to(el, { duration: 0, y: `0px`, scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 })
+            .to(el, { duration: 0.05, skewY: '1deg', skewX: '-1deg', scale: 1.06 })
+            .to(el, { duration: 0.05, skewY: '0deg', skewX: '0deg', scale: 1 });
+      }
+    }
+  },
 ];

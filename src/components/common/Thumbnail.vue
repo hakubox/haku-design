@@ -222,6 +222,7 @@ onUnmounted(() => {
       right: 0;
       outline: 1px solid #4d8ce4;
       background-color: rgba(51, 122, 183, 0.2);
+      box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.15);
       border-radius: 2px;
 
       &:active {

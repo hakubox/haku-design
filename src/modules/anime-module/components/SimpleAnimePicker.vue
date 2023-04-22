@@ -70,7 +70,8 @@ const animeList = ref<HTMLElement>();
 
 const startAnime = (target: HTMLElement, anime: SimpleAnime) => {
   const _dom = target.firstChild as HTMLElement;
-  if (anime.animeFn && !isPlaying(anime.animeName)) {
+  clearAnime(anime.animeName);
+  if (anime.animeFn) {
     const defaultAttrs = getDefaultProps(anime);
     const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
     const _anime = anime.animeFn(_dom, {
@@ -78,7 +79,7 @@ const startAnime = (target: HTMLElement, anime: SimpleAnime) => {
     })?.duration(state.animeConfig.duration ?? 1000)
       .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())!;
     _anime.then(() => {
-      if (anime.animeType === 'out') {
+      if (anime.animeType !== 'in') {
         _anime.reverse(0.001);
       }
       setTimeout(() => {
@@ -110,20 +111,41 @@ const getDefaultProps = (anime: SimpleAnime) => {
   return _attrs;
 }
 
+/** 清除动画 */
+const clearAnime = (animeName?: string) => {
+  state.playingAnimeNames.forEach((i, index) => {
+    if (animeName === undefined || animeName === i) {
+      const _animeName = animeName ?? i;
+      const _anime = state.playingAnimes[index];
+      const _animeConfig = simpleAnimeList.find(i => i.animeName === _animeName);
+      if (_animeConfig?.animeType !== 'in') {
+        _anime.reverse(0.01);
+        _anime.kill();
+      } else {
+        _anime.duration(0.01);
+      }
+      if (animeName) {
+        state.playingAnimeNames.splice(index, 1);
+        state.playingAnimes.splice(index, 1);
+      }
+    }
+  });
+  if (animeName === undefined) {
+    state.playingAnimeNames = [];
+    state.playingAnimes = [];
+  }
+}
+
 /** 重新播放动画 */
 const replay = () => {
+  clearAnime(state.currentAnimeName);
   const _dom = animeList.value?.querySelector(`[anime='${state.currentAnimeName}']`) as HTMLElement;
   startAnime(_dom, simpleAnimeList.find(i => i.animeName === state.currentAnimeName)!);
 };
 
 /** 设置动画分类 */
 const setAnimeCategory = (category: string) => {
-  state.playingAnimes.forEach(i => {
-    i.reverse(0.001);
-    i.kill();
-  });
-  state.playingAnimeNames = [];
-  state.playingAnimes = [];
+  clearAnime();
   state.currentAnimeCategory = category;
   const _animes = simpleAnimeList.filter(i => state.currentAnimeCategory === i.animeType);
   if (_animes.length) {
@@ -182,7 +204,13 @@ const setAnime = (animeName: string) => {
   state.animeConfigList.forEach(item => {
     if (item.default) {
       if (typeof item.name === 'string') {
-        state.animeConfig[item.name] = item.default;
+        if (['duration', 'repeat'].includes(item.name)) {
+          if (state.animeConfig[item.name] === undefined) {
+            state.animeConfig[item.name] = item.default;
+          }
+        } else {
+          state.animeConfig[item.name] = item.default;
+        }
       }
     }
   });
