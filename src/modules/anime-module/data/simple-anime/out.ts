@@ -5,7 +5,7 @@ import { ComponentPropertyEditor } from '@/@types/enum';
 /** 简单淡出动画列表 */
 export const animes: SimpleAnime[] = [
 
-  { animeName: 'fadeOut', animeTitle: '渐隐', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'fadeOut', animeTitle: '渐隐', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'none',
       editor: ComponentPropertyEditor.radioGroup,
@@ -64,7 +64,7 @@ export const animes: SimpleAnime[] = [
     }
   },
 
-  { animeName: 'blurOut', animeTitle: '模糊淡出', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'blurOut', animeTitle: '模糊淡出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'none',
       editor: ComponentPropertyEditor.radioGroup,
@@ -123,7 +123,7 @@ export const animes: SimpleAnime[] = [
     }
   },
 
-  { animeName: 'doorOpen', animeTitle: '开门', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'doorOpen', animeTitle: '开门', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,
@@ -161,7 +161,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
   
-  { animeName: 'zoomOut', animeTitle: '镜头拉近', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'zoomOut', animeTitle: '镜头拉近', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'none',
       editor: ComponentPropertyEditor.radioGroup,
@@ -220,7 +220,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
 
-  { animeName: 'rollTo', animeTitle: '翻转淡出', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'rollTo', animeTitle: '翻转淡出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,
@@ -272,8 +272,61 @@ export const animes: SimpleAnime[] = [
         );
     }
   } },
+
+  { animeName: 'rotateTo', animeTitle: '旋转淡出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
+    {
+      name: 'direction', title: '类型', group: 'anime', default: 'left',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '向上', value: 'top' },
+          { label: '向左', value: 'left' },
+          { label: '向下', value: 'bottom' },
+          { label: '向右', value: 'right' },
+        ]
+      }
+    }, {
+      name: 'distance', title: '距离', group: 'anime', default: 100,
+      editor: ComponentPropertyEditor.int,
+      attrs: {
+        suffix: '%',
+        min: 0
+      },
+    }, {
+      name: 'rotate', title: '旋转角度', group: 'anime', default: 180,
+      editor: ComponentPropertyEditor.int,
+      attrs: {
+        suffix: '°',
+        min: 0
+      },
+    }
+  ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
+      switch (attrs.direction) {
+        case 'left':
+          return gsap.fromTo(el, 
+            { opacity: 1, rotateZ: `${attrs.rotate}deg`, x: `0%` },
+            { opacity: 0, rotateZ: `0deg`, x: `-${attrs.distance}%` }, 
+          );
+        case 'right':
+          return gsap.fromTo(el, 
+            { opacity: 1, rotateZ: `${attrs.rotate}deg`, x: `0%` },
+            { opacity: 0, rotateZ: `0deg`, x: `${attrs.distance}%` }, 
+          );
+        case 'top':
+          return gsap.fromTo(el, 
+            { opacity: 1, rotateZ: `${attrs.rotate}deg`, y: `0%` },
+            { opacity: 0, rotateZ: `0deg`, y: `-${attrs.distance}%` }, 
+          );
+        case 'bottom':
+          return gsap.fromTo(el, 
+            { opacity: 1, rotateZ: `${attrs.rotate}deg`, y: `0%` },
+            { opacity: 0, rotateZ: `0deg`, y: `${attrs.distance}%` }, 
+          );
+      }
+    }
+  },
   
-  { animeName: 'pushReleaseTo', animeTitle: '加速淡出', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'pushReleaseTo', animeTitle: '加速淡出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,
@@ -337,7 +390,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
   
-  { animeName: 'wipeOut', animeTitle: '擦出', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'wipeOut', animeTitle: '擦出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,
@@ -381,7 +434,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
 
-  { animeName: 'pitchingOut', animeTitle: '切出', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'pitchingOut', animeTitle: '切出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,
@@ -419,7 +472,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
 
-  { animeName: 'hangAndDrop', animeTitle: '掉下', animeType: 'out', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'hangAndDrop', animeTitle: '掉下', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,

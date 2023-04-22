@@ -19,6 +19,7 @@
           :class="{ current: state.currentAnimeName === anime.animeName }"
           @click="setAnime(anime.animeName)"
           @mouseenter="$event => startAnime($event.target as HTMLElement, anime)"
+          @mouseleave="$event => endAnime($event.target as HTMLElement, anime)"
         >
           <img src="@/modules/anime-module/assets/img/block.png" />
           <span>{{ anime.animeTitle }}</span>
@@ -68,30 +69,47 @@ const state = reactive({
 
 const animeList = ref<HTMLElement>();
 
+/** 开始播放动画 */
 const startAnime = (target: HTMLElement, anime: SimpleAnime) => {
   const _dom = target.firstChild as HTMLElement;
   clearAnime(anime.animeName);
-  if (anime.animeFn) {
-    const defaultAttrs = getDefaultProps(anime);
-    const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
-    const _anime = anime.animeFn(_dom, {
-      ...attrs,
-    })?.duration(state.animeConfig.duration ?? 1000)
-      .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())!;
-    _anime.then(() => {
-      if (anime.animeType !== 'in') {
-        _anime.reverse(0.001);
-      }
-      setTimeout(() => {
-        const _index = state.playingAnimeNames.indexOf(anime.animeName);
-        state.playingAnimeNames.splice(_index, 1);
-        state.playingAnimes.splice(_index, 1);
-      }, 10);
-    });
-    state.playingAnimeNames.push(anime.animeName);
-    state.playingAnimes.push(_anime);
-  }
+  const defaultAttrs = getDefaultProps(anime);
+  const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
+  const _anime = anime.animeFn(_dom, {
+    ...attrs,
+  })?.duration(state.animeConfig.duration ?? 1000)
+    .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())!;
+  _anime.then(() => {
+    if (anime.animeType !== 'in' && anime.fillmode !== 'forwards') {
+      _anime.reverse(0.001);
+    }
+    setTimeout(() => {
+      const _index = state.playingAnimeNames.indexOf(anime.animeName);
+      state.playingAnimeNames.splice(_index, 1);
+      state.playingAnimes.splice(_index, 1);
+    }, 10);
+  });
+  state.playingAnimeNames.push(anime.animeName);
+  state.playingAnimes.push(_anime);
 };
+
+/** 结束播放动画 */
+const endAnime = (target: HTMLElement, anime: SimpleAnime) => {
+  if (anime.animeType !== 'in' && anime.fillmode === 'forwards') {
+    const _animeIndex = state.playingAnimeNames.findIndex(i => i === anime.animeName);
+    if (_animeIndex >= 0) {
+      state.playingAnimes[_animeIndex].reverse();
+    } else {
+      const _dom = target.firstChild as HTMLElement;
+      const defaultAttrs = getDefaultProps(anime);
+      const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
+      const _anime = anime.animeFn(_dom, {
+        ...attrs
+      })!;
+      _anime.reverse();
+    }
+  }
+}
 
 /** 是否运行中 */
 const isPlaying = (animeName: string) => {
@@ -183,7 +201,7 @@ const setAnime = (animeName: string) => {
         max: 8
       }
     },
-    (simpleAnimeList[_animeIndex].animeType === 'emphasize' ? {
+    (simpleAnimeList[_animeIndex].animeType === 'emphasize' && simpleAnimeList[_animeIndex].fillmode !== 'forwards' ? {
       name: 'repeat', title: '循环次数', group: 'anime',
       editor: ComponentPropertyEditor.slider,
       attrs: {
