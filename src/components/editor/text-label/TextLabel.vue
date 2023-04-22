@@ -29,7 +29,7 @@ const props = defineProps({
   height: 30px;
   width: calc(100%);
   transition: 0.3s;
-  padding-left: 8px;
+  padding-left: 0px;
 
   > .text-label-content {
     color: #666;

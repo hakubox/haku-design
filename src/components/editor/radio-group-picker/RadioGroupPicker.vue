@@ -53,5 +53,10 @@ watch(() => props.value, (val, oldVal) => {
 @import '/src/assets/less/variable.less';
 
 .radio-group-picker {
+
+  > .ant-radio-group-solid {
+    vertical-align: middle;
+    margin-top: -3px;
+  }
 }
 </style>

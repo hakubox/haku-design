@@ -373,6 +373,14 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     attrs: {},
     editor: ComponentPropertyEditor.numbers,
   },
+  {
+    name: 'slider',
+    description: '滑动输入框',
+    component: 'slider-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.slider,
+  },
 ];
 
 /** 获取所有编辑器 */

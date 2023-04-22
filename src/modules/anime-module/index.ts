@@ -9,7 +9,7 @@ export { simpleAnimeList } from './data/simple-anime';
 export const state = reactive({
   /** 已绑定动画 */
   simpleAnimeConfig: {
-
+    
   } as SimpleAnimeConfig,
 });
 

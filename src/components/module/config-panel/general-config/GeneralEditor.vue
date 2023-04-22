@@ -5,7 +5,7 @@
       v-for="(propGroup, index) in groups"
       :key="'p' + index"
     >
-      <label class="property-collapse-item-title">
+      <label v-show="props.showTitle" class="property-collapse-item-title">
         <!-- <DownOutlined /> -->
         {{propGroup.title}}
       </label>
@@ -138,6 +138,11 @@ const props = defineProps({
   model: {
     type: Object as PropType<Record<string, any>>,
     default: () => ({})
+  },
+  /** 显示标题 */
+  showTitle: {
+    type: Boolean,
+    default: true,
   },
   /** 属性分组 */
   groups: {

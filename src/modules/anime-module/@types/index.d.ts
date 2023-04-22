@@ -11,10 +11,12 @@ export interface SimpleAnime {
   animeTitle: string;
   /** 动画描述 */
   description?: string;
+  /** 默认属性 */
+  attrs: Record<string, any>;
   /** 动画类型(入场/出场/强调) */
   animeType: 'in' | 'out' | 'emphasize';
   /** 动画函数（如果没有则取css动画） */
-  animeFn?: (el: HTMLElement, attrs: Record<string, any>) => gsap.core.Tween | undefined;
+  animeFn?: (el: HTMLElement, attrs: Record<string, any>) => gsap.core.Tween | gsap.core.Timeline | undefined;
   /** 可选择方向 */
   // directions: Partial<Record<SimpleAnimeDirection, any>>;
   /** 仅针对文字 */
