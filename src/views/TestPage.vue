@@ -2,7 +2,7 @@
   <div>
     <!-- 目前暂时用于Monaco编辑器测试 -->
     <!-- <code-editor style="height: 70vh" language="json" v-model:value="state.editorJson" @change="valueChange"> </code-editor> -->
-    <hr />
+
     <!-- <button @click="setValue">值改变</button>
     {{ state.editorJson }} -->
 
@@ -15,16 +15,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
 import { Gesture, DragGesture } from '@use-gesture/vanilla';
-import { gsap } from 'gsap';
-import { message } from 'ant-design-vue';
-import { simpleAnimeList } from '@/modules/anime-module';
-import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module/@types';
-import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
-import { GeneralProperty } from '@/@types';
-import { ComponentPropertyEditor } from '@/@types/enum';
 import SimpleAnimePicker from '@/modules/anime-module/components/SimpleAnimePicker.vue';
-
-const defaultImg = new URL('@/modules/anime-module/assets/img/block.png', import.meta.url).href;
 
 const state = reactive({
   index: 200,
@@ -33,18 +24,6 @@ const state = reactive({
   isDrag: false,
   value: [],
 });
-
-const getDefaultProps = (anime: SimpleAnime) => {
-  const _attrs = {} as Record<string, any>;
-  anime.propertys?.forEach(item => {
-    if (item.default) {
-      if (typeof item.name === 'string') {
-        _attrs[item.name] = item.default;
-      }
-    }
-  });
-  return _attrs;
-}
 
 onMounted(() => {
   // const el = document.querySelector('.my-drag-box')!;

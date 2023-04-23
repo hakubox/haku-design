@@ -297,30 +297,31 @@ export const animes: SimpleAnime[] = [
       editor: ComponentPropertyEditor.int,
       attrs: {
         suffix: '°',
-        min: 0
+        min: -3600,
+        max: 3600
       },
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
       switch (attrs.direction) {
         case 'left':
           return gsap.fromTo(el, 
-            { opacity: 1, rotateZ: `${attrs.rotate}deg`, x: `0%` },
-            { opacity: 0, rotateZ: `0deg`, x: `-${attrs.distance}%` }, 
+            { opacity: 1, rotateZ: `0deg`, x: `0%` },
+            { opacity: 0, rotateZ: `${attrs.rotate}deg`, x: `-${attrs.distance}%` }, 
           );
         case 'right':
           return gsap.fromTo(el, 
-            { opacity: 1, rotateZ: `${attrs.rotate}deg`, x: `0%` },
-            { opacity: 0, rotateZ: `0deg`, x: `${attrs.distance}%` }, 
+            { opacity: 1, rotateZ: `0deg`, x: `0%` },
+            { opacity: 0, rotateZ: `${attrs.rotate}deg`, x: `${attrs.distance}%` }, 
           );
         case 'top':
           return gsap.fromTo(el, 
-            { opacity: 1, rotateZ: `${attrs.rotate}deg`, y: `0%` },
-            { opacity: 0, rotateZ: `0deg`, y: `-${attrs.distance}%` }, 
+            { opacity: 1, rotateZ: `0deg`, y: `0%` },
+            { opacity: 0, rotateZ: `${attrs.rotate}deg`, y: `-${attrs.distance}%` }, 
           );
         case 'bottom':
           return gsap.fromTo(el, 
-            { opacity: 1, rotateZ: `${attrs.rotate}deg`, y: `0%` },
-            { opacity: 0, rotateZ: `0deg`, y: `${attrs.distance}%` }, 
+            { opacity: 1, rotateZ: `0deg`, y: `0%` },
+            { opacity: 0, rotateZ: `${attrs.rotate}deg`, y: `${attrs.distance}%` }, 
           );
       }
     }
@@ -390,7 +391,7 @@ export const animes: SimpleAnime[] = [
     }
   } },
   
-  { animeName: 'wipeOut', animeTitle: '擦出', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'wipeOut', animeTitle: '擦除', animeType: 'out', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方向', group: 'anime', default: 'left',
       editor: ComponentPropertyEditor.radioGroup,

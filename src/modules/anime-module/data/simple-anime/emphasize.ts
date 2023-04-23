@@ -122,7 +122,7 @@ export const animes: SimpleAnime[] = [
     }
   },
 
-  { animeName: 'dance', animeTitle: '晃动', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'dance', animeTitle: '抖动', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'direction', title: '方位', group: 'anime', default: 'top',
       editor: ComponentPropertyEditor.radioGroup,
@@ -176,29 +176,49 @@ export const animes: SimpleAnime[] = [
           { label: 'Y轴', value: 'y' },
         ]
       }
+    }, {
+      name: 'rotate', title: '旋转角度', group: 'anime', default: 360,
+      editor: ComponentPropertyEditor.int,
+      attrs: {
+        suffix: '°',
+        min: -3600,
+        max: 3600
+      },
+    }, {
+      name: 'location', title: '固定位置', group: 'anime', default: 'center',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '中间', value: 'center' },
+          { label: '上方', value: 'top' },
+          { label: '下方', value: 'bottom' },
+          { label: '左侧', value: 'left' },
+          { label: '右侧', value: 'right' },
+        ]
+      }
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
       switch (attrs.type) {
         case 'z':
           return gsap.fromTo(el, 
-            { rotateZ: '0deg' }, 
-            { rotateZ: '360deg' }
+            { rotateZ: '0deg', transformOrigin: attrs.location }, 
+            { rotateZ: `${attrs.rotate}deg` }
           );
         case 'x':
           return gsap.fromTo(el, 
-            { rotateX: '0deg' }, 
-            { rotateX: '360deg' }
+            { rotateX: '0deg', transformOrigin: attrs.location }, 
+            { rotateX: `${attrs.rotate}deg` }
           );
         case 'y':
           return gsap.fromTo(el, 
-            { rotateY: '0deg' }, 
-            { rotateY: '360deg' }
+            { rotateY: '0deg', transformOrigin: attrs.location }, 
+            { rotateY: `${attrs.rotate}deg` }
           );
       }
     }
   },
 
-  { animeName: 'shake', animeTitle: '抖动', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
+  { animeName: 'shake', animeTitle: '震动', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
     {
       name: 'type', title: '类型', group: 'anime', default: 'pulse',
       editor: ComponentPropertyEditor.radioGroup,
@@ -326,10 +346,22 @@ export const animes: SimpleAnime[] = [
         suffix: '°',
         min: 0
       },
+    }, {
+      name: 'location', title: '固定位置', group: 'anime', default: 'center',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '中间', value: 'center' },
+          { label: '上方', value: 'top' },
+          { label: '下方', value: 'bottom' },
+          { label: '左侧', value: 'left' },
+          { label: '右侧', value: 'right' },
+        ]
+      }
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
       let tl = gsap.timeline();
-      return tl.to(el, { duration: 0, rotate: `0deg` })
+      return tl.to(el, { duration: 0, transformOrigin: attrs.location, rotate: `0deg` })
         .to(el, { duration: 0.16, rotate: `-${attrs.rotate}deg` })
         .to(el, { duration: 0.17, rotate: `${attrs.rotate}deg` })
         .to(el, { duration: 0.17, rotate: `-${attrs.rotate}deg` })
@@ -372,6 +404,17 @@ export const animes: SimpleAnime[] = [
         0 5px 10px rgba(0, 0, 0, .25), 
         0 10px 10px rgba(0, 0, 0, .2), 
         0 20px 20px rgba(0, 0, 0, .15)` });
+    }
+  },
+  
+  { animeName: 'lightning', animeTitle: '闪烁', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
+  ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
+      let tl = gsap.timeline();
+      return tl.to(el, { duration: 0, opacity: 1 })
+        .to(el, { duration: 0.25, opacity: 0 })
+        .to(el, { duration: 0.25, opacity: 1 })
+        .to(el, { duration: 0.25, opacity: 0 })
+        .to(el, { duration: 0.25, opacity: 1 });
     }
   },
 ];

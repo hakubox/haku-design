@@ -2,7 +2,13 @@
   <div>
     <div class="anime-body" style="width: 500px;">
       <div class="anime-header">
-        <ul class="anime-categorys">
+        <ul
+          class="anime-categorys"
+          :style="{
+            '--anime-category-count': state.animeCategory.length,
+            '--anime-category-index': state.animeCategory.findIndex(item => item.name === state.currentAnimeCategory)
+          }"
+        >
           <li
             class="anime-category"
             :class="{ active: state.currentAnimeCategory === item.name }"
@@ -73,11 +79,8 @@ const animeList = ref<HTMLElement>();
 const startAnime = (target: HTMLElement, anime: SimpleAnime) => {
   const _dom = target.firstChild as HTMLElement;
   clearAnime(anime.animeName);
-  const defaultAttrs = getDefaultProps(anime);
-  const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
-  const _anime = anime.animeFn(_dom, {
-    ...attrs,
-  })?.duration(state.animeConfig.duration ?? 1000)
+  const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : getDefaultProps(anime);
+  const _anime = anime.animeFn(_dom, attrs)?.duration(attrs.duration ?? state.animeConfig.duration ?? 1000)
     .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())!;
   _anime.then(() => {
     if (anime.animeType !== 'in' && anime.fillmode !== 'forwards') {
@@ -103,9 +106,7 @@ const endAnime = (target: HTMLElement, anime: SimpleAnime) => {
       const _dom = target.firstChild as HTMLElement;
       const defaultAttrs = getDefaultProps(anime);
       const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : defaultAttrs;
-      const _anime = anime.animeFn(_dom, {
-        ...attrs
-      })!;
+      const _anime = anime.animeFn(_dom, attrs)!;
       _anime.reverse();
     }
   }
@@ -126,7 +127,10 @@ const getDefaultProps = (anime: SimpleAnime) => {
       }
     }
   });
-  return _attrs;
+  return {
+    ...anime.attrs,
+    ..._attrs
+  };
 }
 
 /** 清除动画 */
@@ -189,13 +193,13 @@ const setAnime = (animeName: string) => {
   state.currentAnimeName = simpleAnimeList[_animeIndex].animeName;
   state.animeConfigList = [
     {
-      name: 'animeName', title: '动画名称', group: 'anime',
+      name: 'animeTitle', title: '动画名称', group: 'anime',
       editor: ComponentPropertyEditor.label,
     }, {
       name: 'duration', title: '时长', group: 'anime',
       editor: ComponentPropertyEditor.slider,
       attrs: {
-        suffix: 's',
+        suffix: '秒',
         step: 0.1,
         min: 0.1,
         max: 8
@@ -215,6 +219,7 @@ const setAnime = (animeName: string) => {
   ].filter(i => i !== undefined) as GeneralProperty[];
   state.animeConfig = {
     animeName: state.currentAnimeName,
+    animeTitle: simpleAnimeList[_animeIndex].animeTitle,
     duration: state.animeConfig.duration ?? 1,
     repeat: state.animeConfig.repeat ?? 1,
     ...(simpleAnimeList[_animeIndex]?.attrs ?? {})
@@ -252,6 +257,7 @@ onMounted(() => {
   border: 1px solid #F5F5F5;
 
   > .anime-header {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -266,6 +272,21 @@ onMounted(() => {
       align-items: center;
       width: 100%;
       margin-bottom: 0px;
+      background-color: #F5F5F5;
+      border-radius: 6px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        display: block;
+        left: calc(var(--anime-category-index, 0) * 100% / var(--anime-category-count, 1) + 1%);
+        top: 5%;
+        width: calc(100% / var(--anime-category-count, 1) - 2%);
+        height: calc(90%);
+        background-color: #648DDF;
+        border-radius: 8px;
+        transition: 0.15s left;
+      }
 
       > .anime-category {
         cursor: pointer;
@@ -273,10 +294,11 @@ onMounted(() => {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        background-color: #F5F5F5;
         width: 100%;
         height: 40px;
         text-align: center;
+        z-index: 1;
+        transition: 0.15s color;
 
         &:first-child {
           border-top-left-radius: 6px;
@@ -290,7 +312,8 @@ onMounted(() => {
 
         &.active {
           cursor: default;
-          background-color: rgba(51, 122, 183, 0.2);
+          color: white;
+          // background-color: rgba(51, 122, 183, 0.2);
         }
       }
     }
@@ -334,12 +357,14 @@ onMounted(() => {
       }
 
       > img {
+        pointer-events: none;
         position: relative;
         width: 60px;
         height: 60px;
         padding: 0px;
         font-size: 13px;
         color: #666666;
+        z-index: 1;
       }
 
       > span {

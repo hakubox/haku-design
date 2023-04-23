@@ -291,7 +291,7 @@ export const animes: SimpleAnime[] = [
         min: 0
       },
     }, {
-      name: 'rotate', title: '旋转角度', group: 'anime', default: 180,
+      name: 'rotate', title: '旋转角度', group: 'anime', default: 360,
       editor: ComponentPropertyEditor.int,
       attrs: {
         suffix: '°',
