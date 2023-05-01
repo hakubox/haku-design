@@ -12,8 +12,8 @@
       }">
         <DesignCanvas
           :style="{
-            width: `${editorState.appConfig.width}px`,
-            height: `${editorState.appConfig.height}px`,
+            width: `${editorState.appConfig.canvasConfig.width}px`,
+            height: `${editorState.appConfig.canvasConfig.height}px`,
           }"
           :isPreview="true"
           :isReadonly="true"

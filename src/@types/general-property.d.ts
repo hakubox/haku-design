@@ -63,5 +63,5 @@ export declare class GeneralProperty {
   // currentEditor?: ComponentPropertyEditor;
 
   /** 属性名 */
-  names?: string[];
+  names?: string[] | string[][];
 }

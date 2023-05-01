@@ -8,7 +8,7 @@
     :layout="layout"
   >
     <label class="component-item-label" v-if="componentLabel ?? label">
-      {{ editerState.appConfig.showNo && component.isFormItem ? serialNumberService.getQuestionNo(id) : '' }}
+      {{ editerState.appConfig.questionnaireConfig.showNo && component.isFormItem ? serialNumberService.getQuestionNo(id) : '' }}
       <span v-html="componentLabel ?? label"></span>
     </label>
     <label

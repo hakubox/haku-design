@@ -92,7 +92,7 @@
 import { createModelId } from '@/tools/common';
 import { PropType, reactive, ref, onMounted, computed, onUnmounted } from 'vue';
 import gsap from 'gsap';
-import type { AudioTimelineFragment, KeyFrame, TimelineFragment, TimelineTrack } from '../@types/timeline';
+import type { AudioTimelineFragment, ComponentTimelineFragment, KeyFrame, TimelineFragment, TimelineTrack } from '../@types/timeline';
 import { state as animeState, service as animeService } from '../';
 import { TimeAxis } from '../@types';
 
@@ -236,14 +236,17 @@ const getAttrsByTime = (time: number) => {
               progress = _time / _keyframe.time;
               Object.entries(_keyframe.attrs).map(([key, value]) => {
                 _attrs[key] = state.testAttrs[key] + (value - state.testAttrs[key]) * progress;
+                // fragment.element.style[key] = value;
               });
             } else {
               progress = (_time - _keyframes[_keyframeIndex - 1].time) / (_keyframe.time - _keyframes[_keyframeIndex - 1].time);
               const _oldAttrs = _keyframes[_keyframeIndex - 1].attrs;
               Object.entries(_keyframe.attrs).map(([key, value]) => {
                 _attrs[key] = _oldAttrs[key] + (value - _oldAttrs[key]) * progress;
+                // fragment.element.style[key] = value;
               });
             }
+            
             return { fragmentId: fragment.id, attrs: _attrs };
           }
         }
@@ -306,8 +309,9 @@ const _globalTimerFn = () => {
         timeAxisContentEl.value.scrollLeft = _cursorLocation - timeAxisContentEl.value.offsetWidth + 30;
       }
     }
-
-    emit('progress', state.currentTime / 1000, getAttrsByTime(state.currentTime));
+    
+    getAttrsByTime(state.currentTime);
+    emit('progress', state.currentTime / 1000, [{ fragmentId: '', attrs: {} }]);
   }
 
   requestAnimationFrame(_globalTimerFn);
@@ -326,17 +330,25 @@ const getCursorLocation = () => {
 /** 修改声音 */
 const changeSpeed = () => {
   getActiveAudioFragmentList().forEach(i => {
-    i.howl.rate(state.playSpeed);
+    if (i.trackType === 'audio') {
+      i.howl.rate(state.playSpeed);
+    } else if (i.trackType === 'component') {
+      
+    }
   });
 };
 
-/** 自动播放 */
+/** 开始播放 */
 const startPlay = () => {
   getActiveAudioFragmentList().forEach(i => {
-    if (state.isPlaying) {
-      i.howl.pause();
-    } else {
-      i.howl.play();
+    if (i.trackType === 'audio') {
+      if (state.isPlaying) {
+        i.howl.pause();
+      } else {
+        i.howl.play();
+      }
+    } else if (i.trackType === 'component') {
+      
     }
   });
   state.isPlaying = !state.isPlaying;
@@ -347,19 +359,22 @@ const startPlay = () => {
 const getActiveAudioFragmentList = () => {
   const _fragmentList = animeState.fragmentList.filter(i => {
     return i.timeAxisId == props.axisId && 
-      i.trackType === 'audio' && 
       state.isPlaying && 
       state.currentTime >= i.startTime && 
       state.currentTime < i.endTime;
   });
-  return _fragmentList as AudioTimelineFragment[];
+  return _fragmentList as (AudioTimelineFragment | ComponentTimelineFragment)[];
 }
 
 /** 重置 */
 const reset = () => {
   state.currentTime = 0;
   getActiveAudioFragmentList().forEach(i => {
-    i.howl.stop();
+    if (i.trackType === 'audio') {
+      i.howl.stop();
+    } else if (i.trackType === 'component') {
+
+    }
   });
 };
 

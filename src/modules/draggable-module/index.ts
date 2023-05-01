@@ -160,14 +160,14 @@ export const service = {
       if (_parent?.level === 0) {
         _childrenPoints.push([
           [0, 0], 
-          [0, editorState.appConfig.height / 2], 
-          [0, editorState.appConfig.height],
-          [editorState.appConfig.width / 2, 0], 
-          [editorState.appConfig.width / 2, editorState.appConfig.height / 2], 
-          [editorState.appConfig.width / 2, editorState.appConfig.height],
-          [editorState.appConfig.width, 0], 
-          [editorState.appConfig.width, editorState.appConfig.height / 2], 
-          [editorState.appConfig.width, editorState.appConfig.height],
+          [0, editorState.appConfig.canvasConfig.height / 2], 
+          [0, editorState.appConfig.canvasConfig.height],
+          [editorState.appConfig.canvasConfig.width / 2, 0], 
+          [editorState.appConfig.canvasConfig.width / 2, editorState.appConfig.canvasConfig.height / 2], 
+          [editorState.appConfig.canvasConfig.width / 2, editorState.appConfig.canvasConfig.height],
+          [editorState.appConfig.canvasConfig.width, 0], 
+          [editorState.appConfig.canvasConfig.width, editorState.appConfig.canvasConfig.height / 2], 
+          [editorState.appConfig.canvasConfig.width, editorState.appConfig.canvasConfig.height],
         ]);
       } else {
         _childrenPoints.push(this.getComponentPoints(_parent?.component!));
@@ -230,14 +230,14 @@ export const service = {
       // 添加外层组件（目前一定是页面）
       _childrenPoints.push([
         [0, 0], 
-        [0, editorState.appConfig.height / 2], 
-        [0, editorState.appConfig.height],
-        [editorState.appConfig.width / 2, 0], 
-        [editorState.appConfig.width / 2, editorState.appConfig.height / 2], 
-        [editorState.appConfig.width / 2, editorState.appConfig.height],
-        [editorState.appConfig.width, 0], 
-        [editorState.appConfig.width, editorState.appConfig.height / 2], 
-        [editorState.appConfig.width, editorState.appConfig.height],
+        [0, editorState.appConfig.canvasConfig.height / 2], 
+        [0, editorState.appConfig.canvasConfig.height],
+        [editorState.appConfig.canvasConfig.width / 2, 0], 
+        [editorState.appConfig.canvasConfig.width / 2, editorState.appConfig.canvasConfig.height / 2], 
+        [editorState.appConfig.canvasConfig.width / 2, editorState.appConfig.canvasConfig.height],
+        [editorState.appConfig.canvasConfig.width, 0], 
+        [editorState.appConfig.canvasConfig.width, editorState.appConfig.canvasConfig.height / 2], 
+        [editorState.appConfig.canvasConfig.width, editorState.appConfig.canvasConfig.height],
       ]);
       // 判断是否靠近吸附线（目前4像素吸附）
       for (let i = 0; i < _childrenPoints.length; i++) {
@@ -403,8 +403,8 @@ export const service = {
         original: e,
         target: _el,
         button: e.button,
-        layerY: e.layerY / state.scale,
-        layerX: e.layerX / state.scale,
+        layerY: e.layerY / editorState.appConfig.canvasConfig.scale,
+        layerX: e.layerX / editorState.appConfig.canvasConfig.scale,
       },
       component,
       true,
@@ -549,7 +549,7 @@ export const service = {
   
         if (
           state.dragConfig.mouseX > 0 &&
-          state.dragConfig.mouseX < editorState.appConfig.width &&
+          state.dragConfig.mouseX < editorState.appConfig.canvasConfig.width &&
           state.dragConfig.mouseY > -80
         ) {
           state.dragConfig.isDragArea = true;
@@ -634,8 +634,8 @@ export const service = {
         }
       } else if (state.dragConfig.isDrag) {
         state.dragConfig.isDragArea = true;
-        state.dragConfig.endLoc.y = e.clientY / state.scale - state.dragConfig.startLoc.y;
-        state.dragConfig.endLoc.x = e.clientX / state.scale - state.dragConfig.startLoc.x;
+        state.dragConfig.endLoc.y = e.clientY / editorState.appConfig.canvasConfig.scale - state.dragConfig.startLoc.y;
+        state.dragConfig.endLoc.x = e.clientX / editorState.appConfig.canvasConfig.scale - state.dragConfig.startLoc.x;
 
         state.dragConfig.mouseX = state.dragConfig.endLoc.x + state.dragConfig.startLoc.x + editorState.canvasLocation.x;
         state.dragConfig.mouseY = state.dragConfig.endLoc.y + state.dragConfig.startLoc.y + editorState.canvasLocation.y;

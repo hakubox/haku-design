@@ -7,8 +7,8 @@
       <div class="component-view-item-detail-title" @click.stop="itemClick(props.component)">
         <i :class="getIcon"></i>
         <span v-if="props.component.isGroup">{{ props.component.isGroup && props.component.label }}</span>
-        <span v-else-if="editorState.appConfig.showNo && !props.component.isGroup && props.component.isFormItem">
-          {{ editorState.appConfig.showNo && props.component.isFormItem ? serialNumberService.getQuestionNo(props.component?.id) : '' }}
+        <span v-else-if="editorState.appConfig.questionnaireConfig.showNo && !props.component.isGroup && props.component.isFormItem">
+          {{ editorState.appConfig.questionnaireConfig.showNo && props.component.isFormItem ? serialNumberService.getQuestionNo(props.component?.id) : '' }}
         </span>
         <span v-html="labelType === 'component' ? props.component.attrs.name : props.component.attrs.label"></span>
       </div>

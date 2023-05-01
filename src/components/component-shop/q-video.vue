@@ -1,11 +1,11 @@
 <template>
   <span v-if="!$attrs.isPreview && props.isBackground" class="video-tooltip">当前为背景视频模式</span>
   <ComponentBasic
+    v-else
     class="component-video"
     :class="{ 'full-screen-video': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="!$attrs.showLabel || props.isBackground ? '' : $attrs.label"
-    v-else
+    :component-label="!$attrs.showLabel || props.isBackground ? '' : $attrs.label"
   >
     <div
       v-if="props.isBackground"
@@ -13,6 +13,7 @@
       :style="{ backgroundColor: $attrs.maskColor as string }"
     ></div>
     <video
+      ref="video"
       :src="($attrs.src as string)"
       :autoplay="($attrs.isPreview as boolean && $attrs.autoplay as boolean)"
       :poster="($attrs.poster as string)"
@@ -24,7 +25,6 @@
       :style="{
         'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
       }"
-      ref="video"
     >
       您的浏览器不支持视频元素
     </video>
@@ -33,7 +33,7 @@
 
 <script lang="ts">
 export default {
-  inheritAttrs: false
+  inheritAttrs: false,
 };
 </script>
 <script lang="ts" setup>
@@ -53,8 +53,7 @@ const props = defineProps({
   },
 });
 
-const state = reactive({
-});
+const state = reactive({});
 </script>
 
 <style lang="less" scoped>

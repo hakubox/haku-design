@@ -44,7 +44,7 @@
                   <i class="iconfont icon-weizhigeshi menu-iconfont"></i>从公共模板库导入
                 </MenuItem>
               </SubMenu>
-              <SubMenu v-if="editorState.appConfig.isInit">
+              <SubMenu v-if="editorState.appConfig.designConfig.isInit">
                 <template #icon>
                   <ExportOutlined />
                 </template>
@@ -70,7 +70,7 @@
                 <i class="iconfont icon-config menu-iconfont"></i>设置
               </MenuItem>
             </SubMenu>
-            <SubMenu  key="edit" v-if="editorState.appConfig.isInit">
+            <SubMenu  key="edit" v-if="editorState.appConfig.designConfig.isInit">
               <template #icon><EditOutlined /></template>
               <template #title>编辑</template>
               <MenuItem key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
@@ -80,7 +80,7 @@
                 <i class="iconfont icon-redo menu-iconfont"></i>恢复
               </MenuItem>
             </SubMenu>
-            <SubMenu v-if="editorState.appConfig.isInit">
+            <SubMenu v-if="editorState.appConfig.designConfig.isInit">
               <template #icon><AppstoreOutlined /></template>
               <template #title>应用</template>
               <MenuItem key="redo" @click="editorState.showAppStyleDialog = true">
@@ -90,10 +90,10 @@
                 <i class="iconfont icon-config menu-iconfont"></i>应用配置
               </MenuItem>
             </SubMenu>
-            <MenuItem v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
             <!-- <MenuItem><template #icon><ScanOutlined /></template>二维码</MenuItem> -->
-            <MenuItem v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
-            <MenuItem v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem>
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem>
           </Menu>
         </div>
       </div>
@@ -125,10 +125,10 @@
 
           <!-- 画布 -->
           <div class="design-form-canvas"
-            :class="editorState.appConfig.deviceType"
+            :class="editorState.appConfig.designConfig.deviceType"
             @mousedown.stop="draggableService.startRangeSelect"
             @scroll="onScroll"
-            v-if="editorState.appConfig.isInit"
+            v-if="editorState.appConfig.designConfig.isInit"
           >
             <!-- 对齐线 -->
             <div class="align-line-panel-vertical">
@@ -167,7 +167,7 @@
 
           <!-- 欢迎界面 -->
           <WelComePanel
-            v-else-if="!editorState.appConfig.isInit"
+            v-else-if="!editorState.appConfig.designConfig.isInit"
             @create="welcomeCreate"
             @openQuestionnaireLibrary="showPublicQuestionnaireLibraryDialog()"
           ></WelComePanel>
@@ -182,24 +182,24 @@
 
           <!-- 缩略图组件 -->
           <Thumbnail
-            :content-width="editorState.appConfig.width + getWidthPadding"
-            :content-height="editorState.appConfig.height + getHeightPadding"
+            :content-width="editorState.appConfig.canvasConfig.width + getWidthPadding"
+            :content-height="editorState.appConfig.canvasConfig.height + getHeightPadding"
             v-model:range-left="draggableState.scrollLeft"
             v-model:range-top="draggableState.scrollTop"
             :range-width="draggableState.canvasViewportWidth"
             :range-height="draggableState.canvasViewportHeight"
             :content-list="editorState.currentPage.children"
-            :canvas-scale="draggableState.scale"
-            v-if="editorState.appConfig.isInit && editorState.appConfig.appType === AppType.canvas"
+            :canvas-scale="editorState.appConfig.canvasConfig.scale"
+            v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType === AppType.canvas"
             @drag="toThumbnailDrag"
           ></Thumbnail>
         </div>
 
         <!-- 主体左侧菜单栏 -->
-        <AsidePanel v-if="editorState.appConfig.isInit"></AsidePanel>
+        <AsidePanel v-if="editorState.appConfig.designConfig.isInit"></AsidePanel>
 
         <!-- 主体右侧菜单栏 -->
-        <ConfigPanel v-if="editorState.appConfig.isInit"></ConfigPanel>
+        <ConfigPanel v-if="editorState.appConfig.designConfig.isInit"></ConfigPanel>
 
       </div>
       
@@ -212,12 +212,12 @@
                 <TimelineItem v-for="item in configState.saveHistory" :key="item.index">{{dayjs(item.time).fromNow()}}</TimelineItem>
               </Timeline>
             </template>
-            <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
+            <label v-if="editorState.appConfig.designConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
           </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
-          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-fullscreen"></i>画布尺寸：{{editorState.appConfig.width}}×{{editorState.appConfig.height}}</label>
-          <label v-if="editorState.appConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-print-view"></i>放大倍数：x{{draggableState.scale.toFixed(1)}}</label>
-          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-fullscreen"></i>画布尺寸：{{editorState.appConfig.canvasConfig.width}}×{{editorState.appConfig.canvasConfig.height}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-print-view"></i>放大倍数：x{{editorState.appConfig.canvasConfig.scale.toFixed(1)}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
           <label :class="configState.config.proMode ? 'pro-mode' : 'normal-mode'">
             <i class="iconfont" :class="configState.config.proMode === 'normal' ? 'icon-yunyingzhongxin' : 'icon-star'"></i>{{configState.getModeTxt }}
@@ -246,9 +246,9 @@
       :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
       v-model:visible="editorState.showAppConfigDialog"
     >
-      <QuestionnaireConfig labelWidth="130px"
+      <AppTypeConfig labelWidth="130px"
         v-if="['questionnaire', 'courseware', 'canvas'].includes(editorState.appConfig.appType)"
-      ></QuestionnaireConfig>
+      ></AppTypeConfig>
       <ComplexComponentConfig labelWidth="130px"
         v-else-if="editorState.appConfig.appType === 'complex-component'"
       ></ComplexComponentConfig>
@@ -337,12 +337,12 @@ const onScroll = throttle((e) => {
 const onResize = (e) => {
   if (editorState.appConfig.appType !== AppType.questionnaire && e.ctrlKey) {
     if (e.deltaY > 0 || e.deltaX > 0) {
-      if (draggableState.scale >= 0.6) {
-        draggableState.scale -= 0.1;
+      if (editorState.appConfig.canvasConfig.scale >= 0.6) {
+        editorState.appConfig.canvasConfig.scale -= 0.1;
       }
     } else {
-      if (draggableState.scale <= 1.5) {
-        draggableState.scale += 0.1;
+      if (editorState.appConfig.canvasConfig.scale <= 2) {
+        editorState.appConfig.canvasConfig.scale += 0.1;
       }
     }
     e.preventDefault();
@@ -369,13 +369,13 @@ const getHeightPadding = computed<number>(() => {
 /** 获取画布样式 */
 const getCanvasRect = () => {
   const _style = {
-    width: `${editorState.appConfig.width}px`,
+    width: `${editorState.appConfig.canvasConfig.width}px`,
     minHeight: 'initial',
-    zoom: draggableState.scale,
+    zoom: editorState.appConfig.canvasConfig.scale,
   } as Record<string, any>;
 
   if (!editorState.isPreview) {
-    _style.minHeight = `${editorState.appConfig.height}px`;
+    _style.minHeight = `${editorState.appConfig.canvasConfig.height}px`;
   }
   return _style;
 }

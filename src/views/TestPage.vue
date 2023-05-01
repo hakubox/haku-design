@@ -132,7 +132,7 @@ onMounted(() => {
   background-color: #F5F5F5;
   border: 1px solid #888;
 
-  > .test-circle {
+  > .test-circle-aaa {
     position: absolute;
     top: 0;
     left: 0;

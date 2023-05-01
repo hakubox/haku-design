@@ -223,7 +223,7 @@ export function initCommands() {
     },
     exec(command) {
       const component = editorService.findComponent(command.objectId);
-      if (component) {
+      if (component && !component.isGroup) {
         const _property = component.propertys.find((i) => i.name == command.attrs.propertyName);
         if (_property) {
           editorService.setComponentAttrType(component, _property, command.newVal);
@@ -232,7 +232,7 @@ export function initCommands() {
     },
     undo(command) {
       const component = editorService.findComponent(command.objectId);
-      if (component) {
+      if (component && !component.isGroup) {
         const _property = component.propertys.find((i) => i.name == command.attrs.propertyName);
         if (_property) {
           editorService.setComponentAttrType(component, _property, command.oldVal);

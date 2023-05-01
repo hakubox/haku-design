@@ -8,7 +8,7 @@
 
 <script lang="ts">
 export default {
-  inheritAttrs: false
+  inheritAttrs: false,
 };
 </script>
 <script lang="ts" setup>
@@ -26,7 +26,7 @@ const props = defineProps({
   margin: {
     type: Array,
     default: () => [0, 0, 0, 0],
-  }
+  },
 });
 </script>
 

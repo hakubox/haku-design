@@ -1,7 +1,7 @@
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { ComponentCategory } from '@/@types/enum';
-import { Component, FormDimensionItem } from '@/@types';
+import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
 
@@ -28,7 +28,7 @@ export const service = {
   /** 提交评分 */
   submitScore() {
     return new Promise<Record<string, { componentId: string, score: number | undefined }>>((resolve, reject) => {
-      const _components: Component[] = editorService.getAllFormItem();
+      const _components: (Component | ComponentGroup)[] = editorService.getAllFormItem();
       const _checkResult = service.checkScore(_components);
       if (_checkResult === true) {
         resolve(state.scores);
@@ -39,7 +39,7 @@ export const service = {
     })
   },
   /** 校验评分 */
-  checkScore(components: Component[]) {
+  checkScore(components: (Component | ComponentGroup)[]) {
     const _failComponents = components.filter(i => {
       if (state.scores[i.id]?.score === undefined) {
         const _component = editorService.findComponent(i.id);
@@ -70,13 +70,13 @@ export const service = {
   /** 获取当前评价 */
   getCurrentRating() {
     if (
-      editorState.appConfig?.dimensionConfig?.isOpen &&
-      editorState.appConfig?.dimensionConfig?.dimensionList?.length
+      editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen &&
+      editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList?.length
     ) {
       throw new Error('暂无法获得维度评价');
     } else {
       const _score = service.countScore();
-      const ratingList = editorState?.appConfig?.ratingList;
+      const ratingList = editorState.appConfig.questionnaireConfig.ratingList;
       return (
         ratingList?.find((i) => {
           if (i.startScore > _score) return false;
@@ -99,14 +99,14 @@ export const service = {
   },
   /** 计算得分 */
   countScore() {
-    if (editorState.appConfig.hasScore) {
-      const _components: Component[] = editorService.getAllFormItem();
+    if (editorState.appConfig.questionnaireConfig.hasScore) {
+      const _components: (Component | ComponentGroup)[] = editorService.getAllFormItem();
       /** 总分数 */
       let _totalScore = 0;
       /** 维度配置 */
-      const _dimensions: FormDimensionItem[] = editorState.appConfig?.dimensionConfig?.isOpen ? editorState.appConfig?.dimensionConfig?.dimensionList : [];
+      const _dimensions: FormDimensionItem[] = editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen ? editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList : [];
 
-      _components.filter((item) => [ComponentCategory.normal, ComponentCategory.complex].includes(item.type)).forEach((item) => {
+      _components.filter((item) => !item.isGroup && [ComponentCategory.normal, ComponentCategory.complex].includes(item.type)).forEach((item) => {
         // 普通题
         // if (item.attrs.score) {
         //   _totalScore += service.formInfo[item.id].value;

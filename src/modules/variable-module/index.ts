@@ -31,7 +31,7 @@ export const getValueType = (type: VariableType) => {
 
 /** 默认变量 */
 export const getDefaultVariables = () => [
-  editorState.appConfig.hasScore ? {
+  editorState.appConfig.questionnaireConfig.hasScore ? {
     title: '评价',
     name: 'getRating',
     type: 'object',
@@ -41,17 +41,17 @@ export const getDefaultVariables = () => [
       { title: '评价详情', name: 'description', type: 'string' },
     ],
   } : undefined,
-  editorState.appConfig.hasScore ? {
+  editorState.appConfig.questionnaireConfig.hasScore ? {
     title: '总分',
     name: 'totalScore',
     type: 'number'
   } : undefined,
-  editorState.appConfig.turnPageMode !== 'no-page' ? {
+  editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' ? {
     title: '当前表单页数',
     name: 'formPageIndex',
     type: 'number',
   } : undefined,
-  editorState.appConfig.timerConfig?.isOpen ? {
+  editorState.appConfig.questionnaireConfig.timerConfig?.isOpen ? {
     title: '记时信息',
     name: 'timerInfo',
     type: 'object',

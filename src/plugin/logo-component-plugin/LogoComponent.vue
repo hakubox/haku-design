@@ -11,12 +11,12 @@ import { reactive } from 'vue';
 const props = defineProps({
   text: {
     type: String,
-    default: 'LOGO'
+    default: 'LOGO',
   },
   image: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 });
 </script>
 <style lang="less">

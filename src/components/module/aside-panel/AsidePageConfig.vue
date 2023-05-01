@@ -17,8 +17,8 @@
           }">
             <DesignCanvas
               :style="{
-                width: `${editorState.appConfig.width}px`,
-                height: `${editorState.appConfig.height}px`,
+                width: `${editorState.appConfig.canvasConfig.width}px`,
+                height: `${editorState.appConfig.canvasConfig.height}px`,
               }"
               :pageIndex="index"
               :isPreview="true"
@@ -122,9 +122,9 @@ bus.$on('onRefresh', () => {
 /** 获取缩放比 */
 const getScale = () => {
   const _elWidth = (elPageList.value?.querySelector('.page-item-body') as HTMLElement)?.offsetWidth || 240;
-  const _scaleX = _elWidth / editorState.appConfig.width;
-  const _height = editorState.appConfig.height * _scaleX;
-  const _scaleY = _height / editorState.appConfig.height;
+  const _scaleX = _elWidth / editorState.appConfig.canvasConfig.width;
+  const _height = editorState.appConfig.canvasConfig.height * _scaleX;
+  const _scaleY = _height / editorState.appConfig.canvasConfig.height;
 
   state.height = _height;
   state.scale = _scaleX < _scaleY ? _scaleX : _scaleY;

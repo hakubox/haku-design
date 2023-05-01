@@ -17,7 +17,7 @@ export const init = async ({ toastModule, confirmModule }) => {
 };
 
 /** 提示框 */
-export const toast = (messageInfo: string, type: 'info' | 'success' | 'error' | 'warning' | 'loading' = 'info', duration: number = 2000): () => void => {
+export const toast = (messageInfo: string, type: 'info' | 'success' | 'error' | 'warning' | 'loading' = 'info', duration: number = 2000): (() => void) => {
   let _type = type as string;
   if (buildProj === 'design') {
     const message = _toastModule;

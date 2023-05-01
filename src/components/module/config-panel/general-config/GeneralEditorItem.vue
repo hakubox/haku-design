@@ -91,7 +91,18 @@ const onChange = (value, prop: GeneralProperty, propertys: GeneralProperty[], mo
 const getValue = computed(() => {
   let _returnValue;
   if (props.prop.names) {
-    _returnValue = props.prop.names.map(name => props.model[name]);
+    _returnValue = props.prop.names.map(name => {
+      if (Array.isArray(name)) {
+        let _obj = props.model;
+        let _names = name;
+        for (let i = 0; i < _names.length; i++) {
+          _obj = _obj[_names[i]];
+        }
+        return _obj;
+      } else {
+        return props.model[name]
+      }
+    });
   } else {
     if (typeof props.prop.name === 'string') {
       _returnValue = props.model[props.prop.name];

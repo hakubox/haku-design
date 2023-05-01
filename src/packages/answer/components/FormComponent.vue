@@ -29,7 +29,7 @@
           :component-id="childComponent.id"
           :ref="childComponent.id"
           :class="{
-            'form-component-layout': ['complex', 'layout'].includes(childComponent.type),
+            'form-component-layout': !childComponent.isGroup && ['complex', 'layout'].includes(childComponent.type),
           }"
           :children="childComponent.children"
           :component="childComponent"
@@ -60,7 +60,7 @@
       </template> -->
     </component>
     <!-- 评分模块 -->
-    <template v-if="!['complex', 'layout'].includes(component.type)">
+    <template v-if="!component.isGroup && !['complex', 'layout'].includes(component.type)">
       <div v-if="scoringState.isScoring && formFillState.formInfo[componentId]" class="form-component-scoring">
         <span class="form-component-scoring-label">
           <i class="iconfont icon-edit-file"></i>
@@ -106,7 +106,7 @@ import { service as eventService } from '@/modules/event-module';
 import { service as variableService } from "@/modules/variable-module";
 import { EventTriggerType } from "@/modules/event-module/enum";
 import { Rate, Stepper } from 'vant';
-import type { Component } from "@/@types";
+import type { Component, ComponentGroup } from "@/@types";
 
 const props = defineProps({
   /** 控件Id */
@@ -116,13 +116,13 @@ const props = defineProps({
   },
   /** 控件 */
   component: {
-    type: Object as PropType<Component>,
+    type: Object as PropType<Component | ComponentGroup>,
     required: true
   },
   /** 子组件 */
   children: {
-    type: Object as PropType<Component[]>,
-    default: () => [] as Component[],
+    type: Object as PropType<(Component | ComponentGroup)[]>,
+    default: () => [] as (Component | ComponentGroup)[],
     required: true
   },
   /** 索引 */
@@ -149,9 +149,11 @@ const value = computed({
     return formFillState.formInfo[props.component.id]?.value;
   },
   set(val) {
-    formFillService.setFormInfo(props.component.id, val, props.component.answerType);
-    emit('setData', props.component.id, val);
-    nextTick(() => eventService.emit(EventTriggerType.valueChange, props.component.id, val));
+    if (!props.component.isGroup) {
+      formFillService.setFormInfo(props.component.id, val, props.component.answerType);
+      emit('setData', props.component.id, val);
+      nextTick(() => eventService.emit(EventTriggerType.valueChange, props.component.id, val));
+    }
   }
 });
 

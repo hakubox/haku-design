@@ -121,7 +121,7 @@ onMounted(() => {
       display: inline-block;
       vertical-align: top;
       line-height: 24px;
-      margin-right: 5px;
+      margin-right: 8px;
       white-space: nowrap;
     }
 
@@ -141,7 +141,7 @@ onMounted(() => {
       background-color: #f7f9fc;
       border: 1px solid #f7f9fc;
       border-radius: 4px;
-      height: 24px;
+      height: 30px;
       width: calc(100% - 15px);
       vertical-align: top;
       line-height: 18px;

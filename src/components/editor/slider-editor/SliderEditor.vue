@@ -12,6 +12,7 @@
       @change="change"
     />
     <InputNumber
+      size="small"
       v-model:value="state.inputValue"
       v-bind="Object.assign({}, $attrs)"
       :max="props.max"
@@ -128,7 +129,6 @@ onMounted(() => {
 
   > .ant-input-number-group-wrapper {
     width: 60%;
-    max-width: 100px;
   }
 
   > .ant-input-number {
@@ -137,6 +137,7 @@ onMounted(() => {
     width: 33%;
     background-color: #f7f9fc;
     border: 1px solid #f7f9fc;
+    max-width: 100px;
   
     &:hover {
       &:not(.disabled) {

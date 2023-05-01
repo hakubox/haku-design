@@ -27,8 +27,8 @@
       >
         <DesignCanvas
           :style="{
-            width: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.width}px` : '',
-            height: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.height}px` : '',
+            width: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.width}px` : '',
+            height: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.height}px` : '',
           }"
           class="device-info-content"
           :isPreview="true"
@@ -323,7 +323,7 @@ const getHighlight = (item: AppEventLog) => {
 watch(() => props.visible, (val) => {
   if (val) {
     openPreview();
-    state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
+    state.previewUIConfig.deviceType = editorState.appConfig.designConfig.deviceType;
     tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, FormInfoItem>;
     tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
     resetScale();
@@ -338,18 +338,18 @@ const resetScale = () => {
   } else if (editorState.appConfig.appType === AppType.canvas) {
     const _width = window.innerWidth - 500 - 40;
     const _height = window.innerHeight - 60 - 48;
-    const _scale = Math.min(_width / editorState.appConfig.width, _height / editorState.appConfig.height);
+    const _scale = Math.min(_width / editorState.appConfig.canvasConfig.width, _height / editorState.appConfig.canvasConfig.height);
     state.pcContentScale = _scale;
 
     state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
-    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.height, (820 - 54) / editorState.appConfig.width);
+    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.canvasConfig.height, (820 - 54) / editorState.appConfig.canvasConfig.width);
     state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
-    state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.height, (390 - 30) / editorState.appConfig.width);
+    state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.canvasConfig.height, (390 - 30) / editorState.appConfig.canvasConfig.width);
   }
 };
 
 onMounted(() => {
-  state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
+  state.previewUIConfig.deviceType = editorState.appConfig.designConfig.deviceType;
   window.addEventListener('resize', resetScale);
 });
 

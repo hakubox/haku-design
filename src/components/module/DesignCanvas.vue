@@ -3,8 +3,8 @@
     class="form-canvas"
     :class="{
       preview: props.isPreview,
-      pc: editorState.appConfig.deviceType == 'pc',
-      mobile: editorState.appConfig.deviceType == 'mobile',
+      pc: editorState.appConfig.designConfig.deviceType == 'pc',
+      mobile: editorState.appConfig.designConfig.deviceType == 'mobile',
     }"
     ref="formCanvas"
   >
@@ -32,10 +32,10 @@
       <div
         style="padding-top: 7px"
         v-if="
-          editorState.appConfig.showPageProgress &&
+          editorState.appConfig.questionnaireConfig.showPageProgress &&
           currentPage.pageType === 'normal-page' &&
           props.isPreview &&
-          editorState.appConfig.turnPageMode !== 'no-page' &&
+          editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' &&
           editorState.maxFormPageCount > 1
         "
       >
@@ -73,7 +73,7 @@
           readonly: props.isReadonly,
           printmode: props.isPrint
         }"
-        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
+        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.canvasConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
         <CanvasNodeActionEditor :global="true" :disabledRotate="true"
           v-if="editorState.appConfig.appType === AppType.canvas && !isPreview"
@@ -111,12 +111,12 @@
           props.isPreview &&
           showButton &&
           editorState.appConfig.appType === AppType.questionnaire &&
-          editorState.appConfig?.showPageButton !== false &&
+          editorState.appConfig.questionnaireConfig.showPageButton !== false &&
           currentPage.pageType === 'normal-page'
         "
         class="fixed-bottom"
       >
-        <div class="fixed-bottom-content" v-if="editorState.appConfig.turnPageMode">
+        <div class="fixed-bottom-content" v-if="editorState.appConfig.questionnaireConfig.turnPageMode">
           <Button
             v-if="editorState.currentFormPageIndex > 0"
             block
@@ -137,18 +137,18 @@
             type="primary"
             size="large"
             @click="submitForm()"
-          >{{ editorState.appConfig.footer.submitButtonText }}</Button>
+          >{{ editorState.appConfig.questionnaireConfig.footer.submitButtonText }}</Button>
         </div>
         <div class="fixed-bottom-content" v-else>
           <Button
             block
-            v-if="editorState.appConfig.footer.resetButton"
+            v-if="editorState.appConfig.questionnaireConfig.footer.resetButton"
             type="default"
             size="large"
             @click="resetForm()"
-          >{{ editorState.appConfig.footer.resetButtonText }}</Button>
+          >{{ editorState.appConfig.questionnaireConfig.footer.resetButtonText }}</Button>
           <Button v-if="props.isPreview" block type="primary" size="large" @click="submitForm()">{{
-            editorState.appConfig.footer.submitButtonText
+            editorState.appConfig.questionnaireConfig.footer.submitButtonText
           }}</Button>
         </div>
       </div>
@@ -262,7 +262,7 @@ onMounted(() => {
   if (editorState.getTimerConfig.isOpen) {
     if (editorState.getTimerConfig.isAutoTiming) formFillService.startTime();
   }
-  if (editorState.appConfig.isInit && editorState.appConfig.id) {
+  if (editorState.appConfig.designConfig.isInit && editorState.appConfig.id) {
     editorService.setOperationRecord();
   }
 });

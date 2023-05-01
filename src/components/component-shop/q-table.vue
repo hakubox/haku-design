@@ -5,7 +5,7 @@
       <Empty v-if="!dataSource.length" description="暂无数据">
         <Button round size="small" type="primary" style="padding: 6px 20px" @click="addRow">添加数据</Button>
       </Empty>
-      <div v-else-if="editorState.appConfig.deviceType === 'mobile' && props.useCard" class="component-card-list">
+      <div v-else-if="editorState.appConfig.designConfig.deviceType === 'mobile' && props.useCard" class="component-card-list">
         <ul class="card-list-body">
           <li
             v-for="row in props.dataSource"

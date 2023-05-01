@@ -2,7 +2,7 @@
   <div class="property-collapse">
     <div
       class="property-collapse-item"
-      v-for="(propGroup, index) in groups"
+      v-for="(propGroup, index) in props.groups"
       :key="'p' + index"
     >
       <label v-show="props.showTitle" class="property-collapse-item-title">
@@ -13,7 +13,7 @@
         <div
           class="form-design-body-property-item"
           :class="{ 'form-design-body-property-item-block': prop.layout == 'block' || (prop.attach && prop.attach.length) }"
-          v-for="prop in propertys.filter(i => i.group === propGroup.name && checkVisible(i))"
+          v-for="prop in props.propertys.filter(i => i.group === propGroup.name && checkVisible(i))"
           :key="Array.isArray(prop.name) ? prop.name.join('.') : prop.name"
           v-show="propShowListener(prop, editorState.currentSelectedComponentPropertyMap, model)"
         >
@@ -39,7 +39,7 @@
               >
                 <template #title>最大化</template>
                 <Button size="small" @click="fullScreen(prop, prop)">
-                  <FullscreenOutlined size="small" />
+                  <FullscreenOutlined :style="{ fontSize: '12px' }" />
                 </Button>
               </Tooltip>
             </template>
@@ -94,7 +94,7 @@
             <Tooltip placement="topLeft" class="prop-tool-btn" v-if="prop?.canFullScreen">
               <template #title>最大化</template>
               <Button size="small" @click="fullScreen(prop, prop)">
-                <FullscreenOutlined size="small" />
+                <FullscreenOutlined :style="{ fontSize: '12px' }" />
               </Button>
             </Tooltip>
           </template>
@@ -230,10 +230,21 @@ const getValue = (prop: GeneralProperty) => {
 const setValue = (prop: GeneralProperty, model: Record<string, any>, value) => {
   if (prop.names) {
     prop.names.forEach((name, index) => {
-      if (model[name].type) {
-        model[name].value = value[index];
+      let _obj = model;
+      let _name;
+      if (Array.isArray(name)) {
+        const _names = name as string[];
+        for (let i = 0; i < _names.length - 1; i++) {
+          _obj = _obj[_names[i]];
+        }
+        _name = _names[_names.length - 1];
       } else {
-        model[name] = value[index];
+        _name = name;
+      }
+      if (_obj[_name].type) {
+        _obj[_name].value = value[index];
+      } else {
+        _obj[_name] = value[index];
       }
     });
   } else {

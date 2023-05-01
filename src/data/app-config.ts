@@ -1,9 +1,27 @@
 import { GeneralProperty } from '@/@types';
-import { ComponentPropertyEditor, ComponentPropertyGroup, PageType, PropertyLayout } from '@/@types/enum';
+import { AppType, ComponentPropertyEditor, PageType, PropertyLayout } from '@/@types/enum';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as globalState } from '@/common/global';
 import { createModelId } from '@/tools/common';
 import { toast } from '@/common/message';
+
+/** 获取应用配置属性列表 */
+export const getAppConfigPropertys = (appType: AppType): GeneralProperty[] => {
+  switch (appType) {
+    case AppType.questionnaire:
+      return [
+        ...formConfigs,
+        ...questionnaireConfig,
+      ];
+    case AppType.canvas:
+      return [
+        ...formConfigs,
+        ...canvasConfig,
+      ];
+    default:
+      return [];
+  }
+};
 
 /** 应用配置列表 */
 export const formConfigs: GeneralProperty[] = [
@@ -48,7 +66,7 @@ export const formConfigs: GeneralProperty[] = [
     editor: ComponentPropertyEditor.multiLine,
   },
   {
-    name: 'deviceType',
+    name: ['designConfig', 'deviceType'],
     title: '设备类型',
     group: 'basic',
     editor: ComponentPropertyEditor.radioGroup,
@@ -68,21 +86,52 @@ export const formConfigs: GeneralProperty[] = [
       editorService.onPageSize();
     },
   },
+];
+
+/** 画布应用相关配置 */
+export const canvasConfig: GeneralProperty[] = [
   {
-    name: 'hasScore',
+    name: 'size',
+    names: [['canvasConfig', 'width'], ['canvasConfig', 'height']],
+    title: '尺寸',
+    require: false,
+    visible: true,
+    group: 'canvas',
+    editor: ComponentPropertyEditor.numbers,
+    attrs: {
+      options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
+    }
+  }, {
+    name: ['canvasConfig', 'scale'],
+    title: '缩放比',
+    group: 'canvas',
+    editor: ComponentPropertyEditor.slider,
+    attrs: {
+      min: 0.5,
+      max: 2,
+      step: 0.1,
+      suffix: '倍'
+    }
+  },
+];
+
+/** 问卷应用相关配置 */
+export const questionnaireConfig: GeneralProperty[] = [
+  {
+    name: ['questionnaireConfig', 'hasScore'],
     title: '是否包含评分',
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
     change() {
       editorService.changeSelectedFormComponent(editorState.currentSelectedComponents, true);
     },
   },
   {
-    name: 'ratingList',
+    name: ['questionnaireConfig', 'ratingList'],
     title: '评价列表',
     default: [{ startScore: 0, title: '正常评分' }],
     layout: PropertyLayout.block,
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.modelList,
     canFullScreen: true,
     attrs: {
@@ -109,7 +158,7 @@ export const formConfigs: GeneralProperty[] = [
             get options() {
               return [
                 { label: '——', value: '' },
-                ...editorState.appConfig.dimensionConfig.dimensionList.map((i) => ({
+                ...editorState.appConfig.questionnaireConfig.dimensionConfig.dimensionList.map((i) => ({
                   label: i.dimensionTitle,
                   value: i.dimensionId,
                 })),
@@ -118,8 +167,8 @@ export const formConfigs: GeneralProperty[] = [
           },
           get visible() {
             return (
-              editorState.appConfig?.dimensionConfig?.isOpen &&
-              editorState.appConfig?.dimensionConfig?.dimensionList?.length > 0
+              editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen &&
+              editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList?.length > 0
             );
           },
         },
@@ -137,9 +186,9 @@ export const formConfigs: GeneralProperty[] = [
     showCondition: (prop, propMap, target) => target.hasScore,
   },
   {
-    name: 'turnPageMode',
+    name: ['questionnaireConfig', 'turnPageMode'],
     title: '分页类型',
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.dropdownList,
     attrs: {
       options: [
@@ -150,162 +199,162 @@ export const formConfigs: GeneralProperty[] = [
     },
   },
   {
-    name: 'showPageProgress',
+    name: ['questionnaireConfig', 'showPageProgress'],
     title: '是否显示进度',
     default: true,
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
     attrs: {},
   },
   {
-    name: 'showNo',
+    name: ['questionnaireConfig', 'showNo'],
     title: '是否显示题目序号',
     description: '无标题的题目无法显示序号',
     default: true,
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
   },
   {
-    name: 'useAutoCache',
+    name: ['questionnaireConfig', 'useAutoCache'],
     title: '自动记录提交信息',
     default: true,
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
   },
   {
-    name: 'autoCacheDuration',
+    name: ['questionnaireConfig', 'autoCacheDuration'],
     title: '缓存超时时长',
     default: 3600000,
-    group: 'basic',
+    group: 'questionnaire',
     editor: ComponentPropertyEditor.duration,
     attrs: { unit: 'hour' },
     showCondition: (prop, propMap, target) => target.useAutoCache,
   },
 
   {
-    name: ['timerConfig', 'isOpen'],
+    name: ['questionnaireConfig', 'timerConfig', 'isOpen'],
     title: '是否开启记时',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
   },
   {
-    name: ['timerConfig', 'isAutoTiming'],
+    name: ['questionnaireConfig', 'timerConfig', 'isAutoTiming'],
     title: '是否自动记时',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'minDuration'],
+    name: ['questionnaireConfig', 'timerConfig', 'minDuration'],
     title: '最小经过时长',
     default: 0,
     group: 'time',
     editor: ComponentPropertyEditor.duration,
     attrs: { unit: 'minute' },
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'isEnforceMinDuration'],
+    name: ['questionnaireConfig', 'timerConfig', 'isEnforceMinDuration'],
     title: '是否强制最小时长',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen && target.timerConfig?.minDuration > 0,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig?.minDuration > 0,
   },
   {
-    name: ['timerConfig', 'minDurationTooltip'],
+    name: ['questionnaireConfig', 'timerConfig', 'minDurationTooltip'],
     title: '时长不足提示文本',
     default: '',
     group: 'time',
     editor: ComponentPropertyEditor.multiLine,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen && target.timerConfig?.minDuration > 0,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig?.minDuration > 0,
   },
   {
-    name: ['timerConfig', 'timeOutDuration'],
+    name: ['questionnaireConfig', 'timerConfig', 'timeOutDuration'],
     title: '超时时长',
     default: 2000,
     group: 'time',
     editor: ComponentPropertyEditor.duration,
     attrs: { unit: 'minute' },
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'showTooltip'],
+    name: ['questionnaireConfig', 'timerConfig', 'showTooltip'],
     title: '显示界面提示',
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'timeOutRemind'],
+    name: ['questionnaireConfig', 'timerConfig', 'timeOutRemind'],
     title: '超时提醒文本',
     group: 'time',
     editor: ComponentPropertyEditor.multiLine,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'timeOutAutoSubmit'],
+    name: ['questionnaireConfig', 'timerConfig', 'timeOutAutoSubmit'],
     title: '超时自动提交',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'remindAdvanceDuration'],
+    name: ['questionnaireConfig', 'timerConfig', 'remindAdvanceDuration'],
     title: '超时提醒提前时长',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'isOpenSingleQuestion'],
+    name: ['questionnaireConfig', 'timerConfig', 'isOpenSingleQuestion'],
     title: '是否开启单题记时',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
   },
   {
-    name: ['timerConfig', 'singleQuestionTimeOutDuration'],
+    name: ['questionnaireConfig', 'timerConfig', 'singleQuestionTimeOutDuration'],
     title: '单题超时时长',
     default: 100,
     group: 'time',
     editor: ComponentPropertyEditor.duration,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen && target.timerConfig.isOpenSingleQuestion,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig.isOpenSingleQuestion,
   },
   {
-    name: ['timerConfig', 'singleQuestionTimeOutAutoSkip'],
+    name: ['questionnaireConfig', 'timerConfig', 'singleQuestionTimeOutAutoSkip'],
     title: '单题超时自动跳过',
     default: false,
     group: 'time',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.timerConfig?.isOpen && target.timerConfig.isOpenSingleQuestion,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig.isOpenSingleQuestion,
   },
 
   {
-    name: ['dimensionConfig', 'isOpen'],
+    name: ['questionnaireConfig', 'dimensionConfig', 'isOpen'],
     title: '是否开启维度',
     default: false,
     group: 'dimension',
     editor: ComponentPropertyEditor.boolean,
   },
   {
-    name: ['dimensionConfig', 'dimensionList'],
+    name: ['questionnaireConfig', 'dimensionConfig', 'dimensionList'],
     title: '维度列表配置',
     default: [],
     layout: PropertyLayout.block,
     group: 'dimension',
     editor: ComponentPropertyEditor.dimension,
     attrs: {},
-    showCondition: (prop, propMap, target) => target.dimensionConfig?.isOpen,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.dimensionConfig?.isOpen,
   },
 
   {
-    name: ['startPageConfig', 'isOpen'],
+    name: ['questionnaireConfig', 'startPageConfig', 'isOpen'],
     title: '是否开启起始页',
     default: false,
     group: 'page',
@@ -329,7 +378,7 @@ export const formConfigs: GeneralProperty[] = [
     },
   },
   {
-    name: ['endPageConfig', 'isOpen'],
+    name: ['questionnaireConfig', 'endPageConfig', 'isOpen'],
     title: '是否开启完成页',
     default: false,
     group: 'page',
@@ -355,7 +404,7 @@ export const formConfigs: GeneralProperty[] = [
   },
 
   {
-    name: 'showPageButton',
+    name: ['questionnaireConfig', 'showPageButton'],
     title: '是否显示底部按钮',
     default: true,
     group: 'bottom',
@@ -363,27 +412,27 @@ export const formConfigs: GeneralProperty[] = [
     attrs: {},
   },
   {
-    name: ['footer', 'submitButtonText'],
+    name: ['questionnaireConfig', 'footer', 'submitButtonText'],
     title: '提交按钮文本',
     default: '提交',
     group: 'bottom',
     editor: ComponentPropertyEditor.singerLine,
-    showCondition: (prop, propMap, target) => target.showPageButton,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton,
   },
   {
-    name: ['footer', 'resetButton'],
+    name: ['questionnaireConfig', 'footer', 'resetButton'],
     title: '显示重置按钮',
     default: false,
     group: 'bottom',
     editor: ComponentPropertyEditor.boolean,
-    showCondition: (prop, propMap, target) => target.showPageButton,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton,
   },
   {
-    name: ['footer', 'resetButtonText'],
+    name: ['questionnaireConfig', 'footer', 'resetButtonText'],
     title: '重置按钮文本',
     default: '重置',
     group: 'bottom',
     editor: ComponentPropertyEditor.singerLine,
-    showCondition: (prop, propMap, target) => target.showPageButton && target.footer.resetButton,
+    showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton && target.questionnaireConfig.footer.resetButton,
   },
-];
+]

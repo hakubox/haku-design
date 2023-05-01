@@ -1,6 +1,6 @@
 export * from './config';
 export { AppPage } from './app-page';
-export { AppConfig } from './app-config';
+export { AppConfig, CanvasConfig, QuestionnaireConfig, DesignConfig } from './app-config';
 export { LayoutConfig } from './form-panel';
 export { FormScript } from './form-script';
 export { PropertyGroup } from './property-group';

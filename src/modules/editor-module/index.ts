@@ -1,6 +1,6 @@
 import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@/lib/clone';
-import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect } from '@/@types';
+import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect, FormDimensionItem } from '@/@types';
 import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@/@types/enum';
 import bus from '@/tools/bus';
 import { getComponents } from '@/data/form-components';
@@ -32,7 +32,6 @@ import { formCommands } from '@/data/form-commands';
 import { FormInfoItem } from '@/modules/form-fill-module/@types';
 import { toast } from '@/common/message';
 
-
 /** 问卷编辑模块逻辑 */
 export const service = {
   /** 创建AppConfig */
@@ -57,42 +56,20 @@ export const service = {
     layoutConfig?: LayoutConfig<LayoutType.flex | LayoutType.absolute>,
     deviceType?: DeviceType,
   }): AppConfig {
+    if (appType === AppType.canvas) {
+      if (!width) throw new Error('画布宽度不能为空');
+      if (!height) throw new Error('画布高度不能为空');
+    }
     return {
+      id: formId || '',
+      appVersion: '1',
       appTitle: appTitle || '',
       appType: appType,
       description: description || '',
-      id: formId || '',
-      deviceType: deviceType ?? DeviceType.mobile,
-      appVersion: '1',
-      isInit: isInit,
       headerTags: [],
       headerContent: '',
-      remark: '',
-      turnPageMode: 'default',
-      showPageProgress: true,
-      showPageButton: true,
-      width: width,
-      height: height,
-      scale: 1,
-      headerHeight: 48,
-      showNo: true,
-      timerConfig: {
-        isOpen: false,
-      },
-      dimensionConfig: {
-        isOpen: false,
-        dimensionList: [],
-      },
-      footer: {
-        isShow: false,
-        submitButtonText: '提交',
-        resetButton: false,
-        resetButtonText: '重置'
-      },
-      componentIndex: 1,
       formTheme: 'default',
-      hasScore: true,
-      isAutoToGrade: true,
+      remark: '',
       layoutConfig: layoutConfig ?? {
         layout: LayoutType.flex,
         layoutDetailConfig: {
@@ -101,18 +78,54 @@ export const service = {
           crossAxisAlignment: CrossAxisAlignment.center
         },
       },
-      startPageConfig: {
-        isOpen: false,
+      designConfig: {
+        isInit: isInit,
+        deviceType: deviceType ?? DeviceType.mobile,
+        componentIndex: 1,
       },
-      endPageConfig: {
-        isOpen: false,
+
+      /** 问卷配置 */
+      questionnaireConfig: {
+        turnPageMode: 'default',
+        showPageProgress: true,
+        showPageButton: true,
+        headerHeight: 48,
+        showNo: true,
+        timerConfig: {
+          isOpen: false,
+        },
+        dimensionConfig: {
+          isOpen: false,
+          dimensionList: [] as FormDimensionItem[],
+        },
+        footer: {
+          isShow: false,
+          submitButtonText: '提交',
+          resetButton: false,
+          resetButtonText: '重置'
+        },
+        hasScore: true,
+        isAutoToGrade: true,
+        startPageConfig: {
+          isOpen: false,
+        },
+        endPageConfig: {
+          isOpen: false,
+        },
+        ratingList: [
+          { startScore: 0, title: '分数正常' }
+        ],
+        useAutoCache: true,
+        autoCacheDuration: 3600000
       },
-      ratingList: [
-        { startScore: 0, title: '分数正常' }
-      ],
-      useAutoCache: true,
-      autoCacheDuration: 3600000
-    } as AppConfig;
+
+      /** 画布配置 */
+      canvasConfig: {
+        width: width || 0,
+        height: height || 0,
+        scale: 1,
+      }
+    };
   },
   /** 展开/收起左侧侧边栏 */
   toggleAsidePanel() {
@@ -166,13 +179,13 @@ export const service = {
         if (component.attrs.isTop) {
           return false;
         }
-        if (state.appConfig.turnPageMode === 'no-page') {
+        if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') {
           return true;
         } else {
           // 每题一页
-          if (state.appConfig.turnPageMode === 'page') {
+          if (state.appConfig.questionnaireConfig.turnPageMode === 'page') {
             return componentIndex === state.currentFormPageIndex;
-          } else if (state.appConfig.turnPageMode === 'default') {
+          } else if (state.appConfig.questionnaireConfig.turnPageMode === 'default') {
             // 默认的情况，默认则根据分页器决定如何分页
             const _splitIndexList = (state.pages[_pageIndex].children as Component[])
               .map((i, index) => i.name === 'q-page-split' ? index : undefined)
@@ -330,9 +343,9 @@ export const service = {
   },
   /** 初始化 */
   init() {
-    if (state.appConfig.deviceType === 'pc') {
+    if (state.appConfig.designConfig.deviceType === 'pc') {
       globalState.isMobile = false;
-    } else if (state.appConfig.deviceType === 'mobile') {
+    } else if (state.appConfig.designConfig.deviceType === 'mobile') {
       globalState.isMobile = true;
     }
     
@@ -667,7 +680,7 @@ export const service = {
         const _propertys = cloneLoop(formComponent.propertys) as ComponentProperty[];
 
         // 判断题型组件是否需要评分，是的话添加评分属性，并给子项添加子项评分
-        if ([ComponentCategory.normal, ComponentCategory.complex].includes(formComponent.type) && state.appConfig.hasScore) {
+        if ([ComponentCategory.normal, ComponentCategory.complex].includes(formComponent.type) && state.appConfig.questionnaireConfig.hasScore) {
           const _propIndex = formComponent.propertys.findIndex(prop => prop.name === 'options' && prop.editor === ComponentPropertyEditor.modelList);
           if (_propIndex >= 0) {
             const _propOptions = _propertys[_propIndex]?.attrs?.columns;
@@ -755,7 +768,7 @@ export const service = {
    * @param {Record<string, FormInfoItem>} formdata 当前答案列表
    * @return {Record<string, FormInfoItem>} 需要填充的表单数据
    */
-  mergeFormData(newComponents: Component[], formdata: Record<string, FormInfoItem>): Record<string, FormInfoItem> {
+  mergeFormData(newComponents: (Component | ComponentGroup)[], formdata: Record<string, FormInfoItem>): Record<string, FormInfoItem> {
     const _re: Record<string, FormInfoItem> = {};
     // 1、将传入的组件树及当前组件树铺平，并且只取题目类型（isFormItem）
     const newComponentList: (Component | ComponentGroup)[] = service.getAllFormItem(newComponents);
@@ -869,7 +882,7 @@ export const service = {
       service.refresh();
       const _dom = document.querySelector('.design-form-canvas-page');
       if (_dom) {
-        state.appConfig.width = _dom.clientWidth;
+        state.appConfig.canvasConfig.width = _dom.clientWidth;
       }
       if (!state.canvasEl) state.canvasEl = document.querySelector('.design-form-canvas')!;
       draggableState.canvasViewportWidth = state.canvasEl.offsetWidth;
@@ -1238,7 +1251,7 @@ export const service = {
     }
   },
   /** 设置组件的属性值 */
-  setComponentAttr(component: Component, propertyName: string, value: any) {
+  setComponentAttr(component: Component | ComponentGroup, propertyName: string, value: any) {
     component.attrs[propertyName] = value;
   },
   /** 设置组件的属性值类型 */
@@ -1351,7 +1364,7 @@ export const state = reactive({
   }),
   /** 获取计时配置 */
   getTimerConfig: computed((): FormTimerConfig => {
-    return state.appConfig?.timerConfig || {};
+    return state.appConfig.questionnaireConfig.timerConfig ?? {};
   }),
   /** 主页 */
   mainPage: computed((): AppPage => {
@@ -1389,8 +1402,8 @@ export const state = reactive({
   }),
   /** 总分页页数 */
   maxFormPageCount: computed((): number => {
-    if (state.appConfig.turnPageMode === 'no-page') return 1;
-    else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
+    if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') return 1;
+    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
     else return state.currentPage.children.filter(i => {
       if (i.isGroup) {
         return false;

@@ -2,9 +2,9 @@
   <ComponentBasic
     class="component-text"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="''"
-    :componentDescription="''"
-    :className="$attrs.className"
+    :component-label="''"
+    :component-description="''"
+    :class-name="$attrs.className"
   >
     <label v-if="$attrs.text" class="component-text-content" :class="$attrs.textClassName" v-html="$attrs.text"></label>
     <label
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 export default {
-  inheritAttrs: false
+  inheritAttrs: false,
 };
 </script>
 <script lang="ts" setup>
@@ -42,8 +42,7 @@ const props = defineProps({
   },
 });
 
-const state = reactive({
-});
+const state = reactive({});
 </script>
 
 <style lang="less" scoped>

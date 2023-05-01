@@ -4,7 +4,7 @@ import { service as scoringService } from '@/modules/scoring-module';
 import { service as validateService } from '@/modules/validate-module';
 import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
-import type { Component, ComponentAnswerType } from '@/@types';
+import type { Component, ComponentAnswerType, ComponentGroup } from '@/@types';
 import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from './@types';
 import { answerCommit } from '@/api/common/form-fill';
 import { Dialog, Toast } from 'vant';
@@ -91,7 +91,7 @@ export const service = {
           eventService.emit(EventTriggerType.timePause, 'global');
           if (editorState.getTimerConfig.isAutoTiming) service.pauseTime();
         }
-        if (editorState.appConfig.useAutoCache) service.save();
+        if (editorState.appConfig.questionnaireConfig.useAutoCache) service.save();
       }
 
       // 用户打开或回到页面
@@ -105,7 +105,7 @@ export const service = {
           eventService.emit(EventTriggerType.timeStart, 'global');
           if (editorState.getTimerConfig.isAutoTiming) service.resumeTime();
         }
-        if (editorState.appConfig.useAutoCache) service.save();
+        if (editorState.appConfig.questionnaireConfig.useAutoCache) service.save();
       }
     });
 
@@ -127,7 +127,7 @@ export const service = {
   },
   /** 自动保存当前信息到缓存 */
   autoSave(delay: number) {
-    if (editorState.appConfig.useAutoCache) {
+    if (editorState.appConfig.questionnaireConfig.useAutoCache) {
       state.tempStorageSaveTimer = window.setTimeout(() => {
         clearTimeout(state.tempStorageSaveTimer);
         this.save();
@@ -140,13 +140,13 @@ export const service = {
   /** 保存状态 */
   save() {
     try {
-      if (editorState.appConfig?.hasScore) scoringService.countScore();
+      if (editorState.appConfig.questionnaireConfig.hasScore) scoringService.countScore();
       const _tempStorage = {
         /** 用户Id */
         userId: authState.userInfo.id,
         /** 问卷Id */
         qid: editorState.appConfig.id,
-        extraCode: editorState.appConfig.extraCode,
+        extraCode: editorState.appConfig.questionnaireConfig.extraCode,
         appVersion: editorState.appConfig.appVersion,
         /** 缓存记录创建时间 */
         createTime: new Date().getTime(),
@@ -159,7 +159,7 @@ export const service = {
           /** 表单信息 */
           formInfo: state.formInfo,
           /** 记时信息 */
-          timerInfo: (editorState.appConfig?.timerConfig?.isOpen ? state.timerInfo : undefined) as TimingInfo | undefined,
+          timerInfo: (editorState.appConfig.questionnaireConfig.timerConfig?.isOpen ? state.timerInfo : undefined) as TimingInfo | undefined,
         },
       } as TempStorage;
 
@@ -170,7 +170,7 @@ export const service = {
           i.userId === _tempStorage.userId &&
           i.qid === _tempStorage.qid &&
           i.extraCode === _tempStorage.extraCode && 
-          new Date().getTime() - i.updateTime < editorState.appConfig.autoCacheDuration,
+          new Date().getTime() - i.updateTime < editorState.appConfig.questionnaireConfig.autoCacheDuration,
       );
 
       if (_index < 0) {
@@ -190,12 +190,12 @@ export const service = {
   },
   /** 获取当前评价 */
   getCurrentRating() {
-    if (editorState.appConfig?.dimensionConfig?.isOpen && editorState.appConfig?.dimensionConfig?.dimensionList?.length) {
+    if (editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen && editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList?.length) {
       throw new Error('暂无法获得维度评价');
       return undefined;
     } else {
       const _score = scoringService.countScore();
-      const ratingList = editorState?.appConfig?.ratingList;
+      const ratingList = editorState?.appConfig.questionnaireConfig.ratingList;
       return ratingList?.find(i => {
         if (i.startScore > _score) return false;
         else if (i.endScore && i.endScore < _score) return false;
@@ -206,7 +206,7 @@ export const service = {
   /** 刚进入页面时自动加载新数据 */
   autoLoad() {
     const storageList = JSON.parse(localStorage.getItem(StorageListKey) || '[]') as TempStorage[];
-    const _index = storageList.findIndex(i => i.userId === authState.userInfo.id && i.qid === editorState.appConfig.id && i.extraCode === editorState.appConfig.extraCode);
+    const _index = storageList.findIndex(i => i.userId === authState.userInfo.id && i.qid === editorState.appConfig.id && i.extraCode === editorState.appConfig.questionnaireConfig.extraCode);
     if (_index >= 0) {
       state.formInfo = editorService.mergeFormData(editorState.pages[0].children, storageList[_index].data.formInfo);
       state.timerInfo = storageList[_index].data.timerInfo;
@@ -218,7 +218,7 @@ export const service = {
     return new Promise(async (resolve, reject) => {
       state.errorInfo = {};
       const _errorComponents: any[] = [];
-      const _components: Component[] = [];
+      const _components: (Component | ComponentGroup)[] = [];
       if (formPageIndex !== undefined && formPageIndex >= 0) {
         _components.push(
           ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
@@ -379,14 +379,14 @@ export const service = {
       questionList: editorService.getAllFormItem(),
       answerList: Object.values(_formInfo),
       formInfo: _formInfo,
-      dimensionScore: editorState.appConfig?.dimensionConfig?.isOpen
-        ? editorState.appConfig?.dimensionConfig?.dimensionList.map((i) => ({
+      dimensionScore: editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen
+        ? editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList.map((i) => ({
             ...i,
             score: state.dimensionScore.find((i) => i.dimensionName === i.dimensionName)?.score || 0,
           }))
         : [],
       timerInfo: state.timerInfo,
-      ratingList: editorState.appConfig.ratingList,
+      ratingList: editorState.appConfig.questionnaireConfig.ratingList,
       remoteInfo: state.remoteInfo,
     };
 

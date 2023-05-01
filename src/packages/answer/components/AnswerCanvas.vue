@@ -40,9 +40,9 @@
         <div
           style="padding: 12px 8px;"
           v-if="
-            editorState.appConfig.showPageProgress && 
+            editorState.appConfig.questionnaireConfig.showPageProgress && 
             editorState.currentPage.pageType === 'normal-page' &&
-            editorState.appConfig.turnPageMode !== 'no-page' &&
+            editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' &&
             editorState.maxFormPageCount > 1 &&
             props.showProgress
           "
@@ -78,7 +78,7 @@
             v-show="editorService.showComponentInFormPage(component.id)"
             :component-id="component.id"
             :class="{
-              'form-component-layout': ['complex', 'layout'].includes(component.type),
+              'form-component-layout': !component.isGroup && ['complex', 'layout'].includes(component.type),
             }"
             :children="component.children"
             :component="component"
@@ -99,23 +99,23 @@
         </div>
 
         <!-- 提交问卷按钮 -->
-        <div v-if="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig?.showPageButton !== false && !isEmptyForm" class="fixed-bottom">
+        <div v-if="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.questionnaireConfig.showPageButton !== false && !isEmptyForm" class="fixed-bottom">
           <div class="fixed-bottom-content" v-if="editorState.maxFormPageCount > 1">
             <Button v-if="editorState.currentFormPageIndex > 0" round block type="default" size="large" @click="editorService.prevPage()">上一页</Button>
             <Button v-if="editorState.currentFormPageIndex < editorState.maxFormPageCount - 1" round block type="primary" size="large" @click="editorService.nextPage()">下一页</Button>
-            <Button v-if="editorState.currentFormPageIndex == editorState.maxFormPageCount - 1" round block type="primary" size="large" @click="submitForm(true)">{{ editorState.appConfig?.footer?.submitButtonText || '提交' }}</Button>
+            <Button v-if="editorState.currentFormPageIndex == editorState.maxFormPageCount - 1" round block type="primary" size="large" @click="submitForm(true)">{{ editorState.appConfig.questionnaireConfig.footer?.submitButtonText || '提交' }}</Button>
           </div>
           <div class="fixed-bottom-content" v-else>
             <Button
               block
-              v-if="editorState.appConfig?.footer?.resetButton"
+              v-if="editorState.appConfig.questionnaireConfig.footer?.resetButton"
               type="default"
               size="large"
               @click="resetForm()"
-              >{{ editorState.appConfig?.footer?.resetButtonText }}</Button
+              >{{ editorState.appConfig.questionnaireConfig.footer?.resetButtonText }}</Button
             >
             <Button block type="primary" size="large" @click="submitForm(true)">{{
-              editorState.appConfig?.footer?.submitButtonText
+              editorState.appConfig.questionnaireConfig.footer?.submitButtonText
             }}</Button>
           </div>
         </div>

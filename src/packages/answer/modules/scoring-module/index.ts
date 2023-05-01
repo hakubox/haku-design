@@ -1,4 +1,3 @@
-
 /** 评分模块 */
 export const service = {
   init() {

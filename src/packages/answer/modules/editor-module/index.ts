@@ -70,7 +70,7 @@ export const state = reactive({
 
   /** 获取计时配置 */
   getTimerConfig: computed((): FormTimerConfig => {
-    return state.appConfig?.timerConfig || {};
+    return state.appConfig.questionnaireConfig.timerConfig || {};
   }),
   /** 当前页 */
   currentPage: computed((): AppPage => {
@@ -305,7 +305,7 @@ export const service = {
     setTimeout(() => {
       const _dom = document.querySelector('.design-app-canvas-page');
       if (_dom) {
-        state.appConfig.width = _dom.clientWidth;
+        state.appConfig.canvasConfig.width = _dom.clientWidth;
       }
     }, 210);
   },

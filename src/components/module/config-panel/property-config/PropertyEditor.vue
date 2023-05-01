@@ -4,7 +4,7 @@
     <GeneralEditor
       :model="editorState.appConfig"
       :propertys="state.pageConfigProps"
-      :groups="[{ title: '页面', name: 'page', icon: '' }]"
+      :groups="state.pageGroups"
       @change="changePageProps"
     ></GeneralEditor>
   </div>
@@ -60,7 +60,7 @@
                 >
                   <template #title>最大化</template>
                   <Button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
-                    <FullscreenOutlined size="small" />
+                    <FullscreenOutlined :style="{ fontSize: '12px' }" />
                   </Button>
                 </Tooltip>
               </template>
@@ -113,7 +113,7 @@
             <Tooltip placement="topLeft" class="fullscreen" v-if="state.propertyEditors[prop.editor]?.canFullScreen">
               <template #title>最大化</template>
               <Button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">
-                <FullscreenOutlined size="small" />
+                <FullscreenOutlined :style="{ fontSize: '12px' }" />
               </Button>
             </Tooltip>
           </template>
@@ -173,7 +173,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
+import { computed, onMounted, reactive, watch } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
 import { service as historyService } from "@/common/history-module";
 import type { ComponentProperty } from "@/@types/component-property";
@@ -185,6 +185,7 @@ import { Button, ButtonGroup, Empty, Modal, Popover, Tooltip } from "ant-design-
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
 import bus from '@/tools/bus';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
+import { getAppConfigPropertys } from "@/data/app-config";
 
 const state = reactive({
   /** 默认属性编辑器哈希表 */
@@ -195,25 +196,28 @@ const state = reactive({
     value: undefined as any,
     isFullScreen: false,
   },
-  /** 预览配置属性栏 */
-  pageConfigProps: [
-    {
-      name: 'size',
-      names: ['width', 'height'],
-      title: '尺寸',
-      require: false,
-      visible: true,
-      group: 'page',
-      editor: ComponentPropertyEditor.numbers,
-      attrs: {
-        options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
-      }
-    }
-  ],
+  /** 页面分组 */
+  pageGroups: [] as { title: string, name: string }[],
+  /** 页面配置属性列表 */
+  pageConfigProps: [] as GeneralProperty[]
 });
 
+/** 预览配置属性栏 */
+const setPageConfigProps = () => {
+  state.pageConfigProps = getAppConfigPropertys(editorState.appConfig.appType);
+  state.pageGroups = [
+    { title: '应用配置', name: 'basic' },
+    { title: '画布配置', name: 'canvas' },
+    { title: '问卷配置', name: 'questionnaire' },
+    { title: '问卷记时配置', name: 'time' },
+    { title: '问卷维度配置', name: 'dimension' },
+    { title: '问卷特殊页配置', name: 'page' },
+    { title: '问卷底部按钮配置', name: 'bottom' },
+  ].filter(i => state.pageConfigProps.some(o => o.group === i.name));
+};
+
 const changePageProps = (val: Record<string, any>, prop: GeneralProperty, propMap: any, model?: Record<string, any> | undefined) => {
-  if (prop.names?.includes('width')) {
+  if (prop.names && Array.isArray(prop.names[0]) && prop.names[0]?.includes('width')) {
     bus.$emit('onRefresh');
   }
 }
@@ -285,9 +289,13 @@ const propAttaChangeListener = (value, prop, propMap, components: (Component | C
   }
 };
 
-const saveFullScreenValue = () => {
-  state.fullScreenConfig.isFullScreen = false;
-};
+watch(() => editorState.appConfig.appType, () => {
+  setPageConfigProps();
+});
+
+onMounted(() => {
+  setPageConfigProps();
+});
 </script>
 
 <style lang="less" scoped>

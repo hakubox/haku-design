@@ -34,7 +34,7 @@
       }"
       :style="{
         transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`,
-        zoom: `${1 / draggableState.scale}`
+        zoom: `${1 / editorState.appConfig.canvasConfig.scale}`
       }"
       class="node-action-tip"
       v-html="draggableState.tipConfig.text ?? ' '"
