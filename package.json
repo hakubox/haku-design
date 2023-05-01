@@ -68,7 +68,6 @@
     "@vitejs/plugin-vue": "4.0.0",
     "@vuepress/plugin-register-components": "2.0.0-beta.59",
     "@vuepress/plugin-search": "2.0.0-beta.59",
-    "@zougt/vite-plugin-theme-preprocessor": "^1.4.8",
     "accessible-nprogress": "^2.1.2",
     "ant-design-vue": "^3.2.15",
     "compression-webpack-plugin": "^10.0.0",

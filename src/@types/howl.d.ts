@@ -1,5 +1,3 @@
-/// <reference types="howler" />
-
 declare module "howler" {
   /**
    * 音频播放器 https://howlerjs.com/

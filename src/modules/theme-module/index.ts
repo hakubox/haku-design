@@ -1,4 +1,4 @@
-import { render } from 'less';
+import { render } from 'less/dist/less.min';
 import type { ThemeConfig } from './@types';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';
@@ -15,19 +15,17 @@ export const state = reactive({
   /** 主题列表 */
   themeList: themeList,
   /** 主题配置 */
-  themeConfig: {
-
-  } as ThemeConfig,
+  themeConfig: {} as ThemeConfig,
   /** 当前主题名称 */
   currentThemeCode: 'theme-default',
-  /** 当前主题 */
-  currentTheme: computed<ThemeConfig | undefined>(() => {
-    return state.themeList.find(i => i.code === state.currentThemeCode);
-  }),
 });
 
 /** 变量模块逻辑 */
 export const service = {
+  /** 获取当前主题 */
+  getCurrentTheme: () => {
+    return state.themeList.find(i => i.code === state.currentThemeCode);
+  },
   /** 加载主题 */
   changeTheme(theme?: string | ThemeConfig) {
     if (theme === undefined || typeof theme === 'string') {

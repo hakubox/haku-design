@@ -3,10 +3,6 @@ import path, { resolve } from 'path';
 import vue from '@vitejs/plugin-vue';
 // import basicSsl from '@vitejs/plugin-basic-ssl';
 import { visualizer } from 'rollup-plugin-visualizer';
-import {
-  themePreprocessorPlugin,
-  themePreprocessorHmrPlugin,
-} from '@zougt/vite-plugin-theme-preprocessor';
 import * as dotenv from 'dotenv';
 
 // https://vitejs.dev/config/
@@ -61,49 +57,6 @@ switch (buildProj) {
         // Components({
         //   resolvers: [AntDesignVueResolver()],
         // }),
-        // 创建动态主题切换
-        // themePreprocessorPlugin({
-        //   less: {
-        //     // 是否启用任意主题色模式，这里不启用
-        //     arbitraryMode: false,
-        //     // 提供多组变量文件
-        //     multipleScopeVars: [
-        //       {
-        //         scopeName: "theme-default",
-        //         // 变量文件内容不应该夹带样式代码，设定上只需存在变量
-        //         path: path.resolve("src/assets/less/theme/theme-default/index.lazy.less"),
-        //       },
-        //       {
-        //         scopeName: "theme-dark",
-        //         path: path.resolve("src/assets/less/theme/theme-dark/index.lazy.less"),
-        //       },
-        //     ],
-        //     // css中不是由主题色变量生成的颜色，也让它抽取到主题css内，可以提高权重
-        //     includeStyleWithColors: [
-        //       {
-        //         color: "#ffffff",
-        //         // 此类颜色的是否跟随主题色梯度变化，默认false
-        //         // inGradient: true,
-        //       },
-        //     ],
-        //     // 默认取 multipleScopeVars[0].scopeName
-        //     defaultScopeName: "theme-default",
-        //     // 在生产模式是否抽取独立的主题css文件，extract为true以下属性有效
-        //     extract: true,
-        //     // 独立主题css文件的输出路径，默认取 viteConfig.build.assetsDir 相对于 (viteConfig.build.outDir)
-        //     outputDir: "",
-        //     // 会选取defaultScopeName对应的主题css文件在html添加link
-        //     themeLinkTagId: "theme-link-tag",
-        //     // "head"||"head-prepend" || "body" ||"body-prepend"
-        //     themeLinkTagInjectTo: "head",
-        //     // 是否对抽取的css文件内对应scopeName的权重类名移除
-        //     removeCssScopeName: false,
-        //     // 可以自定义css文件名称的函数
-        //     customThemeCssFileName: (scopeName) => scopeName,
-        //   },
-        // }),
-        // // 主题热更新，不得已分开插件，因为需要vite插件顺序enforce
-        // themePreprocessorHmrPlugin(),
         {
           name: 'demo-transform',
           enforce: 'pre',
@@ -147,8 +100,7 @@ switch (buildProj) {
         }
       },
       optimizeDeps: {
-        exclude: [
-        ]
+        exclude: []
       },
     });
     break;

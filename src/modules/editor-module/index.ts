@@ -885,8 +885,10 @@ export const service = {
         state.appConfig.canvasConfig.width = _dom.clientWidth;
       }
       if (!state.canvasEl) state.canvasEl = document.querySelector('.design-form-canvas')!;
-      draggableState.canvasViewportWidth = state.canvasEl.offsetWidth;
-      draggableState.canvasViewportHeight = state.canvasEl.offsetHeight;
+      if (state.canvasEl) {
+        draggableState.canvasViewportWidth = state.canvasEl.offsetWidth;
+        draggableState.canvasViewportHeight = state.canvasEl.offsetHeight;
+      }
     }, 210);
   },
   /** 跳转到上一页（问卷分页） */

@@ -106,9 +106,9 @@ export interface AppConfig {
   layoutConfig: LayoutConfig;
   /** 设计器配置 */
   designConfig: DesignConfig;
-  /** 问卷配置 */
+  /** 应用类型配置 - 问卷 */
   questionnaireConfig: QuestionnaireConfig;
-  /** 画布配置 */
+  /** 应用类型配置 - 画布 */
   canvasConfig: CanvasConfig;
   /** 应用类型独有配置项 */
   // appTypeConfig: AppTypeDetailConfig[T];

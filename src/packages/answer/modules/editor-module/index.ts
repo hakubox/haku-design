@@ -114,8 +114,8 @@ export const state = reactive({
   }),
   /** 总页数 */
   maxFormPageCount: computed((): number => {
-    if (state.appConfig.turnPageMode === 'no-page') return 1;
-    else if (state.appConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
+    if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') return 1;
+    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
     else return state.currentPage.children.filter(i => i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen).length + 1;
   }),
 });
@@ -142,13 +142,13 @@ export const service = {
         if (component.attrs.isTop) {
           return false;
         }
-        if (state.appConfig.turnPageMode === 'no-page') {
+        if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') {
           return true;
         } else {
           // 每题一页
-          if (state.appConfig.turnPageMode === 'page') {
+          if (state.appConfig.questionnaireConfig.turnPageMode === 'page') {
             return componentIndex === state.currentFormPageIndex;
-          } else if (state.appConfig.turnPageMode === 'default') {
+          } else if (state.appConfig.questionnaireConfig.turnPageMode === 'default') {
             // 默认的情况，默认则根据分页器决定如何分页
             const _splitIndexList = (state.pages[state.currentPageIndex].children as Component[])
               .map((i, index) => i.name === 'q-page-split' ? index : undefined)
@@ -165,7 +165,7 @@ export const service = {
             }
           }
         }
-        // !editorStore.appConfig.turnPageMode || (isPreview && editorStore.appConfig.turnPageMode && index == editorStore.currentFormPageIndex)
+        // !editorStore.appConfig.questionnaireConfig.turnPageMode || (isPreview && editorStore.appConfig.questionnaireConfig.turnPageMode && index == editorStore.currentFormPageIndex)
         return false;
       } else {
         return true;
