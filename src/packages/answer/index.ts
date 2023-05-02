@@ -11,7 +11,7 @@ messageInit({ toastModule: Toast, confirmModule: Dialog });
 export function install(vue) {
   if (install['installed']) return;
   vue.use(answerComponents);
-};
+}
 
 export const AnswerCanvas = Answer;
 

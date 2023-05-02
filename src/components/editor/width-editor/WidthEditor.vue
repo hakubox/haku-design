@@ -34,7 +34,7 @@ const emit = defineEmits<{
   (event: 'update:value', val: string): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   /** 值 */
   inputValue: '',
   /** 后缀 */
@@ -51,7 +51,7 @@ const change = throttle(() => {
 /** 初始化 */
 const init = () => {
   if (typeof props.value == 'string') {
-    let _suffixRegExp = /[^-0-9.]/.exec(props.value);
+    const _suffixRegExp = /[^-0-9.]/.exec(props.value);
     if (_suffixRegExp) {
       state.inputValue = props.value.substring(0, _suffixRegExp.index);
       state.suffix = props.value.substring(_suffixRegExp.index);

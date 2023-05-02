@@ -1,6 +1,6 @@
 
 const _getPixelRatio = (context) => {
-  let backingStore =
+  const backingStore =
     context.backingStorePixelRatio ||
     context.webkitBackingStorePixelRatio ||
     context.mozBackingStorePixelRatio ||
@@ -24,7 +24,7 @@ const drawCanvas = (options: {
   const canvas = document.createElement('canvas');
   document.body.append(canvas);
   const ctx = canvas.getContext('2d')!;
-  let ratio = _getPixelRatio(ctx);
+  const ratio = _getPixelRatio(ctx);
 
   canvas.width = options.width * ratio;
   canvas.height = options.height * ratio;
@@ -37,18 +37,18 @@ const drawCanvas = (options: {
   ctx.imageSmoothingQuality = 'high';
   ctx.fillStyle = 'rgba(255, 255, 255, 0)';
 
-  let max = Math.max(...options.peaks);
+  const max = Math.max(...options.peaks);
 
-  let newArr: number[] = [];
+  const newArr: number[] = [];
   for (let i = 0; i < options.peaks.length; i++) {
     newArr[i] = options.peaks[i] / Number(max);
   }
 
-  let barCount = options.width / 3;
+  const barCount = options.width / 3;
 
-  let bar_w = Math.ceil(options.width / barCount);
+  const bar_w = Math.ceil(options.width / barCount);
 
-  let topSize = 1 - botSize;
+  const topSize = 1 - botSize;
   let lastBarHeight = 0;
   let searched_index: number;
 
@@ -68,7 +68,7 @@ const drawCanvas = (options: {
           Math.abs(newArr[searched_index] + newArr[searched_index - 1] + newArr[searched_index + 1]) / 3;
       }
 
-      let targetRatio = isReflection ? botSize : topSize;
+      const targetRatio = isReflection ? botSize : topSize;
 
       let barHeight = Math.abs(newArr[searched_index] * options.height * targetRatio);
 
@@ -80,7 +80,7 @@ const drawCanvas = (options: {
 
       ctx.lineWidth = 0;
       barHeight = Math.floor(barHeight);
-      let barPositionTop = isReflection
+      const barPositionTop = isReflection
         ? options.height * topSize
         : Math.ceil(options.height * targetRatio - barHeight);
 
@@ -106,7 +106,7 @@ const drawCanvas = (options: {
 
 export const getAudioFile = (url: string) => {
   return new Promise<ArrayBuffer>((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'arraybuffer';
     xhr.onreadystatechange = () => {
@@ -123,27 +123,27 @@ export const getAudioFile = (url: string) => {
 };
 
 const drawPeaks = (befferSource: AudioBufferSourceNode) => {
-  let _befferSource = befferSource.buffer!;
+  const _befferSource = befferSource.buffer!;
   const length = 200;
-  let sampleSize = _befferSource.length / length;
-  let sampleStep = ~~(sampleSize / 10) || 1;
-  let channels = _befferSource.numberOfChannels;
-  let splitPeaks: number[][] = [];
-  let mergedPeaks: number[] = [];
+  const sampleSize = _befferSource.length / length;
+  const sampleStep = ~~(sampleSize / 10) || 1;
+  const channels = _befferSource.numberOfChannels;
+  const splitPeaks: number[][] = [];
+  const mergedPeaks: number[] = [];
 
   for (let c = 0; c < channels; c++) {
     splitPeaks[c] = [];
-    let peaks: number[] = splitPeaks[c];
-    let chan = _befferSource.getChannelData(c);
+    const peaks: number[] = splitPeaks[c];
+    const chan = _befferSource.getChannelData(c);
 
     for (let i = 0; i < length; i++) {
-      let start = ~~(i * sampleSize);
-      let end = ~~(start + sampleSize);
+      const start = ~~(i * sampleSize);
+      const end = ~~(start + sampleSize);
       let min = 0;
       let max = 0;
 
       for (let j = start; j < end; j += sampleStep) {
-        let value = chan[j];
+        const value = chan[j];
 
         if (value > max) {
           max = value;
@@ -171,7 +171,7 @@ const drawPeaks = (befferSource: AudioBufferSourceNode) => {
 };
 
 /** 获取音频图形 */
-export const getAudioImg = (
+export const getAudioImg = async (
   /** 音频地址 / ArrayBuffer */
   target: string | ArrayBuffer,
   params: {
@@ -185,65 +185,63 @@ export const getAudioImg = (
     shadowColor?: string;
   },
 ) => {
-  return new Promise<string>(async (resolve, reject) => {
-    // @ts-ignore
-    const options = Object.assign({}, {
-      audio: null,
-      playIndex: 0,
-      barColor: '#666666',
-    }, params) as {
-      width: number;
-      height: number;
-      barColor: string;
-      audioCtx: AudioContext;
-      befferSource: AudioBufferSourceNode;
-      analyser: AnalyserNode;
-      pcm: number[];
-    };
-    Object.entries(([key, value]) => {
-      options[key] = value;
+  // @ts-ignore
+  const options = Object.assign({}, {
+    audio: null,
+    playIndex: 0,
+    barColor: '#666666',
+  }, params) as {
+    width: number;
+    height: number;
+    barColor: string;
+    audioCtx: AudioContext;
+    befferSource: AudioBufferSourceNode;
+    analyser: AnalyserNode;
+    pcm: number[];
+  };
+  Object.entries(([key, value]) => {
+    options[key] = value;
+  });
+  // 创建一个音频上下文
+  options.audioCtx = new AudioContext();
+
+  // 创建一个分析音频模块
+  options.analyser = options.audioCtx.createAnalyser();
+  // 设置音频的数量大小 默认是2048
+  options.analyser.fftSize = 512;
+
+  // 关联音频
+  options.analyser.connect(options.audioCtx.destination);
+
+  let arraybuffer: ArrayBuffer;
+  if (typeof target === 'string') {
+    arraybuffer = await getAudioFile(target);
+  } else {
+    arraybuffer = target;
+  }
+
+  return await options.audioCtx.decodeAudioData(arraybuffer, (buffer: AudioBuffer) => {
+    const accuracy = 100;
+    // 创建 AudioBufferSourceNode
+    console.log('options.audioCtx', options.audioCtx);
+    options.befferSource = options.audioCtx.createBufferSource();
+    // 讲解码之后的 buffer 放到 AudioBufferSourceNode 的 buffer 中
+    options.befferSource.buffer = buffer;
+    options.befferSource.connect(options.analyser);
+
+    // 返回计算断开时波形的最大值和最小值
+    const peaks = drawPeaks(options.befferSource);
+
+    options.pcm = peaks.map(function (item) {
+      return Math.abs(Math.round(item * accuracy) / accuracy);
     });
-    // 创建一个音频上下文
-    options.audioCtx = new AudioContext();
-
-    // 创建一个分析音频模块
-    options.analyser = options.audioCtx.createAnalyser();
-    // 设置音频的数量大小 默认是2048
-    options.analyser.fftSize = 512;
-
-    // 关联音频
-    options.analyser.connect(options.audioCtx.destination);
-
-    let arraybuffer: ArrayBuffer;
-    if (typeof target === 'string') {
-      arraybuffer = await getAudioFile(target);
-    } else {
-      arraybuffer = target;
-    }
-
-    options.audioCtx.decodeAudioData(arraybuffer, (buffer: AudioBuffer) => {
-      const accuracy = 100;
-      // 创建 AudioBufferSourceNode
-      console.log('options.audioCtx', options.audioCtx);
-      options.befferSource = options.audioCtx.createBufferSource();
-      // 讲解码之后的 buffer 放到 AudioBufferSourceNode 的 buffer 中
-      options.befferSource.buffer = buffer;
-      options.befferSource.connect(options.analyser);
-
-      // 返回计算断开时波形的最大值和最小值
-      let peaks = drawPeaks(options.befferSource);
-
-      options.pcm = peaks.map(function (item) {
-        return Math.abs(Math.round(item * accuracy) / accuracy);
-      });
-      const _url = drawCanvas({
-        peaks: options.pcm,
-        ...options
-      });
-      resolve(_url);
-    }, (err) => {
-      console.log(err);
-      reject(err);
+    const _url = drawCanvas({
+      peaks: options.pcm,
+      ...options
     });
+    return _url;
+  }, (err) => {
+    console.log(err);
+    throw err;
   });
 };

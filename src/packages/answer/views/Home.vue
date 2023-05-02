@@ -20,7 +20,7 @@ import { reactive, ref, onMounted } from 'vue';
 import '../assets/sweetalert.css';
 import AnswerCanvas from '../components/AnswerCanvas.vue';
 import { useRoute } from 'vue-router';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { state as formFillState } from '@/modules/form-fill-module';
 
 const route = useRoute();

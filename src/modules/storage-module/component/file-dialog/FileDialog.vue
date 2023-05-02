@@ -33,7 +33,7 @@
               <i :class="`iconfont icon-redo ${dirForwardStack.length ? 'active' : ''}`" @click="dirForward"></i>
             </Tooltip>
           </div>
-          <DirPathBreadcrumb :cur-dir-id="curDirId" @switch-dir="switchDir"/>
+          <DirPathBreadcrumb :cur-dir-id="curDirId" @switch-dir="switchDir" />
           <!-- 按钮组 -->
           <div class="file-dialog-btns">
             <Button type="default" @click="toogleAddNewDirModal">新建文件夹</Button>

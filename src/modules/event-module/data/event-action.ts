@@ -22,7 +22,7 @@ export const eventActionGroups: { label: string; value: EventActionGroup }[] = [
 const mediaComponents = ['q-audio', 'q-video', 'q-anx-audio', 'q-anx-video'];
 
 /** 获取所有事件行为 */
-export let getEventActions = computed<AppEventAction[]>(() => {
+export const getEventActions = computed<AppEventAction[]>(() => {
   return eventActions;
 });
 

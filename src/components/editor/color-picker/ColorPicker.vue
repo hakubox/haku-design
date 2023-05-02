@@ -1,7 +1,7 @@
 <template>
   <div
     class="color-picker"
-    :class="`color-picker-${size}${isShowPicker ? ' active' : ''}`"
+    :class="`color-picker-${props.size}${state.isShowPicker ? ' active' : ''}`"
     @mousedown.stop="extendPicker"
   >
     <input class="color-picker-input" ref="colorInput" type="text" :value="value" @change="changeColor($event)" />
@@ -12,7 +12,7 @@
     <div
       class="color-picker-dropdown"
       ref="colorPicker"
-      :class="{ 'color-picker-dropdown-show': showPicker, 'color-picker-dropdown-top': showPickerTop }"
+      :class="{ 'color-picker-dropdown-show': state.showPicker, 'color-picker-dropdown-top': state.showPickerTop }"
       @mousedown.stop
     >
       <div
@@ -21,12 +21,12 @@
         :style="{ 'background-color': diskBackGround }"
         @mousedown="handleStartDrag"
       >
-        <div class="color-picker-disk-point" :style="{ transform: `translate(${cursorLeft}px, ${cursorTop}px)` }"></div>
+        <div class="color-picker-disk-point" :style="{ transform: `translate(${state.cursorLeft}px, ${state.cursorTop}px)` }"></div>
       </div>
 
       <div class="color-picker-color">
-        <div class="color-picker-oldcolor" :style="{ background: oldValue }"></div>
-        <div class="color-picker-newcolor" :style="{ background: newValue }"></div>
+        <div class="color-picker-oldcolor" :style="{ background: state.oldValue }"></div>
+        <div class="color-picker-newcolor" :style="{ background: state.newValue }"></div>
       </div>
 
       <!-- 色环值 -->
@@ -48,7 +48,7 @@
       <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 9px" />
 
       <div class="color-picker-history">
-        <div class="color-picker-history-item" v-for="(item, index) in history" :key="index">
+        <div class="color-picker-history-item" v-for="(item, index) in state.history" :key="index">
           <div
             class="color-picker-history-item-color"
             :title="item"
@@ -58,11 +58,11 @@
         </div>
       </div>
 
-      <hr style="border: none; border-top: 1px solid #eee; margin-top: 2px" v-show="history.length" />
+      <hr style="border: none; border-top: 1px solid #eee; margin-top: 2px" v-show="state.history.length" />
 
       <div class="color-picker-footer">
         <div class="color-picker-footer-text">
-          <input type="text" v-model="newValue" />
+          <input type="text" v-model="state.newValue" />
           <div class="color-picker-footer-text-type">{{ colorType }}</div>
           <i
             v-if="canChangeColorType"
@@ -80,275 +80,267 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import Color from '@/lib/color/Color';
-import { toRefs, reactive, ref, watch, PropType, defineComponent, computed } from 'vue';
+import { toRefs, reactive, ref, watch, PropType, defineComponent, computed, onMounted, onUnmounted } from 'vue';
 
-export default defineComponent({
-  props: {
-    /** 当前颜色 */
-    value: {
-      type: String,
-      default: '',
-    },
-    /** 显示透明色 */
-    showAlpha: {
-      type: Boolean,
-      default: true,
-    },
-    /** 颜色类型 */
-    colorType: {
-      type: String as PropType<'hex' | 'rgb' | 'hsl' | 'hsv'>,
-      default: 'rgb',
-    },
-    /** 是否可切换颜色类型 */
-    canChangeColorType: {
-      type: Boolean,
-      default: false,
-    },
-    /** 是否可清空 */
-    canClear: {
-      type: Boolean,
-      default: true,
-    },
-    size: {
-      type: String as PropType<'large' | 'middle' | 'small'>,
-      default: 'middle',
-    },
+const props = defineProps({
+  /** 当前颜色 */
+  value: {
+    type: String,
+    default: '',
   },
-  created() {
-    this.color = new Color({
-      enableAlpha: this.showAlpha,
-      format: this.colorType,
-    }) as Color;
+  /** 显示透明色 */
+  showAlpha: {
+    type: Boolean,
+    default: true,
   },
-  mounted() {
-    this.init();
+  /** 颜色类型 */
+  colorType: {
+    type: String as PropType<'hex' | 'rgb' | 'hsl' | 'hsv'>,
+    default: 'rgb',
   },
-  destroy() {
-    document.body.addEventListener('mouseup', this.handleEndDrag);
-    document.body.addEventListener('mousemove', this.handleDrag);
-    document.body.addEventListener('mousedown', this.shrinkPicker);
+  /** 是否可切换颜色类型 */
+  canChangeColorType: {
+    type: Boolean,
+    default: false,
   },
-  methods: {
-    /** 颜色改变函数 */
-    changeColor(e?) {
-      let value = e ? e.target.value : this.color.value;
-
-      if (this.value != value) {
-        let rect = this.colorPickerDisk.getBoundingClientRect();
-        this.cursorLeft = (this.color.get('saturation') * rect.width) / 100;
-        this.cursorTop = ((100 - this.color.get('value')) * rect.height) / 100;
-
-        this.color.fromString(value.trim().toLowerCase());
-      }
-    },
-    /** 设置透明度（0 ~ 1） */
-    setAlpha(alpha: number) {
-      const { r, g, b } = this.color.toRgb();
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-    },
-    /** 初始化 */
-    init() {
-      this.color.fromString(this.value.trim().toLowerCase());
-      this.color.format = this.colorType;
-      this.alpha = this.color._alpha;
-      document.body.addEventListener('mouseup', this.handleEndDrag);
-      document.body.addEventListener('mousemove', this.handleDrag);
-      document.body.addEventListener('mousedown', this.shrinkPicker);
-
-      let _historyList: any = sessionStorage.getItem('colorPickerHistory');
-
-      if (!_historyList || !_historyList.length) {
-        const _color = new Color({
-          enableAlpha: this.showAlpha,
-          format: this.colorType,
-        });
-        _historyList = [];
-        _color.fromString('rgba(255, 255, 255, 1)');
-        _historyList.push(_color.value);
-        _color.fromString('rgba(0, 0, 0, 1)');
-        _historyList.push(_color.value);
-      } else _historyList = JSON.parse(_historyList);
-      this.history = _historyList;
-
-      let rect = this.colorPickerDisk.getBoundingClientRect();
-      this.cursorLeft = (this.color.get('saturation') * rect.width) / 100;
-      this.cursorTop = ((100 - this.color.get('value')) * rect.height) / 100;
-    },
-    handleStartDrag(e) {
-      this.isStartDrag = true;
-      this.handleDrag(e);
-    },
-    /** 在色板取色 */
-    handleDrag(e) {
-      if (this.isStartDrag) {
-        let rect = this.colorPickerDisk.getBoundingClientRect();
-        let left = e.pageX - rect.left;
-        let top = e.pageY - rect.top;
-        left = Math.min(Math.max(0, left), rect.width);
-        top = Math.min(Math.max(0, top), rect.height);
-        this.cursorLeft = left;
-        this.cursorTop = top;
-        this.color.set({
-          saturation: (left / rect.width) * 100,
-          value: 100 - (top / rect.height) * 100,
-        });
-        this.newValue = this.color.value;
-      }
-    },
-    /** 拖拽完毕 */
-    handleEndDrag() {
-      this.isStartDrag = false;
-    },
-    /** 选择历史颜色 */
-    selectHistoryColor(item) {
-      this.setColor(item);
-    },
-    setColor(color: string) {
-      console.log('color', color);
-      this.newValue = color;
-      this.color.fromString(this.newValue);
-
-      let rect = this.colorPickerDisk.getBoundingClientRect();
-      this.cursorLeft = (this.color.get('saturation') * rect.width) / 100;
-      this.cursorTop = ((100 - this.color.get('value')) * rect.height) / 100;
-
-      this.comfirm();
-    },
-    /** 切换颜色类型 */
-    changeColorType() {
-      let colorType = this.colorType;
-      switch (colorType) {
-        case 'rgb':
-          colorType = 'hsv';
-          break;
-        case 'hsv':
-          colorType = 'hsl';
-          break;
-        case 'hsl':
-          colorType = 'hex';
-          break;
-        case 'hex':
-          colorType = 'rgb';
-          break;
-        default:
-          break;
-      }
-      this.$emit('update:colorType', colorType);
-      this.color.format = this.colorType;
-      this.setColor(this.color.value);
-    },
-    /** 展开 */
-    extendPicker() {
-      let { y } = this.colorInput.getBoundingClientRect();
-      let { height } = document.body.getBoundingClientRect();
-      this.showPickerTop = height - y < 380;
-      this.showPicker = true;
-
-      this.init();
-    },
-    /** 收缩 */
-    shrinkPicker() {
-      this.showPicker = false;
-    },
-    /** 确定 */
-    comfirm() {
-      this.oldValue = this.newValue;
-      this.$emit('input', this.newValue);
-      this.$emit('update:value', this.newValue);
-      this.$emit('change', this.newValue);
-      this.showPicker = false;
-
-      let _color = new Color({
-        enableAlpha: this.showAlpha,
-        format: this.colorType,
-      });
-      if (this.history.length > 20) {
-        this.history.splice(0, 1);
-      }
-      _color.fromString(this.newValue);
-      if (!this.history.includes(_color.value)) {
-        this.history.push(_color.value);
-        sessionStorage.setItem('colorPickerHistory', JSON.stringify(this.history));
-      }
-    },
+  /** 是否可清空 */
+  canClear: {
+    type: Boolean,
+    default: true,
   },
-  setup(props) {
-    const colorInput = ref({} as any);
-    const colorPicker = ref({} as any);
-    const colorPickerDisk = ref({} as any);
+  size: {
+    type: String as PropType<'large' | 'middle' | 'small'>,
+    default: 'middle',
+  },
+});
 
-    const state = reactive({
-      /** 是否开始选择 */
-      showPicker: false,
-      /** 弹框展开方向 */
-      showPickerTop: true,
-      /** 是否开始在色板拖拽取色 */
-      isStartDrag: false,
-      /** 色板游标离上部距离 */
-      cursorTop: 0,
-      /** 色板游标离左部距离 */
-      cursorLeft: 0,
-      /** 旧色值 */
-      oldValue: '#FFFFFF',
-      /** 新色值 */
-      newValue: '',
-      /** 颜色 */
-      color: {} as Color,
-      /** 文本框元素 */
-      colorInput,
-      /** 弹出框元素 */
-      colorPicker,
-      /** 画板元素 */
-      colorPickerDisk,
-      /** 颜色历史记录 */
-      history: [] as string[],
-      /** 是否显示下拉框 */
-      isShowPicker: false,
+const colorInput = ref({} as any);
+const colorPicker = ref({} as any);
+const colorPickerDisk = ref({} as any);
+
+const state = reactive({
+  /** 是否开始选择 */
+  showPicker: false,
+  /** 弹框展开方向 */
+  showPickerTop: true,
+  /** 是否开始在色板拖拽取色 */
+  isStartDrag: false,
+  /** 色板游标离上部距离 */
+  cursorTop: 0,
+  /** 色板游标离左部距离 */
+  cursorLeft: 0,
+  /** 旧色值 */
+  oldValue: '#FFFFFF',
+  /** 新色值 */
+  newValue: '',
+  /** 颜色 */
+  color: {} as Color,
+  /** 文本框元素 */
+  colorInput,
+  /** 弹出框元素 */
+  colorPicker,
+  /** 画板元素 */
+  colorPickerDisk,
+  /** 颜色历史记录 */
+  history: [] as string[],
+  /** 是否显示下拉框 */
+  isShowPicker: false,
+});
+
+/** 色环值 */
+const hue = computed({
+  get: () => {
+    return state.color.get('hue');
+  },
+  set: (val) => {
+    state.color.set('hue', val);
+    state.newValue = state.color.value;
+  },
+});
+
+const emit = defineEmits<{
+  (event: 'change', value: string): void;
+  (event: 'update:value', value: string): void;
+  (event: 'update:colorType', value: "hex" | "rgb" | "hsl" | "hsv"): void;
+}>();
+
+/** 透明度 */
+const alpha = computed({
+  get: () => {
+    return state.color.get('alpha');
+  },
+  set: (val) => {
+    state.color.set('alpha', val);
+    state.newValue = state.color.value;
+  },
+});
+
+/** 调色板的背景色 */
+const diskBackGround = computed(() => {
+  return `hsl(${state.color.get('hue')}, 100%, 50%)`;
+});
+
+watch(() => props.showAlpha, () => {
+  state.color.enableAlpha = props.showAlpha;
+});
+
+/** 颜色改变函数 */
+const changeColor = (e?) => {
+  const value = e ? e.target.value : state.color.value;
+
+  if (props.value != value) {
+    const rect = state.colorPickerDisk.getBoundingClientRect();
+    state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
+    state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
+
+    state.color.fromString(value.trim().toLowerCase());
+  }
+};
+/** 设置透明度（0 ~ 1） */
+const setAlpha = (alpha: number) => {
+  const { r, g, b } = state.color.toRgb();
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+/** 初始化 */
+const init = () => {
+  state.color.fromString(props.value.trim().toLowerCase());
+  state.color.format = props.colorType;
+  alpha.value = state.color._alpha;
+  document.body.addEventListener('mouseup', handleEndDrag);
+  document.body.addEventListener('mousemove', handleDrag);
+  document.body.addEventListener('mousedown', shrinkPicker);
+
+  let _historyList: any = sessionStorage.getItem('colorPickerHistory');
+
+  if (!_historyList || !_historyList.length) {
+    const _color = new Color({
+      enableAlpha: props.showAlpha,
+      format: props.colorType,
     });
+    _historyList = [];
+    _color.fromString('rgba(255, 255, 255, 1)');
+    _historyList.push(_color.value);
+    _color.fromString('rgba(0, 0, 0, 1)');
+    _historyList.push(_color.value);
+  } else _historyList = JSON.parse(_historyList);
+  state.history = _historyList;
 
-    /** 色环值 */
-    const hue = computed({
-      get: () => {
-        return state.color.get('hue');
-      },
-      set: (val) => {
-        state.color.set('hue', val);
-        state.newValue = state.color.value;
-      },
+  const rect = state.colorPickerDisk.getBoundingClientRect();
+  state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
+  state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
+};
+const handleStartDrag = (e) => {
+  state.isStartDrag = true;
+  handleDrag(e);
+};
+/** 在色板取色 */
+const handleDrag = (e) => {
+  if (state.isStartDrag) {
+    const rect = state.colorPickerDisk.getBoundingClientRect();
+    let left = e.pageX - rect.left;
+    let top = e.pageY - rect.top;
+    left = Math.min(Math.max(0, left), rect.width);
+    top = Math.min(Math.max(0, top), rect.height);
+    state.cursorLeft = left;
+    state.cursorTop = top;
+    state.color.set({
+      saturation: (left / rect.width) * 100,
+      value: 100 - (top / rect.height) * 100,
     });
+    state.newValue = state.color.value;
+  }
+};
+/** 拖拽完毕 */
+const handleEndDrag = () => {
+  state.isStartDrag = false;
+};
+/** 选择历史颜色 */
+const selectHistoryColor = (item) => {
+  setColor(item);
+};
+const setColor = (color: string) => {
+  console.log('color', color);
+  state.newValue = color;
+  state.color.fromString(state.newValue);
 
-    /** 透明度 */
-    const alpha = computed({
-      get: () => {
-        return state.color.get('alpha');
-      },
-      set: (val) => {
-        state.color.set('alpha', val);
-        state.newValue = state.color.value;
-      },
-    });
+  const rect = state.colorPickerDisk.getBoundingClientRect();
+  state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
+  state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
 
-    /** 调色板的背景色 */
-    const diskBackGround = computed(() => {
-      return `hsl(${state.color.get('hue')}, 100%, 50%)`;
-    });
+  comfirm();
+};
+/** 切换颜色类型 */
+const changeColorType = () => {
+  let colorType = props.colorType;
+  switch (colorType) {
+    case 'rgb':
+      colorType = 'hsv';
+      break;
+    case 'hsv':
+      colorType = 'hsl';
+      break;
+    case 'hsl':
+      colorType = 'hex';
+      break;
+    case 'hex':
+      colorType = 'rgb';
+      break;
+    default:
+      break;
+  }
+  emit('update:colorType', colorType);
+  state.color.format = props.colorType;
+  setColor(state.color.value);
+};
+/** 展开 */
+const extendPicker = () => {
+  const { y } = state.colorInput.getBoundingClientRect();
+  const { height } = document.body.getBoundingClientRect();
+  state.showPickerTop = height - y < 380;
+  state.showPicker = true;
 
-    watch(
-      () => props.showAlpha,
-      () => {
-        state.color.enableAlpha = props.showAlpha;
-      },
-    );
+  init();
+};
+/** 收缩 */
+const shrinkPicker = () => {
+  state.showPicker = false;
+};
+/** 确定 */
+const comfirm = () => {
+  state.oldValue = state.newValue;
+  emit('update:value', state.newValue);
+  emit('change', state.newValue);
+  state.showPicker = false;
 
-    return {
-      ...toRefs(state),
-      hue,
-      alpha,
-      diskBackGround,
-    };
-  },
+  const _color = new Color({
+    enableAlpha: props.showAlpha,
+    format: props.colorType,
+  });
+  if (state.history.length > 20) {
+    state.history.splice(0, 1);
+  }
+  _color.fromString(state.newValue);
+  if (!state.history.includes(_color.value)) {
+    state.history.push(_color.value);
+    sessionStorage.setItem('colorPickerHistory', JSON.stringify(state.history));
+  }
+};
+
+onMounted(() => {
+  state.color = new Color({
+    enableAlpha: props.showAlpha,
+    format: props.colorType,
+  }) as Color;
+
+  init();
+});
+
+onUnmounted(() => {
+  document.body.addEventListener('mouseup', handleEndDrag);
+  document.body.addEventListener('mousemove', handleDrag);
+  document.body.addEventListener('mousedown', shrinkPicker);
 });
 </script>
 

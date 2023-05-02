@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from '@vue/reactivity';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Verify from '@/components/common/verifition/Verify.vue';
 import { service as authService } from '@/common/auth-module';

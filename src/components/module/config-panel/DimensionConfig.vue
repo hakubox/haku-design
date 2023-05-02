@@ -119,7 +119,7 @@ const getQuestionsLabel = (index: number) => {
       if (qIndex === 0 || !_list.length) {
         _list.push([_item]);
       } else {
-        let _lastItem = _list[_list.length - 1];
+        const _lastItem = _list[_list.length - 1];
         if (_lastItem.length && _lastItem[_lastItem.length - 1].index === qIndex - 1) {
           _lastItem.push(_item);
         } else {

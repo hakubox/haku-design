@@ -17,7 +17,7 @@ export const eventTriggerGroups: { label: string; value: EventTriggerGroup }[] =
 ];
 
 /** 获取所有事件触发 */
-export let getEventTriggers = computed<AppEventTrigger[]>(() => {
+export const getEventTriggers = computed<AppEventTrigger[]>(() => {
   return eventTriggers;
 });
 

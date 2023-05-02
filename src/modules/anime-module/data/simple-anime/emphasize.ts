@@ -17,7 +17,7 @@ export const animes: SimpleAnime[] = [
       }
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       switch (attrs.speed) {
         case 'slow':
           return tl.to(el, { duration: 0.175, scale: 1.2, ease: Linear.easeNone })
@@ -62,7 +62,7 @@ export const animes: SimpleAnime[] = [
       visible: (attrs) => ['top', 'bottom'].includes(attrs.direction),
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       switch (attrs.direction) {
         case 'top':
           return tl.to(el, { duration: 0.25, css: { transform: `translate3d(0px,0px,0px)` }, ease: Power2.easeOut })
@@ -135,7 +135,7 @@ export const animes: SimpleAnime[] = [
       }
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       switch (attrs.direction) {
         case 'top':
           return tl.to(el, { duration: 0, skewX: '0deg', transformOrigin: 'top' })
@@ -240,7 +240,7 @@ export const animes: SimpleAnime[] = [
       visible: (attrs) => !['vibration', 'pulse'].includes(attrs.direction),
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       switch (attrs.type) {
         case 'pulse':
           return tl.to(el, { duration: 0.1, scale: 1 })
@@ -360,7 +360,7 @@ export const animes: SimpleAnime[] = [
       }
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       return tl.to(el, { duration: 0, transformOrigin: attrs.location, rotate: `0deg` })
         .to(el, { duration: 0.16, rotate: `-${attrs.rotate}deg` })
         .to(el, { duration: 0.17, rotate: `${attrs.rotate}deg` })
@@ -381,7 +381,7 @@ export const animes: SimpleAnime[] = [
       visible: (attrs) => !['vibration', 'pulse'].includes(attrs.direction),
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       return tl.to(el, { duration: 0, y: `0px`, ease: Power1.easeInOut })
         .to(el, { duration: 0.50, y: `${attrs.distance}px`, ease: Power1.easeInOut })
         .to(el, { duration: 0.50, y: `0px`, ease: Power1.easeInOut });
@@ -390,7 +390,7 @@ export const animes: SimpleAnime[] = [
 
   { animeName: '3D', animeTitle: '3D效果', animeType: 'emphasize', fillmode: 'forwards', onText: false, attrs: { duration: 2 }, propertys: [
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       return tl.to(el, { duration: 0, boxShadow: `none` })
         .to(el, { duration: 0.50, boxShadow: `0 1px 0 #ccc, 
         0 2px 0 #c9c9c9, 
@@ -409,7 +409,7 @@ export const animes: SimpleAnime[] = [
   
   { animeName: 'lightning', animeTitle: '闪烁', animeType: 'emphasize', fillmode: 'none', onText: false, attrs: { duration: 1 }, propertys: [
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       return tl.to(el, { duration: 0, opacity: 1 })
         .to(el, { duration: 0.25, opacity: 0 })
         .to(el, { duration: 0.25, opacity: 1 })

@@ -66,7 +66,7 @@ const showDialogPicker = () => {
   }
 };
 
-let state = reactive({
+const state = reactive({
   /** 是否显示弹出框 */
   showPicker: false,
 });

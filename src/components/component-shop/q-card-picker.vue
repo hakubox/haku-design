@@ -58,8 +58,8 @@
 
 <script lang="ts">
 export default {
-    inheritAttrs: false,
-    components: { Icon }
+    components: { Icon },
+    inheritAttrs: false
 };
 </script>
 <script lang="ts" setup>

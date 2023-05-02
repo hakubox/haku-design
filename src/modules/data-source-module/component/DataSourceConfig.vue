@@ -352,7 +352,7 @@ const state = reactive({
 
 const showDataSource = computed<{ title: string; type: string; remark?: string }>(() => {
   if (state.showDataSourceId) {
-    let _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
+    const _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
     if (_index >= 0) {
       return dataSourceState.dataSourceList[_index];
     }
@@ -430,7 +430,7 @@ const editDataSourceInfo = () => {
   formRef.value!
     .validate()
     .then(() => {
-      let _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
+      const _index = dataSourceState.dataSourceList.findIndex((i) => i.id == state.showDataSourceId);
       if (_index >= 0) {
         dataSourceState.dataSourceList[_index].title = state.editDataSource.title;
         dataSourceState.dataSourceList[_index].remark = state.editDataSource.remark;

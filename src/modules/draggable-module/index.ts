@@ -170,7 +170,7 @@ export const service = {
           [editorState.appConfig.canvasConfig.width, editorState.appConfig.canvasConfig.height],
         ]);
       } else {
-        _childrenPoints.push(this.getComponentPoints(_parent?.component!));
+        _childrenPoints.push(this.getComponentPoints(_parent?.component));
       }
       // 判断是否靠近吸附线（目前4像素吸附）
       for (let i = 0; i < _childrenPoints.length; i++) {
@@ -650,8 +650,8 @@ export const service = {
 
           // 单个拖拽和多个拖拽采用不同的逻辑
           if (editorState.currentSelectedComponents.length > 1) {
-            let _components = editorState.currentSelectedComponents as (Component | ComponentGroup)[];
-            let _rangeSelector = editorService.getSelectedComponentRect() as ComponentRect;
+            const _components = editorState.currentSelectedComponents as (Component | ComponentGroup)[];
+            const _rangeSelector = editorService.getSelectedComponentRect() as ComponentRect;
             state.alignLines = service.getAlignLinesByRect({
               x: _x, y: _y,
               width: _rangeSelector.width,

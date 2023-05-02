@@ -75,7 +75,7 @@ const containerRef = ref<HTMLElement>();
 let _subscription: any;
 
 onMounted(()=>{
-  let _options = {
+  const _options = {
     ...state.defaultOptions,
     ...props.options,
     theme: props.theme,

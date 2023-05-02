@@ -384,7 +384,7 @@ export const propertyEditors: Array<InitPropertyEditor> = [
 ];
 
 /** 获取所有编辑器 */
-export let getEditors = computed<Record<string, PropertyEditor>>(() => {
+export const getEditors = computed<Record<string, PropertyEditor>>(() => {
   return initPropertyEditors();
 });
 

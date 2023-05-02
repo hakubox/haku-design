@@ -1,5 +1,5 @@
 <template>
-  <template
+  <div
     class="component-item component-center layout-component"
     :class="{ required: $attrs.required, 'has-children': components?.length }"
     :style="{
@@ -19,7 +19,7 @@
         <slot name="child0"><q-blank /></slot>
       </div>
     </template>
-  </template>
+  </div>
 </template>
 
 <script lang="ts" setup>

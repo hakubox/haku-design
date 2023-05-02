@@ -58,26 +58,8 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { defineComponent } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import { Input, Textarea } from 'ant-design-vue';
-
-export default defineComponent({
-  components: {
-    VNodes: (_, { attrs }) => {
-      return attrs.vnodes;
-    },
-    Input,
-    Textarea,
-  },
-  setup() {
-    return {
-      editorState,
-    };
-  },
-  created() {},
-  mounted() {},
-  methods: {},
-});
 </script>

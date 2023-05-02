@@ -81,8 +81,8 @@
 
 <script lang="ts">
 export default {
-    inheritAttrs: false,
-    components: { Loading }
+    components: { Loading },
+    inheritAttrs: false
 };
 </script>
 <script lang="ts" setup>

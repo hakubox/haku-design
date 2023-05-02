@@ -55,7 +55,7 @@ const emit = defineEmits<{
   (event: 'input', val: string[]): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   inputValue: '',
   tags: [] as string[],
   inputVisible: false,

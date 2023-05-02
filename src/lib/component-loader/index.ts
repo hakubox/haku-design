@@ -5,8 +5,7 @@ import { confirm } from '@/common/message';
 /** 加载组件 */
 export function loadComponent(component: ConcreteComponent, options: Record<string, any> = {}, rootEl = document.body): { dom: HTMLElement, vnode: VNode } {
   const _container: HTMLDivElement = document.createElement('div');
-  let _component: VNode;
-  _component = h(component, options);
+  const _component: VNode = h(component, options);
   render(_component, _container);
   rootEl.appendChild(_container);
   return {

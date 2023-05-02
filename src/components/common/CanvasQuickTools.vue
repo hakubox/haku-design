@@ -136,7 +136,7 @@ const state = reactive({
             if (_minX > i.attrs.x) _minX = i.attrs.x;
             if (_maxX < i.attrs.x + i.attrs.width) _maxX = i.attrs.x + i.attrs.width;
           });
-          let _centerX = _minX + (_maxX - _minX) / 2;
+          const _centerX = _minX + (_maxX - _minX) / 2;
           _components.forEach(i => {
             if (i.attrs.x !== _centerX - i.attrs.width / 2) {
               i.attrs.x = _centerX - i.attrs.width / 2;
@@ -186,7 +186,7 @@ const state = reactive({
             if (_minY > i.attrs.y) _minY = i.attrs.y;
             if (_maxY < i.attrs.y + i.attrs.height) _maxY = i.attrs.y + i.attrs.height;
           });
-          let _centerY = _minY + (_maxY - _minY) / 2;
+          const _centerY = _minY + (_maxY - _minY) / 2;
           _components.forEach(i => {
             if (i.attrs.y !== _centerY - i.attrs.height / 2) {
               i.attrs.y = _centerY - i.attrs.height / 2;
@@ -221,7 +221,7 @@ const state = reactive({
             if (_minX > i.attrs.x) _minX = i.attrs.x;
             if (_maxX < i.attrs.x) _maxX = i.attrs.x;
           });
-          let _average = (_maxX - _minX) / (_components.length - 1);
+          const _average = (_maxX - _minX) / (_components.length - 1);
           _components.forEach((i, index) => {
             if (i.attrs.x !== _minX + index * _average) i.attrs.x = _minX + index * _average;
           });
@@ -239,7 +239,7 @@ const state = reactive({
             if (_minY > i.attrs.y) _minY = i.attrs.y;
             if (_maxY < i.attrs.y) _maxY = i.attrs.y;
           });
-          let _average = (_maxY - _minY) / (_components.length - 1);
+          const _average = (_maxY - _minY) / (_components.length - 1);
           _components.forEach((i, index) => {
             if (i.attrs.y !== _minY + index * _average) i.attrs.y = _minY + index * _average;
           });

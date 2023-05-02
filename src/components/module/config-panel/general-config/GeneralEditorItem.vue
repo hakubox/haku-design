@@ -94,7 +94,7 @@ const getValue = computed(() => {
     _returnValue = props.prop.names.map(name => {
       if (Array.isArray(name)) {
         let _obj = props.model;
-        let _names = name;
+        const _names = name;
         for (let i = 0; i < _names.length; i++) {
           _obj = _obj[_names[i]];
         }

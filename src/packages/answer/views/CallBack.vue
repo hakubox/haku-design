@@ -11,7 +11,7 @@ import { get } from '@/lib/api';
 
 /** url头参数 */
 const hash = location.href.substr(location.href.lastIndexOf('?') + 1).replace('#/', '');
-let query = Object.assign.apply({}, [
+const query = Object.assign.apply({}, [
   {},
   ...hash
     .substr(hash.indexOf('?') + 1)

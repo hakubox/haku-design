@@ -80,7 +80,7 @@ export function mergeComponent(components: (Component | ComponentGroup)[]) {
     index: number;
     level: number;
   }[];
-  let reComponents = [] as (Component | ComponentGroup)[];
+  const reComponents = [] as (Component | ComponentGroup)[];
   for (let i = 0; i < components.length; i++) {
     const item = components[i];
     const _parent = editorService.findParentComponent(item.id);
@@ -95,7 +95,7 @@ export function mergeComponent(components: (Component | ComponentGroup)[]) {
       reComponents.push(_re);
     }
   }
-  let componentGroup = {
+  const componentGroup = {
     id: createModelId(10),
     name: 'ComponentGroup',
     isGroup: true,

@@ -24,7 +24,7 @@
       ref="componentRef"
     >
       <!-- <template v-for="(component, index) in children" :key="index" #[`child${index}`] > -->
-      <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+      <template v-for="(childComponent, childIndex) in component.children || []" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
         <FormComponent
           :component-id="childComponent.id"
           :ref="childComponent.id"
@@ -33,7 +33,7 @@
           }"
           :children="childComponent.children"
           :component="childComponent"
-          :index="index"
+          :index="childIndex"
           :isFullScreen="isFullScreen"
         />
         <div class="form-component-disabled" v-if="scoringState.isScoring"></div>

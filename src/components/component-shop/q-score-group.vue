@@ -73,7 +73,7 @@ const emit = defineEmits<{
 }>();
 
 const changeValue = (val, index) => {
-  let vals = new Array(props.options.length).fill(0);
+  const vals = new Array(props.options.length).fill(0);
   for (let i = 0; i < props.value.length; i++) {
     vals[i] = props.value[i] ?? 0;
   }

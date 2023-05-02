@@ -20,12 +20,12 @@
       >
         <i class="history-log-item-icon" :class="historyService.getCommandIcon(item.type)" alt="" />
         <div class="history-log-item-content">
-          <template v-for="(label, index) in historyService.getFormatTitle(item)">
-            <span :key="'a' + index" v-if="label == '{{component}}'">{{ item.newVal.title }}</span>
-            <span :key="'b' + index" v-else-if="label.startsWith('{{') && label.endsWith('}}')">{{
+          <template v-for="(label, detailIndex) in historyService.getFormatTitle(item)">
+            <span :key="'a' + detailIndex" v-if="label == '{{component}}'">{{ item.newVal.title }}</span>
+            <span :key="'b' + detailIndex" v-else-if="label.startsWith('{{') && label.endsWith('}}')">{{
               item.attrs[label.substring(2, label.length - 2)]
             }}</span>
-            <span :key="'c' + index" v-else>{{ label }}</span>
+            <span :key="'c' + detailIndex" v-else>{{ label }}</span>
           </template>
         </div>
         <span class="history-log-item-active">

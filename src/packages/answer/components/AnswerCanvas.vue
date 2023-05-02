@@ -209,6 +209,7 @@ const props = defineProps({
   userId: {
     type: String,
     required: false,
+    default: ''
   },
   /** 时候开启debug模式 */
   isDebug: {

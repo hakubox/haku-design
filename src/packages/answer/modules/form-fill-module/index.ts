@@ -219,7 +219,6 @@ export const service = {
           ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
         );
       } else {
-        const _page = editorState.currentPage as AppPage;
         _components.push(...editorService.getAllFormItem());
       }
       _components.forEach(component => {
@@ -559,7 +558,7 @@ export const service = {
         return editorService.findComponent(data.value)?.attrs.name || '——';
       case 'data-variable':
         return `${data.value}`; // ${variableStore.getVar(data.value) ?? '——'}
-      case 'data-component-option':
+      case 'data-component-option': {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
@@ -568,6 +567,7 @@ export const service = {
           return `${_component?.attrs.name} / ${_value}`;
         }
         return '——';
+      }
       default:
         return '——';
     }
@@ -585,7 +585,7 @@ export const service = {
         return editorService.findComponent(data.value)?.attrs.name || '——';
       case 'data-variable':
         return `${data.value}`; // ${variableStore.getVar(data.value) ?? '——'}
-      case 'data-component-option':
+      case 'data-component-option': {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
@@ -594,6 +594,7 @@ export const service = {
           return _value;
         }
         return '——';
+      }
       default:
         return '——';
     }

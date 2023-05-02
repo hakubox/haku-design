@@ -16,7 +16,7 @@ export interface PropertyEditor {
   /** HTML */
   html?: string;
   /** 插槽 */
-  slot: Record<string, any>;
+  slot: Record<string, any[]>;
   /** 属性 */
   attrs: Record<string, any>;
   /** 事件 */

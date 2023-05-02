@@ -1,5 +1,5 @@
 import { state as storageState, service as storageService } from '@/modules/storage-module';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import type { AntTreeNodeDragEnterEvent, AntTreeNodeDropEvent, TreeDataItem } from 'ant-design-vue/lib/tree';
 import { reactive, toRefs, watch, watchEffect } from 'vue';
 

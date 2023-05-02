@@ -155,7 +155,7 @@ export default class Color {
     options = options || {};
 
     for (const option in options) {
-      if (options.hasOwnProperty(option)) {
+      if (Object.prototype.hasOwnProperty.call(options, option)) {
         this[option] = options[option];
       }
     }
@@ -181,7 +181,7 @@ export default class Color {
   set(prop, value?) {
     if (arguments.length === 1 && typeof prop === 'object') {
       for (const p in prop) {
-        if (prop.hasOwnProperty(p)) {
+        if (Object.prototype.hasOwnProperty.call(prop, p)) {
           this.set(p, prop[p]);
         }
       }

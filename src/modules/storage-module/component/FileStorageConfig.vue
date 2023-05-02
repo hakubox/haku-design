@@ -274,7 +274,7 @@ const showStorageTypes = computed<StorageService[]>(() => {
 
 const showStorage = computed<Record<string, any>>(() => {
   if (state.showStorageId) {
-    let _index = storageState.storageServices.findIndex((i) => i.id == state.showStorageId);
+    const _index = storageState.storageServices.findIndex((i) => i.id == state.showStorageId);
     if (_index >= 0) {
       return storageState.storageServices[_index];
     }
@@ -337,7 +337,7 @@ const editStorageInfo = () => {
     .validate()
     .then(() => {
       if (state.showStorageId) {
-        let _index = storageState.storageServices.findIndex((i) => i.id == state.showStorageId);
+        const _index = storageState.storageServices.findIndex((i) => i.id == state.showStorageId);
         if (_index >= 0) {
           storageState.storageServices[_index].title = state.editStorage.title;
           storageState.storageServices[_index].remark = state.editStorage.remark;
@@ -346,7 +346,7 @@ const editStorageInfo = () => {
           message.error('未找到当前数据源');
         }
       } else {
-        let _instance = storageService.createStorageService(state.editStorage.type);
+        const _instance = storageService.createStorageService(state.editStorage.type);
         switch (state.editStorage.type) {
           case StorageServiceType.cos:
             _instance.config = {
@@ -404,7 +404,7 @@ const getVarTypeStr = (type: string) => {
 const importJSON = () => {};
 
 onBeforeMount(() => {
-  let _localService = localStorage.getItem('storage-service');
+  const _localService = localStorage.getItem('storage-service');
   if (_localService && _localService.length > 2) {
     storageState.storageServices = JSON.parse(_localService);
   }

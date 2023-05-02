@@ -214,76 +214,74 @@ export const service = {
     this.clearExpired();
   },
   /** 校验表单 */
-  validateForm(formPageIndex?: number): Promise<{ isComplete: boolean; errorComponents: any[] }> {
-    return new Promise(async (resolve, reject) => {
-      state.errorInfo = {};
-      const _errorComponents: any[] = [];
-      const _components: (Component | ComponentGroup)[] = [];
-      if (formPageIndex !== undefined && formPageIndex >= 0) {
-        _components.push(
-          ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
-        );
-      } else {
-        _components.push(...editorService.getAllFormItem());
-      }
-      for await (const component of _components) {
-        if (component.isFormItem) {
-          if (component.attrs.visible) {
-            const _val = state?.formInfo?.[component.id]?.value;
-            // 校验必填项
-            if (component.attrs.required) {
-              if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !(_val.filter(x=>x).length)))) {
-                _errorComponents.push({ component: component, message: '问卷填写未完成' });
+  async validateForm(formPageIndex?: number): Promise<{ isComplete: boolean; errorComponents: any[] }> {
+    state.errorInfo = {};
+    const _errorComponents: any[] = [];
+    const _components: (Component | ComponentGroup)[] = [];
+    if (formPageIndex !== undefined && formPageIndex >= 0) {
+      _components.push(
+        ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
+      );
+    } else {
+      _components.push(...editorService.getAllFormItem());
+    }
+    for await (const component of _components) {
+      if (component.isFormItem) {
+        if (component.attrs.visible) {
+          const _val = state?.formInfo?.[component.id]?.value;
+          // 校验必填项
+          if (component.attrs.required) {
+            if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !(_val.filter(x=>x).length)))) {
+              _errorComponents.push({ component: component, message: '问卷填写未完成' });
+              state.errorInfo[component.id] = {
+                isError: true,
+                componentId: component.id,
+                errorText: ['当前题目不能为空'],
+              };
+            }
+          }
+          // 校验包含（数据校验）属性的项
+          if (component.attrs.validate) {
+            try {
+              await validateService.transformValidate(_val, component.attrs.validate).then(d => {
+                console.log('成功');
+              }).catch(({ errors }) => {
+                const _err = errors[0];
+                const _errMessage = _err.message.replace('{{value}}', '');
+                _errorComponents.push({ component: component, message: _errMessage });
                 state.errorInfo[component.id] = {
                   isError: true,
                   componentId: component.id,
-                  errorText: ['当前题目不能为空'],
+                  errorText: [_errMessage],
                 };
-              }
-            }
-            // 校验包含（数据校验）属性的项
-            if (component.attrs.validate) {
-              try {
-                await validateService.transformValidate(_val, component.attrs.validate).then(d => {
-                  console.log('成功');
-                }).catch(({ errors }) => {
-                  const _err = errors[0];
-                  const _errMessage = _err.message.replace('{{value}}', '');
-                  _errorComponents.push({ component: component, message: _errMessage });
-                  state.errorInfo[component.id] = {
-                    isError: true,
-                    componentId: component.id,
-                    errorText: [_errMessage],
-                  };
-                });
-                
-              } catch (err) {
-                console.error('校验失败', err);
-                debugger;
-              }
+              });
+              
+            } catch (err) {
+              console.error('校验失败', err);
+              debugger;
             }
           }
         }
       }
-      if (_errorComponents.length === 0) {
-        resolve({
-          isComplete: true,
-          errorComponents: [],
-        });
-      } else {
-        /** 出错时滚动条滚动到到第一个错误组件 【注：在设计端需要加上.form-canvas.preview前缀】 */
-        setTimeout(() => {
-          const _el = document.querySelector(
-            `.form-canvas.preview [component-id="${_errorComponents[0].component.id}"]`,
-          );
-          if (_el) _el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-        }, 100);
-        resolve({
-          isComplete: false,
-          errorComponents: _errorComponents,
-        });
-      }
-    });
+    }
+    if (_errorComponents.length === 0) {
+      return {
+        isComplete: true,
+        errorComponents: [],
+      };
+    } else {
+      /** 出错时滚动条滚动到到第一个错误组件 【注：在设计端需要加上.form-canvas.preview前缀】 */
+      setTimeout(() => {
+        const _el = document.querySelector(
+          `.form-canvas.preview [component-id="${_errorComponents[0].component.id}"]`,
+        );
+        if (_el) _el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      }, 100);
+      return {
+        isComplete: false,
+        errorComponents: _errorComponents,
+      };
+    }
   },
   /** 开始表单填写 */
   startFormFill() {
@@ -584,7 +582,7 @@ export const service = {
         return editorService.findComponent(data.value)?.attrs.name || '——';
       case 'data-variable':
         return `${data.value}`; // ${variableStore.getVar(data.value) ?? '——'}
-      case 'data-component-option':
+      case 'data-component-option': {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
@@ -593,6 +591,7 @@ export const service = {
           return `${_component?.attrs.name} / ${_value}`;
         }
         return '——';
+      }
       default:
         return '——';
     }
@@ -610,7 +609,7 @@ export const service = {
         return editorService.findComponent(data.value)?.attrs.name || '——';
       case 'data-variable':
         return `${data.value}`; // ${variableStore.getVar(data.value) ?? '——'}
-      case 'data-component-option':
+      case 'data-component-option': {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
@@ -619,6 +618,7 @@ export const service = {
           return _value;
         }
         return '——';
+      }
       default:
         return '——';
     }

@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Dropdown, InputNumber, Menu, MenuItem } from 'ant-design-vue';
 import { onMounted, PropType, reactive, watch } from 'vue';
 
@@ -94,6 +94,8 @@ const getPrecision = computed(() => {
       return 1;
     case 'hour':
       return 2;
+    default:
+      return 0;
   }
 });
 

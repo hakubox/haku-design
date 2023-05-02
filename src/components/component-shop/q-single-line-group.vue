@@ -63,7 +63,7 @@ const state = reactive({
 });
 
 const changeValue = (val, index: number) => {
-  let vals = new Array(props.options.length).fill('');
+  const vals = new Array(props.options.length).fill('');
   for (let i = 0; i < props.value.length; i++) {
     vals[i] = props.value[i];
   }

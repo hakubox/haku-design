@@ -15,8 +15,8 @@
       @onComplete="onComplete"
       @onEvent="onEvent"
     >
-      <template v-slot:header>header</template>
-      <template v-slot:footer>footer</template>
+      <template #header>header</template>
+      <template #footer>footer</template>
     </AnswerCanvas>
   </div>
   <Button block type="primary" size="large" @click="submitForm()">自定义提交</Button>

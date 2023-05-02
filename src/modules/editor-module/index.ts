@@ -159,7 +159,7 @@ export const service = {
   },
   /** 显示组件 */
   showComponentInFormPage(componentId: string, pageIndex?: number): boolean {
-    let _pageIndex = pageIndex ?? state.currentPageIndex;
+    const _pageIndex = pageIndex ?? state.currentPageIndex;
     let componentIndex: number | undefined = undefined;
     let component: Component | ComponentGroup | undefined = undefined;
     let _index = 0;
@@ -699,7 +699,7 @@ export const service = {
         // 判断是否为子组件，是的话看父组件有没有子组件属性
         const parentComponentInfo = service.findParentComponent(formComponent.id);
         if (parentComponentInfo?.component?.childPropertys) {
-          _propertys.push(...parentComponentInfo?.component.childPropertys);
+          _propertys.push(...(parentComponentInfo?.component.childPropertys || []));
         }
 
         // 所有组件添加上置顶功能

@@ -48,11 +48,11 @@ const state = reactive({
 
 /** 解析格式化数据 */
 const arr: ComputedRef<string[]> = computed(() => {
-  let reg = /\{\{.*?\}\}/g;
+  const reg = /\{\{.*?\}\}/g;
   let match: RegExpExecArray | null = reg.exec(props.config.format);
   let _index = 0;
-  let _re: string[] = [];
-  let _indexes: number[] = [];
+  const _re: string[] = [];
+  const _indexes: number[] = [];
   while (match) {
     if (!_indexes.includes(match.index)) _indexes.push(match.index);
     _indexes.push(match.index + match.toString().length);
@@ -61,7 +61,7 @@ const arr: ComputedRef<string[]> = computed(() => {
   _indexes.push(props.config.format.length);
   _index = 0;
   for (let i = 0; i < _indexes.length; i++) {
-    let val = props.config.format.substring(_index, _indexes[i]);
+    const val = props.config.format.substring(_index, _indexes[i]);
     _re.push(val);
     _index = _indexes[i];
   }

@@ -27,7 +27,7 @@ import { getFileType, getFileIconByFileType } from '@/modules/storage-module/too
 import { parseByte } from '../tools/transFileSize';
 import { ProgressState } from '../hooks/useFile';
 import { CaretRightOutlined, PauseOutlined, CloseOutlined } from '@ant-design/icons-vue';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 
 const props = defineProps<{ globalUploadProgressState: ProgressState }>();
 const emit = defineEmits<{ (e: 'update:globalUploadProgressState', value: ProgressState): void }>();

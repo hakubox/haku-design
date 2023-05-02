@@ -29,7 +29,7 @@ const emit = defineEmits<{
   (event: 'update:value', val: string): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   inputValue: '',
 });
 

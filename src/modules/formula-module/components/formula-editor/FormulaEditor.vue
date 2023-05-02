@@ -64,7 +64,7 @@ const emit = defineEmits<{
   (eventName: 'focus'): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   defaultOptions: {
     wordWrap: 'off', //控制如何换行
     automaticLayout: true,
@@ -85,7 +85,7 @@ const containerRef = ref(null);
 let _subscription: any;
 
 onMounted(() => {
-  let _options = {
+  const _options = {
     ...state.defaultOptions,
     ...props.options,
     theme: props.theme,

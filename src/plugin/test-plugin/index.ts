@@ -14,7 +14,7 @@ export function registerTestPlugin() {
     pluginType: PluginType.basicPlugin,
     async onloadApp() {
       const _container: HTMLDivElement = document.createElement('div');
-      let _component: VNode = h(TestPlugin, {});
+      const _component: VNode = h(TestPlugin, {});
       render(_component, _container);
       editorState.canvasPanelEl.appendChild(_container);
     },

@@ -70,7 +70,7 @@
                 <i class="iconfont icon-config menu-iconfont"></i>设置
               </MenuItem>
             </SubMenu>
-            <SubMenu  key="edit" v-if="editorState.appConfig.designConfig.isInit">
+            <SubMenu key="edit" v-if="editorState.appConfig.designConfig.isInit">
               <template #icon><EditOutlined /></template>
               <template #title>编辑</template>
               <MenuItem key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
@@ -132,10 +132,20 @@
           >
             <!-- 对齐线 -->
             <div class="align-line-panel-vertical">
-              <div class="align-line" v-for="line in draggableState.alignLines.filter(i => i.x !== undefined)" :style="{ left: `${line.x! + (editorState.canvasRect?.x ?? 0)}px` }"></div>
+              <div
+                class="align-line"
+                v-for="(line, index) in draggableState.alignLines.filter(i => i.x !== undefined)"
+                :key="index"
+                :style="{ left: `${line.x! + (editorState.canvasRect?.x ?? 0)}px` }"
+              ></div>
             </div>
             <div class="align-line-panel-horizontal">
-              <div class="align-line" v-for="line in draggableState.alignLines.filter(i => i.y !== undefined)" :style="{ top: `${line.y! + (editorState.canvasRect?.y ?? 0)}px` }"></div>
+              <div
+                class="align-line"
+                v-for="(line, index) in draggableState.alignLines.filter(i => i.y !== undefined)"
+                :key="index"
+                :style="{ top: `${line.y! + (editorState.canvasRect?.y ?? 0)}px` }"
+              ></div>
             </div>
 
             <!-- 拖拽出来的定位线 -->
@@ -182,10 +192,10 @@
 
           <!-- 缩略图组件 -->
           <Thumbnail
+            v-model:range-top="draggableState.scrollTop"
+            v-model:range-left="draggableState.scrollLeft"
             :content-width="editorState.appConfig.canvasConfig.width + getWidthPadding"
             :content-height="editorState.appConfig.canvasConfig.height + getHeightPadding"
-            v-model:range-left="draggableState.scrollLeft"
-            v-model:range-top="draggableState.scrollTop"
             :range-width="draggableState.canvasViewportWidth"
             :range-height="draggableState.canvasViewportHeight"
             :content-list="editorState.currentPage.children"

@@ -25,6 +25,7 @@ const props = defineProps({
     required: true,
   },
   value: {
+    type: [String, Number] as PropType<string | number>,
     required: true,
   },
 });

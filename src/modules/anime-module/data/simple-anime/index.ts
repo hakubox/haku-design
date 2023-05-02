@@ -1,5 +1,4 @@
-import { SimpleAnime, SimpleAnimeConfig } from '../../@types';
-import { ComponentPropertyEditor } from '@/@types/enum';
+import type { SimpleAnime } from '../../@types';
 import { animes as inAnimeList } from './in';
 import { animes as outAnimeList } from './out';
 import { animes as emphasizeAnimeList } from './emphasize';

@@ -51,6 +51,7 @@ import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module/@types';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import { GeneralProperty } from '@/@types';
 import { ComponentPropertyEditor } from '@/@types/enum';
+import type { gsap } from 'gsap';
 
 const state = reactive({
   /** 当前动画名称 */
@@ -80,20 +81,23 @@ const startAnime = (target: HTMLElement, anime: SimpleAnime) => {
   const _dom = target.firstChild as HTMLElement;
   clearAnime(anime.animeName);
   const attrs = state.currentAnimeName === anime.animeName ? state.animeConfig : getDefaultProps(anime);
-  const _anime = anime.animeFn(_dom, attrs)?.duration(attrs.duration ?? state.animeConfig.duration ?? 1000)
-    .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())!;
-  _anime.then(() => {
-    if (anime.animeType !== 'in' && anime.fillmode !== 'forwards') {
-      _anime.reverse(0.001);
-    }
-    setTimeout(() => {
-      const _index = state.playingAnimeNames.indexOf(anime.animeName);
-      state.playingAnimeNames.splice(_index, 1);
-      state.playingAnimes.splice(_index, 1);
-    }, 10);
-  });
-  state.playingAnimeNames.push(anime.animeName);
-  state.playingAnimes.push(_anime);
+  let _anime = anime.animeFn(_dom, attrs);
+  if (_anime) {
+    _anime = _anime.duration(attrs.duration ?? state.animeConfig.duration ?? 1000)
+      .repeat((() => anime.animeType === 'emphasize' ? state.animeConfig.repeat - 1 : 0)())
+    _anime.then(() => {
+      if (_anime && anime.animeType !== 'in' && anime.fillmode !== 'forwards') {
+        _anime.reverse(0.001);
+      }
+      setTimeout(() => {
+        const _index = state.playingAnimeNames.indexOf(anime.animeName);
+        state.playingAnimeNames.splice(_index, 1);
+        state.playingAnimes.splice(_index, 1);
+      }, 10);
+    });
+    state.playingAnimeNames.push(anime.animeName);
+    state.playingAnimes.push(_anime);
+  }
 };
 
 /** 结束播放动画 */

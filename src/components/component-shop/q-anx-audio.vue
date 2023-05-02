@@ -75,8 +75,8 @@
 
 <script lang="ts">
 export default {
-    inheritAttrs: false,
-    components: { Slider }
+    components: { Slider },
+    inheritAttrs: false
 };
 </script>
 <script lang="ts" setup>

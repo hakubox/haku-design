@@ -177,7 +177,7 @@ const editStorageInfo = () => {
     if (!state.showThemeCode) {
       return;
     }
-    let _index = themeState.themeList.findIndex((i) => i.code === state.showThemeCode);
+    const _index = themeState.themeList.findIndex((i) => i.code === state.showThemeCode);
     if (_index >= 0) {
       themeState.themeList[_index].title = state.editStorage.title;
       themeState.themeList[_index].remark = state.editStorage.remark;

@@ -20,7 +20,7 @@
 /**
  * 添加新文件夹弹窗
  */
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Modal, Form, FormItem, Textarea, Select, Input } from 'ant-design-vue';
 import type { TreeDataItem } from 'ant-design-vue/lib/tree';
 import { PropType, reactive, toRefs, watch, watchEffect } from 'vue';

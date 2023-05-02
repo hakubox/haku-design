@@ -82,7 +82,7 @@
   <!-- 右键查看文件属性弹窗 -->
   <FileAttributeModal v-model:visible="fileAttributeModalVisible" :file-item="activeMenuFile" />
   <!-- 文件预览-->
-  <FilePreview v-model:visible="showPreview" :activeMenuFile="activeMenuFile"/>
+  <FilePreview v-model:visible="showPreview" :activeMenuFile="activeMenuFile" />
 </template>
 
 <script lang="ts" setup>
@@ -103,7 +103,7 @@ import {
 import InputLable from '../common/InputLable.vue';
 import { Button, Empty } from 'ant-design-vue';
 import { fileDialogState } from '../../fileDialogController';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { parseByte } from '../../tools/transFileSize';
 import { ProgressState } from '../../hooks/useFile';
 import { VueDraggableNext } from 'vue-draggable-next';

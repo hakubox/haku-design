@@ -5,19 +5,19 @@
       <div class="welcome-panel-operate">
         <div class="operate-title">新建</div>
         <div class="operate-list">
-          <div class="operate-item welcome-link" @click="$emit('create', 'questionnaire')">
+          <div class="operate-item welcome-link" @click="emit('create', 'questionnaire')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建调查问卷...</span>
           </div>
-          <div class="operate-item welcome-link" @click="$emit('create', 'courseware')">
+          <div class="operate-item welcome-link" @click="emit('create', 'courseware')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建课件...</span>
           </div>
-          <div class="operate-item welcome-link" @click="$emit('create', 'complex-component')">
+          <div class="operate-item welcome-link" @click="emit('create', 'complex-component')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建复合组件...</span>
           </div>
-          <div class="operate-item welcome-link" @click="$emit('create', 'canvas')">
+          <div class="operate-item welcome-link" @click="emit('create', 'canvas')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建画布...</span>
           </div>
@@ -30,7 +30,7 @@
             <i class="iconfont icon-dakai"></i>
             <span class="operate-item-label">打开文件...</span>
           </div>
-          <div class="operate-item welcome-link" @click="$emit('openQuestionnaireLibrary')">
+          <div class="operate-item welcome-link" @click="emit('openQuestionnaireLibrary')">
             <i class="iconfont icon-dakai"></i>
             <span class="operate-item-label">打开问卷库...</span>
           </div>
@@ -187,6 +187,11 @@ const state = reactive({
   /** 最近列表 */
   recentList: [] as QuestionaryBasicInfoDto[],
 });
+
+const emit = defineEmits<{
+  (event: 'create', string: string): void;
+  (event: 'openQuestionnaireLibrary'): void;
+}>();
 
 /** 获取类型名称 */
 const getTypeName = (type) => {

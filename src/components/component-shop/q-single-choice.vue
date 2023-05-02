@@ -58,7 +58,7 @@ import { onMounted, PropType, reactive, nextTick, watch, inject } from "vue";
 import { service as storageService } from '@/modules/storage-module';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';
-import { computed } from "@vue/reactivity";
+import { computed } from "vue";
 import { Radio, RadioGroup } from "vant";
 
 const props = defineProps({
@@ -113,7 +113,7 @@ watch(() => props.value, (val, oldVal) => {
 const elseTxt = computed({
   get() {
     if (!props.value) return '';
-    let _option = props.options?.find(i => i.value === props.value);
+    const _option = props.options?.find(i => i.value === props.value);
     if (_option) {
       return '';
     } else {
@@ -126,7 +126,7 @@ const elseTxt = computed({
 });
 
 const init = () => {
-  let _option = props.options?.find(i => i.value === props.value);
+  const _option = props.options?.find(i => i.value === props.value);
   if (!_option) {
     elseTxt.value = props.value;
     if (props.value) state.isElse = true;

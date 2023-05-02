@@ -90,7 +90,7 @@ const eventShowListener = (event, eventMap, component?: Component) => {
 /** 属性修改触发的事件 */
 const eventChangeListener = (e, event, eventMap, component?: Component) => {
   if (event) {
-    let a = {} as any;
+    const a = {} as any;
     // let _value = e.target ? e.target.value : e;
     // component.eventAttrs[event.name] = _value;
     // if (event?.change) {
@@ -116,7 +116,7 @@ const editEvent = (event: AppEvent) => {
 };
 /** 移除事件 */
 const removeEvent = (event: AppEvent) => {
-  let _index = eventState.allEvents.findIndex((i) => i.id == event.id);
+  const _index = eventState.allEvents.findIndex((i) => i.id == event.id);
   eventState.allEvents.splice(_index, 1);
 };
 /** 移除事件触发 */

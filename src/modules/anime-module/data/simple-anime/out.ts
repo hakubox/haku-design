@@ -366,7 +366,7 @@ export const animes: SimpleAnime[] = [
       visible: (attrs) => attrs.direction !== 'none',
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-    let tl = gsap.timeline();
+    const tl = gsap.timeline();
     switch (attrs.direction) {
       case 'none':
         return tl.to(el, { duration: 0, opacity: 1, scale: 1, ease: Back.easeOut.config(attrs.speed) })
@@ -492,7 +492,7 @@ export const animes: SimpleAnime[] = [
       visible: (attrs) => attrs.direction !== 'none',
     }
   ], animeFn: (el: HTMLElement, attrs: Record<string, any>) => {
-      let tl = gsap.timeline();
+      const tl = gsap.timeline();
       switch (attrs.direction) {
         case 'left':
           return tl.to(el, { duration: 0, transformOrigin: 'left', rotate: '0deg', ease: Linear.easeNone })

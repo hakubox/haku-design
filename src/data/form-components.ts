@@ -2025,7 +2025,7 @@ export let formComponents: InitComponent[] = [
 ];
 
 /** 获取所有组件 */
-export let getComponents = computed<InitComponent[]>(() => {
+export const getComponents = computed<InitComponent[]>(() => {
   return initComponents();
 });
 

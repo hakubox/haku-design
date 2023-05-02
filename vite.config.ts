@@ -77,6 +77,7 @@ switch (buildProj) {
       ],
       define: {
         'process.env': process.env,
+        monaco: 'monaco',
       },
       build: {
         rollupOptions: {

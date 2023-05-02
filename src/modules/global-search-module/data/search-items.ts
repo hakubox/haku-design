@@ -9,7 +9,7 @@ import { computed, ref, watch } from "vue";
 import Fuse from 'fuse.js';
 
 /** Fuse实例 */
-let fuse: Fuse<GlobalSearchItem> = new Fuse([], {
+const fuse: Fuse<GlobalSearchItem> = new Fuse([], {
   includeScore: true,
   includeMatches: true,
   minMatchCharLength: 2,

@@ -1,4 +1,4 @@
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { h, reactive, Ref, watch } from 'vue';
 import { fileDialogState } from '../fileDialogController';
 import { getType } from 'mime';

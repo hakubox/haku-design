@@ -47,12 +47,12 @@ const state = reactive({
   inputValue: '',
 });
 /** 表单变量 */
-let formScriptComment = inject('formScriptComment') as Record<string, any>;
+const formScriptComment = inject('formScriptComment') as Record<string, any>;
 /** 表单变量 */
-let formScript = inject('formScript') as FormScript;
+const formScript = inject('formScript') as FormScript;
 /** 获取函数列表 */
 const functionList = computed(() => {
-  let _formScriptComment = formScriptComment;
+  const _formScriptComment = formScriptComment;
   return Object.entries(formScript.methods).map(([key, value]) => ({
     label: _formScriptComment[key] ? _formScriptComment[key] + ': ' + key : key,
     value: key,

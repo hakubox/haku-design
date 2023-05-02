@@ -39,7 +39,7 @@
         :isPreview="props.isPreview"
         ref="componentRef"
       >
-        <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+        <template v-for="(childComponent, detailIndex) in component.children || []" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
           <FormDesignComponent
             :component-id="childComponent.id"
             :ref="childComponent.id"
@@ -54,7 +54,7 @@
             :component="childComponent"
             :isPreview="props.isPreview"
             :isFormItem="false"
-            :index="index"
+            :index="detailIndex"
             :isFullScreen="isFullScreen"
           />
         </template>
@@ -93,7 +93,7 @@
       :isPreview="props.isPreview"
       ref="componentRef"
     >
-      <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+      <template v-for="(childComponent, index2) in component.children || []" :key="index2" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
         <FormDesignComponent
           :component-id="childComponent.id"
           :ref="childComponent.id"
@@ -108,7 +108,7 @@
           :component="childComponent"
           :isPreview="props.isPreview"
           :isFormItem="false"
-          :index="index"
+          :index="index2"
           :isFullScreen="isFullScreen"
         />
       </template>
@@ -140,7 +140,7 @@
           <span class="form-component-tool-item-title">群组</span>
         </div>
         <div v-if="componentQuickTools?.length" class="form-component-tool-group">
-          <template :key="index" v-for="(item, index) in componentQuickTools">
+          <template :key="index" v-for="item in componentQuickTools">
             <div
               v-if="item.icon && !item.label"
               class="form-component-tool-item form-component-tool-item-btn"
@@ -237,7 +237,6 @@ import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
 import { EventTriggerType } from '@/modules/event-module/enum';
 import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
-import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';

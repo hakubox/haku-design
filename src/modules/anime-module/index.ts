@@ -45,7 +45,7 @@ export const service = {
   },
   /** 新增片段 */
   addFragment: async (fragment: SetPartial<TimelineFragment, 'id' | 'type' | 'trackType' | 'timeAxisId' | 'lock' | 'disabled'>) => {
-    let _basicFragment = {
+    const _basicFragment = {
       id: createModelId(5),
       type: 'normal',
       disabled: true,
@@ -65,7 +65,7 @@ export const service = {
         src: _basicFragment.target,
         buffer: typeof _basicFragment.target === 'string' ? (await getAudioFile(_basicFragment.target)) : _basicFragment.target,
       } as SetPartial<AudioTimelineFragment, 'howl'>;
-      let imageData = "data:audio/x-wav;base64," + btoa(new Uint8Array(_fragment.buffer).reduce((data, byte) => data + String.fromCharCode(byte), ""));
+      const imageData = "data:audio/x-wav;base64," + btoa(new Uint8Array(_fragment.buffer).reduce((data, byte) => data + String.fromCharCode(byte), ""));
       const howl = new Howl({
         src: imageData,
       });

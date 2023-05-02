@@ -3,8 +3,11 @@ import { defineCommand } from "@/data/form-commands";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as themeState } from '@/modules/theme-module';
 
+// @ts-ignore
 import defaultTheme from '@/assets/theme/theme-default/index.lazy.less?inline';
+// @ts-ignore
 import darkTheme from '@/assets/theme/theme-dark/index.lazy.less?inline';
+// @ts-ignore
 import translucentTheme from '@/assets/theme/theme-translucent/index.lazy.less?inline';
 
 const themes = {

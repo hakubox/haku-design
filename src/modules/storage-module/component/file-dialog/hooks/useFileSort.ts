@@ -1,6 +1,6 @@
 import { StorageFileInfo } from '@/modules/storage-module/@types';
 import { SortType } from '@/modules/storage-module/enum';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { ref, Ref } from 'vue';
 import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
 

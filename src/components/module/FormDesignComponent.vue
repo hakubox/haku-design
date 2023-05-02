@@ -41,7 +41,7 @@
         :isPreview="props.isPreview"
         ref="componentRef"
       >
-        <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+        <template v-for="(childComponent, childIndex) in component.children || []" :key="childIndex" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
           <FormDesignComponent
             :component-id="childComponent.id"
             :ref="childComponent.id"
@@ -56,7 +56,7 @@
             :component="childComponent"
             :isPreview="props.isPreview"
             :isFormItem="false"
-            :index="index"
+            :index="childIndex"
             :isFullScreen="isFullScreen"
           />
         </template>
@@ -95,7 +95,7 @@
       :isPreview="props.isPreview"
       ref="componentRef"
     >
-      <template v-for="(childComponent, index) in component.children" :key="index" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
+      <template v-for="(childComponent, childIndex) in component.children || []" :key="childIndex" #[`child_${childComponent.slotIndex}_${childComponent.id}`]>
         <FormDesignComponent
           :component-id="childComponent.id"
           :ref="childComponent.id"
@@ -110,7 +110,7 @@
           :component="childComponent"
           :isPreview="props.isPreview"
           :isFormItem="false"
-          :index="index"
+          :index="childIndex"
           :isFullScreen="isFullScreen"
         />
       </template>
@@ -142,7 +142,7 @@
           <span class="form-component-tool-item-title">{{ component.attrs.name }}</span>
         </div>
         <div v-if="componentQuickTools?.length" class="form-component-tool-group">
-          <template :key="index" v-for="(item, index) in componentQuickTools">
+          <template :key="index" v-for="item in componentQuickTools">
             <div
               v-if="item.icon && !item.label"
               class="form-component-tool-item form-component-tool-item-btn"
@@ -314,8 +314,8 @@ const getStyle = () => {
       return {
         position: position,
         zIndex: props.component.attrs.sticky ? 1 : 'initial',
-        width: `${getComponentWidth}px`,
-        height: `${getComponentHeight}px`,
+        width: `${getComponentWidth.value}px`,
+        height: `${getComponentHeight.value}px`,
         top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
         left: `${props.component.attrs.x}px`,
         transform: `rotate(${props.component.attrs.rotate || 0}deg)`

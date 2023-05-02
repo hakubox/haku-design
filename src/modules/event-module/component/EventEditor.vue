@@ -19,7 +19,7 @@
         <div class="event-editor-header-btns">
           <Button type="primary" @click="saveEvent">
             <template #icon>
-              <SaveOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/>
+              <SaveOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" />
             </template>
             保存逻辑
           </Button>
@@ -53,7 +53,7 @@
               <Tooltip class="event-editor-trigger-item-remove">
                 <template #title>删除当前条件</template>
                 <Button danger ghost @click="removeTrigger(state.event, triggerIndex)">
-                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
+                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" /></template>
                   删除
                 </Button>
               </Tooltip>
@@ -90,7 +90,7 @@
               <Tooltip class="event-editor-action-item-remove">
                 <template #title>删除当前行为</template>
                 <Button danger ghost @click="removeAction(state.event, actionIndex)">
-                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
+                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" /></template>
                   删除
                 </Button>
               </Tooltip>
