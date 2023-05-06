@@ -109,7 +109,7 @@ const state = reactive({
     },
   ],
   /** 菜单Event */
-  menuEvent: null as any,
+  menuEvent: {} as MouseEvent,
   /** 右键菜单是否显示 */
   rightClickMenuVisible: false,
 });

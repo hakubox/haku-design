@@ -164,3 +164,21 @@ export interface DirItem {
   data: FileItem;
   children: DirItem[];
 }
+
+/** 进度状态 */
+export interface ProgressStateItem {
+  /** 文件名 */
+  filename: string;
+  /** 进度状态 */
+  progress: any;
+  /** 所处文件夹id */
+  dirId: string;
+  /** 下载状态 - 是否暂停 */
+  isPaused: boolean;
+  /** 暂停下载 */
+  pause: () => void;
+  /** 取消下载 */
+  cancel: () => void;
+  /** 恢复下载 */
+  resume: () => void;
+}

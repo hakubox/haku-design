@@ -1,7 +1,6 @@
 import { deletes, get, post } from '@/lib/api';
 import { serverConfig } from '@/config';
 
-
 const _baseUrl = () => {
   return serverConfig.serverConfig.environment === 'development' ? '/userapi/api' : 'https://bpmtest-userapi.gejinet.com/api';
 };

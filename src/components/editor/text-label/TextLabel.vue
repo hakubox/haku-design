@@ -8,9 +8,11 @@
 </template>
 
 <script lang="ts" setup>
+import { PropType } from 'vue';
+
 const props = defineProps({
   value: {
-    type: String,
+    type: [String, Number] as PropType<string | number>,
     default: '',
   },
 });

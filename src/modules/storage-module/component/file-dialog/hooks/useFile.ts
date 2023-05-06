@@ -2,26 +2,16 @@ import { computed } from 'vue';
 import { h, reactive, Ref, watch } from 'vue';
 import { fileDialogState } from '../fileDialogController';
 import { getType } from 'mime';
-import { isDir } from '@/modules/storage-module/tools/fileTypeHandler';
+import { isDir } from '../../../tools/fileTypeHandler';
 import { message, notification, UploadFile } from 'ant-design-vue';
-import { state as storageState, service as storageService } from '@/modules/storage-module';
-import { getFileKey } from '@/modules/storage-module/api';
+import { state as storageState, service as storageService } from '../../../';
+import { getFileKey } from '../../../api';
 import GlobalUploadProgressContent from '../components/GlobalUploadProgressContent.vue';
-import { StorageServiceType } from '@/modules/storage-module/enum';
+import { StorageServiceType } from '../../../enum';
+import { ProgressStateItem } from '../../../@types';
 
-export interface progressStateItem {
-  filename: string; // 文件名
-  progress: ProgressInfo; // 进度状态
-  dirId: string; // 所处文件夹id
-  isPaused: boolean; // 下载状态 - 是否暂停
-  pause: () => void; // 暂停下载
-  cancel: () => void; // 取消下载
-  resume: () => void; // 恢复下载
-}
-
-export type ProgressState = progressStateItem[];
 /** 全局上传进度状态 */
-const globalUploadProgressState = reactive([] as ProgressState);
+const globalUploadProgressState = reactive([] as ProgressStateItem[]);
 
 // TODO: 将useStorageStore中的的文件相关逻辑逻辑搬过来
 // 文件相关业务逻辑
@@ -80,7 +70,7 @@ export const useFile = (curDirId: Ref<string>) => {
     const initTaskFn = () => {
       message.error('上传任务尚未准备就绪，请稍等');
     };
-    const progressState: progressStateItem = reactive({
+    const progressState: ProgressStateItem = reactive({
       filename: fileName,
       progress: {
         loaded: 0,

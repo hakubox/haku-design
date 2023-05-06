@@ -133,7 +133,7 @@
         </div>
       </template> -->
     </component>
-    <Transition name="form-component-tools">
+    <!-- <Transition name="form-component-tools"> -->
       <div v-if="!props.isPreview && editorState.currentSelectedComponents.length === 1 && editorState.currentSelectedIds.includes(component.id)" class="form-component-tools">
         <div class="form-component-tool-item form-component-tool-item-info" @mousedown.stop="mouseDownEvent($event, props.component)">
           <i class="form-component-tool-item-icon" :class="editorState.menuComponents.find(x=>x.name===component.name)?.icon" alt="" />
@@ -190,7 +190,7 @@
           </Tooltip>
         </div>
       </div>
-    </Transition>
+    <!-- </Transition> -->
     <!-- 评分模块 -->
     <div v-if="props.isPreview && scoringState.isScoring && formFillState.formInfo[componentId]" class="form-component-scoring">
       <span class="form-component-scoring-label">
@@ -507,7 +507,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  transition: 0.15s;
+  // transition: 0.15s;
   height: 22px;
   background-color: @primary-color;
   color: #fff;
@@ -585,7 +585,7 @@ onUnmounted(() => {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
     box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.15);
-    transition: 0.15s;
+    // transition: 0.15s;
     transform: translateY(1px);
 
     &:hover {

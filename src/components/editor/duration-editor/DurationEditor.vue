@@ -41,10 +41,10 @@ const props = defineProps({
     type: String as PropType<'hour' | 'minute' | 'second' | 'millisecond'>,
     default: 'second',
   },
-  /** 毫秒数 */
+  /** 值 */
   value: {
     type: Number as PropType<number | undefined>,
-    required: true,
+    default: 0
   },
   /** 可使用单位列表 */
   useUnits: {

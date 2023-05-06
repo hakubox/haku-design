@@ -52,6 +52,7 @@
 /**
  * 文件上传弹窗
  */
+import { nextTick, reactive, Ref, ref, toRefs, watchEffect } from 'vue';
 import {
   Modal,
   Form,
@@ -65,7 +66,6 @@ import {
   UploadFile,
   UploadProps,
 } from 'ant-design-vue';
-import { nextTick, reactive, Ref, ref, toRefs, watchEffect } from 'vue';
 import { fileDialogState } from '../fileDialogController';
 
 /** 提交的表单 */

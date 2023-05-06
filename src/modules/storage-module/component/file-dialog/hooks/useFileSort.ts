@@ -6,8 +6,10 @@ import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
 
 /** 排序顺序 */
 export enum SortOrder {
-  sequence, // 顺序
-  reverse, // 倒序
+  /** 顺序 */
+  sequence,
+  /** 倒序 */
+  reverse,
 }
 
 /**

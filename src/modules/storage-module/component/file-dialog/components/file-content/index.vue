@@ -87,7 +87,7 @@
 
 <script lang="ts" setup>
 /** 文件展示面板 */
-import { StorageFileInfo } from '@/modules/storage-module/@types';
+import { ProgressStateItem, StorageFileInfo } from '@/modules/storage-module/@types';
 import { FileType, getFileIconByFileType } from '../../../../tools/fileTypeHandler';
 import {
   getCurrentInstance,
@@ -105,7 +105,6 @@ import { Button, Empty } from 'ant-design-vue';
 import { fileDialogState } from '../../fileDialogController';
 import { computed } from 'vue';
 import { parseByte } from '../../tools/transFileSize';
-import { ProgressState } from '../../hooks/useFile';
 import { VueDraggableNext } from 'vue-draggable-next';
 import FileAttributeModal from './components/FileAttributeModal.vue';
 import FilePreview from './components/FilePreview.vue';
@@ -139,7 +138,7 @@ const props = defineProps({
     required: true,
   },
   dirProgressState: {
-    type: Array as PropType<ProgressState>,
+    type: Array as PropType<ProgressStateItem[]>,
     default: () => [],
     required: true,
   },
@@ -148,7 +147,7 @@ const { curDirId } = toRefs(props);
 const state = reactive({
   /** 当前选中的文件id列表 */
   selectedFileIds: [] as string[],
-  menuEvent: null as any,
+  menuEvent: undefined as any,
   rightClickMenuVisible: false,
 });
 
