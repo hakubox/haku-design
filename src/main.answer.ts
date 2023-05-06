@@ -25,10 +25,14 @@ import { Toast, Dialog } from 'vant';
 
 messageInit({ toastModule: Toast, confirmModule: Dialog });
 
-/** @ts-ignore */
-scoringStore.service = answerScoringService;
-/** @ts-ignore */
-authStore.service = answerAuthService;
+scoringStore.service = {
+  ...scoringStore.service,
+  ...answerScoringService
+};
+authStore.service = {
+  ...authStore.service,
+  ...answerAuthService
+};
 
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);

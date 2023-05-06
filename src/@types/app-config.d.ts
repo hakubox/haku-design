@@ -89,7 +89,7 @@ export interface AppConfig {
   /** 应用类型 */
   appType: AppType;
   /** 应用版本号 */
-  appVersion: string;
+  appVersion: number;
   /** 标题 */
   appTitle: string;
   /** 头部标签 */
@@ -101,7 +101,7 @@ export interface AppConfig {
   /** 备注 */
   remark: string;
   /** 主题 */
-  formTheme: string;
+  appTheme: string;
   /** 页面布局形式 */
   layoutConfig: LayoutConfig;
   /** 设计器配置 */

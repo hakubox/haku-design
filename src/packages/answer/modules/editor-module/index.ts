@@ -3,7 +3,7 @@ import { LayoutConfig, PropertyGroup, ComponentProperty, AppConfig, ExportAppBod
 import { CrossAxisAlignment, LayoutType, MainAxisAlignment, ComponentPropertyEditor, PageType } from '@/@types/enum';
 import bus from '@/tools/bus';
 import { state as eventState, service as eventService } from '@/modules/event-module';
-import { state as themeState } from "@/modules/theme-module";
+import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService } from '@/modules/form-fill-module';
 import { AppPage } from '@/@types/app-page';
@@ -196,7 +196,7 @@ export const service = {
       state.currentSelectedComponentPropertyMap = {};
 
       eventState.allEvents = body.events;
-      themeState.changeTheme(body.theme.code);
+      themeService.changeTheme(body.theme.code);
       await timeout(100);
     } catch(err) {
       Toast.fail('加载数据出错');

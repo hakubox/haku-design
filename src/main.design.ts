@@ -10,6 +10,7 @@ import AntdIcon from '@/common/antd-icon';
 import components from '@/common/register-global-components';
 import directives from '@/directives';
 import AntdZHCN from 'ant-design-vue/es/locale/zh_CN';
+import { message, Modal } from 'ant-design-vue';
 
 import '@vant/touch-emulator';
 import 'vant/lib/index.less';
@@ -36,20 +37,20 @@ import { service as pluginModule } from '@/modules/plugin-module';
 // import { registerImageEditor } from '@/plugin/image-editor-plugin';
 // import { registerImageLoadedEventTrigger } from '@/plugin/image-loaded-event-trigger';
 
-import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
-import 'monaco-editor/esm/vs/basic-languages/less/less.contribution'
-import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
+import 'monaco-editor/esm/vs/basic-languages/css/css.contribution';
+import 'monaco-editor/esm/vs/basic-languages/less/less.contribution';
+import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution';
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
 // @ts-ignore
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 // @ts-ignore
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 // @ts-ignore
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 // @ts-ignore
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
+import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 // @ts-ignore
-import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
+import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 
 configState.ConfigDialog = ConfigDialog;
 
@@ -63,20 +64,18 @@ globalStore.state.antdConfigProvider.locale = AntdZHCN;
 
 import { init as messageInit } from '@/common/message';
 
-import { message, Modal } from 'ant-design-vue';
-
 messageInit({ toastModule: message, confirmModule: Modal });
 
 window['MonacoEnvironment'] = {
-  getWorker (_: string, label: string) {
+  getWorker(_: string, label: string) {
     console.log('getWorker', label);
-    if (label === 'typescript' || label === 'javascript') return new TsWorker()
-    if (label === 'json') return new JsonWorker()
-    if (label === 'css' || label === 'less') return new CssWorker()
-    if (label === 'html') return new HtmlWorker()
-    return new EditorWorker()
-  }
-}
+    if (label === 'typescript' || label === 'javascript') return new TsWorker();
+    if (label === 'json') return new JsonWorker();
+    if (label === 'css' || label === 'less') return new CssWorker();
+    if (label === 'html') return new HtmlWorker();
+    return new EditorWorker();
+  },
+};
 
 // setLocaleData(zhHans);
 // window['monaco'] = editorApi;
@@ -84,25 +83,29 @@ window['MonacoEnvironment'] = {
 
 window.addEventListener('load', () => {
   if (window.opener) {
-    serverConfig.whiteList.forEach(path => {
+    serverConfig.whiteList.forEach((path) => {
       window.opener.postMessage({ msg: '加载完毕' }, path);
     });
   }
 });
 
-window.addEventListener('message', (event) => {
-  if (!serverConfig.whiteList.includes(event.origin)) return;
-  try {
-    if (event.data.token) {
-      localStorage.setItem('Authorization', event.data.token);
-    }
-    if (event.data.page) {
-      router.push(event.data.page);
-    } else {
-      router.back();
-    }
-  } catch (error) {}
-}, false);
+window.addEventListener(
+  'message',
+  (event) => {
+    if (!serverConfig.whiteList.includes(event.origin)) return;
+    try {
+      if (event.data.token) {
+        localStorage.setItem('Authorization', event.data.token);
+      }
+      if (event.data.url) {
+        router.push(event.data.url);
+      } else {
+        router.back();
+      }
+    } catch (error) {}
+  },
+  false,
+);
 
 globalStore.install(app, router);
 

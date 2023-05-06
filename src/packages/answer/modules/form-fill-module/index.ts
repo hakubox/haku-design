@@ -5,7 +5,7 @@ import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
 import { Component, ComponentAnswerType, ComponentGroup } from '@/@types';
 import { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from '@/modules/form-fill-module/@types';
-import { answerCommit } from '@/api/common/form-fill';
+import { answerCommit } from '@/api/form-fill';
 import { Dialog, Toast } from 'vant';
 import { isBlank } from '@/tools/common';
 import { AppPage } from '@/@types/app-page';

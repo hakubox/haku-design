@@ -4,7 +4,6 @@ import { fileDialogState } from '../fileDialogController';
 import { getType } from 'mime';
 import { isDir } from '@/modules/storage-module/tools/fileTypeHandler';
 import { message, notification, UploadFile } from 'ant-design-vue';
-import { type ProgressInfo } from 'cos-js-sdk-v5';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getFileKey } from '@/modules/storage-module/api';
 import GlobalUploadProgressContent from '../components/GlobalUploadProgressContent.vue';
@@ -88,7 +87,7 @@ export const useFile = (curDirId: Ref<string>) => {
         total: 0,
         speed: 0,
         percent: 0,
-      } as ProgressInfo,
+      },
       dirId,
       isPaused: false,
       pause: initTaskFn,
@@ -96,7 +95,7 @@ export const useFile = (curDirId: Ref<string>) => {
       resume: initTaskFn,
     });
     globalUploadProgressState.push(progressState);
-    const onProgress = (progress: ProgressInfo) => {
+    const onProgress = (progress: any) => {
       // 更新进度
       progressState.progress.percent = progress.percent;
       progressState.progress.loaded = progress.loaded;

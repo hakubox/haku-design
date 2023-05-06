@@ -5,7 +5,7 @@ export interface VersionHistoryInstance {
   /** 历史版本Id */
   id: string;
   /** 历史版本号 */
-  appVersion: string;
+  appVersion: number;
   /** 升级描述 */
   description: string;
   /** 历史版本备注 */

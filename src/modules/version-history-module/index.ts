@@ -16,7 +16,7 @@ export const service = {
     return new Promise((resolve, reject) => {
       const _instance: VersionHistoryInstance = {
         id: '',
-        appVersion: '1',
+        appVersion: 1,
         description: '',
         remark: '',
         createUser: '',
@@ -34,7 +34,7 @@ export const service = {
     })
   },
   /** 获取对应的版本历史 */
-  setQuestionaryVersion(id: string, version: string) {
+  setQuestionaryVersion(id: string, version: number) {
     setQuestionaryVersion(id, version).then(res => {
       toast('问卷版本切换成功', 'success');
       state.bus.$emit('version_change');

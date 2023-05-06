@@ -4,7 +4,6 @@ import { getToken } from '@/lib/api/token';
 import { service as authService } from '@/common/auth-module';
 import qs from 'qs';
 import { clearBlankProps, removeProp } from '../../tools/common';
-import { ERROR_CODE_MAP, SUCCESS_CODE } from './response_code';
 import { ApiConfig, ApiMethodType, ApiPageList, ApiReturn, ParamConfig, ParamLinkType } from './types';
 import { replacePathParams, transFormData } from './utils';
 import { toast } from '@/common/message';
@@ -139,88 +138,86 @@ export function request<ReturnResponse extends boolean, ReturnPageList extends b
   return new Promise((resolve, reject) => {
     /** 是否需要获取 token */
     const isGetToken = config?.getToken !== false;
-    const _params: Record<string, any> | any[] = Array.isArray(params)
-      ? params
-      : {
-          _t: new Date().getTime(),
-          ...defaultConfig,
-          ...params,
-        };
+    const _params: Record<string, any> | any[] = Array.isArray(params) ? params : {
+      _t: new Date().getTime(),
+      ...defaultConfig,
+      ...params,
+    };
 
-    (config.axios ?? axios)
-      .request({
-        method: method as Method,
-        signal: config.abortSignal,
-        responseType: config?.responseType ?? 'json',
-        ...config,
-        ...config.events,
-        headers: {
-          /** 获取用户身份校验信息（jwt） */
-          Authorization: isGetToken ? getToken(true) : '',
-          ...config.headers,
-        },
-        ...getRequestParams<ReturnResponse, ReturnPageList>(url, method, _params, config),
-      })
-      .then((d) => {
-        const _data = d.data;
-        if (_data.repCode !== undefined) {
-          if (_data.success) {
-            resolve(_data.repData);
-          } else {
-            reject(_data);
-          }
-        } else if (_data instanceof Blob) {
-          resolve({
-            filename: (
-              /.*;?filename=(.*?);?$/.exec(d.headers['content-disposition'] ?? '') ?? [`未命名文件`]
-            ) /** ${localConfig.defaultSuffix ?? ''} */
-              .pop() as string,
-            blob: _data,
-          } as any);
-        } else if (ERROR_CODE_MAP[_data.code]) {
-          localStorage.removeItem('Authorization');
-          toast('登录超时，请重新登录。', 'error');
-          globalState.router.push('/login');
-          authService.logout();
-          reject(_data);
-        } else if (_data.code === SUCCESS_CODE || _data.code === 200) {
-          if (config.returnResponse || config.returnPageList) {
-            resolve(_data);
-          } else if (_data.data) {
-            resolve(_data.data);
-          } else if (_data.rows) {
-            resolve(_data.rows);
-          } else {
-            resolve(undefined as any);
-          }
-        } else if (_data.code === 401) {
-          toast(_data.msg, 'error');
-          /** router.push('/login'); */
-          reject(_data);
+    (config.axios ?? axios).request({
+      method: method as Method,
+      signal: config.abortSignal,
+      responseType: config?.responseType ?? 'json',
+      ...config,
+      ...config.events,
+      headers: {
+        /** 获取用户身份校验信息（jwt） */
+        Authorization: isGetToken ? getToken(true) : '',
+        ...config.headers,
+      },
+      ...getRequestParams<ReturnResponse, ReturnPageList>(url, method, _params, config),
+    }).then((d) => {
+      const _data = d.data;
+      if (_data.repCode !== undefined) {
+        if (_data.success) {
+          resolve(_data.repData);
         } else {
-          toast(_data.msg, 'error');
           reject(_data);
         }
-      })
-      .catch((err) => {
-        let _err = err;
-        if (axios.isCancel(err)) {
-          console.log('Request canceled', err.message);
-        } else if (err.response && err.response.status === 401) {
-          localStorage.removeItem('Authorization');
-          toast('登录超时，请重新登录。', 'error');
-          globalState.router.push('/login');
-          reject(err);
-          return;
-        } else if (err?.response?.data) {
-          _err = `[${err.response.status}]${
-            err.response.data.errMsg || err.response.data.title || err.response.data.error
-          }`;
-        } else if (err?.response) {
-          _err = `[${err.response.status}]${err.response.message || err.response.error}`;
+      } else if (_data instanceof Blob) {
+        resolve({
+          filename: (
+            /.*;?filename=(.*?);?$/.exec(d.headers['content-disposition'] ?? '') ?? [`未命名文件`]
+          ) /** ${localConfig.defaultSuffix ?? ''} */
+            .pop() as string,
+          blob: _data,
+        } as any);
+      } else if (_data.code === '401') {
+        localStorage.removeItem('Authorization');
+        toast('登录超时，请重新登录。', 'error');
+        globalState.router.push('/login');
+        authService.logout();
+        reject(_data);
+      } else if (!_data.isSuccess) {
+        if (!_data.isSuccess && _data.message) {
+          toast(`[Bad Request]${_data.message}`, 'error');
         }
-        toast(_err, 'error');
-        reject(_err);
-      });
+        reject(_data);
+      } else if (_data.code === 200) {
+        if (config.returnResponse || config.returnPageList) {
+          resolve(_data);
+        } else if (_data.data) {
+          resolve(_data.data);
+        } else {
+          resolve(undefined as any);
+        }
+      } else if (_data.code === 401) {
+        toast(_data.msg, 'error');
+        /** router.push('/login'); */
+        reject(_data);
+      } else {
+        toast(_data.msg, 'error');
+        reject(_data);
+      }
+    }).catch((err) => {
+      let _err = err;
+      if (axios.isCancel(err)) {
+        console.log('Request canceled', err.message);
+      } else if (err.response && err.response.status === 401) {
+        localStorage.removeItem('Authorization');
+        toast('登录超时，请重新登录。', 'error');
+        globalState.router.push('/login');
+        reject(err);
+        return;
+      } else if (err?.response?.data) {
+        _err = `[${err.response.status}]${
+          err.response.data.errMsg || err.response.data.title || err.response.data.error
+        }`;
+      } else if (err?.response) {
+        _err = `[${err.response.status}]${err.response.message || err.response.error}`;
+      }
+      toast(_err, 'error');
+      reject(_err);
+    });
   });
 }

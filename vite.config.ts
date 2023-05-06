@@ -43,7 +43,19 @@ switch (buildProj) {
       },
       server: {
         host: '0.0.0.0',
-        port: 4561
+        port: 4561,
+        proxy: {
+          '/userapi': {
+            target: 'https://bpmtest-userapi.gejinet.com',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/userapi/, ''),
+          },
+          '/api': {
+            target: 'https://ld-designer.gejinet.com',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api/, '/api'),
+          }
+        }
       },
       css: {
         preprocessorOptions: {

@@ -27,8 +27,8 @@ defineCommand({
     themeTitle: { type: VarType.string, required: true },
   },
   async exec(command) {
-    command.oldVal = editorState.appConfig.formTheme;
-    editorState.appConfig.formTheme = command.newVal;
+    command.oldVal = editorState.appConfig.appTheme;
+    editorState.appConfig.appTheme = command.newVal;
     themeState.currentThemeCode = `theme-${command.newVal}`;
     document.documentElement.className = `theme-${command.newVal}`;
 
@@ -40,7 +40,7 @@ defineCommand({
     document.head.appendChild(_dom);
   },
   undo(command) {
-    editorState.appConfig.formTheme = command.oldVal;
+    editorState.appConfig.appTheme = command.oldVal;
     themeState.currentThemeCode = `theme-${command.oldVal}`;
     document.documentElement.className = `theme-${command.newVal}`;
     

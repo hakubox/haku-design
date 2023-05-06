@@ -1,14 +1,16 @@
 import { deletes, get, post } from '@/lib/api';
+import { serverConfig } from '@/config';
 
-/** 用户登录 */
-export function login(account, password, code) {
-  return post('/auth/authApi/login', {
-    password,
-    account,
-    code,
-    productId: 0,
-    projectId: 0,
-    loginMode: '00',
+
+const _baseUrl = () => {
+  return serverConfig.serverConfig.environment === 'development' ? '/userapi/api' : 'https://bpmtest-userapi.gejinet.com/api';
+};
+
+/** 获取Token */
+export function getToken(username: string, password: string) {
+  return post(`${_baseUrl()}/Authorization/GetToken`, {
+    name: username,
+    password: password,
   });
 }
 

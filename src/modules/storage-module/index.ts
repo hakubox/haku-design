@@ -22,9 +22,7 @@ import { StorageServiceStatus, StorageServiceType } from './enum';
 import { createModelId, downLoadFile } from '@/tools/common';
 import { FileType, getFileType } from './tools/fileTypeHandler';
 import { getVideoDuration } from './tools/getVideoDuration';
-import { SUCCESS_CODE } from '@/lib/api/response_code';
 import type { DirItem } from './@types';
-import type { ProgressInfo } from 'cos-js-sdk-v5';
 import { toast, confirm } from '@/common/message';
 
 /** 存储模块状态 */
@@ -162,7 +160,7 @@ export const service = {
       tags?: string[]; // 标签
       fileName?: string; // 文件名
       remark?: string; // 文件描述
-      onProgress?: (progress: ProgressInfo) => void; // 上传进度回调
+      onProgress?: (progress: any) => void; // 上传进度回调
       onTaskReady?: (taskId: string, resumeUpload: () => void) => void; // 获取taskId，通过cos控制进度
       callback?: () => void; // 上传完成回调
     },
@@ -284,7 +282,7 @@ export const service = {
   },
   async addNewDir(params: Parameters<typeof mkDir>[0]) {
     const res = await mkDir(params);
-    if (res.code === SUCCESS_CODE) {
+    if (res.code === 200) {
       toast('新建文件夹成功', 'success');
       this.getDirTree();
       this.updateFileList(params.parentId);

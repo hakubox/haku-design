@@ -1,5 +1,4 @@
 import { StorageServiceType, StorageServiceStatus } from '../enum';
-import { CosObject, type SliceUploadFileParams } from 'cos-js-sdk-v5';
 import { FileType } from '../tools/fileTypeHandler';
 
 /** 文件信息 */
@@ -31,7 +30,7 @@ export interface StorageFileInfo {
   /** 文件 */
   file?: File;
   /** 远程存储原始数据 */
-  originData?: CosObject;
+  originData?: any;
   /** 修改日期 */
   updateTime: number;
   /** 关联targetId */
@@ -67,13 +66,13 @@ export interface StorageServiceApi {
   /** 初始化 */
   init(instance: StorageServiceInstance): Promise<void>;
   /** 获取文件列表 */
-  list(instance: StorageServiceInstance): Promise<CosObject[]>;
+  list(instance: StorageServiceInstance): Promise<any[]>;
   /** 传文件 */
   upload(
     instance: StorageServiceInstance,
     file: File,
     config?: {
-      cosConfig?: Omit<SliceUploadFileParams, 'Body' | 'Bucket' | 'Region' | 'onTaskReady'> & {
+      cosConfig?: Omit<any, 'Body' | 'Bucket' | 'Region' | 'onTaskReady'> & {
         onTaskReady?: (taskId: string, resumeUpload: () => void) => void;
       };
       callback?: (err, data) => void;

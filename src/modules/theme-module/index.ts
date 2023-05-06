@@ -3,7 +3,7 @@ import type { ThemeConfig } from './@types';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';
 import { themeList } from './data/theme-list';
-import { computed, reactive } from 'vue';
+import { reactive } from 'vue';
 import { toast } from '@/common/message';
 
 /** 主题模块状态 */

@@ -5,7 +5,7 @@ export interface QuestionaryBasicInfoDto {
   /** id */
   id: number;
   /** 版本号 */
-  appVersion: string;
+  appVersion: number;
   /** 标题 */
   title: string;
   /** 备注 */
@@ -78,7 +78,7 @@ export function listQuestionary({
   ) as PageList<QuestionaryBasicInfoDto>;
 }
 
-// /** 查询问卷详细 */
+/** 查询问卷详细 */
 export function getQuestionary(id: string): Promise<{ questionary: QuestionaryBasicInfoDto; tagList: number[] }> {
   return get(`/questionary/questionary/detail`, { id });
 }
@@ -109,7 +109,7 @@ export function getQuestionaryVersionList(id: string) {
 }
 
 /** 切换问卷版本 */
-export function setQuestionaryVersion(id: string, appVersion: string ) {
+export function setQuestionaryVersion(id: string, appVersion: number ) {
   return post('/questionary/questionary/set-current', { id, appVersion });
 }
 

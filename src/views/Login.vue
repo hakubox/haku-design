@@ -45,21 +45,12 @@
         </FormItem>
       </Form>
     </div>
-
-    <Verify
-      ref="verifyRef"
-      mode="pop"
-      captcha-type="blockPuzzle"
-      :img-size="{ width: '330px', height: '155px' }"
-      @success="capctchaCheckSuccess"
-    ></Verify>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Verify from '@/components/common/verifition/Verify.vue';
 import { service as authService } from '@/common/auth-module';
 import { toast } from '@/common/message';
 import { Button, Col, Form, Input, Row, FormItem } from 'ant-design-vue';
@@ -76,7 +67,6 @@ const state = reactive({
     username: '',
     password: '',
     rememberMe: false,
-    code: '',
   },
 });
 const rules: { [k: string]: RuleObject[] } = {
@@ -84,25 +74,17 @@ const rules: { [k: string]: RuleObject[] } = {
   password: [{ required: true, message: '密码必填', trigger: 'blur' }],
 };
 const formRef = ref<typeof Form>();
-const verifyRef = ref<typeof Verify>();
-
-/** 登录前校验 */
-const capctchaCheckSuccess = (params: any) => {
-  state.loginForm.code = params.captchaVerification;
-
-  authService.login(state.loginForm).then((d) => {
-    toast('登录成功', 'success');
-    router.push('/design');
-  }).finally(() => {
-    state.isLoading = false;
-  });
-};
 
 /** 登录 */
 const login = () => {
   state.isLoading = true;
   formRef.value!.validate().then(() => {
-    verifyRef.value!.show();
+    authService.login(state.loginForm).then((d) => {
+      toast('登录成功', 'success');
+      router.push('/design');
+    }).finally(() => {
+      state.isLoading = false;
+    });
   }).catch((error: any) => {
     console.error('error', error);
     // if (error.errorFields?.length) {

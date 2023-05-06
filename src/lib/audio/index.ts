@@ -185,63 +185,71 @@ export const getAudioImg = async (
     shadowColor?: string;
   },
 ) => {
-  // @ts-ignore
-  const options = Object.assign({}, {
-    audio: null,
-    playIndex: 0,
-    barColor: '#666666',
-  }, params) as {
-    width: number;
-    height: number;
-    barColor: string;
-    audioCtx: AudioContext;
-    befferSource: AudioBufferSourceNode;
-    analyser: AnalyserNode;
-    pcm: number[];
-  };
-  Object.entries(([key, value]) => {
-    options[key] = value;
-  });
-  // 创建一个音频上下文
-  options.audioCtx = new AudioContext();
-
-  // 创建一个分析音频模块
-  options.analyser = options.audioCtx.createAnalyser();
-  // 设置音频的数量大小 默认是2048
-  options.analyser.fftSize = 512;
-
-  // 关联音频
-  options.analyser.connect(options.audioCtx.destination);
-
-  let arraybuffer: ArrayBuffer;
-  if (typeof target === 'string') {
-    arraybuffer = await getAudioFile(target);
-  } else {
-    arraybuffer = target;
-  }
-
-  return await options.audioCtx.decodeAudioData(arraybuffer, (buffer: AudioBuffer) => {
-    const accuracy = 100;
-    // 创建 AudioBufferSourceNode
-    console.log('options.audioCtx', options.audioCtx);
-    options.befferSource = options.audioCtx.createBufferSource();
-    // 讲解码之后的 buffer 放到 AudioBufferSourceNode 的 buffer 中
-    options.befferSource.buffer = buffer;
-    options.befferSource.connect(options.analyser);
-
-    // 返回计算断开时波形的最大值和最小值
-    const peaks = drawPeaks(options.befferSource);
-
-    options.pcm = peaks.map(function (item) {
-      return Math.abs(Math.round(item * accuracy) / accuracy);
+  return new Promise<string>((resolve, reject) => {
+    const options = Object.assign({}, {
+      audio: null,
+      playIndex: 0,
+      barColor: '#666666',
+      audioCtx: new AudioContext(),
+    }, params) as Record<string, any>;
+    Object.entries(([key, value]) => {
+      options[key] = value;
     });
-    const _url = drawCanvas({
-      peaks: options.pcm,
-      ...options
-    });
-    return _url;
-  }, (err) => {
-    console.log(err);
-    throw err;
-  });
+    // 创建一个音频上下文
+    options.audioCtx = new AudioContext();
+  
+    // 创建一个分析音频模块
+    options.analyser = options.audioCtx.createAnalyser();
+    // 设置音频的数量大小 默认是2048
+    options.analyser.fftSize = 512;
+  
+    // 关联音频
+    options.analyser.connect(options.audioCtx.destination);
+    let arraybuffer: ArrayBuffer;
+
+    const _fn = () => {
+      (options.audioCtx as AudioContext).decodeAudioData(arraybuffer, (buffer: AudioBuffer) => {
+        const accuracy = 100;
+        // 创建 AudioBufferSourceNode
+        options.befferSource = options.audioCtx.createBufferSource();
+        // 讲解码之后的 buffer 放到 AudioBufferSourceNode 的 buffer 中
+        options.befferSource.buffer = buffer;
+        options.befferSource.connect(options.analyser);
+    
+        // 返回计算断开时波形的最大值和最小值
+        const peaks = drawPeaks(options.befferSource);
+    
+        options.pcm = peaks.map(function (item) {
+          return Math.abs(Math.round(item * accuracy) / accuracy);
+        });
+        const _url = drawCanvas({
+          peaks: options.pcm,
+          ...(options as {
+            width: number;
+            height: number;
+            barColor: string;
+            audioCtx: AudioContext;
+            befferSource: AudioBufferSourceNode;
+            analyser: AnalyserNode;
+            pcm: number[];
+          })
+        });
+        resolve(_url);
+      }, (err) => {
+        console.error(err);
+        reject(err);
+        throw err;
+      });
+    };
+  
+    if (typeof target === 'string') {
+      getAudioFile(target).then(d => {
+        arraybuffer = d;
+        _fn();
+      });
+    } else {
+      arraybuffer = target;
+      _fn();
+    }
+  })
 };

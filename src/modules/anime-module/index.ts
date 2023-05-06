@@ -63,22 +63,25 @@ export const service = {
       const _fragment = {
         ..._basicFragment,
         src: _basicFragment.target,
-        buffer: typeof _basicFragment.target === 'string' ? (await getAudioFile(_basicFragment.target)) : _basicFragment.target,
+        buffer: new ArrayBuffer(0),
       } as SetPartial<AudioTimelineFragment, 'howl'>;
+      if (typeof _basicFragment.target === 'string') {
+        _fragment.buffer = await getAudioFile(_basicFragment.target);
+      } else {
+        _fragment.buffer = _basicFragment.target as ArrayBuffer;
+      }
       const imageData = "data:audio/x-wav;base64," + btoa(new Uint8Array(_fragment.buffer).reduce((data, byte) => data + String.fromCharCode(byte), ""));
-      const howl = new Howl({
+      _fragment.howl = new Howl({
         src: imageData,
       });
+      state.fragmentList.push(_fragment as AudioTimelineFragment);
       const _bgUrl = await getAudioImg(_fragment.buffer, {
         width: 200,
         height: 37,
         barColor: 'rgba(255,255,255,0.7)',
       });
-      state.fragmentList.push({
-        ..._fragment,
-        bgUrl: _bgUrl,
-        howl
-      });
+      const _index = state.fragmentList.findIndex(i => i.id === _fragment.id);
+      state.fragmentList[_index].bgUrl = _bgUrl;
     } else if (_basicFragment.trackType === 'component') {
       const _fragment = {
         ..._basicFragment,

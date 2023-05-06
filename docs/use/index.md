@@ -2,7 +2,7 @@
 
 ## 在线演示
 
-[问卷设计器](https://que-design.vansunscience.com/design)
+[问卷设计器](https://hakuq.com/#/design)
 
 ## 问卷是什么？
 

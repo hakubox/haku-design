@@ -62,13 +62,13 @@ export const service = {
     }
     return {
       id: formId || '',
-      appVersion: '1',
+      appVersion: 1,
       appTitle: appTitle || '',
       appType: appType,
       description: description || '',
       headerTags: [],
       headerContent: '',
-      formTheme: 'default',
+      appTheme: 'default',
       remark: '',
       layoutConfig: layoutConfig ?? {
         layout: LayoutType.flex,
@@ -319,7 +319,8 @@ export const service = {
     themeService.changeTheme();
     if (!createConfig.id) {
       addQuestionary({
-        content: service.getExportData(),
+        ...service.getExportData(),
+        title: createConfig.title,
         description: state.appConfig.description,
       }).then(d => {
         state.appConfig.id = d.id + '';
@@ -594,8 +595,28 @@ export const service = {
       });
     });
 
+    const _appConfig = state.appConfig;
+
+    /**
+     * 1. theme 改为 appTheme
+     * 2. isPublished 移除
+     * 3. deviceType 移除
+     * 4. hasScore 移除
+     * 5. isAutoToGrade 怎么理解？
+     * 6. footer 怎么理解？
+     */
+
+    /** 返回结果 */
     const _re = {
-      appConfig: state.appConfig,
+      id: _appConfig.id,
+      appType: _appConfig.appType,
+      title: _appConfig.appTitle,
+      description: _appConfig.description,
+      headerTags: _appConfig.headerTags,
+      headerContent: _appConfig.headerContent,
+      remark: _appConfig.remark,
+
+      appConfig: _appConfig,
       pages: _pages,
       events: eventState.allEvents,
       files: storageState.fileList.map(i => i.id),
@@ -605,7 +626,7 @@ export const service = {
         config: themeState.themeConfig,
         title: themeState.themeConfig.title,
       },
-      previewUrl: ''
+      previewUrl: '',
     };
     return _re;
   },
@@ -629,7 +650,7 @@ export const service = {
           break;
       }
       state.appConfig.id = questionaryId;
-      state.previewUrl = body.previewUrl;
+      state.previewUrl = body.previewUrl || '';
       eventState.allEvents = body.events;
       themeService.changeTheme(body?.theme?.config);
       hide();

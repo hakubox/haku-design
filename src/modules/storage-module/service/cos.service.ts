@@ -1,7 +1,5 @@
 import { StorageService, StorageServiceInstance } from '@/modules/storage-module/@types';
 import { StorageServiceType } from '../enum';
-import type { GetAuthorizationCallbackParams, StorageClass } from 'cos-js-sdk-v5';
-import COS from 'cos-js-sdk-v5/src/cos';
 import { getCosAuthorization } from '../api';
 
 const cosConfig = {
@@ -22,7 +20,7 @@ const getAuthorization = async (options, cosCallback) => {
       StartTime: startTime, // 时间戳，单位秒，如：1580000000，建议返回服务器时间作为签名的开始时间，避免用户浏览器本地时间偏差过大导致签名错误
       ExpiredTime: expiredTime, // 时间戳，单位秒，如：1580000000
       ScopeLimit: true, // 细粒度控制权限需要设为 true，会限制密钥只在相同请求时重复使用
-    } as GetAuthorizationCallbackParams);
+    });
   }
 };
 
@@ -36,10 +34,10 @@ export const COSService: StorageService = {
   api: {
     init(instance) {
       return new Promise((resolve, reject) => {
-        instance.sdk = new COS({
-          getAuthorization,
-          UploadCheckContentMd5: true,
-        });
+        // instance.sdk = new COS({
+        //   getAuthorization,
+        //   UploadCheckContentMd5: true,
+        // });
         resolve();
       });
     },
@@ -123,7 +121,7 @@ export const COSService: StorageService = {
           Key: fileKey /* 必须 */,
           Bucket: cosConfig.privateBucketName /* 必须 */,
           Region: cosConfig.cosRegion /* 存储桶所在地域，必须字段 */,
-          StorageClass: 'STANDARD' as StorageClass,
+          StorageClass: 'STANDARD',
           Body: file, // 上传文件对象
           ChunkSize: 1024 * 500, // 分片大小，单位 B
           onTaskReady: (taskId) => {

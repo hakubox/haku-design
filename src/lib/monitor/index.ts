@@ -123,8 +123,6 @@ export function init(vue: App<Element>) {
     // console.debug('页面跳转', event);
   });
   
-  /******************************/
-  
   // 全局js错误
   window.addEventListener('error', (e: ErrorEvent) => {
     const _targetList = e.composedPath();
@@ -135,13 +133,9 @@ export function init(vue: App<Element>) {
   window.addEventListener('error', function (event) {
     const errorTarget = event.target;
 
-    if (errorTarget) {
-      // @ts-ignore
-      if (errorTarget.baseURI) {
-        // @ts-ignore
-        const a = { errMsg: errorTarget.outerHTML, errUrl: errorTarget.baseURI, errType: '', error: event };
-        console.debug(a);
-      }
+    if (errorTarget && errorTarget['baseURI']) {
+      const a = { errMsg: errorTarget['outerHTML'], errUrl: errorTarget['baseURI'], errType: '', error: event };
+      console.debug(a);
     }
   }, true);
   
