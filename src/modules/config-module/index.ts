@@ -1,6 +1,6 @@
 import { watch, reactive, computed, ConcreteComponent } from 'vue';
 import { GlobalConfig } from '@/@types/config';
-import { service as historyService } from '@/common/history-module';
+import { service as historyService } from '@/modules/history-module';
 import { state as editorState } from '@/modules/editor-module';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
 import dayjs from 'dayjs';

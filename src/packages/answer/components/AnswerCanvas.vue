@@ -158,11 +158,9 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as scoringState, service as scoringService } from '@/modules/scoring-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { state as authState } from '@/common/auth-module';
-import { service as eventService } from '@/modules/event-module';
-import { getQuestionary, getQuestionaryAnswer } from '@/api/common/questionnaire';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { service as eventService, EventTriggerType, type AppEvent } from '@/modules/event-module';
+import { getQuestionary, getQuestionaryAnswer } from '@/api/questionnaire';
 import type { AppPage, AppConfig } from '@/@types';
-import type { AppEvent } from '@/modules/event-module/@types';
 import FormComponent from './FormComponent.vue';
 import QRCode from '@/components/common/QRCode.vue';
 import '../assets/sweetalert.css';
@@ -438,6 +436,7 @@ const init = async () => {
     editorState.appConfig.id = questionary.id + '';
     editorState.appConfig.appVersion = questionary.appVersion;
     if (props.theme) {
+      if (!questionary.content.theme) questionary.content.theme = {};
       questionary.content.theme.code = props.theme;
     }
     await editorService.loadAppBody(questionary.content.appConfig.id, questionary.content);

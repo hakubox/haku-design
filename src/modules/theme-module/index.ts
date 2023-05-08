@@ -1,10 +1,12 @@
 import { render } from 'less/dist/less.min';
-import type { ThemeConfig } from './@types';
+import type { ThemeConfig } from './index.d';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';
 import { themeList } from './data/theme-list';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
+
+export * from './index.d';
 
 /** 主题模块状态 */
 export const state = reactive({

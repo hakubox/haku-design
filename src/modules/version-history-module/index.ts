@@ -1,8 +1,10 @@
-import type { VersionHistoryInstance } from './@types';
-import { getQuestionaryVersionList, setQuestionaryVersion } from "@/api/common/questionnaire";
+import type { VersionHistoryInstance } from './index.d';
+import { getQuestionaryVersionList, setQuestionaryVersion } from "@/api/questionnaire";
 import bus from '@/tools/bus';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
+
+export * from './index.d';
 
 export const state = reactive({
   /** 版本历史列表 */

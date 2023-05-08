@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
-import { getQuestionary } from '@/api/common/questionnaire';
+import { getQuestionary } from '@/api/questionnaire';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import DesignCanvas from "../components/module/DesignCanvas.vue";
 import { useRoute } from 'vue-router';

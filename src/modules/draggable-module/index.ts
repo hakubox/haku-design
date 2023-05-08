@@ -1,14 +1,14 @@
 import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@/@types';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 import { cloneForce } from '@/lib/clone';
 import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tools/common';
-import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './@types';
+import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './index.d';
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
 import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
-import { number } from 'echarts';
 
+export * from './index.d';
 
 /** 拖拽模块状态 */
 export const state = reactive({

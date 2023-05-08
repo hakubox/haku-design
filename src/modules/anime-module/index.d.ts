@@ -1,5 +1,5 @@
-import { GeneralProperty } from "@/@types";
-export * from './timeline.d';
+import type { GeneralProperty } from "../../@types";
+export * from './@types/timeline.d';
 
 /** 简单动画-方向 */
 export type SimpleAnimeDirection = 'none' | 'left' | 'right' | 'top' | 'bottom';

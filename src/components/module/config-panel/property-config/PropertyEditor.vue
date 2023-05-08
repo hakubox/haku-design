@@ -175,7 +175,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, reactive, watch } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { service as historyService } from "@/common/history-module";
+import { service as historyService } from "@/modules/history-module";
 import type { ComponentProperty } from "@/@types/component-property";
 import { initPropertyEditors } from '@/data/property-editor';
 import { ComponentPropertyEditor } from "@/@types/enum";

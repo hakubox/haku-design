@@ -165,7 +165,7 @@
 import { reactive, onMounted, onUnmounted } from 'vue';
 import { service as editorService } from '@/modules/editor-module';
 import { service as introService } from '@/modules/intro-module';
-import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/common/questionnaire';
+import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/questionnaire';
 import { dateFormat } from '@/tools/common';
 import { Input, List, ListItem, ListItemMeta, Select, SelectOption, Tag, Tooltip, message } from 'ant-design-vue';
 

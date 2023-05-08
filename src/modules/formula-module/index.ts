@@ -1,7 +1,9 @@
-import type { Formula, AddFormula, FormulaParam } from './@types';
+import type { Formula, AddFormula, FormulaParam } from './index.d';
 import { formulas } from './data/formula';
 import { service as variableService } from '@/modules/variable-module';
 import { reactive } from 'vue';
+
+export * from './index.d';
 
 /** 公式模块状态 */
 export const state = reactive({

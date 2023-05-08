@@ -7,16 +7,16 @@ import { getComponents } from '@/data/form-components';
 import { initRemoteDevices } from '@/data/form-devices';
 import { getEditors } from '../../data/property-editor';
 import { getMenuComponentItems } from '../../data/menu-component-items';
-import { state as configState, service as configService } from '@/common/config-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
+import { state as configState, service as configService } from '@/modules/config-module';
+import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as storageState } from "@/modules/storage-module";
-import { service as formFillService } from '@/modules/form-fill-module';
+import { service as formFillService, type FormInfoItem } from '@/modules/form-fill-module';
 import { state as themeState, service as themeService } from "@/modules/theme-module";
-import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { service as pluginModule } from '@/modules/plugin-module';
 import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/common';
-import { addQuestionary, saveQuestionary } from "@/api/common/questionnaire";
+import { addQuestionary, saveQuestionary } from "@/api/questionnaire";
 import { AppPage } from '@/@types/app-page';
 import { state as globalState } from '@/common/global';
 
@@ -27,9 +27,7 @@ const remoteDevices = initRemoteDevices();
 const OperationRecord = '__hakuform__operation__';
 
 import { getFileListByIds } from '@/modules/storage-module/api';
-import { EventTriggerType } from '@/modules/event-module/enum';
 import { formCommands } from '@/data/form-commands';
-import { FormInfoItem } from '@/modules/form-fill-module/@types';
 import { toast } from '@/common/message';
 
 /** 问卷编辑模块逻辑 */

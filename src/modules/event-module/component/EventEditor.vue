@@ -170,11 +170,11 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, PropType, reactive, toRaw, watch } from 'vue';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { AppEvent, AppEventAction, AppEventTrigger } from '@/modules/event-module/@types';
-import { eventTriggerGroups, getEventTriggers } from '@/modules/event-module/data/event-trigger';
+import { state as eventState, service as eventService } from '../';
+import { AppEvent, AppEventAction, AppEventTrigger } from '../@types';
+import { eventTriggerGroups, getEventTriggers } from '../data/event-trigger';
 import { createModelId } from '@/tools/common';
-import { getEventActions, eventActionGroups } from '@/modules/event-module/data/event-action';
+import { getEventActions, eventActionGroups } from '../data/event-action';
 import EventFormatEditor from './EventFormatEditor.vue';
 import { Button, Dropdown, Input, Menu, MenuItem, message, Modal, Select, SelectOption, SubMenu, Tooltip } from 'ant-design-vue';
 import { DeleteOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons-vue';

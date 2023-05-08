@@ -2,7 +2,7 @@ import { reactive, UnwrapRef, toRefs, onMounted, onUnmounted, StyleValue } from 
 import { Component, ComponentGroup, ComponentRect } from '@/@types';
 import { state as editorState, service as editorService } from '../modules/editor-module';
 import { arrChange, createModelId } from '@/tools/common';
-import { service as historyService } from './history-module';
+import { service as historyService } from '../modules/history-module';
 
 /** 模块操作类型 */
 export type HandleType = 'componentMovePrev' | 'componentMoveNext' | 'componentCopy' | 'componentRemove';

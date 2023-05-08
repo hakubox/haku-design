@@ -38,7 +38,7 @@
 <script lang="ts" setup>
 import { PropType, computed, watch } from "vue";
 import { state as editorState } from "@/modules/editor-module";
-import { service as historyService } from "@/common/history-module";
+import { service as historyService } from "@/modules/history-module";
 import { ComponentProperty } from "@/@types/component-property";
 import { type Component } from "@/@types";
 

@@ -1,5 +1,5 @@
 import { DeviceType, ComponentPropertyEditor, PageType } from '@/@types/enum';
-import { AppEventAction } from '@/modules/event-module/@types';
+import { type AppEventAction } from '../@types';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as variableService } from '@/modules/variable-module';

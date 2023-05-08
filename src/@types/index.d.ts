@@ -19,5 +19,6 @@ export { GeneralProperty } from './general-property';
 export { RatingConfig } from './rating-config';
 export { ComponentQuickTool } from './component-quick-tool';
 export { ComponentRect } from './component-rect';
+export { DataEditorValue } from './data-editor-value';
 
 export type SetPartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;

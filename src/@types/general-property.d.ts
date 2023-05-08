@@ -3,7 +3,7 @@ import { PropertyGroup } from './property-group';
 import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from './enum';
 
 /** 通用属性 */
-export declare class GeneralProperty {
+export interface GeneralProperty {
   /** 属性名 */
   name: string | (string | number)[];
   /** 是否禁用 */

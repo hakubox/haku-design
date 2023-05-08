@@ -4,16 +4,16 @@ import { service as scoringService } from '@/modules/scoring-module';
 import { service as validateService } from '@/modules/validate-module';
 import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
-import type { Component, ComponentAnswerType, ComponentGroup } from '@/@types';
-import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from './@types';
+import type { Component, ComponentAnswerType, ComponentGroup, AppPage, DataEditorValue } from '@/@types';
+import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from './index.d';
 import { answerCommit } from '@/api/form-fill';
 import { Dialog, Toast } from 'vant';
 import { isBlank } from '@/tools/common';
-import { AppPage } from '@/@types/app-page';
 import { clearOldMediaInfo } from '@/lib/media';
 import { EventTriggerType } from '../event-module/enum';
 import { computed, nextTick, reactive } from 'vue';
-import type { DataEditorValue } from '@/@types/data-editor-value';
+
+export * from './index.d';
 
 /** 缓存列表KEY */
 const StorageListKey = '__hakuform__storage__';

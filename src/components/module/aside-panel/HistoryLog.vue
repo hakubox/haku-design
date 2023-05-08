@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 import { dateFormat } from '@/tools/common';
 import { formCommands } from '@/data/form-commands';
 import { Empty, Tooltip } from 'ant-design-vue';

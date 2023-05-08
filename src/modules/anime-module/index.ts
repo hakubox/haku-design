@@ -3,10 +3,11 @@ import { getAudioFile, getAudioImg } from '@/lib/audio';
 import { createModelId } from '@/tools/common';
 import { Howl } from 'howler';
 import { reactive } from 'vue';
-import type { AudioTimelineFragment, ComponentTimelineFragment, KeyFrame, SimpleAnimeConfig, TimeAxis, TimelineFragment, TimelineTrack } from './@types';
+import type { AudioTimelineFragment, ComponentTimelineFragment, KeyFrame, SimpleAnimeConfig, TimeAxis, TimelineFragment, TimelineTrack } from './index.d';
 import { simpleAnimeList } from './data/simple-anime';
 
 export { simpleAnimeList } from './data/simple-anime';
+export * from './index.d';
 
 // http://cssanimation.io/index.html
 

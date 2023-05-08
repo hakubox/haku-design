@@ -103,10 +103,9 @@ import PlayControl from './q-anx-video-play-control.vue';
 import { computed, onMounted, onUnmounted, PropType, reactive, ref, useAttrs, watch, watchEffect } from 'vue';
 import { timeFormat, toggleFullScreen, getQBasicProps } from '@/tools/common';
 import { Slider } from 'vant';
-import { state as eventState, service as eventService } from '@/modules/event-module';
+import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { MediaEvents, setMediaPlayPosition } from '@/lib/media';
-import { EventTriggerType } from '@/modules/event-module/enum';
 
 const defaultImg = new URL('@/assets/img/temp/default-img.webp', import.meta.url).href;
 

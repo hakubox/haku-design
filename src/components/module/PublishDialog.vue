@@ -83,7 +83,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, watch } from 'vue';
-import { state as configState } from '@/common/config-module';
+import { state as configState } from '@/modules/config-module';
 import QRCode from '@/components/common/QRCode.vue';
 import { Button, CheckboxGroup, Form, FormItem, Image, Input, InputNumber, Modal, RangePicker, Textarea, Tooltip, message } from 'ant-design-vue';
 import { QrcodeOutlined } from '@ant-design/icons-vue';

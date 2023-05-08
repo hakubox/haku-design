@@ -1,5 +1,5 @@
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { service as eventService } from '@/modules/event-module';
+import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
@@ -10,7 +10,6 @@ import { Dialog, Toast } from 'vant';
 import { isBlank } from '@/tools/common';
 import { AppPage } from '@/@types/app-page';
 import { clearOldMediaInfo } from '@/lib/media';
-import { EventTriggerType } from '@/modules/event-module/enum';
 import { computed, nextTick, reactive } from 'vue';
 import { type DataEditorValue } from '@/@types/data-editor-value';
 

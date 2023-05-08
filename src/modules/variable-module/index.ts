@@ -3,10 +3,12 @@ import { state as editorState } from '@/modules/editor-module';
 import { state as dataSourceState } from '@/modules/data-source-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { createModelId, timeFormat } from '@/tools/common';
-import type { VariableTreeNode, VariableType } from './@types';
+import type { VariableTreeNode, VariableType } from './index.d';
 import { cloneForce } from '@/lib/clone';
 import { DataSourceType } from '../data-source-module/enum';
-import { computed, reactive, toRefs } from 'vue';
+import { computed, reactive } from 'vue';
+
+export * from './index.d';
 
 /** 获取变量数据源下拉项 */
 export const getVariableDataSource = (): VariableTreeNode[] => {

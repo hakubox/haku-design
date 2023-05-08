@@ -226,16 +226,14 @@
 
 <script lang="ts" setup>
 import type { Component, ComponentGroup } from '@/@types';
-import type { DragConfig } from '@/modules/draggable-module/@types';
 import { computed, nextTick, ref, type PropType, onMounted, onUnmounted, StyleValue } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { service as eventService } from '@/modules/event-module';
+import { state as draggableState, service as draggableService, type DragConfig } from '@/modules/draggable-module';
+import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as variableService } from '@/modules/variable-module';
 import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
-import { EventTriggerType } from '@/modules/event-module/enum';
 import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';

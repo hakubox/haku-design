@@ -1,5 +1,5 @@
 import { timeout } from "@/tools/common";
-import { state as configState, service as configService } from '@/common/config-module';
+import { state as configState, service as configService } from '@/modules/config-module';
 import { service as globalSearchService } from '@/modules/global-search-module';
 import type { GlobalSearchItem } from "../@types";
 import { state as editorState, service as editorService } from '@/modules/editor-module';

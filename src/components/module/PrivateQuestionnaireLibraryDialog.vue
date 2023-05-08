@@ -122,7 +122,7 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, PropType, Ref, onMounted } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { getQuestionary, listQuestionary } from "@/api/common/questionnaire";
+import { getQuestionary, listQuestionary } from "@/api/questionnaire";
 import { dateFormat } from '@/tools/common';
 import { InputSearch, message, Modal, Pagination, Tag, Tooltip, ConfigProvider, CheckboxGroup } from "ant-design-vue";
 import { state as globalState } from '@/common/global';

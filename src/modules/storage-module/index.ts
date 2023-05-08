@@ -5,7 +5,8 @@ import type {
   StorageServiceInstance,
   FileDialogConfig,
   StorageFileInfo,
-} from './@types';
+  DirItem
+} from './index.d';
 import {
   changeDir,
   finishUpload,
@@ -22,8 +23,9 @@ import { StorageServiceStatus, StorageServiceType } from './enum';
 import { createModelId, downLoadFile } from '@/tools/common';
 import { FileType, getFileType } from './tools/fileTypeHandler';
 import { getVideoDuration } from './tools/getVideoDuration';
-import type { DirItem } from './@types';
 import { toast, confirm } from '@/common/message';
+
+export * from './index.d';
 
 /** 存储模块状态 */
 export const state = reactive({

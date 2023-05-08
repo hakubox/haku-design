@@ -1,6 +1,6 @@
 
 import { PluginInfo } from './@types';
-import { state as configState } from '@/common/config-module';
+import { state as configState } from '@/modules/config-module';
 import { registerPlugin } from './register-plugin';
 import { PluginLoadType, PluginType } from './enum';
 

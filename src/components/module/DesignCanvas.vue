@@ -73,7 +73,7 @@
           readonly: props.isReadonly,
           printmode: props.isPrint
         }"
-        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.canvasConfig.deviceType == 'pc' ? '700px' : '687px' }"
+        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.designConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
         <CanvasNodeActionEditor :global="true" :disabledRotate="true"
           v-if="editorState.appConfig.appType === AppType.canvas && !isPreview"
@@ -161,10 +161,9 @@ import { AppType } from '@/@types/enum';
 import { reactive, PropType, onMounted, nextTick, ref, provide, computed } from 'vue';
 import { Button, Progress } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { service as eventService } from '@/modules/event-module';
+import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { service as formFillService } from '@/modules/form-fill-module';
-import { DragConfig } from '@/modules/draggable-module/@types';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { type DragConfig } from '@/modules/draggable-module/@types';
 import FormDesignComponent from './FormDesignComponent.vue';
 import CanvasNodeActionEditor from '@/components/common/CanvasNodeActionEditor.vue';
 import { toast } from '@/common/message';

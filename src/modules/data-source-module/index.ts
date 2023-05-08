@@ -1,7 +1,9 @@
-import type { DataSource, SourceData } from './@types';
+import type { DataSource, SourceData } from './index.d';
 import { createModelId } from '@/tools/common';
 import { DataSourceType } from './enum';
 import { computed, reactive } from 'vue';
+
+export * from './index.d';
 
 /** 转换数据为数据图 */
 const transformDataMap = (data: any) => {

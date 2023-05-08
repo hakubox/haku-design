@@ -73,7 +73,7 @@ const undoVersion = (item: VersionHistoryInstance) => {
     });
 };
 /** 是否为最新版本 */
-const isNewVersion = (version: string) => {
+const isNewVersion = (version: number) => {
   return editorState.appConfig.appVersion === version;
 };
 /** 查询项图标 */

@@ -17,7 +17,7 @@ import 'vant/lib/index.less';
 import '@/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
-import { state as configState } from '@/common/config-module';
+import { state as configState } from '@/modules/config-module';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';

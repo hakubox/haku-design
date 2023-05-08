@@ -1,10 +1,7 @@
 <template>
-  <div class="numbers-editor" :class="{ disabled: props.disabled }">
-    <div class="numbers-editor-item" v-for="(item, index) in options">
-      <span class="numbers-editor-label">{{ item.label ?? item.prop }}</span>
-      <input :disabled="props.disabled" v-model.number="state.vals[index]" @input="change" type="number" />
-      <span v-if="item.unit !== ''" class="numbers-editor-unit">{{ item.unit ?? 'px' }}</span>
-    </div>
+  <!-- 边距编辑器 -->
+  <div class="padding-editor" :class="{ disabled: props.disabled }">
+    
   </div>
 </template>
 

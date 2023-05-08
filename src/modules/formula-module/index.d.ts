@@ -18,7 +18,7 @@ export interface Formula {
   /** 示例 */
   example?: string;
   /** 公式代码 */
-  func: function;
+  func: Function;
 }
 
 /** 真实TS类型转换 */

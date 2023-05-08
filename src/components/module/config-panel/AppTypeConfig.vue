@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, watch } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import { getAppConfigPropertys } from '@/data/app-config';
 import type { GeneralProperty } from '@/@types';

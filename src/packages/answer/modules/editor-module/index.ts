@@ -2,7 +2,7 @@ import { reactive, computed } from 'vue';
 import { LayoutConfig, PropertyGroup, ComponentProperty, AppConfig, ExportAppBody, FormTimerConfig, Component, ComponentGroup } from '@/@types';
 import { CrossAxisAlignment, LayoutType, MainAxisAlignment, ComponentPropertyEditor, PageType } from '@/@types/enum';
 import bus from '@/tools/bus';
-import { state as eventState, service as eventService } from '@/modules/event-module';
+import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService } from '@/modules/form-fill-module';
@@ -11,7 +11,6 @@ import { Toast } from "vant";
 
 import { timeout } from '@/tools/common';
 import { getFileListByIds } from '@/modules/storage-module/api';
-import { EventTriggerType } from '@/modules/event-module/enum';
 import { FormInfoItem } from '@/modules/form-fill-module/@types';
 
 /** 问卷编辑模块状态 */
@@ -196,7 +195,7 @@ export const service = {
       state.currentSelectedComponentPropertyMap = {};
 
       eventState.allEvents = body.events;
-      themeService.changeTheme(body.theme.code);
+      if (body.theme?.code) themeService.changeTheme(body.theme.code);
       await timeout(100);
     } catch(err) {
       Toast.fail('加载数据出错');

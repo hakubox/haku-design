@@ -1,6 +1,8 @@
 import { reactive, computed } from 'vue';
 import Schema from 'async-validator';
-import type { ValidateRule, ValidateType } from './@types';
+import type { ValidateRule, ValidateType } from './index.d';
+
+export * from './index.d';
 
 const typeTemplate = '{{%s}}不是一个有效的%s';
 /** 校验模块状态 */

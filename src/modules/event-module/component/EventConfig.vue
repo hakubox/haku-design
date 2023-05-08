@@ -35,9 +35,8 @@
 <script lang="ts" setup>
 import { computed, PropType, reactive, ref, toRaw } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
+import { state as eventState, service as eventService, AppEvent } from '@/modules/event-module';
 import { Component } from '@/@types/component';
-import { AppEvent, AppEventAction, AppEventTrigger } from '@/modules/event-module/@types';
 import { createModelId } from '@/tools/common';
 import EventFormatPreview from './EventFormatPreview.vue';
 import EventEditor from './EventEditor.vue';

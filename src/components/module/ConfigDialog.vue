@@ -50,7 +50,7 @@
 
 <script lang="ts" setup>
 import { reactive } from "vue";
-import { state as configState } from '@/common/config-module';
+import { state as configState } from '@/modules/config-module';
 import { service as storageService } from '@/modules/storage-module';
 import { Badge, Button, Descriptions, DescriptionsItem, Modal, RadioButton, RadioGroup, Switch, ConfigProvider } from "ant-design-vue";
 import { state as globalState } from '@/common/global';

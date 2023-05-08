@@ -1,15 +1,15 @@
 import { reactive, computed } from 'vue';
-import { PluginInstance, PluginDependency } from './@types';
+import type { PluginInstance, PluginDependency } from './index.d';
 import message from '@/common/message';
 import { PluginType, PluginStatus } from './enum';
 import { compareVersion } from '@/tools/common';
 
-export type { PluginInfo, PluginDependency } from './@types';
-export { PluginType, PluginStatus, PluginLoadType } from './enum';
-export { registerPlugin } from './register-plugin';
-export { registerComponent, registerMenu } from './register-component';
-export { registerEditor } from './register-editor';
-export { registerEventTrigger, registerEventAction } from './register-event';
+export * from './index.d';
+export * from './enum';
+export * from './register-plugin';
+export * from './register-component';
+export * from './register-editor';
+export * from './register-event';
 
 /** 插件模块状态 */
 export const state = reactive({
