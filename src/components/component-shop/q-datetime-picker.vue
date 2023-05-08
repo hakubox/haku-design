@@ -43,7 +43,7 @@ export default {
 </script>
 <script lang="ts" setup>
 import { inject, onMounted, PropType, reactive, toRefs, watch } from 'vue';
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import { dateFormat, getQBasicProps } from '@/tools/common';
 import VueDatepickerLocal from '../common/data-picker/VueDatepickerLocal.vue';
 import { DatetimePicker, Popup } from 'vant';

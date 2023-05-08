@@ -131,7 +131,7 @@
 import { reactive, ref, watch, PropType, Ref } from 'vue';
 import { CheckboxGroup, InputSearch, Modal, Pagination, Tag, Tooltip, ConfigProvider } from 'ant-design-vue';
 import SearchOutlined from '@ant-design/icons-vue/SearchOutlined';
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 
 const props = defineProps({
   /** 是否显示 */

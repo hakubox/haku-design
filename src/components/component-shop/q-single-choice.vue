@@ -56,7 +56,7 @@ export default {
 <script lang="ts" setup>
 import { onMounted, PropType, reactive, nextTick, watch, inject } from "vue";
 import { service as storageService } from '@/modules/storage-module';
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import { getQBasicProps } from '@/tools/common';
 import { computed } from "vue";
 import { Radio, RadioGroup } from "vant";

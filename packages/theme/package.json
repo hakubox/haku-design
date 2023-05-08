@@ -1,0 +1,16 @@
+{
+  "name": "@haku-design/theme",
+  "version": "1.0.0",
+  "description": "主题模块",
+  "main": "index.ts",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/haku-design/theme"
+  },
+  "author": "lidian_226@outlook.com",
+  "license": "ISC"
+}

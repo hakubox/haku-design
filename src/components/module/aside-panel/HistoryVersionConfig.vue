@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import { createVNode, onMounted, reactive } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as versionHistoryState, service as versionHistoryService } from '@/modules/version-history-module';
 import { VersionHistoryInstance } from '@/modules/version-history-module/@types';
 import { dateFormat } from '@/tools/common';

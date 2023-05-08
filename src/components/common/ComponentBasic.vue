@@ -24,9 +24,9 @@
 <script lang="ts" setup>
 import { PropType } from 'vue';
 import { getBoxModel } from '@/tools/common';
-import { state as editerState } from '@/modules/editor-module';
+import { state as editerState } from '@haku-design/editor';
 import { service as serialNumberService } from '@/modules/serial-number-module';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core/@types';
 
 const props = defineProps({
   /** 组件Id */

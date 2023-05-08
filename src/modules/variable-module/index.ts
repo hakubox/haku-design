@@ -1,10 +1,9 @@
-import { state as formFillState } from '@/modules/form-fill-module';
-import { state as editorState } from '@/modules/editor-module';
+import { state as formFillState } from '@haku-design/form-fill';
+import { state as editorState } from '@haku-design/editor';
 import { state as dataSourceState } from '@/modules/data-source-module';
 import { service as scoringService } from '@/modules/scoring-module';
-import { createModelId, timeFormat } from '@/tools/common';
+import { createModelId, timeFormat, cloneForce } from '@haku-design/common';
 import type { VariableTreeNode, VariableType } from './@types';
-import { cloneForce } from '@/lib/clone';
 import { DataSourceType } from '../data-source-module/enum';
 import { computed, reactive, toRefs } from 'vue';
 

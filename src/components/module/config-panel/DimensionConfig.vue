@@ -81,7 +81,7 @@
 
 <script lang="ts" setup>
 import { PropType, reactive, toRefs } from 'vue';
-import { service as editorService } from '@/modules/editor-module';
+import { service as editorService } from '@haku-design/editor';
 import { Button, Dropdown, Empty, Input, InputNumber, Menu, MenuDivider, MenuItem, Select, Table } from 'ant-design-vue';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined, PlusOutlined, ToolOutlined } from '@ant-design/icons-vue';
 

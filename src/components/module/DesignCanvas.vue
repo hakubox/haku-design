@@ -157,17 +157,17 @@
 </template>
 
 <script lang="ts" setup>
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 import { reactive, PropType, onMounted, nextTick, ref, provide, computed } from 'vue';
 import { Button, Progress } from 'ant-design-vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { service as eventService } from '@/modules/event-module';
-import { service as formFillService } from '@/modules/form-fill-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { service as eventService } from '@haku-design/event';
+import { service as formFillService } from '@haku-design/form-fill';
 import { DragConfig } from '@/modules/draggable-module/@types';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { EventTriggerType } from '@haku-design/event';
 import FormDesignComponent from './FormDesignComponent.vue';
 import CanvasNodeActionEditor from '@/components/common/CanvasNodeActionEditor.vue';
-import { toast } from '@/common/message';
+import { message } from '@haku-design/common';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -239,7 +239,7 @@ const submitForm = () => {
     formFillService.submitForm().then(({ isComplete }) => {
       if (isComplete) {
         eventService.emit(EventTriggerType.submitForm);
-        toast('问卷填写完成', 'success');
+        message.toast('问卷填写完成', 'success');
         editorService.nextAppPage();
       }
     });

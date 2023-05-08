@@ -99,10 +99,10 @@
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
-import { ComponentCategory } from '@/@types/enum';
-import { ToolComponentItem } from '@/@types/tool-component-item';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { Component } from '@haku-design/core/@types';
+import { ComponentCategory } from '@haku-design/core';
+import { ToolComponentItem } from '@haku-design/core/@types/tool-component-item';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { service as draggableService } from '@/modules/draggable-module';
 import { reactive } from 'vue';
 import DataSourceConfig from '@/modules/data-source-module/component/DataSourceConfig.vue';
@@ -110,7 +110,7 @@ import FileStorageConfig from '@/modules/storage-module/component/FileStorageCon
 import AsideComponentView from '@/components/module/aside-panel/AsideComponentView.vue';
 import HistoryLog from '@/components/module/aside-panel/HistoryLog.vue';
 import HistoryVersionConfig from '@/components/module/aside-panel/HistoryVersionConfig.vue';
-import ThemeTemplateConfig from '@/modules/theme-module/component/ThemeTemplateConfig.vue';
+import ThemeTemplateConfig from '@haku-design/theme/component/ThemeTemplateConfig.vue';
 import PluginConfig from '@/modules/plugin-module/component/PluginConfig.vue';
 import AsidePageConfig from '@/components/module/aside-panel/AsidePageConfig.vue';
 import { Button } from 'ant-design-vue';

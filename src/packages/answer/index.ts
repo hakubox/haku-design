@@ -4,9 +4,9 @@ import { Toast, Dialog } from 'vant';
 import './assets/less/main.less';
 import 'vant/lib/index.css';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
-import { init as messageInit } from '@/common/message';
+import { message } from '@haku-design/common';
 
-messageInit({ toastModule: Toast, confirmModule: Dialog });
+message.init({ toastModule: Toast, confirmModule: Dialog });
 
 export function install(vue) {
   if (install['installed']) return;

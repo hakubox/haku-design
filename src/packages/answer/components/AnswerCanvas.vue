@@ -151,18 +151,16 @@
 </template>
 
 <script lang="ts" setup>
-import { AppType } from '@/@types/enum';
 import { defineProps, reactive, defineEmits, PropType, onMounted, onUnmounted, watch, defineExpose, computed } from 'vue';
 import { Button, Dialog, Empty, Progress, Toast } from 'vant';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as scoringState, service as scoringService } from '@/modules/scoring-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { state as authState } from '@/common/auth-module';
-import { service as eventService } from '@/modules/event-module';
-import { getQuestionary, getQuestionaryAnswer } from '@/api/common/questionnaire';
-import { EventTriggerType } from '@/modules/event-module/enum';
-import type { AppPage, AppConfig } from '@/@types';
-import type { AppEvent } from '@/modules/event-module/@types';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
+import { state as authState } from '@haku-design/auth';
+import { getQuestionary, getQuestionaryAnswer } from '@haku-design/core/src/api/questionnaire';
+import { EventTriggerType, service as eventService } from '@haku-design/event';
+import { type AppPage, type AppConfig, AppType } from '@haku-design/core';
+import type { AppEvent } from '@haku-design/event';
 import FormComponent from './FormComponent.vue';
 import QRCode from '@/components/common/QRCode.vue';
 import '../assets/sweetalert.css';

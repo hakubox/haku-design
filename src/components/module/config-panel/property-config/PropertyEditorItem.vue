@@ -37,10 +37,9 @@
 
 <script lang="ts" setup>
 import { PropType, computed, watch } from "vue";
-import { state as editorState } from "@/modules/editor-module";
-import { service as historyService } from "@/common/history-module";
-import { ComponentProperty } from "@/@types/component-property";
-import { type Component } from "@/@types";
+import { state as editorState } from "@haku-design/editor";
+import { service as historyService } from "@haku-design/history";
+import { ComponentProperty, type Component } from "@haku-design/core";
 
 const props = defineProps({
   /** 属性 */

@@ -118,20 +118,17 @@
 
 <script lang="ts" setup>
 import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref } from "vue";
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { AppType, ComponentPropertyEditor, PageType } from '@/@types/enum';
-import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
+import { state as eventState, service as eventService } from '@haku-design/event';
+import { AppPage, AppType, ComponentPropertyEditor, GeneralProperty, PageType } from '@haku-design/core';
+import GeneralEditor from '@haku-design/core/src/components/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
-import { cloneLoop } from "@/lib/clone";
-import { AppPage } from "@/@types/app-page";
-import { FormInfoItem } from "@/modules/form-fill-module/@types";
-import { GeneralProperty } from "@/@types";
-import { AppEventLog } from "@/modules/event-module/@types";
-import EventItem from "@/modules/event-module/component/EventItem.vue";
+import { type FormInfoItem } from "@haku-design/form-fill";
+import { AppEventLog } from "@haku-design/event";
+import EventItem from "@haku-design/event/src/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
-import { dateFormat } from "@/tools/common";
+import { dateFormat, cloneLoop } from "@haku-design/common";
 
 const deviceInfo = ref<HTMLElement>();
 

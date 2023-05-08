@@ -83,10 +83,10 @@ export default {
 import { computed, onMounted, PropType, reactive, ref, watch, useAttrs } from 'vue';
 import { timeFormat } from '@/tools/common';
 import { service as storageService } from '@/modules/storage-module';
-import { service as eventService } from '@/modules/event-module';
+import { service as eventService } from '@haku-design/event';
 import { MediaEvents, setMediaPlayPosition } from '@/lib/media';
 import { getQBasicProps } from '@/tools/common';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { EventTriggerType } from '@haku-design/event/enum';
 import PlayControl from './q-anx-video-play-control.vue';
 import { Slider } from 'vant';
 

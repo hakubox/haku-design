@@ -1,0 +1,16 @@
+{
+  "name": "@haku-design/version-history",
+  "version": "1.0.0",
+  "description": "版本历史模块",
+  "main": "index.ts",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/haku-design/version-history"
+  },
+  "author": "lidian_226@outlook.com",
+  "license": "ISC"
+}

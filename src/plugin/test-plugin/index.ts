@@ -1,4 +1,4 @@
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { VNode, h, render } from 'vue';
 import { PluginType, registerPlugin } from '@/modules/plugin-module';
 import TestPlugin from './TestPlugin.vue';

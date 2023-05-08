@@ -1,4 +1,4 @@
-import global from '@/common/global';
+import global from '@haku-design/global';
 import ImageEditor from './ImageEditor.vue';
 import { PluginType, type PluginInfo, registerEditor } from '@/modules/plugin-module';
 

@@ -79,7 +79,7 @@
 
 <script lang="ts" setup>
 import { computed, onUnmounted, PropType, reactive, useAttrs } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { Button, Dropdown, Empty, Input, InputNumber, Menu, MenuDivider, MenuItem, Select, Table } from 'ant-design-vue';
 import { createModelId } from '@/tools/common';
 import { ArrowDownOutlined } from '@ant-design/icons-vue';

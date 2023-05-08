@@ -51,14 +51,14 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted, reactive, ref } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import DesignCanvas from "@/components/module/DesignCanvas.vue";
 import bus from '@/tools/bus';
 import { Button } from 'ant-design-vue';
-import { PageType } from '@/@types/enum';
+import { PageType } from '@haku-design/core';
 import { Vue3Menus } from 'vue3-menus';
 import { cloneLoop } from '@/lib/clone';
-import { AppPage, Component, ComponentGroup } from '@/@types';
+import { AppPage, Component, ComponentGroup } from '@haku-design/core/@types';
 import { createModelId } from '@/tools/common';
 import message from '@/common/message';
 

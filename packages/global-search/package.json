@@ -1,0 +1,21 @@
+{
+  "name": "@haku-design/global-search",
+  "version": "1.0.0",
+  "description": "全局搜索模块",
+  "main": "index.ts",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/haku-design/global-search"
+  },
+  "keywords": [
+    "haku",
+    "haku-design",
+    "global-search"
+  ],
+  "author": "lidian_226@outlook.com",
+  "license": "ISC"
+}

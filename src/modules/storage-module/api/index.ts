@@ -1,4 +1,4 @@
-import { deletes, get, post, put } from '@/lib/api';
+import { deletes, get, post, put } from '@haku-design/common';
 import type { FileListResponse, StorageFileInfo } from '../@types';
 import { SortType } from '../enum';
 import { transFileListResponse } from '../utils';

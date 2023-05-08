@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { Select } from 'ant-design-vue';
 import { computed, onMounted, onUnmounted, PropType, reactive, useAttrs, watch } from 'vue';
 

@@ -1,4 +1,4 @@
-import { EventTriggerGroup } from '@/modules/event-module/enum';
+import { EventTriggerGroup } from '@haku-design/event/enum';
 import { PluginType, type PluginInfo, registerEventAction, registerEventTrigger } from '@/modules/plugin-module';
 
 /** 注册图片加载完成事件触发（插件测试） */

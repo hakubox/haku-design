@@ -10,11 +10,10 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, watch } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
-import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
-import { getAppConfigPropertys } from '@/data/app-config';
-import type { GeneralProperty } from '@/@types';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { state as historyState, service as historyService } from '@haku-design/history';
+import GeneralEditor from '@haku-design/core/src/components/general-config/GeneralEditor.vue';
+import { getAppConfigPropertys, type GeneralProperty } from '@haku-design/core';
 
 const props = defineProps({
   /** 标签宽度 */

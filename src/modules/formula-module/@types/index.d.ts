@@ -1,6 +1,11 @@
 import { FormulaParamType, FormulaType } from '../type';
 
 
+declare global {
+  /** Monaco编辑器 */
+  const monaco: any;
+}
+
 /** 公式 */
 export interface Formula {
   /** 公式名称 */

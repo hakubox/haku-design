@@ -44,7 +44,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Verify from '@/components/common/verifition/Verify.vue';
-import { service as authService } from '@/common/auth-module';
+import { service as authService } from '@haku-design/auth';
 import { Button, CellGroup, Field, Form, Toast } from 'vant';
 import { onMounted } from 'vue';
 

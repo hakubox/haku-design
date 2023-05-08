@@ -1,13 +1,13 @@
 import { createApp } from 'vue';
-import globalStore from '@/common/global';
+import globalStore from '@haku-design/global';
 import { setLocaleData } from 'monaco-editor-nls';
 import { changeConfig, serverConfig } from './config';
 import Menus from 'vue3-menus';
 import Vant from 'vant';
 import App from './App.vue';
 import router from './router';
-import AntdIcon from '@/common/antd-icon';
-import components from '@/common/register-global-components';
+import AntdIcon from '@haku-design/common/src/antd-icon';
+import components from '@haku-design/common/src/register-global-components';
 import directives from '@/directives';
 import AntdZHCN from 'ant-design-vue/es/locale/zh_CN';
 import { message, Modal } from 'ant-design-vue';
@@ -16,12 +16,12 @@ import '@vant/touch-emulator';
 import 'vant/lib/index.less';
 import '@/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
-import type { ServerEnvironment } from './@types';
-import { state as configState } from '@/common/config-module';
+import type { ServerEnvironment } from '@haku-design/core';
+import { state as configState } from '@haku-design/config';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
-import '@/common/theme';
+import '@haku-design/common/src/theme';
 
 // import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
 
@@ -30,8 +30,8 @@ import FormulaEditor from '@/modules/formula-module/components/formula-editor/Fo
 import RulesEditor from '@/modules/validate-module/component/RulesEditor.vue';
 import ConfigDialog from '@/components/module/ConfigDialog.vue';
 import packageInfo from '../package.json';
-import { init } from '@/lib/monitor';
-import { service as pluginModule } from '@/modules/plugin-module';
+import { monitor } from '@haku-design/common';
+import { service as pluginModule } from '@haku-design/plugin';
 // import { registerTestPlugin } from '@/plugin/test-plugin';
 // import { registerLogoComponent } from '@/plugin/logo-component-plugin';
 // import { registerImageEditor } from '@/plugin/image-editor-plugin';
@@ -52,19 +52,21 @@ import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 // @ts-ignore
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 
+///<reference path="howler.d.ts"/>
+
 configState.ConfigDialog = ConfigDialog;
 
 const app = createApp(App);
-init(app);
+monitor.init(app);
 
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);
 
 globalStore.state.antdConfigProvider.locale = AntdZHCN;
 
-import { init as messageInit } from '@/common/message';
+import { message as commonMessage } from '@haku-design/common';
 
-messageInit({ toastModule: message, confirmModule: Modal });
+commonMessage.init({ toastModule: message, confirmModule: Modal });
 
 window['MonacoEnvironment'] = {
   getWorker(_: string, label: string) {

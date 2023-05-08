@@ -13,7 +13,7 @@ export default {
 
 <script lang="ts" setup>
 import { useAttrs, onMounted, PropType, reactive, watch } from 'vue';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
 import { service as scoringService } from '@/modules/scoring-module';
 import { getQBasicProps } from '@/tools/common';
 import { computed } from 'vue';

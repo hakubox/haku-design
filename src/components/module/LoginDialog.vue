@@ -27,7 +27,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import { service as authService } from '@/common/auth-module';
+import { service as authService } from '@haku-design/auth';
 import { Form, FormItem, Input, InputPassword, Modal, Spin, message } from 'ant-design-vue';
 import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
 

@@ -1,6 +1,6 @@
-import global from '@/common/global';
+import global from '@haku-design/common/global';
 import LogoComponent from './LogoComponent.vue';
-import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup } from '@/@types/enum';
+import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup } from '@haku-design/core';
 import { PluginType, type PluginInfo, registerComponent } from '@/modules/plugin-module';
 
 /** 注册Logo组件（插件测试） */

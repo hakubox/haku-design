@@ -230,25 +230,25 @@
 </template>
 
 <script lang="ts" setup>
-import type { Component, ComponentGroup } from '@/@types';
+import type { Component, ComponentGroup } from '@haku-design/core';
 import type { DragConfig } from '@/modules/draggable-module/@types';
 import { computed, nextTick, ref, type PropType, onMounted, onUnmounted, StyleValue } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { service as eventService } from '@/modules/event-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
+import { service as eventService } from '@haku-design/event';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
 import { service as variableService } from '@/modules/variable-module';
 import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
-import { EventTriggerType } from '@/modules/event-module/enum';
-import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
+import { EventTriggerType } from '@haku-design/event';
+import { getComponentsRectStyle, useComponentHandle } from "@haku-design/common";
 import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
-import { AppType } from '@/@types/enum';
-import bus from '@/tools/bus';
+import { AppType } from '@haku-design/core';
+import bus from '@haku-design/common/src/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 
 const props = defineProps({

@@ -21,7 +21,7 @@ import '../assets/sweetalert.css';
 import AnswerCanvas from '../components/AnswerCanvas.vue';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
-import { state as formFillState } from '@/modules/form-fill-module';
+import { state as formFillState } from '@haku-design/form-fill';
 
 const route = useRoute();
 

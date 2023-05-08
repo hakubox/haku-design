@@ -53,14 +53,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { Component, ComponentGroup } from '@/@types';
+import type { Component, ComponentGroup } from '@haku-design/core';
 import { PropType, onMounted, reactive, computed, ref, watch } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import message from '@/common/message';
+import { getAngle, toDecimal, message, getComponentsRect, getHeight, getWidth } from '@haku-design/common';
 import { onUnmounted } from 'vue';
-import { getAngle, toDecimal } from '@/tools/common';
-import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';

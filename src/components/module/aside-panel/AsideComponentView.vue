@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { Empty, Switch } from 'ant-design-vue';
 import { reactive } from 'vue';
 import AsideComponentChildView from './AsideComponentChildView.vue';

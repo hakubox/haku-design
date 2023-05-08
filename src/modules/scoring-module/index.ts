@@ -1,9 +1,9 @@
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { ComponentCategory } from '@/@types/enum';
-import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
+import { type Component, type ComponentGroup, type FormDimensionItem } from '@haku-design/core';
+import { ComponentCategory } from '@haku-design/core/src/@types/enum';
 import { reactive } from 'vue';
-import { toast } from '@/common/message';
+import { message } from '@haku-design/common';
 
 /** 评分模块状态 */
 export const state = reactive({
@@ -33,7 +33,7 @@ export const service = {
       if (_checkResult === true) {
         resolve(state.scores);
       } else {
-        toast(_checkResult.message, 'error');
+        message.toast(_checkResult.message, 'error');
         reject(_checkResult);
       }
     })

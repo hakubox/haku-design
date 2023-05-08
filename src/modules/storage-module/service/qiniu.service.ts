@@ -1,6 +1,5 @@
-import { get } from '@/lib/api';
 import { StorageService, StorageServiceInstance } from '@/modules/storage-module/@types';
-import { base64encode, utf16to8 } from '@/tools/common';
+import { base64encode, utf16to8, get } from '@haku-design/common';
 // import { enc, HmacSHA1 } from 'crypto-js';
 import { StorageServiceType } from '../enum';
 

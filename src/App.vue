@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import { ConfigProvider } from 'ant-design-vue';
 </script>
 

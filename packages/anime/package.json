@@ -1,0 +1,16 @@
+{
+  "name": "@haku-design/anime",
+  "version": "1.0.0",
+  "description": "动画模块",
+  "main": "index.ts",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/haku-design/anime"
+  },
+  "author": "lidian_226@outlook.com",
+  "license": "ISC"
+}

@@ -19,11 +19,10 @@ import {
 } from './api';
 import { reactive } from 'vue';
 import { StorageServiceStatus, StorageServiceType } from './enum';
-import { createModelId, downLoadFile } from '@/tools/common';
+import { createModelId, downLoadFile, message } from '@haku-design/common';
 import { FileType, getFileType } from './tools/fileTypeHandler';
 import { getVideoDuration } from './tools/getVideoDuration';
 import type { DirItem } from './@types';
-import { toast, confirm } from '@/common/message';
 
 /** 存储模块状态 */
 export const state = reactive({
@@ -78,7 +77,7 @@ export const service = {
   },
   /** 移除所有文件依赖 */
   removeAllFile() {
-    confirm('是否确认清空所有文件列表？', '注意当前操作不可恢复').then(() => {
+    message.confirm('是否确认清空所有文件列表？', '注意当前操作不可恢复').then(() => {
       state.fileList.splice(0, state.fileList.length);
     });
   },
@@ -146,7 +145,7 @@ export const service = {
         instance.errorStr = undefined;
       })
       .catch((err) => {
-        toast(`[${instance.title + '连接失败'}] err.message`);
+        message.toast(`[${instance.title + '连接失败'}] err.message`);
         instance.status = StorageServiceStatus.fail;
         instance.errorStr = err.message;
       });
@@ -181,7 +180,7 @@ export const service = {
     const _service = this.getService(serviceType);
     if (serviceInstance && _service) {
       const callback = async () => {
-        toast('上传成功!', 'success');
+        message.toast('上传成功!', 'success');
         const params = {
           fileKey,
           fileName,
@@ -205,7 +204,7 @@ export const service = {
       _service.api
         .upload(serviceInstance, file, { cosConfig: { Key: fileKey, onProgress, onTaskReady }, callback })
         .catch((err) => {
-          toast(err, 'error');
+          message.toast(err, 'error');
         });
     }
   },
@@ -244,12 +243,12 @@ export const service = {
     const service = this.getService(serviceType);
     if (serviceInstance && service) {
       const res = await service.api.delete(fileKey, serviceInstance).catch((err) => {
-        toast(err, 'error');
+        message.toast(err, 'error');
       });
       if (res) {
         /** 同步服务器数据 */
         await deleteServerFile(fileId);
-        toast(res, 'success');
+        message.toast(res, 'success');
         this.initFileModule(dirId);
       }
     }
@@ -257,7 +256,7 @@ export const service = {
   /** 移除文件夹 */
   async deleteDir(targetDirId: string, parentDirId: string) {
     await deleteServerFile(targetDirId);
-    toast('删除成功!', 'success');
+    message.toast('删除成功!', 'success');
     this.initFileModule(parentDirId);
   },
   /** 下载文件 */
@@ -266,7 +265,7 @@ export const service = {
     const service = this.getService(serviceType);
     if (serviceInstance && service) {
       const res = await service.api.download(fileKey, serviceInstance).catch((err) => {
-        toast(err, 'error');
+        message.toast(err, 'error');
       });
       if (res) {
         downLoadFile(fileKey, res);
@@ -283,7 +282,7 @@ export const service = {
   async addNewDir(params: Parameters<typeof mkDir>[0]) {
     const res = await mkDir(params);
     if (res.code === 200) {
-      toast('新建文件夹成功', 'success');
+      message.toast('新建文件夹成功', 'success');
       this.getDirTree();
       this.updateFileList(params.parentId);
     }
@@ -292,7 +291,7 @@ export const service = {
   async moveResource(params: Parameters<typeof changeDir>[0]) {
     await changeDir(params)
       .catch(() => {
-        toast('修改文件夹失败，请重试', 'error');
+        message.toast('修改文件夹失败，请重试', 'error');
       })
       .finally(() => {
         this.getDirTree();
@@ -303,7 +302,7 @@ export const service = {
   async dragResource(params: Parameters<typeof changeDir>[0], oldParentId: string) {
     await changeDir(params)
       .catch(() => {
-        toast('修改文件夹失败，请重试', 'error');
+        message.toast('修改文件夹失败，请重试', 'error');
       })
       .finally(() => {
         this.getDirTree();

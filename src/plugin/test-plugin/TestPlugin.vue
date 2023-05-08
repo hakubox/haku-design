@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import { service as editorService } from '@/modules/editor-module';
+import { service as editorService } from '@haku-design/editor';
 
 const state = reactive({
   text: '文本内容',

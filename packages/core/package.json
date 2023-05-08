@@ -1,0 +1,17 @@
+{
+  "name": "@haku-design/core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "type": "module",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/haku-design/core"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,4 +1,4 @@
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
 import { reactive } from 'vue';
 
 /** 序号类型 */

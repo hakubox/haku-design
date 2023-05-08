@@ -112,7 +112,7 @@ import UploadProgressItem from './components/UploadProgressItem.vue';
 import { useFileDrag } from './hooks/useFileDrag';
 import { useRightClickMenu } from './hooks/useRightClickMenu';
 import { Vue3Menus } from 'vue3-menus';
-import { toast } from '@/common/message';
+import { message } from '@haku-design/common';
 
 interface IEmits {
   (e: 'doubleClickDir', dirId: string): void;
@@ -270,7 +270,7 @@ const onChecked = () => {
   const selectList = props.fileList.filter((item) => state.selectedFileIds.includes(item.id));
   const hasDir = selectList.findIndex((item) => isDir(item.type)) > -1;
   if (hasDir) {
-    toast('不能选择文件夹', 'error');
+    message.toast('不能选择文件夹', 'error');
   } else {
     const fileList = props.fileList.filter((item) => state.selectedFileIds.includes(item.id));
     fileDialogState.onConfirm(fileList);

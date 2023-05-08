@@ -1,5 +1,5 @@
 import type { DataSource, SourceData } from './@types';
-import { createModelId } from '@/tools/common';
+import { createModelId } from '@haku-design/common';
 import { DataSourceType } from './enum';
 import { computed, reactive } from 'vue';
 

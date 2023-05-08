@@ -31,9 +31,8 @@
 import { onMounted, reactive, ref } from 'vue';
 // import { Gesture, DragGesture } from '@use-gesture/vanilla';
 // import SimpleAnimePicker from '@/modules/anime-module/components/SimpleAnimePicker.vue';
-import TimeAxis from '@/modules/anime-module/components/TimeAxis.vue';
-// import { cloneLoop } from '@/lib/clone';
-import { state as animeState, service as animeService } from '@/modules/anime-module';
+import TimeAxis from '@haku-design/anime/src/components/TimeAxis.vue';
+import { state as animeState, service as animeService } from '@haku-design/anime';
 
 const timeAxis = ref<typeof TimeAxis>();
 

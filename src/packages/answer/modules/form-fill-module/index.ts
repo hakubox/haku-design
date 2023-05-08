@@ -1,18 +1,23 @@
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { service as eventService } from '@/modules/event-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { service as eventService } from '@haku-design/event';
 import { service as scoringService } from '@/modules/scoring-module';
-import { state as authState } from '@/common/auth-module';
-import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
-import { Component, ComponentAnswerType, ComponentGroup } from '@/@types';
-import { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from '@/modules/form-fill-module/@types';
-import { answerCommit } from '@/api/form-fill';
+import { state as authState } from '@haku-design/auth';
+import {
+  type DataEditorValue,
+  type AppPage,
+  type Component,
+  type ComponentAnswerType,
+  type ComponentGroup,
+  OriginDataTransformComponentAnswerType,
+  PageType,
+} from '@haku-design/core';
+import { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from '@haku-design/form-fill';
+import { answerCommit } from '@haku-design/core/src/api/form-fill';
 import { Dialog, Toast } from 'vant';
-import { isBlank } from '@/tools/common';
-import { AppPage } from '@/@types/app-page';
-import { clearOldMediaInfo } from '@/lib/media';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { isBlank } from '@haku-design/common';
+import { clearOldMediaInfo } from '@haku-design/common/src/lib/media';
+import { EventTriggerType } from '@haku-design/event';
 import { computed, nextTick, reactive } from 'vue';
-import { type DataEditorValue } from '@/@types/data-editor-value';
 
 /** 缓存列表KEY */
 const StorageListKey = '__hakuform__storage__';
@@ -127,7 +132,7 @@ export const service = {
         clearTimeout(state.tempStorageSaveTimer);
         this.save();
         this.autoSave(delay);
-      }, delay*1000);
+      }, delay * 1000);
     } else {
       throw new Error('未开启自动记录提交信息功能');
     }
@@ -154,7 +159,9 @@ export const service = {
           /** 表单信息 */
           formInfo: state.formInfo,
           /** 记时信息 */
-          timerInfo: (editorState.appConfig.questionnaireConfig.timerConfig?.isOpen ? state.timerInfo : undefined) as TimingInfo | undefined,
+          timerInfo: (editorState.appConfig.questionnaireConfig.timerConfig?.isOpen ? state.timerInfo : undefined) as
+            | TimingInfo
+            | undefined,
         },
       } as TempStorage;
 
@@ -164,7 +171,7 @@ export const service = {
         (i) =>
           i.userId === _tempStorage.userId &&
           i.qid === _tempStorage.qid &&
-          i.extraCode === _tempStorage.extraCode && 
+          i.extraCode === _tempStorage.extraCode &&
           new Date().getTime() - i.updateTime < editorState.appConfig.questionnaireConfig.autoCacheDuration,
       );
 
@@ -185,23 +192,33 @@ export const service = {
   },
   /** 获取当前评价 */
   getCurrentRating() {
-    if (editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen && editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList?.length) {
+    if (
+      editorState.appConfig.questionnaireConfig.dimensionConfig?.isOpen &&
+      editorState.appConfig.questionnaireConfig.dimensionConfig?.dimensionList?.length
+    ) {
       throw new Error('暂无法获得维度评价');
       return undefined;
     } else {
       const _score = scoringService.countScore();
       const ratingList = editorState.appConfig.questionnaireConfig.ratingList;
-      return ratingList?.find(i => {
-        if (i.startScore > _score) return false;
-        else if (i.endScore && i.endScore < _score) return false;
-        return true;
-      }) || { title: '暂无评价', description: '暂无评价' };
+      return (
+        ratingList?.find((i) => {
+          if (i.startScore > _score) return false;
+          else if (i.endScore && i.endScore < _score) return false;
+          return true;
+        }) || { title: '暂无评价', description: '暂无评价' }
+      );
     }
   },
   /** 刚进入页面时自动加载新数据 */
   autoLoad() {
     const storageList = JSON.parse(localStorage.getItem(StorageListKey) || '[]') as TempStorage[];
-    const _index = storageList.findIndex(i => i.userId === authState.userInfo.id && i.qid === editorState.appConfig.id && i.extraCode === editorState.appConfig.questionnaireConfig.extraCode);
+    const _index = storageList.findIndex(
+      (i) =>
+        i.userId === authState.userInfo.id &&
+        i.qid === editorState.appConfig.id &&
+        i.extraCode === editorState.appConfig.questionnaireConfig.extraCode,
+    );
     if (_index >= 0) {
       state.formInfo = editorService.mergeFormData(editorState.pages[0].children, storageList[_index].data.formInfo);
       state.timerInfo = storageList[_index].data.timerInfo;
@@ -216,16 +233,19 @@ export const service = {
       const _components: (Component | ComponentGroup)[] = [];
       if (formPageIndex !== undefined && formPageIndex >= 0) {
         _components.push(
-          ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
+          ...editorService.getAllFormItem(
+            undefined,
+            (i) => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id),
+          ),
         );
       } else {
         _components.push(...editorService.getAllFormItem());
       }
-      _components.forEach(component => {
+      _components.forEach((component) => {
         if (component.isFormItem) {
           if (component.attrs.required && component.attrs.visible) {
             const _val = state?.formInfo?.[component.id]?.value;
-            if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !(_val.filter(x=>x).length)))) {
+            if (!_val || isBlank(_val) || (Array.isArray(_val) && (!_val.length || !_val.filter((x) => x).length))) {
               _errorComponents.push({ component: component, message: '问卷填写未完成' });
               state.errorInfo[component.id] = {
                 isError: true,
@@ -296,11 +316,11 @@ export const service = {
       }
     });
   },
-  /** 
+  /**
    * 提交表单信息（完成填写）
    * @param validate 是否需要校验
    **/
-  async submitForm(validate=true) {
+  async submitForm(validate = true) {
     eventService.emit(EventTriggerType.beforeSubmitForm, 'global');
     await nextTick();
     if (editorState.getTimerConfig.isOpen && editorState.getTimerConfig.isAutoTiming) service.completeTime();
@@ -320,8 +340,8 @@ export const service = {
               _val = { label: service.getOptionLabel(key, value?.value), value: value?.value };
               break;
             case 'option-list':
-              _score = value?.value.map(i => service.getOptionScore(key, i)).reduce((a, b) => a + b, 0);
-              _val = value?.value.map(i => ({ label: service.getOptionLabel(key, i), value: i }));
+              _score = value?.value.map((i) => service.getOptionScore(key, i)).reduce((a, b) => a + b, 0);
+              _val = value?.value.map((i) => ({ label: service.getOptionLabel(key, i), value: i }));
               break;
             case 'number':
             case 'text':
@@ -329,10 +349,10 @@ export const service = {
               break;
             case 'text-list':
             case 'number-list':
-              _val = value?.value.map(i => ({ value: i }));
+              _val = value?.value.map((i) => ({ value: i }));
               break;
             case 'extrainfo-list':
-              _val = value?.value.map(i => i);
+              _val = value?.value.map((i) => i);
               break;
             default:
               _val = { value: value?.value };
@@ -393,10 +413,10 @@ export const service = {
         Toast.fail('填写未完成');
         return {
           isComplete: false,
-          data: _data
+          data: _data,
         };
       }
-    } 
+    }
 
     const hide = Toast.loading({
       message: '提交中...',
@@ -435,16 +455,16 @@ export const service = {
     delete state.formInfo[removeKey];
   },
   /** 题目答案显示处理 */
-  setQuestionAnswer(id: string, answerValue: any [], type: ComponentAnswerType) {
+  setQuestionAnswer(id: string, answerValue: any[], type: ComponentAnswerType) {
     let value;
     if (['text-list', 'option-list', 'number-list', 'file-list', 'array-list'].includes(type)) {
       value = answerValue.reduce((acc, cur) => {
-        return [...acc, cur.value]
-      }, [])
+        return [...acc, cur.value];
+      }, []);
     } else if (['extrainfo-list'].includes(type)) {
       value = answerValue.reduce((acc, cur) => {
-        return [...acc, cur]
-      }, [])
+        return [...acc, cur];
+      }, []);
     } else if (['option'].includes(type)) {
       value = answerValue[0];
     } else if (answerValue.length > 0) {
@@ -454,7 +474,9 @@ export const service = {
     nextTick(() => {
       eventService.emit(EventTriggerType.valueChange, id, value);
       if (type === 'datetime') {
-        nextTick(() => {this.setFormInfo(id, value, type);})
+        nextTick(() => {
+          this.setFormInfo(id, value, type);
+        });
       }
     });
   },
@@ -562,8 +584,8 @@ export const service = {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
-          const _options: { label: string, value: any }[] = _component?.attrs?.options ?? [];
-          const _value = _options.find(i => i.value === _splitValue[1])?.label;
+          const _options: { label: string; value: any }[] = _component?.attrs?.options ?? [];
+          const _value = _options.find((i) => i.value === _splitValue[1])?.label;
           return `${_component?.attrs.name} / ${_value}`;
         }
         return '——';
@@ -589,8 +611,8 @@ export const service = {
         const _splitValue = (data.value || '').split('|');
         if (_splitValue.length === 2) {
           const _component = editorService.findComponent(_splitValue[0]);
-          const _options: { label: string, value: any }[] = _component?.attrs?.options ?? [];
-          const _value = _options.find(i => i.value === _splitValue[1])?.value;
+          const _options: { label: string; value: any }[] = _component?.attrs?.options ?? [];
+          const _value = _options.find((i) => i.value === _splitValue[1])?.value;
           return _value;
         }
         return '——';
@@ -598,10 +620,10 @@ export const service = {
       default:
         return '——';
     }
-  }
+  },
 };
 
 export default {
   state,
-  service
-}
+  service,
+};

@@ -27,7 +27,7 @@
 
 <script lang="ts" setup>
 import { PropType, reactive, useAttrs, onMounted, ref, watch, nextTick } from 'vue';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core/@types';
 import { cloneForce } from '@/lib/clone';
 
 const props = defineProps({

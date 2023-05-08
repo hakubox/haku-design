@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts" setup>
-import { createModelId, throttle, timeout } from '@/tools/common';
+import { createModelId, throttle, timeout } from '@haku-design/common';
 import { onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
 import { state as formulaState } from '../../';
 import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { Tooltip } from 'ant-design-vue';
 // import monaco from 'monaco-editor';
 

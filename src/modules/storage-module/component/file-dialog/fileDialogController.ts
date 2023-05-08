@@ -1,6 +1,6 @@
 import { ConcreteComponent, reactive, watch } from 'vue';
 import { StorageFileInfo } from '../../@types';
-import { destoryComponent, loadComponent } from '@/lib/component-loader';
+import { destoryComponent, loadComponent } from '@haku-design/common';
 import FileDialog from './FileDialog.vue';
 
 /** 变量弹窗外层DIV节点 */

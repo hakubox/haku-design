@@ -1,0 +1,26 @@
+export * from './config.d';
+export type { AppPage } from './app-page';
+export type { AppConfig, CanvasConfig, QuestionnaireConfig, DesignConfig } from './app-config';
+export type { LayoutConfig } from './form-panel';
+export type { FormScript } from './form-script';
+export type { PropertyGroup } from './property-group';
+export type { ComponentGroup } from './component-group';
+export type { ComponentOption } from './component-option';
+export type { ComponentProperty } from './component-property';
+export type { Component, ComponentAnswerType } from './component';
+export type { Questionnaire } from './questionnaire';
+export type { RemoteDevice } from './remote-device';
+export type { PropertyEditor } from './property-editor';
+export type { CreateNewConfig } from './create-new-config';
+export type { FormTimerConfig } from './form-timer-config';
+export type { FormDimensionConfig, FormDimensionItem } from './form-dimension-config';
+export type { ExportAppBody } from './export-app-body';
+export type { GeneralProperty } from './general-property';
+export type { RatingConfig } from './rating-config';
+export type { ComponentQuickTool } from './component-quick-tool';
+export type { ComponentRect } from './component-rect';
+export type { CommandType, Command, Props } from './command';
+export type { ToolComponentItem } from './tool-component-item';
+export type { DataEditorValue } from './data-editor-value';
+
+export type SetPartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;

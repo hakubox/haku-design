@@ -121,11 +121,11 @@
 
 <script lang="ts" setup>
 import { reactive, ref, watch, PropType, Ref, onMounted } from "vue";
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { getQuestionary, listQuestionary } from "@/api/common/questionnaire";
-import { dateFormat } from '@/tools/common';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { getQuestionary, listQuestionary } from "@haku-design/core/src/api/questionnaire";
+import { dateFormat } from '@haku-design/common';
 import { InputSearch, message, Modal, Pagination, Tag, Tooltip, ConfigProvider, CheckboxGroup } from "ant-design-vue";
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import SearchOutlined from "@ant-design/icons-vue/SearchOutlined";
 
 const props = defineProps({

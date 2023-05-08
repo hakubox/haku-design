@@ -1,6 +1,6 @@
 {
   "name": "haku-design",
-  "private": false,
+  "private": true,
   "version": "0.3.1",
   "description": "小白快搭是使用vite4.0开发的一款设计工具。",
   "type": "module",
@@ -15,6 +15,24 @@
     "editor",
     "canvas",
     "vue"
+  ],
+  "workspaces": [
+    "packages/global-search",
+    "packages/common",
+    "packages/core",
+    "packages/editor",
+    "packages/config",
+    "packages/plugin",
+    "packages/global",
+    "packages/auth",
+    "packages/event",
+    "packages/theme",
+    "packages/version-history",
+    "packages/intro",
+    "packages/hotkey",
+    "packages/anime",
+    "packages/form-fill",
+    "packages/history"
   ],
   "scripts": {
     "dev": "cross-env buildProj=design buildMode=development vite --mode development",
@@ -73,6 +91,7 @@
     "eslint-plugin-vue": "^9.11.0",
     "fastdom": "^1.0.11",
     "is-mobile": "^3.1.1",
+    "lerna": "^6.6.2",
     "less": "4.1.3",
     "monaco-editor": "0.33.0",
     "monaco-editor-nls": "3.0.0",

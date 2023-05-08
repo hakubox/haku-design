@@ -60,6 +60,6 @@
 
 <script lang="ts" setup>
 import { defineComponent } from 'vue';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { Input, Textarea } from 'ant-design-vue';
 </script>

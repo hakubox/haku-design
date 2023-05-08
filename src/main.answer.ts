@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import globalStore from '@/common/global';
+import globalStore from '@haku-design/global';
 import { changeConfig, serverConfig } from './config';
 import App from './App.answer.vue';
 import router from './packages/answer/router';
@@ -9,21 +9,21 @@ import '@vant/touch-emulator';
 import 'vant/lib/index.less';
 import '@/packages/answer/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
-import type { ServerEnvironment } from './@types';
+import type { ServerEnvironment } from '@haku-design/core';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 
 import scoringStore from '@/modules/scoring-module';
 import { service as answerScoringService } from './modules/scoring-module';
-import authStore from '@/common/auth-module';
+import authStore from '@haku-design/auth';
 import { service as answerAuthService } from '@/packages/answer/modules/auth-module';
 
-import { init as messageInit } from '@/common/message';
+import { message } from '@haku-design/common';
 
 import { Toast, Dialog } from 'vant';
 
-messageInit({ toastModule: Toast, confirmModule: Dialog });
+message.init({ toastModule: Toast, confirmModule: Dialog });
 
 scoringStore.service = {
   ...scoringStore.service,

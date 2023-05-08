@@ -1,4 +1,4 @@
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import { NavigationFailure } from 'vue-router';
 import NProgress from 'accessible-nprogress';
 import { Toast } from 'vant';

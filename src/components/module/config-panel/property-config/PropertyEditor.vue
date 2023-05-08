@@ -174,18 +174,15 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, watch } from "vue";
-import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { service as historyService } from "@/common/history-module";
-import type { ComponentProperty } from "@/@types/component-property";
-import { initPropertyEditors } from '@/data/property-editor';
-import { ComponentPropertyEditor } from "@/@types/enum";
+import { state as editorState, service as editorService } from "@haku-design/editor";
+import { service as historyService } from "@haku-design/history";
+import { type ComponentProperty, initPropertyEditors, ComponentPropertyEditor, getAppConfigPropertys } from "@haku-design/core";
 import PropertyEditorItem from './PropertyEditorItem.vue';
-import type { Component, ComponentGroup, GeneralProperty } from "@/@types";
+import type { Component, ComponentGroup, GeneralProperty } from "@haku-design/core";
 import { Button, ButtonGroup, Empty, Modal, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
-import bus from '@/tools/bus';
-import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
-import { getAppConfigPropertys } from "@/data/app-config";
+import bus from '@haku-design/common/src/tools/bus';
+import GeneralEditor from '@haku-design/core/src/components/general-config/GeneralEditor.vue';
 
 const state = reactive({
   /** 默认属性编辑器哈希表 */

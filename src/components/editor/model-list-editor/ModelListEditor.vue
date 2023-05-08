@@ -135,11 +135,11 @@
 
 <script lang="ts" setup>
 import { PropType, reactive, watch } from 'vue';
-import { ComponentPropertyEditor } from '@/@types/enum';
+import { ComponentPropertyEditor } from '@haku-design/core';
 import { Button, Dropdown, Menu, MenuDivider, MenuItem, Popover, Table, Tooltip, message } from 'ant-design-vue';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { throttle } from '@/tools/common';
-import type { Component } from '@/@types';
+import type { Component } from '@haku-design/core/@types';
 
 const props = defineProps({
   /** 当前值 */

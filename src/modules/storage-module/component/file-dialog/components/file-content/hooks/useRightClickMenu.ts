@@ -4,7 +4,7 @@ import { StorageFileInfo } from '@/modules/storage-module/@types';
 import { Modal } from 'ant-design-vue';
 import { computed, nextTick, reactive, Ref, toRefs } from 'vue';
 import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
-import { toast } from '@/common/message';
+import { message } from '@haku-design/common';
 
 /** 处理右键菜单逻辑 */
 export const useRightClickMenu = (fileList: Ref<StorageFileInfo[]>, curDirId: Ref<string>, onDblClick: Function) => {
@@ -63,7 +63,7 @@ export const useRightClickMenu = (fileList: Ref<StorageFileInfo[]>, curDirId: Re
         state.showPreview = true;
       });
     } else {
-      toast('当前文件不支持直接打开', 'error');
+      message.toast('当前文件不支持直接打开', 'error');
     }
   };
   /** 下载文件 */
@@ -100,7 +100,7 @@ export const useRightClickMenu = (fileList: Ref<StorageFileInfo[]>, curDirId: Re
       }
       state.showRenameInput = false;
     } else {
-      toast('文件名称已重复，请重新输入', 'error');
+      message.toast('文件名称已重复，请重新输入', 'error');
     }
   };
 

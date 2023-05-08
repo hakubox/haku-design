@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { service as editorService } from '@/modules/editor-module';
+import { service as editorService } from '@haku-design/editor';
 import { Cascader } from 'ant-design-vue';
 import { computed, PropType, reactive, watch, useAttrs } from 'vue';
 

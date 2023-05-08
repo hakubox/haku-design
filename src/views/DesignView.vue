@@ -299,30 +299,27 @@
 <script lang="ts" setup>
 import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
-import { downLoadFile, dateFormat, throttle } from '@/tools/common';
+import { downLoadFile, dateFormat, throttle, message } from '@haku-design/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { state as historyState, service as historyService } from '@haku-design/history';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
-import { state as configState, service as configService } from '@/common/config-module';
-import { state as versionHistoryState } from '@/modules/version-history-module';
-import { service as globalSearchService } from '@/modules/global-search-module';
-import { useComponentHandle } from '@/common/component-handle';
-import { useAppHandle } from '@/common/app-handle';
+import { state as configState, service as configService } from '@haku-design/config';
+import { state as versionHistoryState } from '@haku-design/version-history';
+import { service as globalSearchService } from '@haku-design/global-search';
+import { useComponentHandle } from '@haku-design/common/src/component-handle';
+import { useAppHandle } from '@haku-design/common/src/app-handle';
 import CreateNewDialog from '@/components/module/CreateNewDialog.vue';
 import PublishDialog from '@/components/module/PublishDialog.vue';
 import WelComePanel from '@/components/module/WelcomePanel.vue';
 import AppPreviewDialog from '@/components/module/AppPreviewDialog.vue';
-import ThemeConfig from '@/modules/theme-module/component/ThemeConfig.vue';
+import ThemeConfig from '@haku-design/theme/src/component/ThemeConfig.vue';
 import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
-import { AppType } from '@/@types/enum';
   
-import { initCommands } from '@/data/form-commands';
-import { getQuestionary } from '@/api/common/questionnaire';
+import { initCommands, Component, AppType } from '@haku-design/core';
+import { getQuestionary } from '@haku-design/core/src/api/questionnaire';
 import { useRoute } from 'vue-router';
-import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
-import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
 import Thumbnail from '@/components/common/Thumbnail.vue';
 
@@ -420,7 +417,7 @@ const toThumbnailDrag = (x: number, y: number) => {
 const setEditorJson = () => {
   const _layout = JSON.stringify(editorService.getExportData(), undefined, '  ');
   state.editorJson = _layout;
-  toast('已生成JSON', 'success');
+  message.toast('已生成JSON', 'success');
 };
 /** 导出为JSON */
 const exportJSONFile = () => {
@@ -449,11 +446,11 @@ initCommands();
 
 /** 根据 id 请求数据并加载页面 */
 const getDataById = id => {
-  const hide = toast('问卷加载中...', 'loading', 0);
+  const hide = message.toast('问卷加载中...', 'loading', 0);
   // 获取测试问卷
   getQuestionary(id as string).then(({ questionary, tagList }) => {
     if (!questionary) {
-      toast('未查询到对应的应用', 'error');
+      message.toast('未查询到对应的应用', 'error');
     } else if (questionary.innerType && !questionary.content) {
       editorService.createNew({
         id: id + '',
@@ -467,7 +464,7 @@ const getDataById = id => {
     }
   }).catch(err => {
     console.error(err);
-    toast(`应用加载失败，错误原因：${err.message}`, 'error');
+    message.toast(`应用加载失败，错误原因：${err.message}`, 'error');
   }).finally(() => {
     hide();
   });

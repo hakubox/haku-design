@@ -101,12 +101,12 @@
 <script lang="ts" setup>
 import { computed, nextTick, PropType, ref } from "vue";
 import { state as scoringState, service as scoringService } from '@/modules/scoring-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { service as eventService } from '@/modules/event-module';
+import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
+import { service as eventService } from '@haku-design/event';
 import { service as variableService } from "@/modules/variable-module";
-import { EventTriggerType } from "@/modules/event-module/enum";
+import { EventTriggerType } from "@haku-design/event/enum";
 import { Rate, Stepper } from 'vant';
-import type { Component, ComponentGroup } from "@/@types";
+import type { Component, ComponentGroup } from "@haku-design/core/@types";
 
 const props = defineProps({
   /** 控件Id */

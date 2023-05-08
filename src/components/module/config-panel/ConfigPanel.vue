@@ -41,9 +41,9 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import PropertyEditor from '@/components/module/config-panel/property-config/PropertyEditor.vue';
-import EventConfig from '@/modules/event-module/component/EventConfig.vue';
+import EventConfig from '@haku-design/event/src/component/EventConfig.vue';
 import { Drawer, TabPane, Tabs, Button } from 'ant-design-vue';
 
 const state = reactive({

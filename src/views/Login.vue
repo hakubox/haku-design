@@ -51,8 +51,8 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { service as authService } from '@/common/auth-module';
-import { toast } from '@/common/message';
+import { service as authService } from '@haku-design/auth';
+import { message } from '@haku-design/common';
 import { Button, Col, Form, Input, Row, FormItem } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import type { RuleObject } from 'ant-design-vue/lib/form';
@@ -80,7 +80,7 @@ const login = () => {
   state.isLoading = true;
   formRef.value!.validate().then(() => {
     authService.login(state.loginForm).then((d) => {
-      toast('登录成功', 'success');
+      message.toast('登录成功', 'success');
       router.push('/design');
     }).finally(() => {
       state.isLoading = false;

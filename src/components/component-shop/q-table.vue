@@ -87,7 +87,7 @@ export default {
 </script>
 <script lang="ts" setup>
 import { PropType, reactive } from 'vue';
-import { state as editorState } from '@/modules/editor-module';
+import { state as editorState } from '@haku-design/editor';
 import { getQBasicProps } from '@/tools/common';
 import { Button, Empty, Loading } from 'vant';
 

@@ -65,7 +65,7 @@ export default {
 <script lang="ts" setup>
 import { nextTick, onMounted, PropType, reactive, toRefs, watch } from 'vue';
 import SimpleEditor from '@/components/editor/simple-editor/SimpleEditor.vue';
-import { state as globalState } from '@/common/global';
+import { state as globalState } from '@haku-design/global';
 import { getQBasicProps } from '@/tools/common';
 import { Icon } from 'vant';
 

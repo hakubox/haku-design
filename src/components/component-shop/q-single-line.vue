@@ -21,7 +21,7 @@ export default {
 <script lang="ts" setup>
 import { inject, PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core/@types';
 
 const props = defineProps({
   value: {

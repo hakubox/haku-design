@@ -1,14 +1,10 @@
-import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@/@types';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
-import { cloneForce } from '@/lib/clone';
-import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tools/common';
+import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@haku-design/core';
+import { AppType, ComponentCategory, LayoutType } from '@haku-design/core/src/@types/enum';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { state as historyState, service as historyService } from '@haku-design/history';
+import { cloneForce, createModelId, intersectsRect, moveNodeOfTree, toDecimal, getComponentsRect, getHeight, getWidth } from '@haku-design/common';
 import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './@types';
-import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
-import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
-import { number } from 'echarts';
-
 
 /** 拖拽模块状态 */
 export const state = reactive({

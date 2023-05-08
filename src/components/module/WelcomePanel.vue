@@ -163,10 +163,10 @@
 
 <script lang="ts" setup>
 import { reactive, onMounted, onUnmounted } from 'vue';
-import { service as editorService } from '@/modules/editor-module';
-import { service as introService } from '@/modules/intro-module';
-import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/common/questionnaire';
-import { dateFormat } from '@/tools/common';
+import { service as editorService } from '@haku-design/editor';
+import { service as introService } from '@haku-design/intro';
+import { getQuestionary, QuestionaryBasicInfoDto } from '@haku-design/core/src/api/questionnaire';
+import { dateFormat } from '@haku-design/common';
 import { Input, List, ListItem, ListItemMeta, Select, SelectOption, Tag, Tooltip, message } from 'ant-design-vue';
 
 const state = reactive({

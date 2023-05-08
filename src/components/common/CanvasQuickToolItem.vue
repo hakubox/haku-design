@@ -20,11 +20,11 @@
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core/@types';
 import { reactive, computed, type PropType } from 'vue';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { AppType } from '@/@types/enum';
-import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
+import { state as editorState, service as editorService } from '@haku-design/editor';
+import { AppType } from '@haku-design/core';
+import type { CanvasQuickTool } from '@haku-design/core/@types/canvas-quick-tool';
 import message from '@/common/message';
 
 const props = defineProps({
