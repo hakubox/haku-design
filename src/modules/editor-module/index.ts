@@ -80,6 +80,8 @@ export const service = {
         isInit: isInit,
         deviceType: deviceType ?? DeviceType.mobile,
         componentIndex: 1,
+        themeCode: 'default',
+        prevThemeCode: 'default'
       },
 
       /** 问卷配置 */
@@ -131,10 +133,13 @@ export const service = {
     this.refresh();
   },
   /** 选择主题 */
-  selectTheme(themeCode: string, themeTitle: string) {
+  selectTheme(themeCode: string, themeTitle: string, loc: { x: number, y: number }) {
     historyService.exec('change-theme', {
       value: themeCode,
-      attrs: { themeTitle: themeTitle }
+      attrs: {
+        themeTitle: themeTitle,
+        event: loc,
+      }
     });
   },
   /** 获取选择的组件范围 */

@@ -33,7 +33,7 @@
     >
       <template #title>
         <i class="iconfont icon-config" style="color: #4d8ce4; margin-right: 5px"></i>
-        {{ themeState.currentTheme?.title }}
+        {{ themeState.themeConfig?.title }}
       </template>
       <div style="margin-top: 20px"></div>
       <Form
@@ -72,7 +72,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { state as themeState, service as themeService } from '../index';
-import type { ThemeConfig } from '../@types';
+import type { ThemeConfig } from '../index.d';
 import { toast } from '@/common/message';
 import { Empty, Form, FormItem, Input, Modal, Textarea } from 'ant-design-vue';
 import { RuleObject } from 'ant-design-vue/lib/form';

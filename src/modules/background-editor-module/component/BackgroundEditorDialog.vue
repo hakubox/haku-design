@@ -1,32 +1,35 @@
 <template>
-  <div>
-    <HakuDialog class="background-dialog" :title="state.currentBackgroundTypeText">
-      <!-- 背景类型选择 -->
-      <div class="background-dialog-type-panel">
-        <ul
-          class="background-type-tabs"
-          :style="{
-            '--background-type-count': state.backgroundTypeList.length,
-            '--background-type-index': state.currentBackgroundTypeIndex
-          }"
-        >
-          <li
-            class="background-type-tab"
-            :class="{ active: state.currentBackgroundType === item.name }"
-            v-for="item in state.backgroundTypeList"
-            @click="setBackgroundType(item.name)"
-          >{{ item.title }}</li>
-        </ul>
-      </div>
-      <!-- 选择器内容区域 -->
-      <div class="background-dialog-content">
-        <!-- 纯色 -->
-        <TypeColorPicker v-if="state.currentBackgroundType === 'color'" />
-        <!-- 线性渐变 -->
-        <!-- 径向渐变 -->
-      </div>
-    </HakuDialog>
-  </div>
+  <HakuDialog
+    body-class="background-dialog"
+    :visible="true"
+    :drag="true"
+    :title="state.currentBackgroundTypeText"
+  >
+    <!-- 背景类型选择 -->
+    <div class="background-dialog-type-panel">
+      <ul
+        class="background-type-tabs"
+        :style="{
+          '--background-type-count': state.backgroundTypeList.length,
+          '--background-type-index': state.currentBackgroundTypeIndex
+        }"
+      >
+        <li
+          class="background-type-tab"
+          :class="{ active: state.currentBackgroundType === item.name }"
+          v-for="item in state.backgroundTypeList"
+          @click="setBackgroundType(item.name)"
+        >{{ item.title }}</li>
+      </ul>
+    </div>
+    <!-- 选择器内容区域 -->
+    <div class="background-dialog-content">
+      <!-- 纯色 -->
+      <TypeColorPicker v-if="state.currentBackgroundType === 'color'" />
+      <!-- 线性渐变 -->
+      <!-- 径向渐变 -->
+    </div>
+  </HakuDialog>
 </template>
 
 <script lang="ts" setup>
@@ -68,9 +71,8 @@ const setBackgroundType = (name: string) => {
 
 <style lang="less" scoped>
 
-.background-dialog {
-  position: relative;
-  width: 300px;
+:deep(.background-dialog) {
+  width: 360px;
 }
 .background-type-tabs {
   position: relative;

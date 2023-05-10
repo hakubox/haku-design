@@ -1,6 +1,7 @@
 import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
+import { AppLinearGradientBackground } from './index.d';
 
 export * from './index.d';
 
@@ -21,6 +22,18 @@ export const service = {
   },
   /** 选择图片 */
   selectImage() {
+
+  },
+  /** 绘制线性渐变背景 */
+  drawLinearGradient(gradient: AppLinearGradientBackground) {
+    const _style = { } as Record<string, any>;
+    const _panelRect = {
+      width: 0,
+      height: 0,
+    };
+    // 输出背景框位置/尺寸及渐变
+
+    // 输出结果
 
   }
 };

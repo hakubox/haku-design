@@ -1,253 +1,257 @@
-@import '/src/assets/less/variable.less';
-@import 'ant-design-vue/dist/antd.less';
-@import 'component.lazy.less';
 
-@primary-color: #0d0f10;
 
-.design-form {
-  background-image: url('img/bg.webp');
-  background-size: 100% auto;
+html.theme-translucent {
+  @import '/src/assets/less/variable.less';
+  @import 'ant-design-vue/dist/antd.less';
+  @import 'component.lazy.less';
+  
+  @primary-color: #0d0f10;
 
-  > .design-form-header {
-    border-bottom: 2px solid #312e2e;
-    background-color: rgba(255, 255, 255, 0.6);
+  .design-form {
+    background-image: url('img/bg.webp');
+    background-size: 100% auto;
 
-    > .design-form-header-logo {
-      color: @primary-color;
-    }
+    > .design-form-header {
+      border-bottom: 2px solid #312e2e;
+      background-color: rgba(255, 255, 255, 0.6);
 
-    > .design-form-header-menu {
-      .ant-menu {
-        background: transparent;
+      > .design-form-header-logo {
+        color: @primary-color;
+      }
 
-        .ant-menu-item,
-        .ant-menu-submenu {
+      > .design-form-header-menu {
+        .ant-menu {
+          background: transparent;
+
+          .ant-menu-item,
+          .ant-menu-submenu {
+          }
         }
       }
     }
-  }
 
-  > .design-form-body {
-    > .design-form-center {
-      background-color: rgba(255, 255, 255, 0.3);
+    > .design-form-body {
+      > .design-form-center {
+        background-color: rgba(255, 255, 255, 0.3);
 
-      > .design-form-canvas {
-        > .design-form-canvas-page {
-          background-color: rgba(255, 255, 255, 0.6);
+        > .design-form-canvas {
+          > .design-form-canvas-page {
+            background-color: rgba(255, 255, 255, 0.6);
 
-          > .questionnaire-content {
-            > .form-canvas {
-              > .form-canvas-body {
-                > .form-canvas-mainpanel {
-                  > .form-component {
-                    &:after {
+            > .questionnaire-content {
+              > .form-canvas {
+                > .form-canvas-body {
+                  > .form-canvas-mainpanel {
+                    > .form-component {
+                      &:after {
+                      }
                     }
                   }
                 }
               }
             }
-          }
 
-          > .questionnaire-title {
+            > .questionnaire-title {
+            }
           }
         }
       }
-    }
 
-    > .design-form-aside {
-      > .design-form-aside-group {
-        background-color: rgba(255, 255, 255, 0.8);
+      > .design-form-aside {
+        > .design-form-aside-group {
+          background-color: rgba(255, 255, 255, 0.8);
 
-        > .design-form-aside-group-item {
-          > .iconfont {
-            color: @primary-color;
-          }
+          > .design-form-aside-group-item {
+            > .iconfont {
+              color: @primary-color;
+            }
 
-          &:hover {
-            background-color: #ffffff;
-            box-shadow: -2px 2px 4px 0px rgba(0, 0, 0, 0.2);
+            &:hover {
+              background-color: #ffffff;
+              box-shadow: -2px 2px 4px 0px rgba(0, 0, 0, 0.2);
+
+              > .iconfont {
+              }
+            }
+
+            &.active {
+              background-color: @primary-color;
+              background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
+
+              &:after {
+                background-color: @primary-color;
+                background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
+              }
+            }
 
             > .iconfont {
             }
+
+            > span {
+            }
+          }
+        }
+
+        > .design-form-aside-content {
+          background-color: rgba(255, 255, 255, 0.6);
+
+          > .design-form-aside-toolbox {
+            > .design-form-aside-toolbox-group {
+              > .design-form-aside-toolbox-group-title {
+              }
+
+              > .design-form-aside-components {
+                > .component-item {
+                  background-color: rgba(255, 255, 255, 0.6);
+                }
+              }
+            }
           }
 
-          &.active {
-            background-color: @primary-color;
-            background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
+          > .design-form-aside-added-components {
+            > li {
+              &.active {
+              }
+            }
+          }
+        }
+      }
 
-            &:after {
-              background-color: @primary-color;
+      > .design-form-property {
+        background-color: rgba(255, 255, 255, 0.5);
+
+        .event-item {
+          > .event-item-header {
+            > .event-item-header-tools {
+              > .event-item-remove {
+              }
+            }
+          }
+
+          > .event-item-trigger {
+            > .event-item-trigger-item {
+              > .event-item-trigger-item-remove {
+              }
+
+              > .event-format {
+                > .event-format-item {
+                }
+              }
+            }
+          }
+
+          > .event-item-action {
+            > .event-item-action-item {
+              > .event-item-action-item-remove {
+              }
+
+              > .event-format {
+                > .event-format-item {
+                }
+              }
+            }
+          }
+
+          .ant-input.ant-input-sm,
+          .ant-input-number.ant-input-number-sm,
+          .ant-input-affix-wrapper {
+          }
+        }
+
+        .ant-tabs-nav-wrap {
+        }
+
+        .property-collapse-item-title {
+        }
+
+        .ant-tabs-nav-wrap {
+          .ant-tabs-tab {
+            &.ant-tabs-tab-active {
               background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
-            }
-          }
-
-          > .iconfont {
-          }
-
-          > span {
-          }
-        }
-      }
-
-      > .design-form-aside-content {
-        background-color: rgba(255, 255, 255, 0.6);
-
-        > .design-form-aside-toolbox {
-          > .design-form-aside-toolbox-group {
-            > .design-form-aside-toolbox-group-title {
-            }
-
-            > .design-form-aside-components {
-              > .component-item {
-                background-color: rgba(255, 255, 255, 0.6);
-              }
+              border-color: #312e2e;
+              border-top-color: #312e2e;
+              border-bottom-color: #1a1818;
             }
           }
         }
 
-        > .design-form-aside-added-components {
-          > li {
-            &.active {
-            }
+        .form-design-body-property-item {
+          > .form-design-body-property-item-label {
           }
         }
       }
     }
 
-    > .design-form-property {
-      background-color: rgba(255, 255, 255, 0.5);
+    // 底部栏
+    > .design-form-footer {
+    }
+  }
 
-      .event-item {
-        > .event-item-header {
-          > .event-item-header-tools {
-            > .event-item-remove {
-            }
-          }
-        }
-
-        > .event-item-trigger {
-          > .event-item-trigger-item {
-            > .event-item-trigger-item-remove {
-            }
-
-            > .event-format {
-              > .event-format-item {
-              }
-            }
-          }
-        }
-
-        > .event-item-action {
-          > .event-item-action-item {
-            > .event-item-action-item-remove {
-            }
-
-            > .event-format {
-              > .event-format-item {
-              }
-            }
-          }
-        }
-
-        .ant-input.ant-input-sm,
-        .ant-input-number.ant-input-number-sm,
-        .ant-input-affix-wrapper {
+  .form-design-body-property-item {
+    > .form-design-body-property-item-value {
+      .ant-input-sm,
+      .ant-input-number-sm,
+      .ant-input-affix-wrapper {
+      }
+      .ant-input.ant-input-sm,
+      .ant-input-number.ant-input-number-sm,
+      .ant-input-affix-wrapper {
+      }
+      .ant-input-affix-wrapper {
+        > .ant-input {
         }
       }
-
-      .ant-tabs-nav-wrap {
-      }
-
-      .property-collapse-item-title {
-      }
-
-      .ant-tabs-nav-wrap {
-        .ant-tabs-tab {
-          &.ant-tabs-tab-active {
-            background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
-            border-color: #312e2e;
-            border-top-color: #312e2e;
-            border-bottom-color: #1a1818;
+      .ant-select {
+        &.ant-select-sm {
+          > .ant-select-selector {
           }
         }
       }
 
-      .form-design-body-property-item {
-        > .form-design-body-property-item-label {
+      .ant-table {
+        .ant-table-thead > tr > th {
+        }
+      }
+    }
+
+    .richtext-editor {
+      .w-e-toolbar {
+      }
+
+      .w-e-text-container {
+      }
+    }
+
+    .box-editor {
+      > div {
+        > .box-editor-label {
+        }
+
+        > input {
         }
       }
     }
   }
 
-  // 底部栏
-  > .design-form-footer {
-  }
-}
-
-.form-design-body-property-item {
-  > .form-design-body-property-item-value {
-    .ant-input-sm,
-    .ant-input-number-sm,
-    .ant-input-affix-wrapper {
-    }
-    .ant-input.ant-input-sm,
-    .ant-input-number.ant-input-number-sm,
-    .ant-input-affix-wrapper {
-    }
-    .ant-input-affix-wrapper {
-      > .ant-input {
-      }
-    }
-    .ant-select {
-      &.ant-select-sm {
-        > .ant-select-selector {
-        }
-      }
-    }
-
-    .ant-table {
-      .ant-table-thead > tr > th {
+  .property-collapse {
+    > .property-collapse-item {
+      &:after {
       }
     }
   }
 
-  .richtext-editor {
-    .w-e-toolbar {
-    }
+  // 折叠面板
+  .expand-handle-left {
+    z-index: 1;
 
-    .w-e-text-container {
-    }
-  }
-
-  .box-editor {
-    > div {
-      > .box-editor-label {
-      }
-
-      > input {
+    &:hover {
+      &:before {
+        background-color: rgba(255, 255, 255, 0.7);
       }
     }
-  }
-}
 
-.property-collapse {
-  > .property-collapse-item {
-    &:after {
-    }
-  }
-}
-
-// 折叠面板
-.expand-handle-left {
-  z-index: 1;
-
-  &:hover {
     &:before {
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: rgba(255, 255, 255, 0.4);
     }
-  }
-
-  &:before {
-    background-color: rgba(255, 255, 255, 0.4);
   }
 }

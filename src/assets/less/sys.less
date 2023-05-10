@@ -75,3 +75,25 @@
   box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.14), inset -1px -1px 0 rgba(0, 0, 0, 0.07);
   -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.14), inset -1px -1px 0 rgba(0, 0, 0, 0.07);
 }
+
+
+// 主题切换动画
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+.reverse::view-transition-old(root) {
+  z-index: 999;
+}
+.reverse::view-transition-new(root) {
+  z-index: 1;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 999;
+}

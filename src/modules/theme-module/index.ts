@@ -5,10 +5,11 @@ import { cloneLoop } from '@/lib/clone';
 import { themeList } from './data/theme-list';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 
 export * from './index.d';
 
-/** 主题模块状态 */
+/** 客户端主题模块状态 */
 export const state = reactive({
   /** 变量 */
   variableMap: {
@@ -18,7 +19,7 @@ export const state = reactive({
   themeList: themeList,
   /** 主题配置 */
   themeConfig: {} as ThemeConfig,
-  /** 当前主题名称 */
+  /** 当前主题名称（客户端主题） */
   currentThemeCode: 'theme-default',
 });
 
@@ -31,7 +32,10 @@ export const service = {
   /** 加载主题 */
   changeTheme(theme?: string | ThemeConfig) {
     if (theme === undefined || typeof theme === 'string') {
-      if (theme) state.currentThemeCode = theme;
+      if (theme) {
+        state.currentThemeCode = theme;
+        editorState.appConfig.appTheme = theme;
+      }
       const _index = state.themeList.findIndex(i => i.code === state.currentThemeCode);
       if (_index >= 0) {
         state.themeConfig = cloneLoop(state.themeList[_index]);

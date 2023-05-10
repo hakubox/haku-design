@@ -3,11 +3,12 @@
   <div class="haku-dialog"
     :class="{
       show: typeof props.visible === 'boolean' ? props.visible : props.visible.value,
-      leave: state.isLeaving
+      leave: state.isLeaving,
+      drag: props.drag
     }"
     @click.self.stop="closeDialog"
   >
-    <div class="haku-dialog-body">
+    <div class="haku-dialog-body" :class="props.bodyClass">
       <!-- 顶部栏 -->
       <div class="haku-dialog-header" v-if="props.header === true && !slots.header">
         <!-- 标题 -->
@@ -61,6 +62,16 @@ const props = defineProps({
   title: {
     type: String,
     default: '弹出框'
+  },
+  /** 主题类样式 */
+  bodyClass: {
+    type: String,
+    default: ''
+  },
+  /** 拖拽 */
+  drag: {
+    type: Boolean,
+    default: true
   }
 });
 
@@ -95,12 +106,12 @@ onUnmounted(() => {
 <style lang="less" scoped>
 @import '/src/assets/less/variable.less';
 
-.preview-modal-enter-active,
-.preview-modal-leave-active {
+.haku-dialog-enter-active,
+.haku-dialog-leave-active {
   transition: opacity 0.5s ease;
 }
-.preview-modal-enter-from,
-.preview-modal-leave-to {
+.haku-dialog-enter-from,
+.haku-dialog-leave-to {
   opacity: 0;
   visibility: hidden;
 }
@@ -112,11 +123,10 @@ onUnmounted(() => {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px 5px 10px 15px;
-  height: 627px;
 }
 
 // 预览弹窗
-.preview-modal {
+.haku-dialog {
   position: fixed;
   display: flex;
   flex-direction: row;
@@ -138,7 +148,7 @@ onUnmounted(() => {
     visibility: visible;
     opacity: 1;
 
-    > .preview-modal-body {
+    > .haku-dialog-body {
       transform: translateY(0px);
     }
   }
@@ -146,38 +156,51 @@ onUnmounted(() => {
   &.leave {
     opacity: 0;
 
-    > .preview-modal-body {
+    > .haku-dialog-body {
       transform: translateY(-30px);
     }
   }
+  
+  &.drag {
+    width: auto;
+    height: auto;
+    bottom: initial;
+    right: initial;
+    background-color: transparent;
+  }
 
-  .preview-modal-body {
+  > .haku-dialog-body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    margin-right: 450px;
     transition: 0.25s;
     transform: translateY(-30px);
+    background-color: white;
+    padding: 0px 15px 15px 15px;
+    border-radius: 6px;
+    box-shadow: 0px 2px 8px 1px rgba(0, 0, 0, 0.18);
 
-    > .preview-modal-header {
+    > .haku-dialog-header {
       flex-shrink: 0;
       flex-grow: 0;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       padding: 10px 12px 6px 12px;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #EEE;
+      margin-bottom: 10px;
 
-      > .preview-modal-title {
+      > .haku-dialog-title {
         flex-shrink: 1;
         flex-grow: 1;
         font-size: 14px;
-        font-weight: bold;
+        font-weight: 500;
       }
 
-      > .preview-modal-tools {
+      > .haku-dialog-tools {
         flex-shrink: 0;
         flex-grow: 0;
+        display: inline-block;
 
         font-size: 14px;
 
@@ -191,7 +214,7 @@ onUnmounted(() => {
       }
     }
 
-    > .preview-modal-content {
+    > .haku-dialog-content {
       flex-shrink: 1;
       flex-grow: 1;
       position: relative;

@@ -18,6 +18,7 @@ const routes: Array<RouteRecordRaw> = [
       { path: 'dragbox', component: () => import('../views/example/DragBox_example.vue') },
       { path: 'background', component: () => import('../views/example/Background_example.vue') },
       { path: 'timeaxis', component: () => import('../views/example/TimeAxis_example.vue') },
+      { path: 'themechange', component: () => import('../views/example/ThemeChange_example.vue') },
     ],
   },
 ];

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 目前暂时用于背景选择器测试 -->
-    <BackgroundEditorDialog :value="state.value">
+    <BackgroundEditorDialog class="dialog1" :value="state.value">
 
     </BackgroundEditorDialog>
 
@@ -25,4 +25,8 @@ onMounted(() => {
 </script>
 
 <style lang="less">
+.haku-dialog.dialog1 {
+  left: 100px;
+  top: 100px;
+}
 </style>

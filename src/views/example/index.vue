@@ -28,6 +28,7 @@ const state = reactive({
     { title: '背景模块', url: '/example/background' },
     { title: '时间轴', url: '/example/timeaxis' },
     { title: '拖拽方向识别', url: '/example/dragbox' },
+    { title: '主题切换', url: '/example/themechange' },
   ]
 });
 

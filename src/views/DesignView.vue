@@ -57,12 +57,12 @@
                 </template>
                 <template #title>主题</template>
                 <MenuItem
-                  :class="{ 'ant-menu-item-active': editorState.appConfig.appTheme == theme.code }"
+                  :class="{ 'ant-menu-item-active': editorState.appConfig.designConfig.themeCode == theme.code }"
                   v-for="(theme, index) in state.formThemes"
                   :key="'sub1-2-' + index"
-                  @click="editorService.selectTheme(theme.code, theme.title)"
+                  @click="$event => editorService.selectTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
                 >
-                  <CheckOutlined v-show="editorState.appConfig.appTheme == theme.code" />
+                  <CheckOutlined v-show="editorState.appConfig.designConfig.themeCode == theme.code" />
                   {{theme.title}}
                 </MenuItem>
               </SubMenu>

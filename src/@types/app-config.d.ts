@@ -79,6 +79,10 @@ export interface DesignConfig {
   deviceType: DeviceType;
   /** 当前控件索引（自增） */
   componentIndex: number;
+  /** 编辑器主题（非客户端主题） */
+  themeCode: string;
+  /** 上一次选择的编辑器主题 */
+  prevThemeCode: string;
 }
 
 
@@ -100,7 +104,7 @@ export interface AppConfig {
   description: string;
   /** 备注 */
   remark: string;
-  /** 主题 */
+  /** 客户端主题 */
   appTheme: string;
   /** 页面布局形式 */
   layoutConfig: LayoutConfig;
