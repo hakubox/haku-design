@@ -47,7 +47,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
 import { simpleAnimeList } from '@/modules/anime-module';
-import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module/@types';
+import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import { GeneralProperty } from '@/@types';
 import { ComponentPropertyEditor } from '@/@types/enum';

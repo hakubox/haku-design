@@ -119,14 +119,13 @@
 <script lang="ts" setup>
 import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
+import { state as formFillState, service as formFillService, type FormInfoItem } from '@/modules/form-fill-module';
 import { state as eventState, service as eventService, type AppEventLog } from '@/modules/event-module';
 import { AppType, ComponentPropertyEditor, PageType } from '@/@types/enum';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { cloneLoop } from "@/lib/clone";
 import { AppPage } from "@/@types/app-page";
-import { FormInfoItem } from "@/modules/form-fill-module/@types";
 import { GeneralProperty } from "@/@types";
 import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";

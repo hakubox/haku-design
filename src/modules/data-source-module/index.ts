@@ -4,6 +4,7 @@ import { DataSourceType } from './enum';
 import { computed, reactive } from 'vue';
 
 export * from './index.d';
+export * from './enum';
 
 /** 转换数据为数据图 */
 const transformDataMap = (data: any) => {

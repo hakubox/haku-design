@@ -1,5 +1,3 @@
-import { string } from 'vue-types';
-
 export enum DataBind {}
 
 /** 表单下的页面类型 */
@@ -206,8 +204,6 @@ export enum AppType {
   questionnaire = 'questionnaire',
   /** 画布 */
   canvas = 'canvas',
-  /** 幻灯片/演示文稿 */
-  powerpoint = 'powerpoint',
   /** 复合组件 */
   complexComponent = 'complex-component',
 }
@@ -222,6 +218,8 @@ export enum OriginDataTransformComponentAnswerType {
   'data-boolean' = 'boolean',
   /** 日期类型 */
   'data-date' = 'datetime',
+  /** 文件类型 */
+  'data-file' = 'file',
   /** 【未完成】组件类型 */
   'data-component' = 'text',
   /** 变量类型 */

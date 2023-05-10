@@ -1,8 +1,9 @@
 import { Component, ComponentProperty, LayoutConfig, SetPartial } from "@/@types";
-import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment } from '@/@types/enum';
+import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment, AppType } from '@/@types/enum';
 import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
 import bus from '@/tools/bus';
+import { state as editorState } from "@/modules/editor-module";
 
 export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component' | 'isGroup'>;
 
@@ -35,7 +36,7 @@ export let formComponents: InitComponent[] = [
     },
     propertys: [
       {
-        name: 'location', title: '位置', default: true, visible: true, names: ['x', 'y'],
+        name: '', names: ['x', 'y'], title: '位置', visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
         attrs: {
           options: [ { label: 'x', prop: 'x' }, { label: 'y', prop: 'y' } ]
@@ -61,8 +62,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine,
         attach: [ ComponentPropertyEditor.variable ],
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'maxlength', title: '最大输入字数', default: 1000,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -2036,7 +2038,17 @@ export function initComponents(componentList?: InitComponent[]): InitComponent[]
   return (componentList ?? []).map(i => {
     const _propertys = i.propertys
       .filter(o => o.default !== undefined && o.default !== null)
-      .map(o => ({[o.name]: o.default}));
+      .map(o => {
+        if (o.names) {
+          const _obj = {};
+          o.names.forEach((name, index) => {
+            _obj[name] = o.default[index];
+          });
+          return _obj;
+        } else {
+          return { [o.name]: o.default };
+        }
+      });
     const component = {
       ...i,
       propertyEditors: Object.assign.apply({}, 

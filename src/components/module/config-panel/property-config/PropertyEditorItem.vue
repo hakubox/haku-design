@@ -91,7 +91,7 @@ const propChangeListener = (value) => {
             },
             value: value[index]
           });
-          _component.attrs['__' + name] = value;
+          _component.attrs['__' + name] = value[index];
           if (props.prop?.change) {
             return props.prop.change.call(this, props.prop, _propMap, _component, value[index], (editorState.componentCanvas as any).$refs);
           }

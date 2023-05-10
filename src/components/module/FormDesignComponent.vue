@@ -17,7 +17,9 @@
       top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
       left: `${props.component.attrs.x}px`,
       transform: `rotate(${props.component.attrs.rotate || 0}deg)`
-    }: {}"
+    }: {
+      margin: getBoxModel(props.component.attrs.margin),
+    }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
   >
@@ -246,6 +248,7 @@ import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@/@types/enum';
+import { getBoxModel } from '@/tools/common';
 import bus from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 

@@ -7,7 +7,19 @@ const routes: Array<RouteRecordRaw> = [
   { path: '/print', component: () => import('../views/PrintPage.vue') },
   { path: '/scoring', component: () => import('../views/Scoring.vue') },
   { path: '/login', component: () => import('../views/Login.vue') },
-  { path: '/test', component: () => import('../views/TestPage.vue') },
+
+  // 示例/测试页面
+
+  { 
+    path: '/example',
+    component: () => import('../views/example/index.vue'),
+    redirect: '/example/background',
+    children: [
+      { path: 'dragbox', component: () => import('../views/example/DragBox_example.vue') },
+      { path: 'background', component: () => import('../views/example/Background_example.vue') },
+      { path: 'timeaxis', component: () => import('../views/example/TimeAxis_example.vue') },
+    ],
+  },
 ];
 
 const router = createRouter({

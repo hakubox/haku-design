@@ -39,7 +39,7 @@ export interface ExportAppBody {
     /** 主题code */
     code?: string;
     /** 主题配置项 */
-    config?: Record<string, any>;
+    config?: ThemeConfig;
     /** 主题标题 */
     title?: string;
   },

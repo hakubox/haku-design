@@ -1,11 +1,10 @@
 import { state as formFillState } from '@/modules/form-fill-module';
 import { state as editorState } from '@/modules/editor-module';
-import { state as dataSourceState } from '@/modules/data-source-module';
+import { state as dataSourceState, DataSourceType } from '@/modules/data-source-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { createModelId, timeFormat } from '@/tools/common';
 import type { VariableTreeNode, VariableType } from './index.d';
 import { cloneForce } from '@/lib/clone';
-import { DataSourceType } from '../data-source-module/enum';
 import { computed, reactive } from 'vue';
 
 export * from './index.d';

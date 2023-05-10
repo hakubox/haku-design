@@ -1,7 +1,7 @@
 <template>
   <div
     :style="{
-      margin: getBoxModel(props.margin),
+      padding: getBoxModel(props.padding),
     }"
     class="component-item"
     :class="[{ required: props.required }, className]"
@@ -56,6 +56,11 @@ const props = defineProps({
   /** 组件标签，会覆盖description属性 */
   componentDescription: {
     type: String,
+  },
+  /** 内边距 */
+  padding: {
+    type: Array as PropType<any>,
+    default: () => [0, 0, 0, 0] as [number, number, number, number],
   },
   /** 外边距 */
   margin: {

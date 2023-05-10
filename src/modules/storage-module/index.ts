@@ -26,6 +26,7 @@ import { getVideoDuration } from './tools/getVideoDuration';
 import { toast, confirm } from '@/common/message';
 
 export * from './index.d';
+export * from './enum';
 
 /** 存储模块状态 */
 export const state = reactive({

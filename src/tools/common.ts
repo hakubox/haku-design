@@ -3,7 +3,7 @@ import { cloneLoop } from '@/lib/clone';
 import { toRaw } from 'vue';
 
 /** QBasic属性名称列表 */
-const QBasicPropNameList: string[] = [ 'id', 'label', 'component', 'description', 'componentLabel', 'componentDescription', 'disabled', 'visible', 'margin', 'required', 'error-txt' ];
+const QBasicPropNameList: string[] = [ 'id', 'label', 'component', 'description', 'componentLabel', 'componentDescription', 'disabled', 'visible', 'padding', 'margin', 'required', 'error-txt' ];
 
 /** 获取QBasic组件的属性 */
 export const getQBasicProps = (props: Record<string, any>) => {

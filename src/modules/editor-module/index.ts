@@ -306,8 +306,6 @@ export const service = {
     if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
-    } else if (createConfig.type === AppType.powerpoint) {
-      service.initFormByPowerpoint(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
@@ -331,8 +329,6 @@ export const service = {
     if (!isPreview) service.changeSelectedFormComponent([]);
     if (createConfig.type === AppType.questionnaire) {
       service.initFormByForm(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
-    } else if (createConfig.type === AppType.powerpoint) {
-      service.initFormByPowerpoint(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.complexComponent) {
       service.initFormByComplexComponent(undefined, createConfig.id, { appTitle: createConfig.title, description: createConfig.description });
     } else if (createConfig.type === AppType.canvas) {
@@ -354,48 +350,6 @@ export const service = {
       state.canvasEl = document.querySelector('.design-form-canvas')!;
       pluginModule.onAppLoad();
     });
-  },
-  /** 初始化幻灯片/演示文稿 */
-  initFormByPowerpoint(form?: any, formId?: string, appConfig?: Record<string, any>) {
-    if (form) {
-      state.appConfig = form.appConfig;
-      if (formId) state.appConfig.id = formId;
-
-      // let _componentTree = fillPropertys(form.components.children);
-      // console.log(_componentTree);
-      state.pages = form.pages;
-      service.getAllComponents(...form.pages).forEach(i => service.loadComponentPropertys(i));
-    } else {
-      const _defaultDevice = remoteDevices['largepc'];
-      state.appConfig = service.createAppConfig({
-        appType: AppType.powerpoint,
-        isInit: true,
-        appTitle: appConfig?.title || '',
-        description: appConfig?.description || '',
-        width: _defaultDevice.width,
-        height: _defaultDevice.height,
-        deviceType: DeviceType.pc,
-        layoutConfig: {
-          layout: LayoutType.flex,
-          layoutDetailConfig: {
-            direction: 'column',
-          }
-        } as LayoutConfig<LayoutType.flex>,
-      });
-      state.pages[0].children = [];
-    }
-
-    state.currentSelectedComponents = [];
-    state.currentSelectedFirstComponentId = '';
-    state.currentSelectedComponentPropertyGroups = [];
-    state.currentSelectedComponentPropertyMap = {};
-
-    setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas')!;
-      state.canvasEl = document.querySelector('.design-form-canvas')!;
-      service.refresh();
-    }, 200);
-    service.init();
   },
   /** 初始化复合组件 */
   initFormByComplexComponent(form?: ExportAppBody, formId?: string, appConfig?: Record<string, any>) {
@@ -641,8 +595,8 @@ export const service = {
         case AppType.questionnaire:
           service.initFormByForm(body);
           break;
-        case AppType.powerpoint:
-          service.initFormByPowerpoint(body);
+        case AppType.canvas:
+          service.initFormByCanvas(body);
           break;
         default:
           break;

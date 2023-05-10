@@ -1,7 +1,7 @@
 {
   "name": "haku-design",
   "private": false,
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "小白快搭是使用vite4.0开发的一款设计工具。",
   "type": "module",
   "author": {
@@ -83,6 +83,7 @@
     "typescript": "^4.9.5",
     "vant": "3.5.2",
     "vite": "4.0.1",
+    "vitest": "^0.31.0",
     "vue-tsc": "^1.0.12",
     "vuepress": "2.0.0-beta.59",
     "vuepress-plugin-demoblock-plus": "2.0.4"
