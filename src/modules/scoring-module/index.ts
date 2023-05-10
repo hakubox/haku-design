@@ -1,7 +1,7 @@
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
 import { type Component, type ComponentGroup, type FormDimensionItem } from '@haku-design/core';
-import { ComponentCategory } from '@haku-design/core/src/@types/enum';
+import { ComponentCategory } from '@haku-design/core/enum';
 import { reactive } from 'vue';
 import { message } from '@haku-design/common';
 

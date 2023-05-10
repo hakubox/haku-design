@@ -1,6 +1,6 @@
 import { Component } from './component';
 import { ComponentGroup } from './component-group';
-import { PageType } from './enum';
+import { PageType } from '../../enum';
 
 /** 表单下的页面 */
 export interface AppPage {

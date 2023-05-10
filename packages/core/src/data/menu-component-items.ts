@@ -1,6 +1,11 @@
-import { ComponentCategory, PageType } from '../@types/enum';
+import { ComponentCategory, PageType } from '../../enum';
 import { ToolComponentItem } from '../@types/tool-component-item';
 import { computed } from 'vue';
+
+/** 工具箱配置菜单 */
+export const getMenuComponentItems = computed(() => {
+  return menuComponentItems;
+});
 
 export let menuComponentItems: ToolComponentItem[] = [
   {
@@ -272,9 +277,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     category: ComponentCategory.special,
   },
 ];
-
-/** 工具箱配置菜单 */
-export const getMenuComponentItems = menuComponentItems;
 
 export const setMenuItems = (items) => {
   menuComponentItems = items;

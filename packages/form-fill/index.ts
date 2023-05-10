@@ -17,7 +17,7 @@ import {
 import { 
   OriginDataTransformComponentAnswerType,
   PageType,
-} from '@haku-design/core/src/@types/enum';
+} from '@haku-design/core/enum';
 
 
 import { clearOldMediaInfo } from '@haku-design/common/src/lib/media';

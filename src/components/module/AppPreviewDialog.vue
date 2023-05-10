@@ -121,7 +121,8 @@ import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref }
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as formFillState, service as formFillService } from '@haku-design/form-fill';
 import { state as eventState, service as eventService } from '@haku-design/event';
-import { AppPage, AppType, ComponentPropertyEditor, GeneralProperty, PageType } from '@haku-design/core';
+import { AppPage, GeneralProperty } from '@haku-design/core';
+import { AppType, ComponentPropertyEditor, PageType } from '@haku-design/core/enum';
 import GeneralEditor from '@haku-design/core/src/components/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { type FormInfoItem } from "@haku-design/form-fill";

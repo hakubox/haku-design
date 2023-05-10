@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts" setup>
-import { AppType } from '@haku-design/core';
 import { onMounted, reactive, ref } from 'vue';
+import { AppType } from '@haku-design/core/enum';
 import { getQuestionary } from '@haku-design/core/src/api/questionnaire';
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import DesignCanvas from "../components/module/DesignCanvas.vue";

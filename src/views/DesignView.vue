@@ -316,7 +316,8 @@ import AppPreviewDialog from '@/components/module/AppPreviewDialog.vue';
 import ThemeConfig from '@haku-design/theme/src/component/ThemeConfig.vue';
 import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
   
-import { initCommands, Component, AppType } from '@haku-design/core';
+import { initCommands, Component } from '@haku-design/core';
+import { AppType } from '@haku-design/core/enum';
 import { getQuestionary } from '@haku-design/core/src/api/questionnaire';
 import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';

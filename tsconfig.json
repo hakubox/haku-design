@@ -45,7 +45,7 @@
     "packages/theme/index.ts",
     "packages/hotkey/index.ts",
     "packages/form-fill/index.ts"
-  ],
+, "packages/core/enum.ts"  ],
   "exclude": [
     "node_modules",
     "dist"

@@ -1,5 +1,5 @@
 import { type PropertyEditor, type SetPartial } from '../../';
-import { ComponentPropertyEditor } from '../@types/enum';
+import { ComponentPropertyEditor } from '../../enum';
 import { icons } from '../data/icon-editor';
 import { computed } from 'vue';
 

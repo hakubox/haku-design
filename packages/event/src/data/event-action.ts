@@ -1,4 +1,4 @@
-import { DeviceType, PageType, ComponentPropertyEditor } from '@haku-design/core/src/@types/enum';
+import { DeviceType, PageType, ComponentPropertyEditor } from '@haku-design/core/enum';
 import { AppEventAction } from '@haku-design/event';
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as formFillState, service as formFillService } from '@haku-design/form-fill';

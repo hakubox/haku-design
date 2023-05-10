@@ -17,22 +17,7 @@
     "vue"
   ],
   "workspaces": [
-    "packages/global-search",
-    "packages/common",
-    "packages/core",
-    "packages/editor",
-    "packages/config",
-    "packages/plugin",
-    "packages/global",
-    "packages/auth",
-    "packages/event",
-    "packages/theme",
-    "packages/version-history",
-    "packages/intro",
-    "packages/hotkey",
-    "packages/anime",
-    "packages/form-fill",
-    "packages/history"
+    "packages/*"
   ],
   "scripts": {
     "dev": "cross-env buildProj=design buildMode=development vite --mode development",

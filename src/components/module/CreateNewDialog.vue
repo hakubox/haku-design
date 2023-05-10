@@ -81,8 +81,8 @@
 
 <script lang="ts" setup>
 import { reactive, watch, computed, PropType } from 'vue';
-import { CreateNewConfig } from '@haku-design/core/@types';
-import { AppType } from '@haku-design/core';
+import { CreateNewConfig } from '@haku-design/core';
+import { AppType } from '@haku-design/core/enum';
 import { Button, Form, FormItem, Input, Modal, Radio, RadioGroup, Textarea } from 'ant-design-vue';
 import { FormOutlined } from '@ant-design/icons-vue';
 

@@ -4,7 +4,7 @@ import { FormTimerConfig } from './form-timer-config';
 import { FormStartPageConfig } from './form-start-page-config';
 import { FormEndPageConfig } from './form-end-page-config';
 import { RatingConfig } from './rating-config';
-import { DeviceType, AppType, LayoutType } from './enum';
+import { DeviceType, AppType, LayoutType } from '../../enum';
 import { LayoutConfig } from './form-panel';
 
 /** 应用类型独有配置项 */

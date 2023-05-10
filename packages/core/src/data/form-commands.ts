@@ -1,5 +1,5 @@
 import { Component, CommandType, Props } from '@haku-design/core';
-import { VarType } from '@haku-design/core/src/@types/enum';
+import { VarType } from '@haku-design/core/enum';
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { cloneLoop } from '@haku-design/common/src/lib/clone';
 import { createModelId } from '@haku-design/common';

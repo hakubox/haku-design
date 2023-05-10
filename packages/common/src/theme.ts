@@ -1,4 +1,4 @@
-import { VarType } from "@haku-design/core/src/@types/enum";
+import { VarType } from "@haku-design/core/enum";
 import { defineCommand } from "@haku-design/core";
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as themeState } from '@haku-design/theme';

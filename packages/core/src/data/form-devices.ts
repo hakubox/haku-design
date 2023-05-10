@@ -1,5 +1,5 @@
 import { type RemoteDevice } from '../@types';
-import { DeviceType } from '../@types/enum';
+import { DeviceType } from '../../enum';
 
 /** 设备型号列表 */
 export const remoteDevices: RemoteDevice[] = [

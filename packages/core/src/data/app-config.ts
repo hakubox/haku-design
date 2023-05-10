@@ -1,4 +1,4 @@
-import { AppType, ComponentPropertyEditor, PageType, PropertyLayout } from '@haku-design/core/src/@types/enum';
+import { AppType, ComponentPropertyEditor, PageType, PropertyLayout } from '@haku-design/core/enum';
 import { GeneralProperty } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as globalState } from '@haku-design/global';

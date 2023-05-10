@@ -1,5 +1,5 @@
 import { type Component, type ComponentProperty, type LayoutConfig, type SetPartial } from "@haku-design/core";
-import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment } from '@haku-design/core/src/@types/enum';
+import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment } from '@haku-design/core/enum';
 import { createModelId } from "@haku-design/common";
 import bus from "@haku-design/common/src/tools/bus";
 import { watch, computed } from 'vue';

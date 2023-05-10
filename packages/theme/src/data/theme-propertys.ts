@@ -1,5 +1,5 @@
 import type { GeneralProperty } from "@haku-design/core";
-import { ComponentPropertyEditor, PropertyLayout } from "@haku-design/core/src/@types/enum";
+import { ComponentPropertyEditor, PropertyLayout } from "@haku-design/core/enum";
 
 /** 主题属性列表 */
 export const themePropertys: GeneralProperty[] = [

@@ -1,5 +1,5 @@
 import { Component } from './component';
-import { LayoutType } from './enum';
+import { LayoutType } from '../../enum';
 import { ComponentLayout } from './layout-config';
 
 /** 布局配置 */

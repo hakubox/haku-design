@@ -1,6 +1,6 @@
 import { Component } from './component';
 import { PropertyGroup } from './property-group';
-import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from './enum';
+import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from '../../enum';
 
 /** 通用属性 */
 export declare class GeneralProperty {

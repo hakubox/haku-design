@@ -1,9 +1,9 @@
 import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@haku-design/common/src/lib/clone';
 import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect, FormDimensionItem } from '@haku-design/core';
-import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@haku-design/core/src/@types/enum';
+import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@haku-design/core/enum';
 import bus from '@haku-design/common/src/tools/bus';
-import { getComponents, initRemoteDevices, getEditors, AppPage, menuComponentItems } from '@haku-design/core';
+import { getComponents, initRemoteDevices, getEditors, AppPage, getMenuComponentItems, formCommands } from '@haku-design/core';
 import { state as configState, service as configService } from '@haku-design/config';
 import { state as eventState, service as eventService } from '@haku-design/event';
 import { state as storageState } from "@/modules/storage-module";
@@ -24,7 +24,6 @@ const OperationRecord = '__hakuform__operation__';
 
 import { getFileListByIds } from '@/modules/storage-module/api';
 import { EventTriggerType } from '@haku-design/event/src/enum';
-import { formCommands } from '@haku-design/core';
 import { FormInfoItem } from '@haku-design/form-fill';
 import { message } from '@haku-design/common';
 
@@ -134,6 +133,7 @@ export const service = {
       value: themeCode,
       attrs: { themeTitle: themeTitle }
     });
+    window.addEventListener('DOMContentLoaded')
   },
   /** 获取选择的组件范围 */
   getSelectedComponentRect(selected?: (Component | ComponentGroup)[]): ComponentRect {
@@ -1360,7 +1360,7 @@ export const state = reactive({
   /** 控件画布 */
   componentCanvas : {} as any,
   /** 工具箱列表 */
-  menuComponents: menuComponentItems,
+  menuComponents: getMenuComponentItems,
   /** 组件列表 */
   componentList: getComponents,
   /** 游标父元素 */

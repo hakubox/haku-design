@@ -1,6 +1,6 @@
 import { SimpleAnime, SimpleAnimeConfig } from '../../@types';
 import { gsap, Linear, Back, Power0, Power2 } from 'gsap';
-import { ComponentPropertyEditor } from '@haku-design/core';
+import { ComponentPropertyEditor } from '@haku-design/core/enum';
 
 /** 简单淡出动画列表 */
 export const animes: SimpleAnime[] = [

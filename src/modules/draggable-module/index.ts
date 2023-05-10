@@ -1,5 +1,5 @@
 import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@haku-design/core';
-import { AppType, ComponentCategory, LayoutType } from '@haku-design/core/src/@types/enum';
+import { AppType, ComponentCategory, LayoutType } from '@haku-design/core/enum';
 import { state as editorState, service as editorService } from '@haku-design/editor';
 import { state as historyState, service as historyService } from '@haku-design/history';
 import { cloneForce, createModelId, intersectsRect, moveNodeOfTree, toDecimal, getComponentsRect, getHeight, getWidth } from '@haku-design/common';

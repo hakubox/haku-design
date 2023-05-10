@@ -1,4 +1,4 @@
-import { DeviceType } from "./enum";
+import { DeviceType } from "../../enum";
 
 /** 设备类型 */
 export declare class RemoteDevice {

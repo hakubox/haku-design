@@ -126,7 +126,8 @@
 import { onMounted, PropType, reactive } from "vue";
 import { state as editorState } from "@haku-design/editor";
 import GeneralEditorItem from './GeneralEditorItem.vue';
-import { ComponentGroup, GeneralProperty, Component, ComponentPropertyEditor } from "@haku-design/core";
+import { ComponentGroup, GeneralProperty, Component } from "@haku-design/core";
+import { ComponentPropertyEditor } from "@haku-design/core/enum";
 import { isBlank, isNotBlank } from "@haku-design/common";
 import { Button, ButtonGroup, Modal, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";

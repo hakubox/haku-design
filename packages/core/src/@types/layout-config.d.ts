@@ -1,4 +1,4 @@
-import { CrossAxisAlignment, MainAxisAlignment } from "./enum";
+import { CrossAxisAlignment, MainAxisAlignment } from "../../enum";
 
 /** 组件布局 */
 export interface ComponentLayout {

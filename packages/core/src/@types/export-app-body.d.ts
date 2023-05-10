@@ -1,7 +1,7 @@
 import { AppConfig, AppPage } from './';
 import { AppEvent } from '@haku-design/event';
 import type { ThemeConfig } from '@haku-design/theme';
-import { AppType } from './enum';
+import { AppType } from '../../enum';
 
 /** 用于导出的应用主体 */
 export interface ExportAppBody {
@@ -31,10 +31,10 @@ export interface ExportAppBody {
   /** 相关文件 */
   files: any[];
   /** 主题 */
-  theme: {
-    id: string,
-    code: string,
-    config: string,
-    title: string,
+  theme?: {
+    id?: string,
+    code?: string,
+    config?: string,
+    title?: string,
   },
 }
