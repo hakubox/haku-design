@@ -50,6 +50,7 @@
                 </template>
                 <template #title>导出</template>
                 <MenuItem key="export_json" @click="menu_exportJSON()">导出为JSON</MenuItem>
+                <MenuItem key="export_image" @click="menu_exportImage()">导出为图片</MenuItem>
               </SubMenu>
               <SubMenu>
                 <template #icon>
@@ -325,6 +326,8 @@ import dayjs from 'dayjs';
 import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
 import Thumbnail from '@/components/common/Thumbnail.vue';
+import domtoimage from 'dom-to-image-more';
+import { ApiMethodType, download } from '@/lib/api';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
@@ -433,6 +436,26 @@ const menu_exportJSON = () => {
     state.jsonEditorVisible = true;
   } else {
     exportJSONFile();
+  }
+};
+/** 导出图片 */
+const menu_exportImage = () => {
+  if((/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent))) {
+    toast('暂不支持Safari导出图片');
+    // download('', {
+    //   url: `${location.origin}/#/preview`,
+    //   width: 500,
+    //   height: 500
+    // }, { method: ApiMethodType.get }).then(blob => {
+    //  downLoadFile(`小白快搭_${editorState.appConfig.appTitle}_${dateFormat(new Date(), 'yyyy_MM_dd')}.png`, blob);
+    // });
+  } else {
+    const _dom = document.querySelector('.design-form-canvas-page');
+    domtoimage.toBlob(_dom).then((blob) => {
+      downLoadFile(`小白快搭_${editorState.appConfig.appTitle}_${dateFormat(new Date(), 'yyyy_MM_dd')}.png`, blob);
+    }).catch((error) => {
+      toast(`导出图片失败，${error}`, 'error');
+    });
   }
 };
 /** 保存功能 */

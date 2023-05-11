@@ -564,9 +564,9 @@ export function openFileDialog(): Promise<File[]> {
 }
 
 /** 下载文件 */
-export function downLoadFile(name: string, data: string) {
+export function downLoadFile(name: string, data: string | Blob) {
   const urlObject = window.URL || window.webkitURL || window;
-  const export_blob = new Blob([data]);
+  const export_blob = typeof data === 'string' ? new Blob([data]) : data;
   const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
   save_link.setAttribute('href', urlObject.createObjectURL(export_blob));
   save_link.setAttribute('download', name);
