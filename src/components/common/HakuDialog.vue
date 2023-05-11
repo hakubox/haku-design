@@ -176,7 +176,7 @@ onUnmounted(() => {
     transition: 0.25s;
     transform: translateY(-30px);
     background-color: white;
-    padding: 0px 15px 15px 15px;
+    padding: 0px 10px 10px 10px;
     border-radius: 6px;
     box-shadow: 0px 2px 8px 1px rgba(0, 0, 0, 0.18);
 
@@ -219,7 +219,7 @@ onUnmounted(() => {
       flex-grow: 1;
       position: relative;
       display: block;
-      overflow: hidden;
+      // overflow: hidden;
       will-change: auto;
 
       > .form-canvas {

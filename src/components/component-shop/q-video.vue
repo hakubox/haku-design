@@ -23,7 +23,8 @@
       :controls="($attrs.controls as boolean)"
       style="width: 100%"
       :style="{
-        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
+        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
+        height: (props.height - props.padding[0] - props.padding[2]) + 'px'
       }"
     >
       您的浏览器不支持视频元素
@@ -37,7 +38,7 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 
 const props = defineProps({
@@ -50,6 +51,16 @@ const props = defineProps({
   rememberPosition: {
     type: Boolean,
     default: true,
+  },
+  /** 内边距 */
+  padding: {
+    type: Array as PropType<number[]>,
+    default: () => [15, 15, 15, 15],
+  },
+  /** 高度 */
+  height: {
+    type: Number,
+    default: 200,
   },
 });
 

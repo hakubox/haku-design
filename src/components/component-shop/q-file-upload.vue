@@ -10,7 +10,7 @@
       :max-count="count"
       :upload-icon="getUploadIcon"
     >
-      <div class="component-photograph-upload">
+      <div class="component-photograph-upload" :style="{ height: (props.height - 80) + 'px' }">
         <div class="component-photograph-upload-video" v-if="props.type === 'camcorder'">
           录像
         </div>
@@ -71,6 +71,11 @@ const props =  defineProps({
   size: {
     type: String,
     default: '100px',
+  },
+  /** 高度 */
+  height: {
+    type: Number,
+    default: 200,
   },
   /** 最大图片数量 */
   count: {
@@ -194,7 +199,7 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: 300px;
+    min-height: 100px;
     aspect-ratio: 4 / 3;
     max-width: 400px;
     background-color: #F5F7FB;

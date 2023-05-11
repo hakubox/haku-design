@@ -246,36 +246,36 @@ export let menuComponentItems: ToolComponentItem[] = [
     },
     pageType: [PageType.normalPage],
   },
-  {
-    title: '步骤条',
-    name: 'q-anx-stepper',
-    icon: 'iconfont icon-lianjieliu',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '仪表盘',
-    name: 'q-anx-practise-score',
-    icon: 'iconfont icon-dashboard',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '翻页按钮',
-    name: 'q-anx-compelete-button',
-    icon: 'iconfont icon-change',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '视频播放器',
-    name: 'q-anx-video',
-    icon: 'iconfont icon-video',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '音频播放器',
-    name: 'q-anx-audio',
-    icon: 'iconfont icon-rentijiance',
-    category: ComponentCategory.special,
-  },
+  // {
+  //   title: '步骤条',
+  //   name: 'q-anx-stepper',
+  //   icon: 'iconfont icon-lianjieliu',
+  //   category: ComponentCategory.special,
+  // },
+  // {
+  //   title: '仪表盘',
+  //   name: 'q-anx-practise-score',
+  //   icon: 'iconfont icon-dashboard',
+  //   category: ComponentCategory.special,
+  // },
+  // {
+  //   title: '翻页按钮',
+  //   name: 'q-anx-compelete-button',
+  //   icon: 'iconfont icon-change',
+  //   category: ComponentCategory.special,
+  // },
+  // {
+  //   title: '视频播放器',
+  //   name: 'q-anx-video',
+  //   icon: 'iconfont icon-video',
+  //   category: ComponentCategory.special,
+  // },
+  // {
+  //   title: '音频播放器',
+  //   name: 'q-anx-audio',
+  //   icon: 'iconfont icon-rentijiance',
+  //   category: ComponentCategory.special,
+  // },
 ];
 
 export const setMenuItems = (items) => {

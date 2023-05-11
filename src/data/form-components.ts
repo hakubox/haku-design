@@ -102,6 +102,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'number',
     title: '数值填写题',
+    attrs: {
+      width: 300,
+      height: 100,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -124,8 +131,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine,
         attach: [ ComponentPropertyEditor.variable ],
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'inputWidth', title: '输入框长度', default: '60px',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length,
@@ -171,6 +179,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'text-list',
     title: '单行问答组',
+    attrs: {
+      width: 300,
+      height: 188,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -189,8 +204,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'maxlength', title: '最大输入字数', default: 1000,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -234,6 +250,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'text',
     title: '多行问答题',
+    attrs: {
+      width: 300,
+      height: 160,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -255,8 +278,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'maxlength', title: '最大输入字数', default: 1000,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.int
@@ -287,6 +311,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'option',
     title: '单项选择题',
+    attrs: {
+      width: 300,
+      height: 90,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -302,8 +333,9 @@ export let formComponents: InitComponent[] = [
         name: 'description', title: '描述', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'layout', title: '宽屏排列方式', default: 'layout-wrap', remark: 'PC端或宽屏的情况下应用，在移动端上则始终为每项一行',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.dropdownList,
@@ -358,7 +390,7 @@ export let formComponents: InitComponent[] = [
   /**
    * 多项选择题
    */
-   {
+  {
     name: 'q-multiple-choice',
     isHidden: false,
     isFormItem: true,
@@ -366,6 +398,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'option-list',
     title: '多项选择题',
+    attrs: {
+      width: 330,
+      height: 90,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -381,8 +420,9 @@ export let formComponents: InitComponent[] = [
         name: 'description', title: '描述', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'layout', title: '排列方式', default: 'layout-wrap',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.dropdownList,
@@ -418,8 +458,7 @@ export let formComponents: InitComponent[] = [
         name: 'options', title: '列表项', default: [
           { value: '1', label: '多选项 1', score: 0 },
           { value: '2', label: '多选项 2', score: 0 },
-          { value: '3', label: '多选项 3', score: 0 },
-          { value: '4', label: '多选项 4', score: 0 }
+          { value: '3', label: '多选项 3', score: 0 }
         ],
         layout: PropertyLayout.block,
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
@@ -443,6 +482,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'option',
     title: '下拉选择题',
+    attrs: {
+      width: 300,
+      height: 90,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -461,8 +507,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '请选择',
         group: ComponentPropertyGroup.style, default: '请选择', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'disabled', title: '是否禁用', default: false, visible: true,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
@@ -503,6 +550,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'datetime',
     title: '日期选择',
+    attrs: {
+      width: 300,
+      height: 95,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -521,8 +575,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '请选择',
         group: ComponentPropertyGroup.style, default: '请选择', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'disabled', title: '是否禁用', default: false, visible: true,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
@@ -550,6 +605,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'datetime-range',
     title: '日期范围选择',
+    attrs: {
+      width: 300,
+      height: 95,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -568,8 +630,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '请选择',
         group: ComponentPropertyGroup.style, default: '请选择', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'disabled', title: '是否禁用', default: false, visible: true,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
@@ -600,6 +663,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'number',
     title: '评分题',
+    attrs: {
+      width: 300,
+      height: 96,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -618,8 +688,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'color', title: '评分颜色', default: '#FFD21E',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
@@ -654,7 +725,7 @@ export let formComponents: InitComponent[] = [
   /** 
    * 多项评分题
    */
-   {
+  {
     name: 'q-score-group',
     isHidden: false,
     isFormItem: true,
@@ -662,6 +733,13 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'number-list',
     title: '多项评分题',
+    attrs: {
+      width: 300,
+      height: 152,
+      disabledHeight: true,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -680,8 +758,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'color', title: '评分颜色', default: '#FFD21E',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
@@ -738,6 +817,12 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'file',
     title: '手写题',
+    attrs: {
+      width: 300,
+      height: 240,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -756,8 +841,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'pencolor', title: '颜色', default: 'genre',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
@@ -791,6 +877,12 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'file-list',
     title: '文件上传题',
+    attrs: {
+      width: 300,
+      height: 240,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -809,8 +901,9 @@ export let formComponents: InitComponent[] = [
         name: 'placeholder', title: '占位提示文字',
         group: ComponentPropertyGroup.style, default: '请输入', editor: ComponentPropertyEditor.singerLine
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'size', title: '预览图片大小', default: '100px',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
@@ -862,6 +955,12 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'array-list',
     title: '表格题',
+    attrs: {
+      width: 300,
+      height: 160,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -877,8 +976,9 @@ export let formComponents: InitComponent[] = [
         name: 'description', title: '描述', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'useCard', title: '卡片形式', default: true, description: '仅会在移动端使用卡片形式展示',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
@@ -965,6 +1065,12 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.normal,
     answerType: 'extrainfo-list',
     title: '可选择卡片',
+    attrs: {
+      width: 350,
+      height: 100,
+      lock: false,
+      visible: true,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -992,6 +1098,10 @@ export let formComponents: InitComponent[] = [
             { label: '3项换行', value: 'layout-span-3' },
             { label: '4项换行', value: 'layout-span-4' }
         ] } 
+      }, {
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'selectMode', title: '选择方式', default: 'single-choice',
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.dropdownList,
@@ -1087,8 +1197,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否吸附在当前区域内的顶部。'
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'direction', title: '组件方向', default: 'column',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.dropdownList,
@@ -1191,8 +1302,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'height', title: '最小组件高度', default: 100, 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
@@ -1230,8 +1342,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'minHeight', title: '最小组件高度', default: '100px', 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
@@ -1276,8 +1389,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'minHeight', title: '最小组件高度', default: '100px', 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
@@ -1471,8 +1585,8 @@ export let formComponents: InitComponent[] = [
           ]
         }
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
       }, {
         name: 'src', title: 'url地址', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.file,
@@ -1501,6 +1615,9 @@ export let formComponents: InitComponent[] = [
       isFullScreen: false,
       lock: false,
       visible: true,
+      disabledHeight: true,
+      width: 350,
+      height: 88,
     },
     propertys: [
       {
@@ -1519,8 +1636,8 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否显示音乐控制器'
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
       }, {
         name: 'autoplay', title: '是否自动播放', default: false,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
@@ -1552,6 +1669,8 @@ export let formComponents: InitComponent[] = [
       isFullScreen: false,
       lock: false,
       visible: true,
+      width: 350,
+      height: 190,
     },
     propertys: [
       {
@@ -1589,8 +1708,8 @@ export let formComponents: InitComponent[] = [
           ]
         }
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
       }, {
         name: 'autoplay', title: '是否自动播放', default: false,
         group: ComponentPropertyGroup.action, editor: ComponentPropertyEditor.boolean
@@ -1665,6 +1784,12 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.attachment,
     title: '柱状图',
+    attrs: {
+      lock: false,
+      visible: true,
+      width: 350,
+      height: 260,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1680,8 +1805,9 @@ export let formComponents: InitComponent[] = [
         name: 'height', title: '高度', default: '200px',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'position', title: '绑定图表', default: 'genre*sold',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
@@ -1714,6 +1840,12 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.attachment,
     title: '折线图',
+    attrs: {
+      lock: false,
+      visible: true,
+      width: 350,
+      height: 260,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1729,11 +1861,9 @@ export let formComponents: InitComponent[] = [
         name: 'height', title: '高度', default: '200px',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
-        name: 'padding', title: '内边距', default: [0,30,50,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'position', title: '绑定图表', default: 'School Year*value',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
@@ -1767,6 +1897,12 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.attachment,
     title: '饼图',
+    attrs: {
+      lock: false,
+      visible: true,
+      width: 350,
+      height: 260,
+    },
     propertys: [
       {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1782,11 +1918,9 @@ export let formComponents: InitComponent[] = [
         name: 'height', title: '高度', default: '200px',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
-        name: 'padding', title: '内边距', default: [40,0,10,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+        showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
         name: 'position', title: '绑定图表', default: 'const*y',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
@@ -1818,212 +1952,229 @@ export let formComponents: InitComponent[] = [
     ]
   },
 
-  {
-    name: 'q-anx-stepper',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.special,
-    title: '步骤组件',
-    propertys: [
-      {
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'options', title: '步骤列表', default: [], layout: PropertyLayout.block,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-        attrs: { rowKey: 'label', columns: [
-          { name: 'label', title: '步骤', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-        ] }
-      }, {
-        name: 'currentStep', title: '当前步骤', default: 0,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
-        attach: [ ComponentPropertyEditor.variable ],
-      }, {
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      }
-    ]
-  },
+  // {
+  //   name: 'q-anx-stepper',
+  //   isHidden: false,
+  //   isFormItem: false,
+  //   isTopLevel: false,
+  //   type: ComponentCategory.special,
+  //   title: '步骤组件',
+  //   attrs: {
+  //     lock: false,
+  //     visible: true,
+  //     width: 350,
+  //     height: 260,
+  //   },
+  //   propertys: [
+  //     {
+  //       name: 'visible', title: '是否显示', default: true, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在界面上显示。'
+  //     }, {
+  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
+  //     }, {
+  //       name: 'options', title: '步骤列表', default: [], layout: PropertyLayout.block,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
+  //       attrs: { rowKey: 'label', columns: [
+  //         { name: 'label', title: '步骤', editor: ComponentPropertyEditor.singerLine, attrs: { } },
+  //       ] }
+  //     }, {
+  //       name: 'currentStep', title: '当前步骤', default: 0,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
+  //       attach: [ ComponentPropertyEditor.variable ],
+  //     }, {
+  //       name: 'remark', title: '备注', default: '',
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+  //     }
+  //   ]
+  // },
 
-  {
-    name: 'q-anx-practise-score',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.special,
-    title: '仪表盘',
-    propertys: [
-      {
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'showImage', title: '显示图片', default: false, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在仪表盘下方显示对应阶段图片。'
-      }, {
-        name: 'steps', title: '阶段列表', layout: PropertyLayout.block,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.modelList, default: [
-          { label: '正常', color: '#41D79C', image: undefined },
-          { label: '轻度焦虑', color: '#FEE225', image: undefined },
-          { label: '中度焦虑', color: '#FFA136', image: undefined },
-          { label: '重度焦虑', color: '#FF6165', image: undefined },
-        ],
-        attrs: { rowKey: 'id', columns: [
-          { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-          { name: 'label', title: '名称', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-          { name: 'image', title: '图片', editor: ComponentPropertyEditor.file, attrs: { } },
-          { name: 'color', title: '颜色', editor: ComponentPropertyEditor.color, attrs: { } },
-        ] }
-      }, {
-        name: 'unit', title: '数值单位', default: '分',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
-      }, {
-        name: 'lineWidth', title: '圆环宽度', default: 6,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-          suffix: '像素'
-        }
-      }, {
-        name: 'thumbSize', title: '指示器大小', default: 15,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-          suffix: '像素'
-        }
-      }, {
-        name: 'spaceDeg', title: '每段间隔', default: 8,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-          suffix: '像素'
-        }
-      }, {
-        name: 'needAnima', title: '使用动画', default: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
-      }, {
-        name: 'score', title: '当前数值', default: 0,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
-        attach: [ ComponentPropertyEditor.variable ],
-      }, {
-        name: 'max', title: '最大值', default: 100,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-      }, {
-        name: 'min', title: '最小值', default: 0,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-      }, {
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      }
-    ]
-  },
+  // {
+  //   name: 'q-anx-practise-score',
+  //   isHidden: false,
+  //   isFormItem: false,
+  //   isTopLevel: false,
+  //   type: ComponentCategory.special,
+  //   title: '仪表盘',
+  //   attrs: {
+  //     lock: false,
+  //     visible: true,
+  //     width: 350,
+  //     height: 260,
+  //   },
+  //   propertys: [
+  //     {
+  //       name: 'visible', title: '是否显示', default: true, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在界面上显示。'
+  //     }, {
+  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
+  //     }, {
+  //       name: 'showImage', title: '显示图片', default: false, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在仪表盘下方显示对应阶段图片。'
+  //     }, {
+  //       name: 'steps', title: '阶段列表', layout: PropertyLayout.block,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.modelList, default: [
+  //         { label: '正常', color: '#41D79C', image: undefined },
+  //         { label: '轻度焦虑', color: '#FEE225', image: undefined },
+  //         { label: '中度焦虑', color: '#FFA136', image: undefined },
+  //         { label: '重度焦虑', color: '#FF6165', image: undefined },
+  //       ],
+  //       attrs: { rowKey: 'id', columns: [
+  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
+  //         { name: 'label', title: '名称', editor: ComponentPropertyEditor.singerLine, attrs: { } },
+  //         { name: 'image', title: '图片', editor: ComponentPropertyEditor.file, attrs: { } },
+  //         { name: 'color', title: '颜色', editor: ComponentPropertyEditor.color, attrs: { } },
+  //       ] }
+  //     }, {
+  //       name: 'unit', title: '数值单位', default: '分',
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
+  //     }, {
+  //       name: 'lineWidth', title: '圆环宽度', default: 6,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
+  //         suffix: '像素'
+  //       }
+  //     }, {
+  //       name: 'thumbSize', title: '指示器大小', default: 15,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
+  //         suffix: '像素'
+  //       }
+  //     }, {
+  //       name: 'spaceDeg', title: '每段间隔', default: 8,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
+  //         suffix: '像素'
+  //       }
+  //     }, {
+  //       name: 'needAnima', title: '使用动画', default: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
+  //     }, {
+  //       name: 'score', title: '当前数值', default: 0,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
+  //       attach: [ ComponentPropertyEditor.variable ],
+  //     }, {
+  //       name: 'max', title: '最大值', default: 100,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
+  //     }, {
+  //       name: 'min', title: '最小值', default: 0,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
+  //     }, {
+  //       name: 'remark', title: '备注', default: '',
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+  //     }
+  //   ]
+  // },
 
-  {
-    name: 'q-anx-compelete-button',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.special,
-    title: '翻页按钮',
-    propertys: [
-      {
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'prevDisabled', title: '禁用上一页', default: false,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
-      }, {
-        name: 'nextDisabled', title: '禁用下一页', default: false,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
-      }, {
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      }
-    ]
-  },
+  // {
+  //   name: 'q-anx-compelete-button',
+  //   isHidden: false,
+  //   isFormItem: false,
+  //   isTopLevel: false,
+  //   type: ComponentCategory.special,
+  //   title: '翻页按钮',
+  //   propertys: [
+  //     {
+  //       name: 'visible', title: '是否显示', default: true, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在界面上显示。'
+  //     }, {
+  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
+  //     }, {
+  //       name: 'prevDisabled', title: '禁用上一页', default: false,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
+  //     }, {
+  //       name: 'nextDisabled', title: '禁用下一页', default: false,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
+  //     }, {
+  //       name: 'remark', title: '备注', default: '',
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+  //     }
+  //   ]
+  // },
 
-  {
-    name: 'q-anx-video',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.special,
-    title: '视频播放器',
-    propertys: [
-      {
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'playPosition', title: '当前视频索引', default: 0,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-      }, {
-        name: 'dataList', title: '视频列表', get default() { 
-          return [ { id: createModelId() } ];
-        },
-        layout: PropertyLayout.block,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-        attrs: { rowKey: 'id', columns: [
-          { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-          { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
-          { name: 'poster', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
-          // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
-        ] }
-      }, {
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      }
-    ]
-  },
+  // {
+  //   name: 'q-anx-video',
+  //   isHidden: false,
+  //   isFormItem: false,
+  //   isTopLevel: false,
+  //   type: ComponentCategory.special,
+  //   title: '视频播放器',
+  //   propertys: [
+  //     {
+  //       name: 'visible', title: '是否显示', default: true, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在界面上显示。'
+  //     }, {
+  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
+  //     }, {
+  //       name: 'playPosition', title: '当前视频索引', default: 0,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
+  //     }, {
+  //       name: 'dataList', title: '视频列表', get default() { 
+  //         return [ { id: createModelId() } ];
+  //       },
+  //       layout: PropertyLayout.block,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
+  //       attrs: { rowKey: 'id', columns: [
+  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
+  //         { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
+  //         { name: 'poster', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
+  //         // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
+  //       ] }
+  //     }, {
+  //       name: 'remark', title: '备注', default: '',
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+  //     }
+  //   ]
+  // },
 
-  {
-    name: 'q-anx-audio',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.special,
-    title: '音频播放器',
-    propertys: [
-      {
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }, {
-        name: 'margin', title: '外边距', default: [0,0,0,0],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box
-      }, {
-        name: 'playPosition', title: '当前音频', default: 0,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-      }, {
-        name: 'dataList', title: '音频列表', get default() { 
-          return [ { id: createModelId() } ];
-        },
-        layout: PropertyLayout.block,
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-        attrs: { rowKey: 'id', columns: [
-          { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-          { name: 'title', width: '30%', title: '标题', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-          { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
-          { name: 'poster', width: '20%', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
-          // { name: 'duration', width: '20%', title: '时长', editor: ComponentPropertyEditor.int, attrs: { } },
-          // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
-        ] }
-      }, {
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      }
-    ]
-  },
+  // {
+  //   name: 'q-anx-audio',
+  //   isHidden: false,
+  //   isFormItem: false,
+  //   isTopLevel: false,
+  //   type: ComponentCategory.special,
+  //   title: '音频播放器',
+  //   propertys: [
+  //     {
+  //       name: 'visible', title: '是否显示', default: true, visible: true,
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+  //       remark: '是否在界面上显示。'
+  //     }, {
+  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
+  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
+  //     }, {
+  //       name: 'playPosition', title: '当前音频', default: 0,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
+  //     }, {
+  //       name: 'dataList', title: '音频列表', get default() { 
+  //         return [ { id: createModelId() } ];
+  //       },
+  //       layout: PropertyLayout.block,
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
+  //       attrs: { rowKey: 'id', columns: [
+  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
+  //         { name: 'title', width: '30%', title: '标题', editor: ComponentPropertyEditor.singerLine, attrs: { } },
+  //         { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
+  //         { name: 'poster', width: '20%', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
+  //         // { name: 'duration', width: '20%', title: '时长', editor: ComponentPropertyEditor.int, attrs: { } },
+  //         // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
+  //       ] }
+  //     }, {
+  //       name: 'remark', title: '备注', default: '',
+  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+  //     }
+  //   ]
+  // },
 ];
 
 /** 获取所有组件 */

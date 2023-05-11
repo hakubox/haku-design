@@ -1,7 +1,7 @@
 <template>
   <ComponentBasic class="component-drawing-board" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="q-drawing-board-clear" @click="clear">重写</div>
-    <canvas class="q-drawing-board" ref="widgetRef" :style="{ height: height + 'px' }"></canvas>
+    <canvas class="q-drawing-board" ref="widgetRef" :style="{ height: (height - 80) + 'px' }"></canvas>
     <span style="font-size: 12px; color: #aaa; padding: 5px 0px">{{ '在空白区域书写' }}</span>
   </ComponentBasic>
 </template>
@@ -23,19 +23,19 @@ const widgetRef = ref();
 const props = defineProps({
   /** 内边距 */
   padding: {
-      type: Array as PropType<any>,
-      default: () => [0, 0, 0, 0] as [number, number, number, number],
-    },
-    /** 高度 */
-    height: {
-      type: Number,
-      default: 200,
-    },
-    /** 设置笔的颜色 */
-    pencolor: {
-      type: String,
-      default: '',
-    },
+    type: Array as PropType<any>,
+    default: () => [0, 0, 0, 0] as [number, number, number, number],
+  },
+  /** 高度 */
+  height: {
+    type: Number,
+    default: 200,
+  },
+  /** 设置笔的颜色 */
+  pencolor: {
+    type: String,
+    default: '',
+  },
 });
 
 

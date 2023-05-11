@@ -66,7 +66,7 @@
 
 <script lang="ts" setup>
 import Color from '@/lib/color/Color';
-import { toRefs, reactive, ref, watch, PropType, defineComponent, computed, onMounted, onUnmounted } from 'vue';
+import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted } from 'vue';
 import TypeColorPickerSlider from './TypeColorPickerSlider.vue';
 
 const props = defineProps({
@@ -101,8 +101,6 @@ const props = defineProps({
   },
 });
 
-const colorInput = ref({} as any);
-const colorPicker = ref({} as any);
 const colorPickerDisk = ref({} as any);
 
 const state = reactive({
@@ -122,10 +120,6 @@ const state = reactive({
   newValue: '',
   /** 颜色 */
   color: {} as Color,
-  /** 文本框元素 */
-  colorInput,
-  /** 弹出框元素 */
-  colorPicker,
   /** 画板元素 */
   colorPickerDisk,
   /** 颜色历史记录 */
@@ -279,15 +273,6 @@ const changeColorType = () => {
   state.color.format = props.colorType;
   setColor(state.color.value);
 };
-/** 展开 */
-const extendPicker = () => {
-  const { y } = state.colorInput.getBoundingClientRect();
-  const { height } = document.body.getBoundingClientRect();
-  state.showPickerTop = height - y < 380;
-  state.showPicker = true;
-
-  init();
-};
 /** 收缩 */
 const shrinkPicker = () => {
   state.showPicker = false;
@@ -334,15 +319,15 @@ onUnmounted(() => {
 
 // 颜色选择器
 
-> .color-picker-color {
+.color-picker-color {
   display: flex;
   flex-direction: column;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   margin: 12px;
   margin-left: 30px;
   border-radius: 4px;
-  box-shadow: 0px 0px 0px 1px #e0e0e0;
+  box-shadow: 0px 0px 0px 1px #E5E5E5;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
 
   > .color-picker-oldcolor {
@@ -350,38 +335,21 @@ onUnmounted(() => {
     flex-grow: 1;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-
-    &:before {
-      position: absolute;
-      color: #bbb;
-      content: '旧';
-      line-height: 25px;
-      left: -22px;
-      font-size: 12px;
-    }
   }
   > .color-picker-newcolor {
     position: relative;
     flex-grow: 1;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-
-    &:before {
-      content: '新';
-      position: absolute;
-      color: #bbb;
-      line-height: 25px;
-      left: -22px;
-      font-size: 12px;
-    }
   }
 }
 
-> .color-picker-disk {
+.color-picker-disk {
   user-select: none;
   position: relative;
-  width: 290px;
+  width: 220px;
   height: 190px;
+  border-radius: 4px;
 
   > .color-picker-disk-point {
     position: absolute;
@@ -391,9 +359,9 @@ onUnmounted(() => {
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    border: 1px solid white;
-    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
-    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid white;
+    box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3), 0px 1px 3px inset rgba(0, 0, 0, 0.3);
+    // background-color: rgba(255, 255, 255, 0.1);
 
     &:before {
       position: absolute;
@@ -412,25 +380,26 @@ onUnmounted(() => {
     width: 100%;
     height: 100%;
     background: linear-gradient(0deg, #000, transparent), linear-gradient(90deg, #fff, hsla(0, 0%, 100%, 0));
+    border-radius: 4px;
   }
 }
 
-> .color-picker-slider-disk {
+.color-picker-slider-disk {
   position: absolute;
-  top: 213px;
-  left: 100px;
-  width: calc(100% - 115px);
+  top: 243px;
+  left: 70px;
+  width: calc(100% - 75px);
 }
 
-> .color-picker-slider-alpha {
+.color-picker-slider-alpha {
   position: absolute;
-  top: 238px;
-  left: 100px;
-  width: calc(100% - 115px);
+  top: 263px;
+  left: 70px;
+  width: calc(100% - 75px);
 }
 
 // 历史列表
-> .color-picker-history {
+.color-picker-history {
   display: flex;
   flex-wrap: wrap;
 
@@ -457,7 +426,7 @@ onUnmounted(() => {
 }
 
 // 选择器底部
-> .color-picker-footer {
+.color-picker-footer {
   display: flex;
   width: 290px;
 

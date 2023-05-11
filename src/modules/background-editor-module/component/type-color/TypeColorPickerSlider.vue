@@ -38,7 +38,7 @@ const state = reactive({
 
 const startDrag = (e) => {
   state.isStartDrag = true;
-  drag(e);
+  // drag(e);
 };
 
 const drag = (e) => {
@@ -63,7 +63,7 @@ const init = () => {
 
 /** 游标离左侧距离 */
 const cursorLeft = computed(() => {
-  return ((slider.value!.offsetWidth || 0) * props.value) / props.max - 8;
+  return (((slider.value!.offsetWidth || 0) - 12) * props.value) / props.max - 1;
 });
 
 onUnmounted(() => {
@@ -83,7 +83,7 @@ onMounted(() => {
   display: block;
   width: 100%;
   height: 12px;
-  border-radius: 3px;
+  border-radius: 10px;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
 
   &:before {
@@ -97,19 +97,20 @@ onMounted(() => {
     left: 0px;
     width: 100%;
     height: 100%;
-    border-radius: 3px;
+    border-radius: 10px;
 
     > .color-picker-slider-bar {
       user-select: none;
       position: absolute;
       cursor: default;
-      top: -2px;
-      left: -7px;
-      width: 16px;
-      height: 16px;
+      top: 0px;
+      left: 0px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background-color: #f8f8f8;
-      box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.4);
+      background-color: transparent;
+      border: 2px solid #f8f8f8;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.3), 0px 1px 3px inset rgba(0, 0, 0, 0.3);
     }
   }
 }
