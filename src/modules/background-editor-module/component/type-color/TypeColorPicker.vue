@@ -9,28 +9,66 @@
       <div class="color-picker-disk-point" :style="{ transform: `translate(${state.cursorLeft}px, ${state.cursorTop}px)` }"></div>
     </div>
 
-    <div class="color-picker-color">
-      <div class="color-picker-oldcolor" :style="{ background: state.oldValue }"></div>
-      <div class="color-picker-newcolor" :style="{ background: state.newValue }"></div>
+    <div class="color-picker-panel">
+      <!-- 新旧色对比 -->
+      <div class="color-picker-contrast">
+        <div class="color-picker-oldcolor" :style="{ background: state.oldValue }"></div>
+        <div class="color-picker-newcolor" :style="{ background: state.newValue }"></div>
+      </div>
+      <div class="color-picker-sliders">
+        <!-- 色值 -->
+        <TypeColorPickerSlider
+          v-model:value="hue"
+          :max="360"
+          class="color-picker-slider-disk"
+          :slider-style="{ background: 'linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)' }"
+        />
+        <!-- 透明度 -->
+        <TypeColorPickerSlider
+          v-if="showAlpha"
+          v-model:value="alpha"
+          :max="100"
+          class="color-picker-slider-alpha"
+          :slider-style="{ background: `linear-gradient(90deg,${setAlpha(0)} 0%,${setAlpha(1)} 100%)` }"
+        />
+      </div>
     </div>
 
-    <!-- 色值 -->
-    <TypeColorPickerSlider
-      v-model:value="hue"
-      :max="360"
-      class="color-picker-slider-disk"
-      :slider-style="{ background: 'linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)' }"
-    />
-    <!-- 透明度 -->
-    <TypeColorPickerSlider
-      v-if="showAlpha"
-      v-model:value="alpha"
-      :max="100"
-      class="color-picker-slider-alpha"
-      :slider-style="{ background: `linear-gradient(90deg,${setAlpha(0)} 0%,${setAlpha(1)} 100%)` }"
-    />
+    <hr style="border: none; border-top: 1px solid #F2F2F2; margin-bottom: 9px" />
 
-    <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 9px" />
+    <!-- 输入区 -->
+    <div class="color-input-panel">
+      <div class="color-input-row">
+        <div class="color-input-cell">
+          <div class="color-input-text"></div>
+          <div class="color-input-text"></div>
+        </div>
+        <div class="color-input-cell">
+          <div class="color-input-select">
+            <select v-model="state.formatterType">
+              <option :value="item" v-for="item in ['hex', 'css']">{{ item }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="color-input-row">
+        <div class="color-input-cell">
+          <!-- RGBA -->
+          <template v-if="state.colorType === 'rgb'">
+            <div class="color-input-text"></div>
+            <div class="color-input-text"></div>
+            <div class="color-input-text"></div>
+            <div class="color-input-select"></div>
+          </template>
+          <div class="color-input-select-btn"></div>
+        </div>
+        <!-- HSL -->
+        <!-- HSB -->
+        <SimpleSelect :visible="true"></SimpleSelect>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #F2F2F2; margin-bottom: 9px" />
 
     <div class="color-picker-history">
       <div class="color-picker-history-item" v-for="(item, index) in state.history" :key="index">
@@ -43,12 +81,12 @@
       </div>
     </div>
 
-    <hr style="border: none; border-top: 1px solid #eee; margin-top: 2px" v-show="state.history.length" />
+    <hr style="border: none; border-top: 1px solid #F2F2F2; margin-top: 4px" v-show="state.history.length" />
 
     <div class="color-picker-footer">
       <div class="color-picker-footer-text">
         <input type="text" v-model="state.newValue" />
-        <div class="color-picker-footer-text-type">{{ colorType }}</div>
+        <div class="color-picker-footer-text-type">{{ state.colorType }}</div>
         <i
           v-if="canChangeColorType"
           title="切换类型"
@@ -68,6 +106,7 @@
 import Color from '@/lib/color/Color';
 import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted } from 'vue';
 import TypeColorPickerSlider from './TypeColorPickerSlider.vue';
+import SimpleSelect from '../common/SimpleSelect.vue';
 
 const props = defineProps({
   /** 当前颜色 */
@@ -79,11 +118,6 @@ const props = defineProps({
   showAlpha: {
     type: Boolean,
     default: true,
-  },
-  /** 颜色类型 */
-  colorType: {
-    type: String as PropType<'hex' | 'rgb' | 'hsl' | 'hsv'>,
-    default: 'rgb',
   },
   /** 是否可切换颜色类型 */
   canChangeColorType: {
@@ -104,6 +138,10 @@ const props = defineProps({
 const colorPickerDisk = ref({} as any);
 
 const state = reactive({
+  /** 颜色类型 */
+  colorType: 'rgb' as 'rgb' | 'hsl' | 'hsv',
+  /** 格式化类型 */
+  formatterType: 'hex' as 'hex' | 'css',
   /** 是否开始选择 */
   showPicker: false,
   /** 弹框展开方向 */
@@ -185,7 +223,7 @@ const setAlpha = (alpha: number) => {
 /** 初始化 */
 const init = () => {
   state.color.fromString(props.value.trim().toLowerCase());
-  state.color.format = props.colorType;
+  state.color.format = state.colorType;
   alpha.value = state.color._alpha;
   document.body.addEventListener('mouseup', handleEndDrag);
   document.body.addEventListener('mousemove', handleDrag);
@@ -196,7 +234,7 @@ const init = () => {
   if (!_historyList || !_historyList.length) {
     const _color = new Color({
       enableAlpha: props.showAlpha,
-      format: props.colorType,
+      format: state.colorType,
     });
     _historyList = [];
     _color.fromString('rgba(255, 255, 255, 1)');
@@ -252,25 +290,7 @@ const setColor = (color: string) => {
 };
 /** 切换颜色类型 */
 const changeColorType = () => {
-  let colorType = props.colorType;
-  switch (colorType) {
-    case 'rgb':
-      colorType = 'hsv';
-      break;
-    case 'hsv':
-      colorType = 'hsl';
-      break;
-    case 'hsl':
-      colorType = 'hex';
-      break;
-    case 'hex':
-      colorType = 'rgb';
-      break;
-    default:
-      break;
-  }
-  emit('update:colorType', colorType);
-  state.color.format = props.colorType;
+  state.color.format = state.colorType;
   setColor(state.color.value);
 };
 /** 收缩 */
@@ -286,7 +306,7 @@ const comfirm = () => {
 
   const _color = new Color({
     enableAlpha: props.showAlpha,
-    format: props.colorType,
+    format: state.colorType,
   });
   if (state.history.length > 20) {
     state.history.splice(0, 1);
@@ -301,7 +321,7 @@ const comfirm = () => {
 onMounted(() => {
   state.color = new Color({
     enableAlpha: props.showAlpha,
-    format: props.colorType,
+    format: state.colorType,
   }) as Color;
 
   init();
@@ -319,30 +339,64 @@ onUnmounted(() => {
 
 // 颜色选择器
 
-.color-picker-color {
-  display: flex;
-  flex-direction: column;
-  width: 30px;
-  height: 30px;
-  margin: 12px;
-  margin-left: 30px;
-  border-radius: 4px;
-  box-shadow: 0px 0px 0px 1px #E5E5E5;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
+.color-picker {
 
-  > .color-picker-oldcolor {
+  > .color-picker-panel {
     position: relative;
-    flex-grow: 1;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-  }
-  > .color-picker-newcolor {
-    position: relative;
-    flex-grow: 1;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+
+    > .color-picker-contrast {
+      display: flex;
+      flex-direction: column;
+      width: 30px;
+      height: 30px;
+      margin-right: 15px;
+      border-radius: 4px;
+      box-shadow: 0px 0px 0px 1px #E5E5E5;
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
+
+      > .color-picker-oldcolor {
+        position: relative;
+        flex-grow: 1;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+      > .color-picker-newcolor {
+        position: relative;
+        flex-grow: 1;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+
+    > .color-picker-sliders {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      width: 100%;
+      height: 100%;
+
+      > .color-picker-slider-disk {
+        position: relative;
+        width: 100%;
+        margin-bottom: 8px;
+      }
+
+      > .color-picker-slider-alpha {
+        position: relative;
+        width: 100%;
+      }
+    }
   }
 }
+
+
 
 .color-picker-disk {
   user-select: none;
@@ -384,20 +438,6 @@ onUnmounted(() => {
   }
 }
 
-.color-picker-slider-disk {
-  position: absolute;
-  top: 243px;
-  left: 70px;
-  width: calc(100% - 75px);
-}
-
-.color-picker-slider-alpha {
-  position: absolute;
-  top: 263px;
-  left: 70px;
-  width: calc(100% - 75px);
-}
-
 // 历史列表
 .color-picker-history {
   display: flex;
@@ -407,9 +447,9 @@ onUnmounted(() => {
     position: relative;
     cursor: pointer;
     display: inline-block;
-    margin: 0px 4px 8px 4px;
-    width: 16px;
-    height: 16px;
+    margin: 0px 2px 4px 2px;
+    width: 20px;
+    height: 20px;
     border-radius: 3px;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
 

@@ -1,8 +1,6 @@
 
 /** 应用颜色 */
 export interface AppColor {
-  /** 颜色类型 */
-  colorType: 'hsl' | 'hsv' | 'hex' | 'rgb';
   /** 红色值：0~255 */
   r: number;
   /** 绿色值：0~255 */
@@ -11,8 +9,6 @@ export interface AppColor {
   b: number;
   /** 透明度：0~1 */
   a: number;
-  /** 颜色值 */
-  value: string;
 }
 
 /** 渐变列表项 */
@@ -23,9 +19,12 @@ export interface GradientItem {
   color: AppColor;
 }
 
+// 背景类型
+export type AppBackgroundType = 'color' | 'linear-gradient' | 'radial-gradient' | 'conic-gradient' | 'image';
+
 /** 应用背景（单层） */
 export interface AppBasicBackground {
-  type: 'color' | 'linear-gradient' | 'radial-gradient' | 'conic-gradient' | 'image';
+  type: AppBackgroundType;
   /** 图层混合类型 */
   mixedType: 'normal';
   /** 是否显示 */
@@ -33,6 +32,7 @@ export interface AppBasicBackground {
   /** 透明度：0~1 */
   opacity: number;
 }
+
 
 /** 背景 */
 export type AppBackground = AppColorBackground | 

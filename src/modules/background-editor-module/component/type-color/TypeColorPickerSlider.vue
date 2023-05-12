@@ -38,14 +38,14 @@ const state = reactive({
 
 const startDrag = (e) => {
   state.isStartDrag = true;
-  // drag(e);
+  drag(e);
 };
 
 const drag = (e) => {
   if (state.isStartDrag) {
     const rect = slider.value!.getBoundingClientRect();
-    const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left), rect.width);
-    const _value = Math.round((_cursorLeft / slider.value!.offsetWidth) * props.max);
+    const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), (rect.width - 12));
+    const _value = Math.round((_cursorLeft / (slider.value!.offsetWidth - 12)) * props.max);
     emit('input', _value);
     emit('update:value', _value);
   }
@@ -100,6 +100,7 @@ onMounted(() => {
     border-radius: 10px;
 
     > .color-picker-slider-bar {
+      pointer-events: none;
       user-select: none;
       position: absolute;
       cursor: default;
