@@ -25,9 +25,8 @@
         />
         <!-- 透明度 -->
         <TypeColorPickerSlider
-          v-if="showAlpha"
           v-model:value="alpha"
-          :max="100"
+          :max="1"
           class="color-picker-slider-alpha"
           :slider-style="{ background: `linear-gradient(90deg,${setAlpha(0)} 0%,${setAlpha(1)} 100%)` }"
         />
@@ -39,15 +38,41 @@
     <!-- 输入区 -->
     <div class="color-input-panel">
       <div class="color-input-row">
-        <div class="color-input-cell">
-          <div class="color-input-text"></div>
-          <div class="color-input-text"></div>
+        <div class="color-input-cell" style="width: 60%">
+          <div class="color-input-text" style="width: 60%">
+            <input
+              maxlength="7"
+              :value="state.colorInput"
+              @focus="state.isChangeColorInput = true;"
+              @input="setColorInput"
+              @blur="restoreColor"
+            />
+          </div>
+          <div class="color-input-text" style="width: 50%; margin-left: 0px;">
+            <input
+              maxlength="4"
+              :value="state.colorInputAlpha"
+              @focus="state.isChangeColorInputAlpha = true;"
+              @input="setColorInputAlpha"
+              @blur="restoreColorAlpha"
+            />
+          </div>
         </div>
         <div class="color-input-cell">
-          <div class="color-input-select">
-            <select v-model="state.formatterType">
-              <option :value="item" v-for="item in ['hex', 'css']">{{ item }}</option>
-            </select>
+          <div
+            class="color-input-select"
+            style="padding-left: 12px;padding-right: 10px;width: 60px;"
+            tabindex="-1"
+            @click="state.showFormatterTypeSelect = !state.showFormatterTypeSelect"
+            @blur="state.showFormatterTypeSelect = false"
+          >
+            {{ state.formatterType }}
+            <SimpleSelect
+              ref="formatterTypeSelect"
+              v-model:visible="state.showFormatterTypeSelect"
+              :options="state.formatterTypeList"
+              v-model:value="state.formatterType"
+            ></SimpleSelect>
           </div>
         </div>
       </div>
@@ -55,16 +80,53 @@
         <div class="color-input-cell">
           <!-- RGBA -->
           <template v-if="state.colorType === 'rgb'">
-            <div class="color-input-text"></div>
-            <div class="color-input-text"></div>
-            <div class="color-input-text"></div>
-            <div class="color-input-select"></div>
+            <div class="color-input-text">
+              <input
+                maxlength="3"
+                :disabled="true"
+                :value="state.color.r"
+              />
+            </div>
+            <div class="color-input-text">
+              <input
+                maxlength="3"
+                :disabled="true"
+                :value="state.color.g"
+              />
+            </div>
+            <div class="color-input-text">
+              <input
+                maxlength="3"
+                :disabled="true"
+                :value="state.color.b"
+              />
+            </div>
+            <div class="color-input-text">
+              <input
+                maxlength="3"
+                :disabled="true"
+                :value="toDecimal(state.color._alpha * 100, 0)"
+              />
+            </div>
+            <div
+              class="color-input-select-btn"
+              style="position: relative;"
+              tabindex="-1"
+              @click="state.showColorTypeSelect = !state.showColorTypeSelect"
+              @blur="state.showColorTypeSelect = false"
+            >
+              <SimpleSelect
+                ref="colorTypeSelect"
+                v-model:visible="state.showColorTypeSelect"
+                :options="state.colorTypeList"
+                v-model:value="state.colorType"
+              ></SimpleSelect>
+            </div>
           </template>
-          <div class="color-input-select-btn"></div>
         </div>
         <!-- HSL -->
         <!-- HSB -->
-        <SimpleSelect :visible="true"></SimpleSelect>
+        
       </div>
     </div>
 
@@ -83,7 +145,7 @@
 
     <hr style="border: none; border-top: 1px solid #F2F2F2; margin-top: 4px" v-show="state.history.length" />
 
-    <div class="color-picker-footer">
+    <!-- <div class="color-picker-footer">
       <div class="color-picker-footer-text">
         <input type="text" v-model="state.newValue" />
         <div class="color-picker-footer-text-type">{{ state.colorType }}</div>
@@ -98,26 +160,28 @@
         <button class="color-picker-footer-tools-clear" v-if="canClear">清空</button>
         <button class="color-picker-footer-tools-confirm" @click="comfirm">确定</button>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-import Color from '@/lib/color/Color';
+import Color, { rgb2hsl } from '@/lib/color/Color';
 import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted } from 'vue';
 import TypeColorPickerSlider from './TypeColorPickerSlider.vue';
 import SimpleSelect from '../common/SimpleSelect.vue';
+import { service as backgroundEditorService } from '../../';
+import type { AppColor } from '../../index.d';
+import { toDecimal } from '@/tools/common';
+import { nextTick } from 'vue';
+
+const formatterTypeSelect = ref<typeof SimpleSelect>();
+const colorTypeSelect = ref<typeof SimpleSelect>();
 
 const props = defineProps({
   /** 当前颜色 */
   value: {
-    type: String,
-    default: '',
-  },
-  /** 显示透明色 */
-  showAlpha: {
-    type: Boolean,
-    default: true,
+    type: Object as PropType<AppColor>,
+    required: true
   },
   /** 是否可切换颜色类型 */
   canChangeColorType: {
@@ -161,27 +225,114 @@ const state = reactive({
   /** 画板元素 */
   colorPickerDisk,
   /** 颜色历史记录 */
-  history: [] as string[],
+  history: [] as AppColor[],
   /** 是否显示下拉框 */
   isShowPicker: false,
+  /** 颜色类型列表 */
+  colorTypeList: [
+    { label: 'RGB', value: 'rgb' },
+    { label: 'HSL', value: 'hsl' },
+    { label: 'HSV', value: 'hsv' },
+  ],
+  /** 显示颜色类型列表下拉框 */
+  showColorTypeSelect: false,
+  /** 格式化列表 */
+  formatterTypeList: [
+    { label: 'HEX', value: 'hex' },
+    { label: 'CSS', value: 'css' },
+  ],
+  /** 显示格式化列表下拉框 */
+  showFormatterTypeSelect: false,
+
+  /** colorInput正在修改中 */
+  isChangeColorInput: false,
+  /** 颜色文本框的值 */
+  colorInput: '',
+  /** colorInput正在修改中 */
+  isChangeColorInputAlpha: false,
+  /** 颜色透明度文本框的值 */
+  colorInputAlpha: '',
 });
+
+const emit = defineEmits<{
+  (event: 'change', value: AppColor): void;
+  (event: 'update:value', value: AppColor): void;
+  (event: 'update:colorType', value: "hex" | "rgb" | "hsl" | "hsv"): void;
+}>();
+
+const submitColor = () => {
+  state.newValue = state.color.value;
+  if (!state.isChangeColorInput) {
+    state.colorInput = state.color.toString(state.formatterType);
+  }
+  if (!state.isChangeColorInputAlpha) {
+    state.colorInputAlpha = toDecimal(state.color._alpha * 100, 0) + '%';
+  }
+  emit('change', state.color.toRgb());
+  emit('update:value', state.color.toRgb());
+};
+
+const restoreColor = () => {
+  if (state.formatterType === 'hex' && /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(state.colorInput)) {
+
+  } else {
+    state.colorInput = state.color.toString(state.formatterType);
+  }
+  state.isChangeColorInput = false;
+};
+
+const setColorInput = (e: any) => {
+  try {
+    if (state.formatterType === 'hex') {
+      let _colorStr = e.target.value as string;
+      if (!_colorStr.startsWith('#')) _colorStr = '#' + _colorStr;
+      if (/^#([0-9a-fA-F]{3}){1,2}$/.test(_colorStr)) {
+        const _color = state.color.fromString(_colorStr, state.color._tempHue);
+        if (_color) {
+          console.error('颜色', _color);
+          state.color = _color;
+          submitColor();
+          state.colorInput = _colorStr;
+          // nextTick(() => {
+
+          // });
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err); 
+  }
+};
+
+const restoreColorAlpha = () => {
+  state.colorInputAlpha = toDecimal(state.color._alpha * 100, 0) + '%';
+  state.isChangeColorInputAlpha = false;
+};
+
+const setColorInputAlpha = (e: any) => {
+  try {
+    const _alpha = parseInt(e.target.value as string);
+    if (!isNaN(_alpha)) {
+      state.color._alpha = _alpha / 100;
+      submitColor();
+      state.colorInputAlpha = e.target.value;
+      // state.colorInputAlpha = toDecimal(_alpha, 0) + '%';
+    }
+  } catch (err) {
+    console.error(err); 
+  }
+};
 
 /** 色环值 */
 const hue = computed({
   get: () => {
-    return state.color.get('hue');
+    return state.color.hue;
   },
   set: (val) => {
-    state.color.set('hue', val);
-    state.newValue = state.color.value;
+    state.color.hue = val;
+    submitColor();
   },
 });
-
-const emit = defineEmits<{
-  (event: 'change', value: string): void;
-  (event: 'update:value', value: string): void;
-  (event: 'update:colorType', value: "hex" | "rgb" | "hsl" | "hsv"): void;
-}>();
 
 /** 透明度 */
 const alpha = computed({
@@ -190,17 +341,13 @@ const alpha = computed({
   },
   set: (val) => {
     state.color.set('alpha', val);
-    state.newValue = state.color.value;
+    submitColor();
   },
 });
 
 /** 调色板的背景色 */
 const diskBackGround = computed(() => {
-  return `hsl(${state.color.get('hue')}, 100%, 50%)`;
-});
-
-watch(() => props.showAlpha, () => {
-  state.color.enableAlpha = props.showAlpha;
+  return `hsl(${state.color.hue}, 100%, 50%)`;
 });
 
 /** 颜色改变函数 */
@@ -222,7 +369,7 @@ const setAlpha = (alpha: number) => {
 };
 /** 初始化 */
 const init = () => {
-  state.color.fromString(props.value.trim().toLowerCase());
+  state.color.fromString(backgroundEditorService.getColorStr(props.value) || '');
   state.color.format = state.colorType;
   alpha.value = state.color._alpha;
   document.body.addEventListener('mouseup', handleEndDrag);
@@ -233,7 +380,7 @@ const init = () => {
 
   if (!_historyList || !_historyList.length) {
     const _color = new Color({
-      enableAlpha: props.showAlpha,
+      enableAlpha: true,
       format: state.colorType,
     });
     _historyList = [];
@@ -263,10 +410,11 @@ const handleDrag = (e) => {
     state.cursorLeft = left;
     state.cursorTop = top;
     state.color.set({
+      hue: state.color._saturation === 0 ? state.color._tempHue : state.color._hue,
       saturation: (left / rect.width) * 100,
       value: 100 - (top / rect.height) * 100,
     });
-    state.newValue = state.color.value;
+    submitColor();
   }
 };
 /** 拖拽完毕 */
@@ -300,27 +448,48 @@ const shrinkPicker = () => {
 /** 确定 */
 const comfirm = () => {
   state.oldValue = state.newValue;
-  emit('update:value', state.newValue);
-  emit('change', state.newValue);
-  state.showPicker = false;
-
   const _color = new Color({
-    enableAlpha: props.showAlpha,
+    enableAlpha: true,
     format: state.colorType,
   });
+  _color.fromString(state.newValue);
+  const _appColor = _color.toRgb();
+  state.colorInput = state.color.toString(state.formatterType);
+  emit('update:value', _appColor);
+  emit('change', _appColor);
+  state.showPicker = false;
+
   if (state.history.length > 20) {
     state.history.splice(0, 1);
   }
-  _color.fromString(state.newValue);
-  if (!state.history.includes(_color.value)) {
-    state.history.push(_color.value);
+  const _findIndex = state.history.findIndex(i => 
+    i.a === _appColor.a &&
+    i.r === _appColor.r &&
+    i.g === _appColor.g &&
+    i.b === _appColor.b
+  );
+  if (_findIndex >= 0) {
+    state.history.push(_appColor);
     sessionStorage.setItem('colorPickerHistory', JSON.stringify(state.history));
   }
 };
 
+watch(() => props.value, (val) => {
+  state.color.fromString(`rgba(${val.r},${val.g},${val.b},${val.a})`)!;
+  state.color.set('alpha', val.a);
+  state.newValue = state.color.value;
+  if (!state.isChangeColorInput) {
+    state.colorInput = state.color.toString(state.formatterType);
+  }
+  
+  const rect = state.colorPickerDisk.getBoundingClientRect();
+  state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
+  state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
+});
+
 onMounted(() => {
   state.color = new Color({
-    enableAlpha: props.showAlpha,
+    enableAlpha: true,
     format: state.colorType,
   }) as Color;
 
@@ -391,6 +560,95 @@ onUnmounted(() => {
       > .color-picker-slider-alpha {
         position: relative;
         width: 100%;
+      }
+    }
+  }
+
+  > .color-input-panel {
+
+    > .color-input-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+
+      + .color-input-row {
+        margin-top: 6px;
+      }
+
+      > .color-input-cell {
+        flex-shrink: 1;
+        flex-grow: 1;
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        background-color: #F0F0F0;
+        border-radius: 4px;
+        font-size: 12px;
+
+        + .color-input-cell {
+          margin-left: 6px;
+        }
+
+        > .color-input-text {
+          flex-shrink: 1;
+          flex-grow: 1;
+          width: 100%;
+
+          + .color-input-text,
+          + .color-input-select-btn {
+          }
+
+          > input {
+            width: 100%;
+            padding: 5px 10px;
+            background-color: transparent;
+            border: none;
+          }
+        }
+
+        > .color-input-select {
+          cursor: pointer;
+          flex-shrink: 1;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          height: 29px;
+
+          &:after {
+            content: '\e641';
+            position: relative;
+            font-family: "iconfont" !important;
+            font-size: 12px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+        }
+
+        > .color-input-select-btn {
+          flex-shrink: 0;
+          flex-grow: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          width: 30px;
+
+          &:after {
+            content: '\e641';
+            position: relative;
+            font-family: "iconfont" !important;
+            font-size: 12px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+        }
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
-  <div class="select-dropdown" :class="{
-    open: state.visible
-  }">
+  <div class="select-dropdown" :class="[props.location, {
+    open: props.visible
+  }]">
     <div
       class="select-option"
       :class="[props.optionClass, {
@@ -10,6 +10,7 @@
       :value="item.value"
       :title="item.label"
       v-for="item in props.options"
+      @click="clickItem(item)"
     >
       <span class="select-option-icon"><i class="iconfont icon-duigou"></i></span>
       <span class="select-option-text">{{ item.label }}</span>
@@ -18,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, type PropType } from 'vue';
+import { reactive, type PropType, nextTick } from 'vue';
 
 const props = defineProps({
   /** 选项列表 */
@@ -32,24 +33,50 @@ const props = defineProps({
   value: {
     type: String,
     required: true
+  },
+  visible: {
+    type: Boolean,
+    required: true,
+  },
+  /** 位置 */
+  location: {
+    type: String as PropType<'top-right'>,
+    default: 'top-right'
   }
 });
+
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'update:value', value: string): void;
+}>();
 
 const value = () => {
 
 };
 
 const state = reactive({
-  visible: false,
 });
 
 /** 打开下拉框 */
 const open = () => {
-  state.visible = true;
+  emit('update:visible', true);
 }
+
+/** 关闭下拉框 */
+const close = () => {
+  emit('update:visible', false);
+}
+
+const clickItem = (item: { label: string, value: string }) => {
+  emit('update:value', item.value);
+  setTimeout(() => {
+    emit('update:visible', false);
+  }, 10);
+};
 
 defineExpose({
   open,
+  close
 })
 
 </script>
@@ -62,14 +89,50 @@ defineExpose({
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  top: 0px;
-  left: 0px;
+  background-color: white;
+  box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.2);
+  padding: 3px;
+  border-radius: 4px;
+  z-index: 9;
+
+  visibility: hidden;
+  transform: translateY(-10px);
+  opacity: 0.0;
+  transition: 0.15s;
+
+  &.open {
+    visibility: visible;
+    opacity: 1.0;
+    transform: translateY(0px);
+  }
+  
+  &.top-right {
+    top: 100%;
+    right: 0px;
+  }
 
   > .select-option {
+    cursor: default;
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     white-space: nowrap;
-    padding: 4px 12px;
+    padding: 2px 12px;
+    border-radius: 4px;
+    height: 28px;
+
+    &:hover {
+      background-color: #4667E6;
+
+      > .select-option-icon {
+        color: white;
+      }
+      > .select-option-text {
+        color: white;
+      }
+    }
 
     &.active {
 
@@ -80,6 +143,12 @@ defineExpose({
 
     > .select-option-icon {
       visibility: hidden;
+      margin-right: 8px;
+
+      > .iconfont {
+        font-size: 14px;
+        transform: scale(0.8);
+      }
     }
 
     > .select-option-text {

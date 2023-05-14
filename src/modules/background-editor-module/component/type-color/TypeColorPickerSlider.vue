@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts" setup>
+import { toDecimal } from '@/tools/common';
 import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
 
 const props = defineProps({
@@ -27,7 +28,6 @@ const props = defineProps({
 const slider = ref<HTMLElement>();
 
 const emit = defineEmits<{
-  (event: 'input', value: number): void;
   (event: 'update:value', value: number): void;
 }>();
 
@@ -44,9 +44,8 @@ const startDrag = (e) => {
 const drag = (e) => {
   if (state.isStartDrag) {
     const rect = slider.value!.getBoundingClientRect();
-    const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), (rect.width - 12));
-    const _value = Math.round((_cursorLeft / (slider.value!.offsetWidth - 12)) * props.max);
-    emit('input', _value);
+    const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), (rect.width - 10));
+    const _value = toDecimal((_cursorLeft / (slider.value!.offsetWidth - 10)) * props.max, 3);
     emit('update:value', _value);
   }
 };
@@ -55,24 +54,23 @@ const endDrag = () => {
   state.isStartDrag = false;
 };
 
-/** 初始化 */
-const init = () => {
-  document.body.addEventListener('mousemove', drag);
-  document.body.addEventListener('mouseup', endDrag);
-};
-
 /** 游标离左侧距离 */
 const cursorLeft = computed(() => {
-  return (((slider.value!.offsetWidth || 0) - 12) * props.value) / props.max - 1;
+  if (slider.value) {
+    return ((slider.value.offsetWidth - 10) * props.value) / props.max - 1;
+  } else {
+    return 0;
+  }
+});
+
+onMounted(() => {
+  document.body.addEventListener('mousemove', drag);
+  document.body.addEventListener('mouseup', endDrag);
 });
 
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', drag);
   document.body.removeEventListener('mouseup', endDrag);
-});
-
-onMounted(() => {
-  init();
 });
 </script>
 
@@ -82,7 +80,7 @@ onMounted(() => {
   position: relative;
   display: block;
   width: 100%;
-  height: 12px;
+  height: 10px;
   border-radius: 10px;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAAGUlEQVQYV2M4gwH+YwCGIasIUwhT25BVBADtzYNYrHvv4gAAAABJRU5ErkJggg==);
 
@@ -106,8 +104,8 @@ onMounted(() => {
       cursor: default;
       top: 0px;
       left: 0px;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background-color: transparent;
       border: 2px solid #f8f8f8;

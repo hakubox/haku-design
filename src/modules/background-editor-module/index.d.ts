@@ -9,6 +9,8 @@ export interface AppColor {
   b: number;
   /** 透明度：0~1 */
   a: number;
+  /** 临时Hue值 */
+  tempHue?: number;
 }
 
 /** 渐变列表项 */
@@ -33,6 +35,31 @@ export interface AppBasicBackground {
   opacity: number;
 }
 
+/** 渐变相关尺寸信息 */
+export interface GradientRectInfo {
+  /** X1 */
+  x1: number;
+  /** Y1 */
+  y1: number;
+  /** X2 */
+  x2: number;
+  /** Y2 */
+  y2: number;
+  /** 中点X坐标 */
+  x: number;
+  /** 中点Y坐标 */
+  y: number;
+  /** 背景正方形半径 */
+  radius: number;
+  /** 渐变线角度 */
+  rotate: number;
+  /** 线段延长线与正方形相交的A坐标 */
+  pointA: { x: number, y: number };
+  /** 线段延长线与正方形相交的B坐标 */
+  pointB: { x: number, y: number };
+  /** 线段和整条延长线的比值 */
+  ratio: number;
+}
 
 /** 背景 */
 export type AppBackground = AppColorBackground | 
