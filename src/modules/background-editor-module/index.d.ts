@@ -24,11 +24,35 @@ export interface GradientItem {
 // 背景类型
 export type AppBackgroundType = 'color' | 'linear-gradient' | 'radial-gradient' | 'conic-gradient' | 'image';
 
+/**
+ * 混合模式
+ * - normal: 正常
+ * - multiply: 正片叠底
+ * - screen: 滤色
+ * - overlay: 叠加
+ * - darken: 变暗
+ * - lighten: 变亮
+ * - color-dodge: 颜色减淡
+ * - color-burn: 颜色加深
+ * - hard-light: 强光
+ * - soft-light: 柔光
+ * - difference: 差值
+ * - exclusion: 排除
+ * - hue: 色相
+ * - saturation: 饱和度
+ * - color: 颜色
+ * - luminosity: 亮度
+ * - initial: 初始
+ * - inherit: 继承
+ */
+export type BlendMode = 'normal' | 'darken' | 'multiply' | 'color-burn' | 'lighten' | 'screen' | 'color-dodge' | 'overlay' | 'soft-light' |
+  'hard-light' | 'difference' | 'exclusion' | 'hue' | 'saturation' | 'color' | 'luminosity' | 'initial' | 'inherit';
+
 /** 应用背景（单层） */
 export interface AppBasicBackground {
   type: AppBackgroundType;
   /** 图层混合类型 */
-  mixedType: 'normal';
+  blendType: 'normal';
   /** 是否显示 */
   show: boolean;
   /** 透明度：0~1 */
@@ -37,18 +61,18 @@ export interface AppBasicBackground {
 
 /** 渐变相关尺寸信息 */
 export interface GradientRectInfo {
-  /** X1 */
-  x1: number;
-  /** Y1 */
-  y1: number;
-  /** X2 */
-  x2: number;
-  /** Y2 */
-  y2: number;
+  /** 最小X */
+  minX: number;
+  /** 最小Y */
+  minY: number;
+  /** 最大X */
+  maxX: number;
+  /** 最大Y */
+  maxY: number;
   /** 中点X坐标 */
-  x: number;
+  centerX: number;
   /** 中点Y坐标 */
-  y: number;
+  centerY: number;
   /** 背景正方形半径 */
   radius: number;
   /** 渐变线角度 */
@@ -65,7 +89,7 @@ export interface GradientRectInfo {
 export type AppBackground = AppColorBackground | 
   AppLinearGradientBackground | 
   AppRadialGradientBackground | 
-  AppRadialConicBackground |
+  AppConicGradientBackground |
   AppImageBackground;
 
 /** 颜色型背景 */
@@ -117,17 +141,23 @@ export interface AppRadialGradientBackground extends AppBasicBackground {
 }
 
 /** 圆锥渐变型背景 */
-export interface AppRadialConicBackground extends AppBasicBackground {
+export interface AppConicGradientBackground extends AppBasicBackground {
   /** 类型：圆锥渐变 */
   type: 'conic-gradient';
+  /** 基础圆半径 */
+  radius: number;
   /** 椭圆长边和基础圆半径的比值 */
   ovalityRatio: number;
   /** 渐变列表 */
   gradientList: GradientItem[];
-  /** 坐标点 - 横坐标 */
-  x: number;
-  /** 坐标点 - 纵坐标 */
-  y: number;
+  /** 第1个坐标点 - 横坐标 */
+  x1: number;
+  /** 第1个坐标点 - 纵坐标 */
+  y1: number;
+  /** 第2个坐标点 - 横坐标 */
+  x2: number;
+  /** 第2个坐标点 - 纵坐标 */
+  y2: number;
 }
 
 /** 图片型背景 */

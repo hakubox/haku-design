@@ -1,14 +1,15 @@
 import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { reactive } from 'vue';
 import message, { toast } from '@/common/message';
-import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppRadialConicBackground, AppRadialGradientBackground, GradientRectInfo } from './index.d';
+import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientRectInfo } from './index.d';
+import { distance } from '@/tools/common';
 
 export * from './index.d';
 
 /** 背景编辑器模块状态 */
 export const state = reactive({
   /** 当前背景 */
-  currentBackground: { type: 'color', color: { r: 255, g: 255, b: 255, a: 0 } } as AppBackground,
+  currentBackground: { type: 'color', blendType: 'normal', color: { r: 216, g: 216, b: 216, a: 1 } } as AppBackground,
   /** 背景类型列表 */
   backgroundTypeList: [
     { name: 'color', title: '纯色', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAACLSURBVFiF7dexDcMwDETRT6fOAhkjWUNzODN5Dy+QnlogAygDeAC6kArDcM00d4AgQc09ljR6HsBz3BlpwA+oBrzG+UdWgALM7h5ZcfcAZqDYeBARS+boZvYGmDJLryKAAAIIIIAAAggggAACCDDRF0VqrWmlh65m9I24pLWfLDdgO3zck4ob8AG+OxCjg8ww/O8tAAAAAElFTkSuQmCC' },
@@ -21,6 +22,27 @@ export const state = reactive({
     title: string,
     url: string
   }[],
+  /** 混合模式列表 */
+  blendModeList: [
+    { value: 'normal', label: '正常' },
+    { value: 'multiply', label: '正片叠底' },
+    { value: 'screen', label: '滤色' },
+    { value: 'overlay', label: '叠加' },
+    { value: 'darken', label: '变暗' },
+    { value: 'lighten', label: '变亮' },
+    { value: 'color-dodge', label: '颜色减淡' },
+    { value: 'color-burn', label: '颜色加深' },
+    { value: 'hard-light', label: '强光' },
+    { value: 'soft-light', label: '柔光' },
+    { value: 'difference', label: '差值' },
+    { value: 'exclusion', label: '排除' },
+    { value: 'hue', label: '色相' },
+    { value: 'saturation', label: '饱和度' },
+    { value: 'color', label: '颜色' },
+    { value: 'luminosity', label: '明度' },
+    { value: 'initial', label: '初始' },
+    { value: 'inherit', label: '继承' }
+  ],
   /** 当前背景类型索引 */
   currentBackgroundTypeIndex: 0,
   /** 当前背景类型文本 */
@@ -53,16 +75,14 @@ export const service = {
       state.currentBackgroundTypeIndex = _typeIndex;
       state.currentBackgroundTypeText = state.backgroundTypeList[_typeIndex].title;
       
-
-      console.log('state.backgroundTypeList[_typeIndex].name', state.backgroundTypeList[_typeIndex].name);
       switch (state.backgroundTypeList[_typeIndex].name) {
         case 'color':
           state.currentBackground = {
             type: 'color',
             show: state.currentBackground.show,
             opacity: state.currentBackground.opacity,
-            mixedType: 'normal',
-            color: { r: 255, g: 255, b: 255, a: 0 }
+            blendType: 'normal',
+            color: { r: 216, g: 216, b: 216, a: 1 }
           };
           state.currentGradientItemIndex = -1;
           break;
@@ -76,11 +96,11 @@ export const service = {
             y2: state.component.height,
             show: _background.show,
             opacity: _background.opacity,
-            mixedType: 'normal',
+            blendType: 'normal',
             repeating: false,
             gradientList: [
-              { progress: 0, color: { r: 255, g: 255, b: 255, a: 0 } },
-              { progress: 1, color: { r: 255, g: 0, b: 0, a: 1 } },
+              { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
             ]
           };
           state.currentGradientItemIndex = 0;
@@ -96,13 +116,34 @@ export const service = {
             y2: state.component.height,
             show: _background.show,
             opacity: _background.opacity,
-            radius: 10,
-            ovalityRatio: 1,
-            mixedType: 'normal',
+            radius: state.component.width / 2,
+            ovalityRatio: state.component.height / state.component.width,
+            blendType: 'normal',
             repeating: false,
             gradientList: [
-              { progress: 0, color: { r: 255, g: 255, b: 255, a: 0 } },
-              { progress: 1, color: { r: 255, g: 0, b: 0, a: 1 } },
+              { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
+            ]
+          };
+          state.currentGradientItemIndex = 0;
+          break;
+        }
+        case 'conic-gradient': {
+          const _background = state.currentBackground as AppConicGradientBackground;
+          state.currentBackground = {
+            type: 'conic-gradient',
+            x1: state.component.width / 2,
+            y1: state.component.height / 2,
+            x2: state.component.width / 2,
+            y2: state.component.height,
+            show: _background.show,
+            opacity: _background.opacity,
+            radius: state.component.width / 2,
+            ovalityRatio: state.component.height / state.component.width,
+            blendType: 'normal',
+            gradientList: [
+              { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
             ]
           };
           state.currentGradientItemIndex = 0;
@@ -143,11 +184,18 @@ export const service = {
   getAngle() {
 
   },
+  /** 获取旋转度数 */
+  getRotate(gradientBg: AppLinearGradientBackground | AppRadialGradientBackground | AppConicGradientBackground) {
+    return 180 / Math.PI * Math.atan2(
+      gradientBg.y2 - gradientBg.y1,
+      gradientBg.x2 - gradientBg.x1
+    );
+  },
   /** 获取背景中使用的排序后的颜色字符串 */
   getGradientCSSColors(
-    gradientBg: AppLinearGradientBackground | AppRadialGradientBackground,
+    gradientBg: AppLinearGradientBackground | AppRadialGradientBackground | AppConicGradientBackground,
     start = 0,
-    end = 0
+    end = 1
   ) {
     let _str = '';
     const _gradientStr = gradientBg.gradientList
@@ -169,9 +217,9 @@ export const service = {
     height: number, 
     gradientBgRect?: {
       /** 中点X坐标 */
-      x: number;
+      centerX: number;
       /** 中点Y坐标 */
-      y: number;
+      centerY: number;
       /** 背景正方形半径 */
       radius: number;
       /** 渐变线角度 */
@@ -196,26 +244,44 @@ export const service = {
         const rect = gradientBgRect ?? service.getLinearGradientRectInfo(gradientBg, width, height);
         _style = {
           backgroundImage: `linear-gradient(${rect.rotate + 90}deg, ${service.getGradientCSSColors(gradientBg, (1 - rect.ratio) / 2, rect.ratio + (1 - rect.ratio) / 2)})`,
-          left: `${rect.x - rect.radius}px`,
-          top: `${rect.y - rect.radius}px`,
+          left: `${rect.centerX - rect.radius}px`,
+          top: `${rect.centerY - rect.radius}px`,
           width: `${rect.radius * 2}px`,
           height: `${rect.radius * 2}px`,
         };
         break;
       }
       case 'radial-gradient': {
-        const rect = gradientBgRect ?? service.getRadialGradientRectInfo(gradientBg, width, height);
-        // 
-        console.log('rect.ratio', rect.ratio);
-        const _radius = Math.max(gradientBg.x2 - gradientBg.x1, gradientBg.y2 - gradientBg.y1);
+        /** 两点距离 */
+        const _distance = distance({ x: gradientBg.x1, y: gradientBg.y1 }, { x: gradientBg.x2, y: gradientBg.y2 });
+        /** 角度 */
+        const _rotate = service.getRotate(gradientBg);
         _style = {
-          backgroundImage: `radial-gradient(${_radius * gradientBg.ovalityRatio}px ${_radius}px at ${gradientBg.x1 + rect.x / 2}px ${gradientBg.y1}px, ${
-            service.getGradientCSSColors(gradientBg, (1 - rect.ratio) / 2, rect.ratio + (1 - rect.ratio) / 2)
+          backgroundImage: `radial-gradient(${_distance * gradientBg.ovalityRatio}px ${_distance}px at ${gradientBg.x1 + state.component.width * 0.5}px ${gradientBg.y1 + state.component.height * 0.5}px, ${
+            service.getGradientCSSColors(gradientBg)
           })`,
-          left: `${rect.x - rect.radius}px`,
-          top: `${rect.y - rect.radius}px`,
-          width: `${rect.radius * 2}px`,
-          height: `${rect.radius * 2}px`,
+          left: `${-state.component.width * 0.5}px`,
+          top: `${-state.component.height * 0.5}px`,
+          width: `${state.component.width * 2}px`,
+          height: `${state.component.height * 2}px`,
+          transform: `rotate(${_rotate + 90}deg)`
+        };
+        break;
+      }
+      case 'conic-gradient': {
+        // const rect = gradientBgRect ?? service.getConicGradientRectInfo(gradientBg, width, height);
+        const _rotate = 180 / Math.PI * Math.atan2(
+          gradientBg.y2 - gradientBg.y1,
+          gradientBg.x2 - gradientBg.x1
+        );
+        _style = {
+          backgroundImage: `conic-gradient(from ${_rotate + 90}deg at ${gradientBg.x1}px ${gradientBg.y1}px, ${
+            service.getGradientCSSColors(gradientBg)
+          })`,
+          left: `0px`,
+          top: `0px`,
+          width: `${state.component.width}px`,
+          height: `${state.component.height}px`,
         };
         break;
       }
@@ -226,10 +292,10 @@ export const service = {
   },
   /** 获取线性渐变中点及其他信息 */
   getLinearGradientRectInfo(gradientBg: AppLinearGradientBackground, width: number, height: number): GradientRectInfo {
-    const _x1 = gradientBg.x1 > gradientBg.x2 ? gradientBg.x2 : gradientBg.x1;
-    const _y1 = gradientBg.y1 > gradientBg.y2 ? gradientBg.y2 : gradientBg.y1;
-    const _x2 = gradientBg.x1 > gradientBg.x2 ? gradientBg.x1 : gradientBg.x2;
-    const _y2 = gradientBg.y1 > gradientBg.y2 ? gradientBg.y1 : gradientBg.y2;
+    const _x1 = Math.min(gradientBg.x2, gradientBg.x1);
+    const _y1 = Math.min(gradientBg.y2, gradientBg.y1);
+    const _x2 = Math.max(gradientBg.x1, gradientBg.x2);
+    const _y2 = Math.max(gradientBg.y1, gradientBg.y2);
     const _centerPoint = { x: _x2 - (_x2 - _x1) / 2, y: _y2 - (_y2 - _y1) / 2 };
 
     /** 最小半径 */
@@ -243,10 +309,7 @@ export const service = {
     if (minRadius < (_y2 - _y1) / 2) minRadius = (_y2 - _y1) / 2;
 
     /** 渐变线角度 */
-    const _rotate = 180 / Math.PI * Math.atan2(
-      gradientBg.y2 - gradientBg.y1,
-      gradientBg.x2 - gradientBg.x1
-    );
+    const _rotate = service.getRotate(gradientBg);
     
     let _pointA = { x: 0, y: 0 };
     let _pointB = { x: 0, y: 0 };
@@ -271,12 +334,12 @@ export const service = {
     const _globalRatio = (_x2 - _x1 > _y2 - _y1 ? _x2 - _x1 : _y2 - _y1) / (minRadius * 2);
 
     return {
-      x1: _x1,
-      y1: _y1,
-      x2: _x2,
-      y2: _y2,
-      x: _centerPoint.x,
-      y: _centerPoint.y,
+      minX: _x1,
+      minY: _y1,
+      maxX: _x2,
+      maxY: _y2,
+      centerX: _centerPoint.x,
+      centerY: _centerPoint.y,
       radius: minRadius,
       rotate: _rotate,
       pointA: _pointA,
@@ -286,10 +349,67 @@ export const service = {
   },
   /** 获取径向渐变中点及其他信息 */
   getRadialGradientRectInfo(gradientBg: AppRadialGradientBackground, width: number, height: number): GradientRectInfo {
-    const _x1 = gradientBg.x1 > gradientBg.x2 ? gradientBg.x2 : gradientBg.x1;
-    const _y1 = gradientBg.y1 > gradientBg.y2 ? gradientBg.y2 : gradientBg.y1;
-    const _x2 = gradientBg.x1 > gradientBg.x2 ? gradientBg.x1 : gradientBg.x2;
-    const _y2 = gradientBg.y1 > gradientBg.y2 ? gradientBg.y1 : gradientBg.y2;
+    const _x1 = Math.min(gradientBg.x2, gradientBg.x1);
+    const _y1 = Math.min(gradientBg.y2, gradientBg.y1);
+    const _x2 = Math.max(gradientBg.x1, gradientBg.x2);
+    const _y2 = Math.max(gradientBg.y1, gradientBg.y2);
+    const _centerPoint = { x: _x2 - (_x2 - _x1) / 2, y: _y2 - (_y2 - _y1) / 2 };
+
+    /** 最小半径 */
+    let minRadius = 0;
+    if (minRadius < Math.abs(_centerPoint.x - width)) minRadius = Math.abs(_centerPoint.x - width);
+    if (minRadius < Math.abs(_centerPoint.x - 0)) minRadius = Math.abs(_centerPoint.x - 0);
+    if (minRadius < Math.abs(_centerPoint.y - height)) minRadius = Math.abs(_centerPoint.y - height);
+    if (minRadius < Math.abs(_centerPoint.y - 0)) minRadius = Math.abs(_centerPoint.y - 0);
+
+    if (minRadius < (_x2 - _x1) / 2) minRadius = (_x2 - _x1) / 2;
+    if (minRadius < (_y2 - _y1) / 2) minRadius = (_y2 - _y1) / 2;
+
+    /** 渐变线角度 */
+    const _rotate = service.getRotate(gradientBg);
+    
+    let _pointA = { x: 0, y: 0 };
+    let _pointB = { x: 0, y: 0 };
+    // 获取延长线的坐标点
+    if (_y2 - _y1 < _x2 - _x1) {
+      // 小三角与大三角的比值
+      const _ratio = (_centerPoint.x - _x1) / _centerPoint.x;
+      // 获取与左侧相交的A点Y坐标
+      const _aPointY = _centerPoint.y - _ratio * (_centerPoint.y - _y1);
+      _pointA = { x: 0, y: _aPointY };
+      _pointB = { x: minRadius * 2, y: (_centerPoint.y - _aPointY) * 2 + _aPointY };
+    } else {
+      // 小三角与大三角的比值
+      const _ratio = (_centerPoint.y - _y1) / _centerPoint.y;
+      // 获取与左侧相交的A点Y坐标
+      const _aPointX = _centerPoint.x - _ratio * (_centerPoint.x - _x1);
+      _pointA = { x: _aPointX, y: 0 };
+      _pointB = { x: (_centerPoint.x - _aPointX) * 2 + _aPointX, y: minRadius * 2 };
+    }
+
+    // 最后一步，获取线段在整条延长线上的占比
+    const _globalRatio = (_x2 - _x1 > _y2 - _y1 ? _x2 - _x1 : _y2 - _y1) / (minRadius * 2) * 3;
+
+    return {
+      minX: _x1,
+      minY: _y1,
+      maxX: _x2,
+      maxY: _y2,
+      centerX: _centerPoint.x,
+      centerY: _centerPoint.y,
+      radius: minRadius,
+      rotate: _rotate,
+      pointA: _pointA,
+      pointB: _pointB,
+      ratio: _globalRatio,
+    };
+  },
+  /** 获取旋转渐变中点及其他信息 */
+  getConicGradientRectInfo(gradientBg: AppConicGradientBackground, width: number, height: number): GradientRectInfo {
+    const _x1 = Math.min(gradientBg.x2, gradientBg.x1);
+    const _y1 = Math.min(gradientBg.y2, gradientBg.y1);
+    const _x2 = Math.max(gradientBg.x1, gradientBg.x2);
+    const _y2 = Math.max(gradientBg.y1, gradientBg.y2);
     const _centerPoint = { x: _x2 - (_x2 - _x1) / 2, y: _y2 - (_y2 - _y1) / 2 };
 
     /** 最小半径 */
@@ -331,12 +451,12 @@ export const service = {
     const _globalRatio = (_x2 - _x1 > _y2 - _y1 ? _x2 - _x1 : _y2 - _y1) / (minRadius * 2) * 3;
 
     return {
-      x1: _x1,
-      y1: _y1,
-      x2: _x2,
-      y2: _y2,
-      x: _centerPoint.x,
-      y: _centerPoint.y,
+      minX: _x1,
+      minY: _y1,
+      maxX: _x2,
+      maxY: _y2,
+      centerX: _centerPoint.x,
+      centerY: _centerPoint.y,
       radius: minRadius,
       rotate: _rotate,
       pointA: _pointA,
@@ -374,6 +494,57 @@ export const service = {
 
     // 输出结果
 
+  },
+  /** 获取线段中点 */
+  getLineCenter(x1: number, y1: number, x2: number, y2: number) {
+    const _x1 = Math.min(x2, x1);
+    const _y1 = Math.min(y2, y1);
+    const _x2 = Math.max(x1, x2);
+    const _y2 = Math.max(y1, y2);
+    return { x: _x2 - (_x2 - _x1) / 2, y: _y2 - (_y2 - _y1) / 2 };
+  },
+  /** 渐变旋转90度 */
+  rotate90Gradient(gradientBg: AppLinearGradientBackground | AppRadialGradientBackground | AppConicGradientBackground) {
+    let _x1 = gradientBg.x1;
+    let _y1 = gradientBg.y1;
+    let _x2 = gradientBg.x2;
+    let _y2 = gradientBg.y2;
+
+    if (gradientBg.type === 'linear-gradient') {
+      const center = service.getLineCenter(_x1, _y1, _x2, _y2);
+  
+      const _r_x1 = _x1 - center.x;
+      const _r_y1 = _y1 - center.y;
+      const _r_x2 = _x2 - center.x;
+      const _r_y2 = _y2 - center.y;
+  
+      _x1 = _r_y1 + center.x;
+      _y1 = -_r_x1 + center.y;
+      _x2 = _r_y2 + center.x;
+      _y2 = -_r_x2 + center.y;
+
+      gradientBg.x1 = _x2;
+      gradientBg.y1 = _y2;
+      gradientBg.x2 = _x1;
+      gradientBg.y2 = _y1;
+    } else if (gradientBg.type === 'radial-gradient' || gradientBg.type === 'conic-gradient') {
+      const _r_x2 = _x2 - _x1;
+      const _r_y2 = _y2 - _y1;
+  
+      _x2 = -_r_y2 + _x1;
+      _y2 = _r_x2 + _y1;
+
+      gradientBg.x2 = _x2;
+      gradientBg.y2 = _y2;
+    }
+
+    return gradientBg;
+  },
+  /** 获取圆环侧边点 */
+  getSlidePoint(x1: number, y1: number, x2: number, y2: number, ratio = 1) {
+    const _r_x = x2 - x1;
+    const _r_y = y2 - y1;
+    return { x: -_r_y + x1, y: _r_x + y1 };
   }
 };
 

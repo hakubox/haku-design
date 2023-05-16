@@ -5,6 +5,24 @@
     :drag="true"
     :title="backgroundEditorState.currentBackgroundTypeText"
   >
+    <template #header-tools>
+      
+      <div
+        class="haku-dialog-header-tool"
+        title="混合模式"
+        tabindex="-1"
+        @click="state.showBlendModeSelect = !state.showBlendModeSelect"
+        @blur="state.showBlendModeSelect = false"
+      >
+        <i class="iconfont icon-config3"></i>
+        <SimpleSelect
+          ref="colorTypeSelect"
+          v-model:visible="state.showBlendModeSelect"
+          :options="state.blendModeList"
+          v-model:value="backgroundEditorState.currentBackground.blendType"
+        ></SimpleSelect>
+      </div>
+    </template>
     <!-- 背景类型选择 -->
     <div class="background-dialog-type-panel">
       <ul
@@ -32,7 +50,7 @@
       <!-- 径向渐变 -->
       <div class="gradient-config" v-if="backgroundEditorState.currentBackground.type !== 'image' && backgroundEditorState.currentBackground.type !== 'color'">
         <GradientSlider
-          v-model:cursor-list="backgroundEditorState.currentBackground.gradientList"
+          v-model:gradient-background="backgroundEditorState.currentBackground"
           v-model:current-cursor-index="backgroundEditorState.currentGradientItemIndex"
           @change="change"
         />
@@ -52,7 +70,8 @@ import message from '@/common/message';
 import HakuDialog from '@/components/common/HakuDialog.vue';
 import { reactive, type PropType } from 'vue';
 import TypeColorPicker from './type-color/TypeColorPicker.vue';
-import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppRadialGradientBackground, GradientItem } from '../index.d';
+import SimpleSelect from './common/SimpleSelect.vue';
+import type { AppBackground, AppBackgroundType, AppColor } from '../index.d';
 import GradientSlider from './common/GradientSlider.vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '../';
 import { computed } from 'vue';
@@ -68,8 +87,32 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive({
-  /** 值 */
-  // value: { type: 'color', color: { r: 255, g: 255, b: 255, a: 0 } } as AppBackground,
+  /** 混合模式下拉框是否显示 */
+  showBlendModeSelect: false,
+  /** 混合模式列表 */
+  blendModeList: [
+    { value: 'normal', label: '正常' },
+    { type: 'split' },
+    { value: 'darken', label: '变暗' },
+    { value: 'multiply', label: '正片叠底' },
+    { value: 'color-burn', label: '颜色加深' },
+    { type: 'split' },
+    { value: 'lighten', label: '变亮' },
+    { value: 'screen', label: '滤色' },
+    { value: 'color-dodge', label: '颜色减淡' },
+    { type: 'split' },
+    { value: 'overlay', label: '叠加' },
+    { value: 'soft-light', label: '柔光' },
+    { value: 'hard-light', label: '强光' },
+    { type: 'split' },
+    { value: 'difference', label: '差值' },
+    { value: 'exclusion', label: '排除' },
+    { type: 'split' },
+    { value: 'hue', label: '色相' },
+    { value: 'saturation', label: '饱和度' },
+    { value: 'color', label: '颜色' },
+    { value: 'luminosity', label: '明度' },
+  ],
 });
 
 const changeBackgroundType = (name: AppBackgroundType) => {
@@ -111,12 +154,12 @@ const currentColor = computed<AppColor>({
 
 .background-dialog-content {
   > .gradient-config {
-    margin: 18px 0px;
+    margin: 8px 0px;
   }
 }
 
 .background-dialog-type-panel {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   
   > .background-type-tabs {
     position: relative;

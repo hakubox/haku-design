@@ -2,19 +2,22 @@
   <div class="select-dropdown" :class="[props.location, {
     open: props.visible
   }]">
-    <div
-      class="select-option"
-      :class="[props.optionClass, {
-        active: item.value === props.value
-      }]"
-      :value="item.value"
-      :title="item.label"
-      v-for="item in props.options"
-      @click="clickItem(item)"
-    >
-      <span class="select-option-icon"><i class="iconfont icon-duigou"></i></span>
-      <span class="select-option-text">{{ item.label }}</span>
-    </div>
+    <template v-for="item in props.options">
+      <div class="select-option-split" v-if="item.type === 'split'"></div>
+      <div
+        class="select-option"
+        :class="[props.optionClass, {
+          active: item.value === props.value
+        }]"
+        :value="item.value"
+        :title="item.label"
+        @click="clickItem(item)"
+        v-else
+      >
+        <span class="select-option-icon"><i class="iconfont icon-duigou"></i></span>
+        <span class="select-option-text">{{ item.label }}</span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -24,7 +27,7 @@ import { reactive, type PropType, nextTick } from 'vue';
 const props = defineProps({
   /** 选项列表 */
   options: {
-    type: Array as PropType<{ label: string, value: string }[]>,
+    type: Array as PropType<{ type: string, label: string, value: string }[]>,
   },
   optionClass: {
     type: String,
@@ -111,17 +114,37 @@ defineExpose({
     right: 0px;
   }
 
-  > .select-option {
+  > .select-option-split {
     cursor: default;
+    position: relative;
+    display: block;
+    margin-top: 6px;
+    border-top: 1px solid #F5F5F5;
+    padding-top: 6px;
+    width: 100%;
+  }
+
+  > .select-option {
+    cursor: pointer;
     position: relative;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     white-space: nowrap;
-    padding: 2px 12px;
+    padding: 4px 12px;
     border-radius: 4px;
     height: 28px;
+    width: 100%;
+    font-size: 12px;
+
+    &.active {
+      background-color: #d7dffe;
+
+      > .select-option-icon {
+        visibility: visible;
+      }
+    }
 
     &:hover {
       background-color: #4667E6;
@@ -131,13 +154,6 @@ defineExpose({
       }
       > .select-option-text {
         color: white;
-      }
-    }
-
-    &.active {
-
-      > .select-option-icon {
-        visibility: visible;
       }
     }
 

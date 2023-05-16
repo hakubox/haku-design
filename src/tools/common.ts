@@ -58,6 +58,13 @@ export function toDecimal(num: number | string, pos: number = 0): number {
   }
 }
 
+/** 计算两点之间的距离 */
+export function distance(a: { x: number, y: number }, b: { x: number, y: number }) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 /**
  * NPM版本号对比，前版本号是否大于后版本号
  * 

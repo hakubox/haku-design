@@ -15,8 +15,11 @@
         <div class="haku-dialog-title">{{ props.title }}</div>
         <!-- 顶部工具栏 -->
         <div class="haku-dialog-header-tools">
+          <slot name="header-tools"></slot>
           <!-- 关闭按钮 -->
-          <div class="haku-dialog-header-tool haku-dialog-close"></div>
+          <div class="haku-dialog-header-tool haku-dialog-close">
+            <i class="iconfont icon-guanbi"></i>
+          </div>
         </div>
       </div>
       <slot v-else-if="props.header === true && slots.header" name="header"></slot>
@@ -197,18 +200,33 @@ onUnmounted(() => {
         font-weight: 500;
       }
 
-      > .haku-dialog-tools {
+      > .haku-dialog-header-tools {
         flex-shrink: 0;
         flex-grow: 0;
-        display: inline-block;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
 
-        font-size: 14px;
-
-        > span {
+        > :deep(.haku-dialog-header-tool) {
+          position: relative;
           transition: 0.12s;
+          font-size: 14px;
+          color: #666;
+          width: 24px;
+          text-align: center;
 
           &:hover {
             color: @primary-color;
+
+            &.haku-dialog-close {
+              color: #DF6152;
+            }
+          }
+
+
+          + .haku-dialog-header-tool {
+            margin-left: 6px;
           }
         }
       }

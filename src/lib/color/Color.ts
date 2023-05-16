@@ -126,7 +126,6 @@ export function getLinearGradientItem(
     b: toDecimal(bStep * step + startColor.b, 0),
     a: aStep * step + startColor.a
   };
-  console.log('-re', _re);
 	return _re;
 }
 

@@ -268,8 +268,8 @@ const submitColor = () => {
   if (!state.isChangeColorInputAlpha) {
     state.colorInputAlpha = toDecimal(state.color._alpha * 100, 0) + '%';
   }
-  emit('change', state.color.toRgb());
   emit('update:value', state.color.toRgb());
+  emit('change', state.color.toRgb());
 };
 
 const restoreColor = () => {
