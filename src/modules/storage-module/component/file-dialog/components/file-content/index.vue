@@ -87,7 +87,7 @@
 
 <script lang="ts" setup>
 /** 文件展示面板 */
-import { ProgressStateItem, StorageFileInfo } from '@/modules/storage-module/@types';
+import { ProgressStateItem, StorageFileInfo } from '@/modules/storage-module/index.d';
 import { FileType, getFileIconByFileType } from '../../../../tools/fileTypeHandler';
 import {
   getCurrentInstance,

@@ -4,16 +4,15 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { onMounted, watch, ref } from 'vue';
+import { onMounted, watch, ref, defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
 import BaseECharts from '@/components/common/BaseECharts.vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   title: {

@@ -24,18 +24,16 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { PropType, reactive } from 'vue';
+import { PropType, reactive, defineOptions } from 'vue';
 import { getBoxModel } from '@/tools/common';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getQBasicProps } from '@/tools/common';
 import ComponentBasic from '@/components/common/ComponentBasic.vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const defaultImg = new URL('@/assets/img/temp/default-img.webp', import.meta.url).href;
 

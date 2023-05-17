@@ -1,7 +1,7 @@
 import { state as globalState } from '@/common/global';
 import { NavigationFailure } from 'vue-router';
 import NProgress from 'accessible-nprogress';
-import { Toast } from 'vant';
+import { toast } from '@/common/message';
 
 /** 评分模块 */
 export const service = {
@@ -16,17 +16,11 @@ export const service = {
       }
       if (_navigationResult) {
         NProgress.done();
-        Toast({
-          type: 'fail', 
-          message: '页面跳转失败'
-        });
+        toast('页面跳转失败', 'error');
       }
     } catch (error) {
       NProgress.done();
-      Toast({
-        type: 'fail', 
-        message: '页面跳转失败'
-      });
+      toast('页面跳转失败', 'error');
     }
   },
 };

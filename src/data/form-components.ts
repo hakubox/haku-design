@@ -253,7 +253,6 @@ export let formComponents: InitComponent[] = [
     attrs: {
       width: 300,
       height: 160,
-      disabledHeight: true,
       lock: false,
       visible: true,
     },

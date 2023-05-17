@@ -7,11 +7,11 @@ import { state as themeState, service as themeService } from "@/modules/theme-mo
 import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService } from '@/modules/form-fill-module';
 import { AppPage } from '@/@types/app-page';
-import { Toast } from "vant";
 
 import { timeout } from '@/tools/common';
 import { getFileListByIds } from '@/modules/storage-module/api';
-import { FormInfoItem } from '@/modules/form-fill-module/@types';
+import type { FormInfoItem } from '@/modules/form-fill-module/index.d';
+import { toast } from '@/common/message';
 
 /** 问卷编辑模块状态 */
 export const state = reactive({
@@ -198,7 +198,7 @@ export const service = {
       if (body.theme?.code) themeService.changeTheme(body.theme.code);
       await timeout(100);
     } catch(err) {
-      Toast.fail('加载数据出错');
+      toast('加载数据出错', 'error');
       console.error(err);
     }
   },
@@ -263,10 +263,7 @@ export const service = {
       eventService.emit(EventTriggerType.prevPage);
       this.onChangePage();
     } else {
-      Toast({
-        type: 'fail',
-        message: '已经是第一页'
-      });
+      toast('已经是第一页', 'error');
     }
   },
   /** 跳转到下一页（问卷分页） */
@@ -279,10 +276,7 @@ export const service = {
         this.onChangePage();
       }
     } else {
-      Toast({
-        type: 'fail',
-        message: '已经是最后一页'
-      });
+      toast('已经是最后一页', 'error');
     }
   },
   /** 跳转到某一页 */
@@ -293,10 +287,7 @@ export const service = {
         this.onChangePage();
       }
     } else {
-      Toast({
-        type: 'fail',
-        message: '页数参数不正确'
-      });
+      toast('页数参数不正确', 'error');
     }
   },
   /** 页面调整大小 */

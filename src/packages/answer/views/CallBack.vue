@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Dialog, Loading } from 'vant';
+import { showDialog, Loading } from 'vant';
 import '../assets/sweetalert.css';
 import { get } from '@/lib/api';
 
@@ -25,7 +25,7 @@ get('/account/getLoginUrl', {
   backUrl: location.href.substr(0, location.href.indexOf('?')) + '?qid=' + query.qid + '#/',
 }).then((d) => {
   if (d.code != '0') {
-    Dialog.alert({
+    showDialog({
       title: '警告',
       message: d.desc,
     });

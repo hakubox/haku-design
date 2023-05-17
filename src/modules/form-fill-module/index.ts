@@ -7,10 +7,10 @@ import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum'
 import type { Component, ComponentAnswerType, ComponentGroup, AppPage, DataEditorValue } from '@/@types';
 import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from './index.d';
 import { answerCommit } from '@/api/form-fill';
-import { Dialog, Toast } from 'vant';
 import { isBlank } from '@/tools/common';
 import { clearOldMediaInfo } from '@/lib/media';
 import { computed, nextTick, reactive } from 'vue';
+import { confirm, toast } from '@/common/message';
 
 export * from './index.d';
 
@@ -393,10 +393,7 @@ export const service = {
       if (_minDuration > 0) {
         state.timerInfo.duration = state.nowUseTime;
         if (state.timerInfo.duration < _minDuration) {
-          const _confrim = await Dialog.confirm({
-            title: '提前结束',
-            message: editorState.getTimerConfig.minDurationTooltip,
-          });
+          const _confrim = await confirm('提前结束', editorState.getTimerConfig.minDurationTooltip);
           if (_confrim) {
             const _re = {
               isComplete: !_isEnforceMinDuration,
@@ -413,7 +410,7 @@ export const service = {
     if (validate) {
       const _checkResult = await service.validateForm();
       if (!_checkResult.isComplete) {
-        Toast.fail('填写未完成');
+        toast('填写未完成', 'error');
         return {
           isComplete: false,
           data: _data
@@ -421,7 +418,8 @@ export const service = {
       }
     } 
 
-    const hide = Toast.loading({
+    const hide = toast({
+      type: 'loading',
       message: '提交中...',
       forbidClick: true,
     });

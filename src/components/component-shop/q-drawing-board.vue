@@ -6,16 +6,14 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch, ref } from 'vue';
+import { useAttrs, onMounted, PropType, reactive, watch, ref, defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import signature from 'signature_pad';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const attrs = useAttrs();
 const widgetRef = ref();

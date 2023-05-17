@@ -10,7 +10,6 @@
     }"
     tip="center"
   >
-    ++{{ $attrs.minHeight }}++
     <template v-if="!components?.length">
       <q-blank />
     </template>

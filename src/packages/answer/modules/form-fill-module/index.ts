@@ -4,14 +4,14 @@ import { service as scoringService } from '@/modules/scoring-module';
 import { state as authState } from '@/common/auth-module';
 import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
 import { Component, ComponentAnswerType, ComponentGroup } from '@/@types';
-import { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from '@/modules/form-fill-module/@types';
+import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from '@/modules/form-fill-module/index.d';
 import { answerCommit } from '@/api/form-fill';
-import { Dialog, Toast } from 'vant';
 import { isBlank } from '@/tools/common';
 import { AppPage } from '@/@types/app-page';
 import { clearOldMediaInfo } from '@/lib/media';
 import { computed, nextTick, reactive } from 'vue';
 import { type DataEditorValue } from '@/@types/data-editor-value';
+import { toast, confirm } from '@/common/message';
 
 /** 缓存列表KEY */
 const StorageListKey = '__hakuform__storage__';
@@ -369,10 +369,7 @@ export const service = {
       if (_minDuration > 0) {
         state.timerInfo.duration = state.nowUseTime;
         if (state.timerInfo.duration < _minDuration) {
-          const _confrim = await Dialog.confirm({
-            title: '提前结束',
-            message: editorState.getTimerConfig.minDurationTooltip,
-          });
+          const _confrim = await confirm('提前结束', editorState.getTimerConfig.minDurationTooltip + '');
           if (_confrim) {
             const _re = {
               isComplete: !_isEnforceMinDuration,
@@ -389,7 +386,7 @@ export const service = {
     if (validate) {
       const _checkResult = await service.validateForm();
       if (!_checkResult.isComplete) {
-        Toast.fail('填写未完成');
+        toast('填写未完成', 'error');
         return {
           isComplete: false,
           data: _data
@@ -397,10 +394,10 @@ export const service = {
       }
     } 
 
-    const hide = Toast.loading({
+    const hide = toast({
       message: '提交中...',
       forbidClick: true,
-    });
+    }) as unknown as { clear: Function };
 
     if (state.useRequest) await answerCommit(editorState.appConfig.id, _data);
 

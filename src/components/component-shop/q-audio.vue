@@ -20,7 +20,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, defineOptions } from 'vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   /** 是否预览状态 */

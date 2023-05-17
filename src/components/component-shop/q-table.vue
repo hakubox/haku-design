@@ -79,17 +79,15 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    components: { Loading },
-    inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { PropType, reactive } from 'vue';
+import { PropType, reactive, defineOptions } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import { getQBasicProps } from '@/tools/common';
 import { Button, Empty, Loading } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const emit = defineEmits<{
   (event: 'update:value', value: string): void;

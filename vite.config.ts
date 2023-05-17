@@ -82,7 +82,11 @@ switch (buildProj) {
           transformIndexHtml,
         },
         // basicSsl(),
-        vue(),
+        vue({
+          script: {
+            defineModel: true
+          }
+        }),
         visualizer({
           open: true,
           gzipSize: true,
@@ -159,7 +163,11 @@ switch (buildProj) {
           transformIndexHtml,
         },
         // basicSsl(),
-        vue(),
+        vue({
+          script: {
+            defineModel: true
+          }
+        }),
         visualizer({
           open: true,
           gzipSize: true,
@@ -216,7 +224,11 @@ switch (buildProj) {
       },
       plugins: [
         // basicSsl(),
-        vue(),
+        vue({
+          script: {
+            defineModel: true
+          }
+        }),
         visualizer({
           template: 'treemap',
           open: true,

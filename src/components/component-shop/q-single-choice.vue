@@ -48,18 +48,17 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, nextTick, watch, inject } from "vue";
+import { onMounted, PropType, reactive, nextTick, watch, inject, defineOptions } from "vue";
 import { service as storageService } from '@/modules/storage-module';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';
-import { computed } from "vue";
-import { Radio, RadioGroup } from "vant";
+import { computed } from 'vue';
+import { Radio, RadioGroup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

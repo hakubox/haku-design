@@ -14,14 +14,13 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { PropType, reactive } from 'vue';
+import { PropType, reactive, defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

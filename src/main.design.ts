@@ -13,7 +13,7 @@ import AntdZHCN from 'ant-design-vue/es/locale/zh_CN';
 import { message, Modal } from 'ant-design-vue';
 
 import '@vant/touch-emulator';
-import 'vant/lib/index.less';
+import 'vant/lib/index.css';
 import '@/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
@@ -118,7 +118,7 @@ app.component('RulesEditor', RulesEditor);
 changeConfig(process.env.Environment as ServerEnvironment);
 
 app.use(directives);
-app.use(Menus);
+Menus(app, { name: 'vue3-menus' });
 app.use(components);
 app.use(AntdIcon);
 

@@ -5,18 +5,16 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch } from 'vue';
+import { useAttrs, reactive, defineOptions } from 'vue';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { getQBasicProps } from '@/tools/common';
 import { computed } from 'vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const attrs = useAttrs();
 

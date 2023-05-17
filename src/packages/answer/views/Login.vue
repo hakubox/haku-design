@@ -29,21 +29,12 @@
         </div>
       </Form>
     </div>
-
-    <Verify
-      ref="verify"
-      :mode="'pop'"
-      :captcha-type="'blockPuzzle'"
-      :img-size="{ width: '330px', height: '155px' }"
-      @success="capctchaCheckSuccess"
-    ></Verify>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Verify from '@/components/common/verifition/Verify.vue';
 import { service as authService } from '@/common/auth-module';
 import { Button, CellGroup, Field, Form, Toast } from 'vant';
 import { onMounted } from 'vue';
@@ -58,7 +49,6 @@ const state = reactive({
     username: '',
     password: '',
     rememberMe: false,
-    code: ''
   },
 });
 const rules = {
@@ -66,28 +56,19 @@ const rules = {
   password: [{ required: true, message: '密码必填', trigger: 'blur' }],
 };
 
-/** 登录前校验 */
-const capctchaCheckSuccess = (params: any) => {
-  state.loginForm.code = params.captchaVerification;
+onMounted(() => {
+  
+})
 
+/** 登录 */
+const login = () => {
+  state.isLoading = true;
   authService.login(state.loginForm).then(d => {
     Toast.success('登录成功');
     router.push('/');
   }).finally(() => {
     state.isLoading = false;
   });
-};
-
-onMounted(() => {
-  
-})
-
-const verify = ref<typeof Verify>();
-
-/** 登录 */
-const login = () => {
-  state.isLoading = true;
-  verify.value?.['show']();
 };
 </script>
 

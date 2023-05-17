@@ -12,14 +12,14 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
+import { defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Rate } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

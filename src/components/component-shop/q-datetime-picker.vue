@@ -12,7 +12,7 @@
         <span class="placeholder" v-else>{{ props.placeholder }}</span>
       </div>
       <Popup v-model:show="state.showPicker" round position="bottom" teleport=".form-canvas.preview">
-        <DatetimePicker
+        <DatePicker
           :value="state.inputValue"
           type="date"
           title="选择年月日"
@@ -36,17 +36,16 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
-import { inject, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { inject, onMounted, PropType, reactive, defineOptions, watch } from 'vue';
 import { state as globalState } from '@/common/global';
 import { dateFormat, getQBasicProps } from '@/tools/common';
 import VueDatepickerLocal from '../common/data-picker/VueDatepickerLocal.vue';
-import { DatetimePicker, Popup } from 'vant';
+import { DatePicker, Popup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

@@ -3,7 +3,7 @@
   <div
     ref="nodeEditorEl"
     class="canvas-node-action-editor"
-    :class="{ global: props.global, show: props.show && (props.global || !props.global && !props.components[0].attrs.lock) }"
+    :class="{ global: props.global, show: isShow }"
     :style="props.global ? {
       width: `${editorState.currentRangeEditorRect.width}px`,
       height: `${editorState.currentRangeEditorRect.height}px`,
@@ -40,16 +40,18 @@
       v-html="draggableState.tipConfig.text ?? ' '"
     ></div>
     <!-- 控制器 -->
-    <div class="node-action-mark-center"></div>
-    <div v-show="props.disabledRotate !== true" class="node-action-handle-rotate" @mousedown.stop="e => onStartDrag(e, 'rotate')"></div>
-    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-top" @mousedown.stop="e => onStartDrag(e, 'top')"></div>
-    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-left" @mousedown.stop="e => onStartDrag(e, 'left')"></div>
-    <div v-show="props.disabledWidth !== true" class="node-action-handle direction-right" @mousedown.stop="e => onStartDrag(e, 'right')"></div>
-    <div v-show="props.disabledHeight !== true" class="node-action-handle direction-bottom" @mousedown.stop="e => onStartDrag(e, 'bottom')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-left" @mousedown.stop="e => onStartDrag(e, 'topleft')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-right" @mousedown.stop="e => onStartDrag(e, 'topright')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-left" @mousedown.stop="e => onStartDrag(e, 'bottomleft')"></div>
-    <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-right" @mousedown.stop="e => onStartDrag(e, 'bottomright')"></div>
+    <template v-if="isShow">
+      <div class="node-action-mark-center"></div>
+      <div v-show="props.disabledRotate !== true" class="node-action-handle-rotate" @mousedown.stop="e => onStartDrag(e, 'rotate')"></div>
+      <div v-show="props.disabledHeight !== true" class="node-action-handle direction-top" @mousedown.stop="e => onStartDrag(e, 'top')"></div>
+      <div v-show="props.disabledWidth !== true" class="node-action-handle direction-left" @mousedown.stop="e => onStartDrag(e, 'left')"></div>
+      <div v-show="props.disabledWidth !== true" class="node-action-handle direction-right" @mousedown.stop="e => onStartDrag(e, 'right')"></div>
+      <div v-show="props.disabledHeight !== true" class="node-action-handle direction-bottom" @mousedown.stop="e => onStartDrag(e, 'bottom')"></div>
+      <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-left" @mousedown.stop="e => onStartDrag(e, 'topleft')"></div>
+      <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-top-right" @mousedown.stop="e => onStartDrag(e, 'topright')"></div>
+      <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-left" @mousedown.stop="e => onStartDrag(e, 'bottomleft')"></div>
+      <div v-show="props.disabledWidth !== true && props.disabledHeight !== true" class="node-action-handle direction-bottom-right" @mousedown.stop="e => onStartDrag(e, 'bottomright')"></div>
+    </template>
   </div>
 </template>
 <script lang="ts" setup>
@@ -60,7 +62,7 @@ import { state as draggableState, service as draggableService } from '@/modules/
 import message from '@/common/message';
 import { onUnmounted } from 'vue';
 import { getAngle, toDecimal } from '@/tools/common';
-import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
+import { getHeight, getWidth } from '@/common/component-handle';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
@@ -140,6 +142,9 @@ const actionDirection = {
 };
 
 const nodeEditorEl = ref<HTMLElement>();
+
+/** 是否显示 */
+const isShow = computed(() => props.show && (props.global || !props.global && !props.components[0].attrs.lock));
 
 const isSingle = computed(() => props.components.length === 1);
 

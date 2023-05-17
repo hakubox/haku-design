@@ -13,15 +13,14 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { inject, PropType, reactive } from 'vue';
+import { inject, PropType, reactive, defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Component } from '@/@types';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

@@ -4,12 +4,17 @@
     <Empty class="basic-echart-empty" v-if="props.empty" description="图表暂无数据" />
   </div>
 </template>
+
 <script lang="ts" setup>
-import { throttle } from '@/tools/common';
+import { watch, ref, reactive, onMounted, nextTick, defineOptions } from 'vue';
 import { init as echartInit, type ECharts } from 'echarts';
-import { watch, ref, reactive, onMounted, nextTick } from 'vue';
+import { throttle } from '@/tools/common';
 import { useElementSize } from '@vueuse/core';
 import { Empty } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   /** 是否为空 */

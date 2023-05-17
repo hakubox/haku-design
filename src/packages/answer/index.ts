@@ -1,12 +1,12 @@
 import Answer from './components/AnswerCanvas.vue';
 import answerComponents from '@/packages/answer/common/register-global-components';
-import { Toast, Dialog } from 'vant';
+import { showToast, Dialog } from 'vant';
 import './assets/less/main.less';
 import 'vant/lib/index.css';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import { init as messageInit } from '@/common/message';
 
-messageInit({ toastModule: Toast, confirmModule: Dialog });
+messageInit({ toastModule: showToast, confirmModule: Dialog });
 
 export function install(vue) {
   if (install['installed']) return;

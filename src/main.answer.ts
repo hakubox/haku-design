@@ -6,7 +6,7 @@ import router from './packages/answer/router';
 import components from '@/packages/answer/common/register-global-components';
 
 import '@vant/touch-emulator';
-import 'vant/lib/index.less';
+import 'vant/lib/index.css';
 import '@/packages/answer/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
@@ -21,9 +21,9 @@ import { service as answerAuthService } from '@/packages/answer/modules/auth-mod
 
 import { init as messageInit } from '@/common/message';
 
-import { Toast, Dialog } from 'vant';
+import { showToast, Dialog } from 'vant';
 
-messageInit({ toastModule: Toast, confirmModule: Dialog });
+messageInit({ toastModule: showToast, confirmModule: Dialog });
 
 scoringStore.service = {
   ...scoringStore.service,

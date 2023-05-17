@@ -73,14 +73,8 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    components: { Slider },
-    inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { computed, onMounted, PropType, reactive, ref, watch, useAttrs } from 'vue';
+import { computed, onMounted, PropType, reactive, ref, watch, useAttrs, defineOptions } from 'vue';
 import { timeFormat } from '@/tools/common';
 import { service as storageService } from '@/modules/storage-module';
 import { service as eventService, EventTriggerType } from '@/modules/event-module';
@@ -88,6 +82,10 @@ import { MediaEvents, setMediaPlayPosition } from '@/lib/media';
 import { getQBasicProps } from '@/tools/common';
 import PlayControl from './q-anx-video-play-control.vue';
 import { Slider } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 /** 音频信息 */
 interface AudioInfo {

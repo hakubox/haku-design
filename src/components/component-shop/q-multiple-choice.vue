@@ -53,17 +53,16 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, watch } from 'vue';
+import { onMounted, PropType, reactive, watch, defineOptions } from 'vue';
 import { service as storageService } from '@/modules/storage-module';
 import { computed } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Checkbox, CheckboxGroup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

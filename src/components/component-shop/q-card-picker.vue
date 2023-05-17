@@ -56,18 +56,16 @@
   </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    components: { Icon },
-    inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { nextTick, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { onMounted, PropType, reactive, defineOptions, watch } from 'vue';
 import SimpleEditor from '@/components/editor/simple-editor/SimpleEditor.vue';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';
 import { Icon } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

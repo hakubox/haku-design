@@ -164,6 +164,7 @@ import type { AppPage, AppConfig } from '@/@types';
 import FormComponent from './FormComponent.vue';
 import QRCode from '@/components/common/QRCode.vue';
 import '../assets/sweetalert.css';
+import { toast } from '@/common/message';
 
 const emits = defineEmits<{
   /** 答卷提交事件，返回false则阻止 */
@@ -386,7 +387,7 @@ const resetForm = () => {
     eventService.emit(EventTriggerType.resetForm);
     formFillService.startFormFill();
     emits('onReset');
-    Toast({ message: '表单已重置' });
+    toast('表单已重置');
   }).catch((err) => {});
 };
 

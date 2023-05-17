@@ -8,13 +8,12 @@
 
 <script lang="ts" setup>
 import { toDecimal } from '@/tools/common';
-import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive, ref, defineModel } from 'vue';
+
+/** 绑定value */
+const modelValue = defineModel<number>('value', { required: true, default: 0 });
 
 const props = defineProps({
-  value: {
-    type: Number,
-    default: 0,
-  },
   sliderStyle: {
     type: Object as PropType<Record<string, any>>,
   },
@@ -26,10 +25,6 @@ const props = defineProps({
 
 /** 控件画布 */
 const slider = ref<HTMLElement>();
-
-const emit = defineEmits<{
-  (event: 'update:value', value: number): void;
-}>();
 
 const state = reactive({
   /** 是否开始拖拽 */
@@ -46,7 +41,7 @@ const drag = (e) => {
     const rect = slider.value!.getBoundingClientRect();
     const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), (rect.width - 10));
     const _value = toDecimal((_cursorLeft / (slider.value!.offsetWidth - 10)) * props.max, 3);
-    emit('update:value', _value);
+    modelValue.value = _value;
   }
 };
 
@@ -57,7 +52,7 @@ const endDrag = () => {
 /** 游标离左侧距离 */
 const cursorLeft = computed(() => {
   if (slider.value) {
-    return ((slider.value.offsetWidth - 10) * props.value) / props.max - 1;
+    return ((slider.value.offsetWidth - 10) * modelValue.value) / props.max - 1;
   } else {
     return 0;
   }

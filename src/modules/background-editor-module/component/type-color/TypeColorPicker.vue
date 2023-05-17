@@ -136,8 +136,8 @@
       <div class="color-picker-history-item" v-for="(item, index) in state.history" :key="index">
         <div
           class="color-picker-history-item-color"
-          :title="item"
-          :style="{ background: item }"
+          :title="`rgba(${item.r}, ${item.g}, ${item.b}, ${item.a})`"
+          :style="{ backgroundColor: `rgba(${item.r}, ${item.g}, ${item.b}, ${item.a})` }"
           @click="selectHistoryColor(item)"
         ></div>
       </div>
@@ -172,7 +172,6 @@ import SimpleSelect from '../common/SimpleSelect.vue';
 import { service as backgroundEditorService } from '../../';
 import type { AppColor } from '../../index.d';
 import { toDecimal } from '@/tools/common';
-import { nextTick } from 'vue';
 
 const formatterTypeSelect = ref<typeof SimpleSelect>();
 const colorTypeSelect = ref<typeof SimpleSelect>();
@@ -384,10 +383,8 @@ const init = () => {
       format: state.colorType,
     });
     _historyList = [];
-    _color.fromString('rgba(255, 255, 255, 1)');
-    _historyList.push(_color.value);
-    _color.fromString('rgba(0, 0, 0, 1)');
-    _historyList.push(_color.value);
+    _historyList.push({ r: 255, g: 255, b: 255, a: 1 });
+    _historyList.push({ r: 0, g: 0, b: 0, a: 1 });
   } else _historyList = JSON.parse(_historyList);
   state.history = _historyList;
 
