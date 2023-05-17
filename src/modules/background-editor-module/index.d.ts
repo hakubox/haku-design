@@ -166,10 +166,8 @@ export interface AppImageBackground extends AppBasicBackground {
   type: 'image';
   /** 图片路径 */
   imageUrl: string;
-  /** 填充方式 none:默认尺寸；fill:充满；cover:拉伸；contain:适应；repeat:平铺  */
-  fillType: 'none' | 'fill' | 'contain' | 'cover' | 'repeat';
-  /** 平铺方式 no-repeat:不平铺；x-repeat:横向平铺；y-repeat:纵向平铺；repeat:完全平铺 */
-  repeatType: 'no-repeat' | 'x-repeat' | 'y-repeat' | 'repeat';
+  /** 填充方式 none:默认尺寸；stretch:拉伸；cover:充满；contain:适应；repeat:平铺；repeat-x:横向平铺；repeat-y:纵向平铺  */
+  fillMode: 'none' | 'stretch' | 'contain' | 'cover' | 'repeat' | 'repeat-x' | 'repeat-y';
   /** 图片横向位置 */
   x: 'left' | 'center' | 'right' | number;
   /** 图片纵向位置 */
@@ -181,11 +179,11 @@ export interface AppImageBackground extends AppBasicBackground {
   /** 纵向翻转 */
   yFlipOver: boolean;
 
-  /** 亮度 */
+  /** 亮度：0~100 */
   brightness: number;
   /** 对比度：0~1 */
   contrast: number;
-  /** 模糊：0~100% */
+  /** 模糊：0~100 */
   blur: number;
   /** 灰度：0~1 */
   grayscale: number;

@@ -6,20 +6,6 @@
     {{ backgroundEditorState.currentBackground }} <br />
 
     <div class="gradient-editor-panel" ref="gradientEditorPanel">
-
-      <div class="test-rect" :style="{
-        top: `200px`,
-        left: `200px`,
-        mixBlendMode: 'normal',
-        backgroundColor: 'red'
-      }"></div>
-
-      <div class="test-rect" :style="{
-        top: `200px`,
-        left: `0px`,
-        mixBlendMode: 'normal',
-        backgroundColor: 'blue'
-      }"></div>
       
       <!-- 带有背景的矩形 -->
       <div class="test-rect" ref="testRect" :style="{

@@ -1,10 +1,13 @@
 import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { reactive } from 'vue';
 import message, { toast } from '@/common/message';
-import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientRectInfo } from './index.d';
+import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientRectInfo, AppImageBackground } from './index.d';
 import { distance } from '@/tools/common';
 
 export * from './index.d';
+
+/** 默认方格图片 */
+export const defaultImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFAAQMAAAD3XjfpAAAABlBMVEX///8AAABVwtN+AAAAUUlEQVRo3u3ZIQ4AMAwCwP7/05vaVE0daQ5JTuCp81MvbQeCIAiCIAiCIJgGI0aAIAiCIAiCIAjOYfAyEARBEARBEARB/wwIgiAIgiAIgivhBfk86GnT8zOGAAAAAElFTkSuQmCC';
 
 /** 背景编辑器模块状态 */
 export const state = reactive({
@@ -14,8 +17,8 @@ export const state = reactive({
   backgroundTypeList: [
     { name: 'color', title: '纯色', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAACLSURBVFiF7dexDcMwDETRT6fOAhkjWUNzODN5Dy+QnlogAygDeAC6kArDcM00d4AgQc09ljR6HsBz3BlpwA+oBrzG+UdWgALM7h5ZcfcAZqDYeBARS+boZvYGmDJLryKAAAIIIIAAAggggAACCDDRF0VqrWmlh65m9I24pLWfLDdgO3zck4ob8AG+OxCjg8ww/O8tAAAAAElFTkSuQmCC' },
     { name: 'linear-gradient', title: '线性渐变', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAD1SURBVFiF7ZQhjsMwEEX/KCbBJs41AspKcqVdkj3AhvRA4WU+RhRgFEWWpSi2Ey8y6JaPQfORNeQ9/RmZAGCapl/nXO+cA0eISFdV9Wzb9pu01o8Y4xcL+V+aphnEvu/38zyhlIJSigVsjIExBsuy9MJ7fwMAKSVCCCwCUkrM84x1XSEy1HvPAs/J3PICMcaXAVcy92qgfAPHcbwMuJK55Ru4bqC4wLWC4g3kB3cDbwKfewPFBa4VXA0Ub6D4R1R8BdnGWou6rlng27Yhxggi0iKlNIQQ+hACrLUsAjlE9CQA6LrukVK6p5RuHGAhBIQQwziOP39YyzDUDdMzzwAAAABJRU5ErkJggg==' },
-    { name: 'radial-gradient', title: '径向渐变', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAASASURBVFiFxVdbbttGFD3DeZGUjNj/ho0EySrU6Me1Ass7aLqOJM5HUfQjSbOI7kIy/EIBJ15FbHgNsmWRM8Mh++FcdjSSG7stkAEuaIPUnHPPfcwdhges3d3d38qy1EqpHmMMAHpfX501TQPGWD2dTj+cnp6O77snu89HW1tbv2utX3HOwTlHkiRIkgRfSaBpGtR1jbqu4b2H9x4APo3H4/5/IjAYDN5JKfeEEJBSQikFKSWEEEiSBEIIAEBVVajrGlVVwTkHay2cc/T/+8PDw7cPJrCzs/NZStlTSkFrjSzLoLVuwe9SoKoqVFWF2WyGoiiIzNn+/v4P9yLw4sWLHznnR0opZFmGPM+RZRmklJBSIgxDTIDkd87BOYebmxvc3NzAWgtrLbz32wcHB8chnogJcM6PyONHjx6BFCACQoh/JEBhcM6Bc440TTGZTMAYgzHmKHaax7JrrTfyPMfq6irSNF0wrXX7VEq1eRGqExJkjEFKCe896rrG48ePt8/Pz/9YIDAYDN5prX/SWmNtba0FzLJsKYmYgBBiTp1QIQAQQlCINjY3N/XFxcXJXAiklHtKKXQ6nVb2GDQE45zPhSCUf9n7uq6R5zmcc/De7wF42yowHA5PpZSb3W4XKysrc14vUyBWYVluhOBkANryXF9fzy8vL49JgedSSuR53saT5CWgEDjsBQDmesAyZUgdKSWyLIMxBlrrVwBe836/P8yy7GWe5+h0Oku9DZWgZ6hA6D0t8pr6Q2hUJc+ePeOi2+2+4ZzPyUgJFaoRq6CUAue3Oey9h7W2JRDmRJygtC/nHLPZTIumaRJqq0mStGUU/yAkEnZF4LYVExkKR+xQWJ6EpZTqCcZYWzaxhXVNXoRqKKUAANbaVomwCuLDKzbGGASAHmMMQog2e2OLCRGRPM/bmJMKcR9YZoQFoPd31nynJXA7TPSqqpqr2dDis76qqlZ24DYEVVW17+n7u/YjLABn4q5SCQEJlIAp4aqqap/GmJZISCYkFFvTNBDW2jOtdY+GihAwPt3CUvPeL5QhkaDvwz1CMoTFGKtFmqaGsjf8QQwcdjhqJiEBUqcsy6VEYoe895hOpx/4ly9f/nz69OmvSZLM1e5dp9qys5+8JyMS8d9k0+kU1locHx//LADAGPNRSvmqKAqkaTrn9bLeTp0sPAtIxZgMTUOkxmw2g3MOAD4BwXSyu7vb0BTU7XaRZdncSfiQ45hIlGWJsixRFAWKosDV1RWur69RFAVGoxGjMgQAOOfec873ZrMZlFILI1fY2+9SJlQhJEFK0HzonHtPuO1EdHFxcfLkyZPtpmk26rqGlLLdPOwHYZWESRpLH8d/MpmgLEtYa88ODg5eEu7CVDwcDpv/ayglzyeTCYqigDEG4/F4DnNhKvbebxtjjqhjdToddDqdfzWWF0Uxdz/w3m/HePe6mND9gE7Eb11MjDGtxw++mITru17NwjUcDk8BPH/I5dQY8/Hk5OT1t/a+FwFa/X5/2O123zRNkyy7nltrz9I0NaPR6Jf77vkXZm13nfYcEWgAAAAASUVORK5CYII=' },
-    { name: 'conic-gradient', title: '旋转渐变', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAUdSURBVFiFpVc9bBNJGH3fzNjrYC8h4sdIh8RPT8o9kRSglPwIJEdQpkmBQmjINZyoU+EKyqOkPClNTiK0KBDXaVA6IohEkIK9xni983PFeZbZ8SYY3UifvB7Pznvfm2/ejAm/0G7evLnabrfDcrkcaa2hlIqazSYAtAAgDEO1vb3dnJ+f/3vcOWmcQXNzc8+EEMvGGGitYT+11mg2m7nvAKC1xuTk5NvLly/P/C8Ct27deiqlXLEAnHNwzsEYg9YajDGsra2h3W5Da41Op5OFMQbGGAghmrOzs3/8MoHbt29vSSkjYww456hUKhnwUH5orbG2tjbSp7XG3t4ePn36ZIm2rl279nsRjvA7Go3G9TRN140xKJfLCIIAQoicxABA9IO7zdZt9XodSins7e1BKRW9fv3acM5vzM3N/eOOYz4BrfU6EaFUKmFychJBEICIRsJvloRbD/V6HdPT0zh27BiMMZBSrvvv5QjMz89vERGCIMCJEyfAGDsS3CfiknAL9tKlS6hWq9Ba49WrV1uFBO7du/cUQEREOXDG2JFEDgP11bh48SKq1SqUUtHGxsbTEQLGmBUiQrVazUBd4CISP1sCG7bv9OnTMMZgMBis5AgsLCxsEhFqtRrCMMwRKIrDwH1gPyYmJjAxMQFjDF6+fPksIzAYDK4wxgrB3b1/GJFxwG2cOXMGxhjUarVlABB37txp2KpnjOWkJKLc1rNNa10IrpTKwpffblOrQrfbxebm5qo4efLkSpIkmdG4e9qSsAbkgxJR9myBpZQj6++GJRHHMXZ2dkKRpilnjCEIAjDGcmtqt5oxJleEAKCUyghLKZGmKdI0HcneT8gSMMbg+PHjkbCT2HV2CwtAThVbE3bcYDCAlBJJkiBJkix7q4qfjL9kACCIKCIiVCqVHLBf5f4E5XIZABDHMeI4zjL3sy2a0yqglIqEldTN3m2+89kQQuDChQvY3t5GGIaZMnb8UY4J4IcCjLEWgEhKmWXlT+KaEWMMQggEQYAwDNHpdAAAQRBkW9aOdd91yfR6PXu8t4Q/uQ/q/845R6lUyk5JpRSSJPkvGyEghCi0bzchu1RKKYjBYNAKgiBK0xSVSqXQ813zEUKgVCpBCJH5hJQyt4Nc4yqy7ziO7a1JiXq9Hnc6HaRpWviC74pCiNx620yUUjmf4JxnPuLHt2/foLXGzs5OkwBgaWnJAMCpU6cyFfzT0LVlq4IbVn6X4GEqvH//HkSEhYUFYgCQJMlzy+xnB1HROeAfRq4Zuc9aa3z+/Blaa9RqtbfA8DB68eLFQ8ZY5mbjgPtXMv+27J8FWmvs7+/jy5cvAIBGozGTERhWcJOI0O12C+UvAvdVKAJ1+/b39+3+b1pcbh/evXu3MTMzc10p9VuapqjVakcSGUcZd+/v7u5CSgkiai0uLt7NfvMHP3r0yFhrPnv2bCGQLTL3ruB/uvHx40f0+30QEe7fv5/DHPFfzvkNIkKaptjd3UWn0yncy0W3Ir8oe70ePnz4gF6vZ7fmjRF1RvQatsePH29prSPGGKampjA1NXWo9H7WSZLg69evrkO2lpaWCv+Y8KJOAHjz5s1fV69eDYloJkkStNttJEmSGY5SCqVSCUSEfr8PpRS63S4ODg5wcHBg1xtCiOaDBw/uHoYz1p/T1dXVze/fv1/xb8du8fkF2+v1nj958uThz+Yei4Bty8vLjfPnz6/0+30+rIFouASt4SnXOnfuXLy4uPjnuHP+C33P74mp5QIpAAAAAElFTkSuQmCC' },
+    { name: 'radial-gradient', title: '径向渐变', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAArlBMVEUAAABJSUlHR0dKSkpKSkpDQ0NCQkJwcHB/f3+IiIhRUVHBwcG3t7egoKCUlJRaWlpUVFROTk5KSkqnp6eZmZl5eXlpaWnOzs6rq6udnZ2SkpKOjo6KioqFhYV2dnZzc3Nra2tiYmLY2NjHx8dlZWVVVVXt7e3j4+Pf39/V1dXKysq8vLyysrKwsLCtra2jo6OBgYF8fHx7e3tfX19LS0v39/fn5+e4uLhnZ2dcXFwz48DTAAAAB3RSTlMAxIXEwolHz+ZFVgAAAaZJREFUOMuNU+d6gzAQAwJ4sGwTIOydPZrRNnn/F+v5a78mbZNQ/ZU4dGdJuYFmqCMhRqpuKvdgCE4p63tGKRf6H1o7ceYd6y4Mu/roMX7SfvIq0F2FUAlAqDpfGFdvaFNQr65QEewxYB8UqKp7Kq5WgA9RccA5IVlGSI4PBQo9Kr7nSz7AeZYmLiBJsxwHUqF++eM98C8kdcexA4jHbkpepIJ/Oj2xWvLJON75E4C/i8eJVNTsJHmdX6oCA+/427UNWG99BxS4qDxuSIfsjA55CvzGXlmAlb0BRZofUMcErMg9GJC5sb95t9plFC1b633jx24GI6QLnR5RAAN2W9tqo0XTLKLWsrc7GBGgIzVgxxrtSRL761UbNfPZbN5E7WrtxwnZoxo2HbGuxMR1Jra1XMzfptO3+WJp2RPHJbjs2EgRfViCBSmImtn09XU6ayIpABNl2ItBweAvhk0az9fUFe35oUx56u7Rqc9MyLBy79FjXbj+n+eWLu4HpufaUOSGQ3uNff879sCbP4tzOV+L03lQnMHq/YZ+W15DuQdT/6y/cfv1B5R5SXlWcOKgAAAAAElFTkSuQmCC' },
+    { name: 'conic-gradient', title: '旋转渐变', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABZVBMVEUAAABiYmKurq6KiopeXl7Ly8uoqKiEhIRCQkJhYWGjo6OCgoI/Pz/GxsZzc3NRUVHAwMCbm5uWlpZ5eXlxcXFUVFRPT0+2trbY2NjT09OGhoa6urqenp6VlZV6enpNTU2cnJxMTEysrKyNjY1sbGy+vr6bm5t1dXViYmK+vr6urq7KysqkpKRzc3Orq6t6enqKiop9fX1paWlYWFj09PTe3t7V1dXR0dHDw8OVlZVmZmZdXV1VVVVTU1NOTk7v7+/s7Oy4uLixsbGoqKibm5uQkJCDg4N3d3dubm5sbGz7+/vp6enl5eXj4+PFxcWhoaGdnZ2ZmZmGhoZfX1/+/v7Hx8fAwMC1tbWfn5+Xl5eSkpJwcHBQUFDb29vZ2dnMzMyzs7OOjo6AgIB2dnb29vbX19eMjIyHh4eBgYFaWlr4+Pjx8fHg4ODOzs67u7u6urpMTExJSUnCwsKmpqZFRUU+Pj5CQkIkWfQrAAAAKHRSTlMAycjIkcnJycnGk5OTiYlOycnJycnJycjGxsaMjIyMjIaGU1NTSkpKfICU6QAAAlJJREFUOMttkXl74VAYRy/d19n3fc+uQtsgKBKCNhJKEIqq6TYtin7+ee8NqjM9/57z/J7n3hfN8GV9eXnELiy8/ooeYn04vL0djVi2qOvSm//0p35/2O9FepHD6N72rnRT2rjvX/b6Pdknh2uRw0zmxO8/KtGPZ/SjSKTmC52PgwsILjs0ff1jGtQi4UJhNriMRveK3e7EvwjLFFUIQeEEfj/4vawee+X4+XA4GISCTEAAA9jv70vWOxLIckh0ikng+IOO1cR+xUelRVLABAQXMED8wR+6uQqBz6el0zghEzUIJn57Jx6HJ54XbE0bF+dyLXNyCR5r4JrZQCuhIG/bNiS48NUy/ih4rOv1usSsIldI4zF4RqRC4Uw0CxrsEdBg3MhVsNsY0oiUfJI9ILYD7LCCG1GUx5Ma0+ZtKls/6uxMEQQcELyY46RKs42r3SmJBHJRKaKOj8+S+S3VYGipyLKNxhWwqw8WkSvowfIsmcyfbqmVnGDRJb3IQgNI3CKaD/LEgv6tBpScEI/RJUkv4oaNcW60KWqOxr5icAnGitH0jaTjRsh9Q0gUvUS31GrALEMQt7o0jOCknMPXTvMTX1FI0Izh4kaS4oYbAWktOfamkeMSAtO0YtdQlBjDQJhNLUV8wFRIgCdIYSrvEeG57VGreEApjwMLFznzCRrD8x7iDScgRbdcqaAJv/h2+5QEHARkglECgZ/ojmcpzxYZ4AY4SJjV6lN0j49wrnzLVLhBmVMCrZb6Af3LW68Xn8T5tDX0EN/nlpaS+bm5tc/ojr9q4NepUU1B6gAAAABJRU5ErkJggg==' },
     { name: 'image', title: '图片', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAADLSURBVFiF7ZfBDcIwDEX/rxioVRfoAp0BevE63H2hzNAO0AUi2MgcIAipaXuBlIO/5FP8858sRYoJAKpaAjibWYMMIjkBuIpIT1U9mdklR3ACpDoAOALAOI4YhmHWZGZbl6yep/whBIQQAOBcxLGnwn+luq4jXFNkS12QA/wPgJkli+RqLfm2/DOAveQADuAAb4Bvv/Mt/wxgLzmAAziA/wccYH+A16IYV6UsatsWwHNJpaqWZnbLlv4hkl0hIneSXZxEpuCJZCUi/QOhULdMV8B8TgAAAABJRU5ErkJggg==' },
   ] as {
     name: AppBackgroundType,
@@ -145,6 +148,32 @@ export const service = {
               { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
               { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
             ]
+          };
+          state.currentGradientItemIndex = 0;
+          break;
+        }
+        case 'image': {
+          const _background = state.currentBackground as AppImageBackground;
+          state.currentBackground = {
+            blendType: 'normal',
+            show: _background.show,
+            opacity: _background.opacity,
+            type: 'image',
+            imageUrl: '',
+            fillMode: 'contain',
+            rotate: 0,
+            xFlipOver: false,
+            yFlipOver: false,
+            x: 0,
+            y: 0,
+            brightness: 0,
+            contrast: 0,
+            blur: 0,
+            grayscale: 0,
+            hueRotate: 0,
+            invert: 0,
+            saturate: 0,
+            sepia: 0
           };
           state.currentGradientItemIndex = 0;
           break;
