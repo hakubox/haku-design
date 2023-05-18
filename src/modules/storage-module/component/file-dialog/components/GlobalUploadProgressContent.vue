@@ -27,7 +27,7 @@ import { Modal, Progress } from 'ant-design-vue';
 import { getFileType, getFileIconByFileType } from '@/modules/storage-module/tools/fileTypeHandler';
 import { parseByte } from '../tools/transFileSize';
 import { CaretRightOutlined, PauseOutlined, CloseOutlined } from '@ant-design/icons-vue';
-import { ProgressStateItem } from '../../../@types';
+import type { ProgressStateItem } from '../../../index.d';
 
 const props = defineProps<{ globalUploadProgressState: ProgressStateItem[] }>();
 const emit = defineEmits<{ (e: 'update:globalUploadProgressState', value: ProgressStateItem[]): void }>();

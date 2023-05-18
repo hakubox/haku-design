@@ -20,9 +20,9 @@
     "dev": "cross-env buildProj=design buildMode=development vite --mode development",
     "build:design": "cross-env buildProj=design buildMode=development vite build",
     "preview:design": "cross-env buildProj=design buildMode=development vite preview",
-    "build:answer": "cross-env buildProj=answer buildMode=development vite build",
-    "preview:answer": "cross-env buildProj=answer buildMode=development vite preview",
-    "build:lib": "cross-env buildProj=answer-lib buildMode=development vite build",
+    "build:user": "cross-env buildProj=user buildMode=development vite build",
+    "preview:user": "cross-env buildProj=user buildMode=development vite preview",
+    "build:lib": "cross-env buildProj=userlib buildMode=development vite build",
     "docs:dev": "vuepress dev docs",
     "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx",
     "docs:build": "vuepress build docs"

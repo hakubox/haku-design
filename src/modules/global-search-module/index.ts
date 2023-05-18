@@ -1,7 +1,7 @@
 import { loadComponent, destoryComponent } from '@/lib/component-loader';
 import { timeout } from '@/tools/common';
 import { computed, ConcreteComponent, reactive } from 'vue';
-import type { GlobalSearchGroupInstance, GlobalSearchItem } from './@types';
+import type { GlobalSearchGroupInstance, GlobalSearchItem } from '.';
 import GlobalSearchVue from './components/GlobalSearch.vue';
 import { search } from './data/search-items';
 import { service as hotkeyService } from '@/modules/hotkey-module';

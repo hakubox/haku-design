@@ -298,7 +298,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed } from 'vue';
+import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed, onErrorCaptured } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
 import { downLoadFile, dateFormat, throttle } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
@@ -492,7 +492,7 @@ const getDataById = id => {
     console.error(err);
     toast(`应用加载失败，错误原因：${err.message}`, 'error');
   }).finally(() => {
-    hide();
+    hide.clear();
   });
 }
 

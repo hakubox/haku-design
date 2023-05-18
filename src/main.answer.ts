@@ -1,13 +1,13 @@
 import { createApp } from 'vue';
 import globalStore from '@/common/global';
 import { changeConfig, serverConfig } from './config';
-import App from './App.answer.vue';
-import router from './packages/answer/router';
-import components from '@/packages/answer/common/register-global-components';
+import App from './App.user.vue';
+import router from './packages/user/router';
+import components from '@/packages/user/common/register-global-components';
 
 import '@vant/touch-emulator';
 import 'vant/lib/index.css';
-import '@/packages/answer/assets/less/main.less';
+import '@/packages/user/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
 import dayjs from 'dayjs';
@@ -15,9 +15,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 
 import scoringStore from '@/modules/scoring-module';
-import { service as answerScoringService } from './modules/scoring-module';
+import { service as userScoringService } from './modules/scoring-module';
 import authStore from '@/common/auth-module';
-import { service as answerAuthService } from '@/packages/answer/modules/auth-module';
+import { service as userAuthService } from '@/packages/user/modules/auth-module';
 
 import { init as messageInit } from '@/common/message';
 
@@ -27,11 +27,11 @@ messageInit({ toastModule: showToast, confirmModule: Dialog });
 
 scoringStore.service = {
   ...scoringStore.service,
-  ...answerScoringService
+  ...userScoringService
 };
 authStore.service = {
   ...authStore.service,
-  ...answerAuthService
+  ...userAuthService
 };
 
 dayjs.locale(zhCN);

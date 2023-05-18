@@ -22,8 +22,8 @@
       "@/*": [
         "./src/*",
       ],
-      "@answer/*": [
-        "./src/packages/answer/*",
+      "@user/*": [
+        "./src/packages/user/*",
       ]
     },
   },
@@ -33,7 +33,7 @@
     "src/**/*.ts", 
     "src/**/*.d.ts", 
     "src/**/*.tsx", 
-    "src/**/*.vue"
+    "src/**/*.vue", 
   ],
   "exclude": [
     "node_modules",

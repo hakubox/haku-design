@@ -1,5 +1,5 @@
 import { DataSourceType } from '../enum';
-import type { DataSourceTypeItem } from '../@types';
+import type { DataSourceTypeItem } from '../index.d';
 
 /** 事件行为 */
 export const dataSourceTypes: DataSourceTypeItem[] = [

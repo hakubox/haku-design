@@ -2,7 +2,7 @@ import type { ToolComponentItem } from '@/@types/tool-component-item';
 import { type InitComponent, formComponents } from '@/data/form-components';
 import { menuComponentItems } from '@/data/menu-component-items';
 import { registerPlugin } from "./register-plugin";
-import { PluginInfo } from './@types';
+import type { PluginInfo } from './index.d';
 import { PluginLoadType, PluginType } from './enum';
 
 /** 注册组件 */

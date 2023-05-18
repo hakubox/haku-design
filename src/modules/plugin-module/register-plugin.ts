@@ -1,5 +1,5 @@
 import { state as pluginState } from "./";
-import type { PluginInfo, PluginInstance } from "./@types";
+import type { PluginInfo, PluginInstance } from "./index.d";
 import { PluginLoadType, PluginStatus } from "./enum";
 import { service as pluginService } from './';
 import { createModelId } from '@/tools/common';

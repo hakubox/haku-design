@@ -1,5 +1,5 @@
 
-import { PluginInfo } from './@types';
+import type { PluginInfo } from './index.d';
 import { state as configState } from '@/modules/config-module';
 import { registerPlugin } from './register-plugin';
 import { PluginLoadType, PluginType } from './enum';

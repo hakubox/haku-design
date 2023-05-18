@@ -152,7 +152,7 @@
 
 <script lang="ts" setup>
 import { AppType } from '@/@types/enum';
-import { defineProps, reactive, defineEmits, PropType, onMounted, onUnmounted, watch, defineExpose, computed } from 'vue';
+import { reactive, PropType, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Button, Dialog, Empty, Progress, Toast } from 'vant';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as scoringState, service as scoringService } from '@/modules/scoring-module';
@@ -165,6 +165,7 @@ import FormComponent from './FormComponent.vue';
 import QRCode from '@/components/common/QRCode.vue';
 import '../assets/sweetalert.css';
 import { toast } from '@/common/message';
+
 
 const emits = defineEmits<{
   /** 答卷提交事件，返回false则阻止 */

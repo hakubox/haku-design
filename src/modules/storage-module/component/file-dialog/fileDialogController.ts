@@ -1,5 +1,5 @@
 import { ConcreteComponent, reactive, watch } from 'vue';
-import { StorageFileInfo } from '../../@types';
+import type { StorageFileInfo } from '../../index.d';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
 import FileDialog from './FileDialog.vue';
 

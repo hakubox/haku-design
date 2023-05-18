@@ -216,7 +216,7 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import type { GlobalSearchGroupInstance, GlobalSearchItem, GlobalSearchItemCrumb } from '../@types';
+import type { GlobalSearchGroupInstance, GlobalSearchItem, GlobalSearchItemCrumb } from '../index.d';
 import { state as globalSearchState, service as globalSearchService } from '../';
 import { service as hotkeyService } from '@/modules/hotkey-module';
 import { throttle } from '@/tools/common';

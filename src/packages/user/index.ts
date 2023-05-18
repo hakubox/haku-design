@@ -1,5 +1,5 @@
 import Answer from './components/AnswerCanvas.vue';
-import answerComponents from '@/packages/answer/common/register-global-components';
+import answerComponents from '@/packages/user/common/register-global-components';
 import { showToast, Dialog } from 'vant';
 import './assets/less/main.less';
 import 'vant/lib/index.css';

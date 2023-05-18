@@ -54,7 +54,11 @@ import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 
 configState.ConfigDialog = ConfigDialog;
 
-const app = createApp(App);
+const app = createApp(App, {
+  // renderError(h, err) {
+  //   return h("pre", { style: { color: "red" } }, err.stack);
+  // }
+});
 init(app);
 
 dayjs.locale(zhCN);

@@ -57,7 +57,7 @@ export default defineUserConfig({
             additionalData: `
 @import '@/assets/less/variable.less';
 @import '@/assets/less/design-editor.less';
-@import '@/packages/answer/assets/less/component.less';`,
+@import '@/packages/user/assets/less/component.less';`,
           },
         },
       }

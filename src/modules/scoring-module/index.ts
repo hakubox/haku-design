@@ -1,7 +1,7 @@
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { ComponentCategory } from '@/@types/enum';
-import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
+import type { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
 

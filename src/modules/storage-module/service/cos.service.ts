@@ -1,4 +1,4 @@
-import { StorageService, StorageServiceInstance } from '@/modules/storage-module/@types';
+import type { StorageService, StorageServiceInstance } from '@/modules/storage-module/index.d';
 import { StorageServiceType } from '../enum';
 import { getCosAuthorization } from '../api';
 

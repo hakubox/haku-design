@@ -1,8 +1,8 @@
-import type { AppEventAction, AppEventTrigger } from '../event-module/@types';
+import type { AppEventAction, AppEventTrigger } from '../event-module/index.d';
 import { eventTriggers } from '../event-module/data/event-trigger';
 import { eventActions } from '../event-module/data/event-action';
 import { registerPlugin } from './register-plugin';
-import { PluginInfo } from './@types';
+import type { PluginInfo } from './index.d';
 import { PluginLoadType, PluginType } from './enum';
 
 /** 注册事件触发 */

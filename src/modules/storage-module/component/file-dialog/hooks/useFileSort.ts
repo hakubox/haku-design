@@ -1,4 +1,4 @@
-import { StorageFileInfo } from '@/modules/storage-module/@types';
+import type { StorageFileInfo } from '@/modules/storage-module/index.d';
 import { SortType } from '@/modules/storage-module/enum';
 import { computed } from 'vue';
 import { ref, Ref } from 'vue';

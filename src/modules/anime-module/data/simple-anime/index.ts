@@ -1,4 +1,4 @@
-import type { SimpleAnime } from '../../@types';
+import type { SimpleAnime } from '../../index.d';
 import { animes as inAnimeList } from './in';
 import { animes as outAnimeList } from './out';
 import { animes as emphasizeAnimeList } from './emphasize';

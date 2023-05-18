@@ -94,7 +94,7 @@ import { PropType, reactive, ref, onMounted, computed, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import type { AudioTimelineFragment, ComponentTimelineFragment, KeyFrame, TimelineFragment, TimelineTrack } from '../@types/timeline';
 import { state as animeState, service as animeService } from '../';
-import { TimeAxis } from '../@types';
+import type { TimeAxis } from '../index.d';
 
 /** 时间轴节点 */
 const timeAxisEl = ref<HTMLElement>();

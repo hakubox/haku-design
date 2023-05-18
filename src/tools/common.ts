@@ -1,4 +1,3 @@
-// import { Component } from '@/@types';
 import { cloneLoop } from '@/lib/clone';
 import { toRaw } from 'vue';
 

@@ -1,7 +1,7 @@
 import { timeout } from "@/tools/common";
 import { state as configState, service as configService } from '@/modules/config-module';
 import { service as globalSearchService } from '@/modules/global-search-module';
-import type { GlobalSearchItem } from "../@types";
+import type { GlobalSearchItem } from "../index.d";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as pluginState, service as pluginService } from '@/modules/plugin-module';
 import { toast } from '@/common/message';

@@ -1,6 +1,6 @@
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getDownloadUrl } from '@/modules/storage-module/api';
-import { StorageFileInfo } from '@/modules/storage-module/@types';
+import type { StorageFileInfo } from '@/modules/storage-module/index.d';
 import { Modal } from 'ant-design-vue';
 import { computed, nextTick, reactive, Ref, toRefs } from 'vue';
 import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';

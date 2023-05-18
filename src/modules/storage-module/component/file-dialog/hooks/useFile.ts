@@ -8,7 +8,7 @@ import { state as storageState, service as storageService } from '../../../';
 import { getFileKey } from '../../../api';
 import GlobalUploadProgressContent from '../components/GlobalUploadProgressContent.vue';
 import { StorageServiceType } from '../../../enum';
-import { ProgressStateItem } from '../../../@types';
+import type { ProgressStateItem } from '../../../index.d';
 
 /** 全局上传进度状态 */
 const globalUploadProgressState = reactive([] as ProgressStateItem[]);

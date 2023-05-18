@@ -201,10 +201,9 @@ import { computed, onBeforeMount, reactive, ref } from 'vue';
 import { state as storageState, service as storageService } from '../index';
 import { openFileDialog } from '@/tools/common';
 import { Empty, Dropdown, message, Popconfirm, Button, FormItem, Input, Tooltip, Menu, MenuItem, Badge, Modal, Form, Textarea } from 'ant-design-vue';
-import { StorageService, StorageServiceInstance } from '@/modules/storage-module/@types';
+import type { StorageService, StorageServiceInstance } from '@/modules/storage-module/index.d';
 import { QiniuService } from '../service/qiniu.service';
 import { StorageServiceType } from '../enum';
-import { COSService } from '../service/cos.service';
 import { PlusOutlined } from '@ant-design/icons-vue';
 import type { RuleObject } from 'ant-design-vue/lib/form';
 

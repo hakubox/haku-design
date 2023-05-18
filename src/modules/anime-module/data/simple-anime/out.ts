@@ -1,4 +1,4 @@
-import { SimpleAnime, SimpleAnimeConfig } from '../../@types';
+import type { SimpleAnime, SimpleAnimeConfig } from '../../index.d';
 import { gsap, Linear, Back, Power0, Power2 } from 'gsap';
 import { ComponentPropertyEditor } from '@/@types/enum';
 

@@ -1,5 +1,5 @@
 import { get } from '@/lib/api';
-import { StorageService, StorageServiceInstance } from '@/modules/storage-module/@types';
+import { StorageService, StorageServiceInstance } from '@/modules/storage-module/index.d';
 import { base64encode, utf16to8 } from '@/tools/common';
 // import { enc, HmacSHA1 } from 'crypto-js';
 import { StorageServiceType } from '../enum';
@@ -21,7 +21,7 @@ export const QiniuService: StorageService = {
       });
     },
     init(instance: StorageServiceInstance) {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         resolve();
       });
     },
@@ -84,7 +84,7 @@ export const QiniuService: StorageService = {
 
         // const uploadToken = instance.config.AccessKey + ':' + encodedSign + ':' + encodedPutPolicy;
 
-        // upload(instance.serverUrl, {
+        // upload(instance.serverApi, {
         //   token: uploadToken,
         //   key: fileInfo.fileName,
         //   fileName: fileInfo.fileName,

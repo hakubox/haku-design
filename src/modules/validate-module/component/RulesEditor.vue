@@ -86,7 +86,7 @@
 import { Checkbox, Input, InputGroup, InputNumber, Select } from 'ant-design-vue';
 import { PropType, reactive, onMounted, watch } from 'vue';
 import { state as validateState, service as validateService } from '../';
-import type { ValidateType } from '../@types';
+import type { ValidateType } from '../index.d';
 
 const props = defineProps({
   /** 当前变量 */

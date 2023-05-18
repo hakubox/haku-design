@@ -1,3 +1,4 @@
+<!-- 颜色选择器 -->
 <template>
   <div class="color-picker">
     <div
@@ -166,7 +167,7 @@
 
 <script lang="ts" setup>
 import Color, { rgb2hsl } from '@/lib/color/Color';
-import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted } from 'vue';
+import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted, onErrorCaptured } from 'vue';
 import TypeColorPickerSlider from './TypeColorPickerSlider.vue';
 import SimpleSelect from '../common/SimpleSelect.vue';
 import { service as backgroundEditorService } from '../../';

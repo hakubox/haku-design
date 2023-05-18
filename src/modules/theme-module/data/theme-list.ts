@@ -1,4 +1,4 @@
-import type { ThemeConfig } from "../@types";
+import type { ThemeConfig } from "../index.d";
 
 export const themeList = [
   { code: 'theme-default', title: '默认主题' },

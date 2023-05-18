@@ -10,7 +10,7 @@ export const init = async ({ toastModule, confirmModule }) => {
   if (buildProj === 'design') {
     _toastModule = toastModule;
     _confirmModule = confirmModule;
-  } else if (buildProj === 'answer') {
+  } else if (buildProj === 'user') {
     _toastModule = toastModule;
     _confirmModule = confirmModule;
   }
