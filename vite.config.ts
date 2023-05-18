@@ -1,5 +1,3 @@
-/// <reference types="vitest" />
-
 import { type UserConfigExport } from 'vite';
 // import basicSsl from '@vitejs/plugin-basic-ssl';
 import * as dotenv from 'dotenv';

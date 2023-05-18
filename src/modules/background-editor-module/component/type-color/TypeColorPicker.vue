@@ -221,7 +221,10 @@ const state = reactive({
   /** 新色值 */
   newValue: '',
   /** 颜色 */
-  color: {} as Color,
+  color: new Color({
+    enableAlpha: true,
+    format: 'rgb',
+  }),
   /** 画板元素 */
   colorPickerDisk,
   /** 颜色历史记录 */
@@ -337,7 +340,7 @@ const hue = computed({
 /** 透明度 */
 const alpha = computed({
   get: () => {
-    return state.color.get('alpha');
+    return state.color?.get('alpha') ?? 0;
   },
   set: (val) => {
     state.color.set('alpha', val);
@@ -364,8 +367,12 @@ const changeColor = (e?) => {
 };
 /** 设置透明度（0 ~ 1） */
 const setAlpha = (alpha: number) => {
-  const { r, g, b } = state.color.toRgb();
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  if (state.color?.toRgb) {
+    const { r, g, b } = state.color.toRgb();
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  } else {
+    return `rgba(255, 255, 255, 0)`;
+  }
 };
 /** 初始化 */
 const init = () => {
@@ -379,10 +386,6 @@ const init = () => {
   let _historyList: any = sessionStorage.getItem('colorPickerHistory');
 
   if (!_historyList || !_historyList.length) {
-    const _color = new Color({
-      enableAlpha: true,
-      format: state.colorType,
-    });
     _historyList = [];
     _historyList.push({ r: 255, g: 255, b: 255, a: 1 });
     _historyList.push({ r: 0, g: 0, b: 0, a: 1 });

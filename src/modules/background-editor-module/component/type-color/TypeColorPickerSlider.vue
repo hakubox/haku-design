@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { toDecimal } from '@/tools/common';
-import { computed, onMounted, onUnmounted, PropType, reactive, ref, defineModel, onErrorCaptured } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive, ref, defineModel } from 'vue';
 
 /** 绑定value */
 const modelValue = defineModel<number>('value', { required: true, default: 0 });

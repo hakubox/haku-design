@@ -147,13 +147,6 @@ export function init(vue: App<Element>) {
   });
   
   /**
-   * Vue内部错误监控
-   */
-  vue.config.errorHandler = function (err, vm, info) {
-    console.debug('Vue内部错误', err, vm, info);
-  };
-  
-  /**
    * 监听页面所有AJAX请求
    */
   /** @ts-ignore */
