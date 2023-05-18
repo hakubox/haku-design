@@ -136,7 +136,10 @@ const state = reactive({
   /** 新色值 */
   newValue: '',
   /** 颜色 */
-  color: {} as Color,
+  color: new Color({
+    enableAlpha: true,
+    format: 'rgb',
+  }),
   /** 文本框元素 */
   colorInput,
   /** 弹出框元素 */
@@ -152,7 +155,7 @@ const state = reactive({
 /** 色环值 */
 const hue = computed({
   get: () => {
-    return state.color.get('hue');
+    return state.color.get('hue') ?? 0;
   },
   set: (val) => {
     state.color.set('hue', val);
@@ -179,11 +182,7 @@ const alpha = computed({
 
 /** 调色板的背景色 */
 const diskBackGround = computed(() => {
-  return `hsl(${state.color.get('hue')}, 100%, 50%)`;
-});
-
-watch(() => props.showAlpha, () => {
-  state.color.enableAlpha = props.showAlpha;
+  return `hsl(${state.color.get('hue') ?? 0}, 100%, 50%)`;
 });
 
 /** 颜色改变函数 */
@@ -315,7 +314,6 @@ const comfirm = () => {
   state.showPicker = false;
 
   const _color = new Color({
-    enableAlpha: props.showAlpha,
     format: props.colorType,
   });
   if (state.history.length > 20) {
@@ -330,7 +328,6 @@ const comfirm = () => {
 
 onMounted(() => {
   state.color = new Color({
-    enableAlpha: props.showAlpha,
     format: props.colorType,
   }) as Color;
 

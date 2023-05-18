@@ -610,7 +610,7 @@ export const service = {
       state.previewUrl = body.previewUrl || '';
       eventState.allEvents = body.events;
       themeService.changeTheme(body?.theme?.config);
-      hide();
+      hide.clear();
       await timeout(100);
       eventService.emit(EventTriggerType.appLoadingComplete, 'global');
       if (!isPreview) toast('加载完成', 'success');
@@ -851,7 +851,7 @@ export const service = {
     }).catch(([err]) => {
       toast(err.desc || '保存问卷出错', 'error');
     }).finally(() => {
-      hide();
+      hide.clear();
     });
   },
   /** 页面调整大小 */

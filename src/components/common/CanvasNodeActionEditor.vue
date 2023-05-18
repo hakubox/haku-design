@@ -33,7 +33,7 @@
         ) && (draggableState.dragConfig.isDrag || state.startDrag) && draggableState.tipConfig.isShow
       }"
       :style="{
-        transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0].attrs.rotate) ?? 0}deg)`,
+        transform: `rotate(${(isSingle ? -editorState.currentRangeEditorRect.rotate : -props.components[0]?.attrs.rotate) ?? 0}deg)`,
         zoom: `${1 / editorState.appConfig.canvasConfig.scale}`
       }"
       class="node-action-tip"

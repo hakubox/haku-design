@@ -2,7 +2,7 @@
   <div>
     <component @focus="onFocus(props.prop)"
       v-bind="Object.assign({}, getEditor.attrs, props.prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      v-if="editorState.currentSelectedComponents.length"
+      v-if="getEditor.component && editorState.currentSelectedComponents.length"
       :component="editorState.currentSelectedComponents?.[0]"
       :components="editorState.currentSelectedComponents"
       :value="getValue"
