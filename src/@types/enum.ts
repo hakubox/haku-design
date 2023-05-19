@@ -129,6 +129,8 @@ export enum ComponentPropertyEditor {
   numbers = 'numbers',
   /** 滑动输入框 */
   slider = 'slider',
+  /** 背景 */
+  background = 'background',
 }
 
 /** 控件属性组 */

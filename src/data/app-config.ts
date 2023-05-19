@@ -86,6 +86,13 @@ export const formConfigs: GeneralProperty[] = [
       editorService.onPageSize();
     },
   },
+  {
+    name: 'background',
+    title: '背景',
+    group: 'basic',
+    editor: ComponentPropertyEditor.background,
+    attrs: {},
+  }
 ];
 
 /** 画布应用相关配置 */

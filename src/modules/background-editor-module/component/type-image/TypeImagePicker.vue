@@ -11,31 +11,31 @@
       >
         {{ fillTypeTitle }}
         <SimpleSelect
-          ref="colorTypeSelect"
           v-model:visible="state.showFillModeSelect"
-          :options="state.fillModeList"
-          v-model:value="currentBackground.fillMode"
+          :options="backgroundEditorState.fillModeList"
+          v-model:value="props.value.fillMode"
+          @change="changeFillMode"
         ></SimpleSelect>
       </div>
       <div class="image-picker-tool" tooltip="旋转90°" @click="rotate90">
-        <i class="iconfont icon-refresh"></i>
+        <i class="iconfont icon-rotate-90"></i>
       </div>
       <div class="image-picker-tool" tooltip="横向翻转" @click="flipHorizontal">
-        <i class="iconfont icon-refresh"></i>
+        <i class="iconfont icon-flip-horizontal"></i>
       </div>
       <div class="image-picker-tool" tooltip="竖向翻转" @click="flipVertical">
-        <i class="iconfont icon-refresh"></i>
+        <i class="iconfont icon-flip-vertical"></i>
       </div>
     </div>
 
     <!-- 预览区域 -->
     <div class="image-picker-preview">
       <!-- 预览内容 -->
-      <div class="image-picker-preview-content" :style="{
-        backgroundImage: `url(${currentBackground.imageUrl})`,
-        backgroundRepeat: getRepeat
-      }">
-        
+      <div class="image-picker-preview-content" :style="[state.imageStyle, { filter: state.imageFilter }]">
+        <div class="image-picker-preview-image" ref="previewImageEl"></div>
+      </div>
+      <div class="image-picker-preview-upload" @click="selectImage()">
+        <div class="image-picker-preview-upload-btn">选择图片...</div>
       </div>
     </div>
 
@@ -45,10 +45,10 @@
 
     <!-- 特殊效果调整区域 -->
     <div class="image-special-effect-list">
-      <div class="image-special-effect-item" v-for="item in state.specialEffectList">
+      <div class="image-special-effect-item" v-for="item in backgroundEditorState.specialEffectList">
         <span class="image-special-effect-label">{{ item.title }}</span>
-        <Slider v-model:value="backgroundEditorState.currentBackground[item.code]" :min="item.min" :max="item.max" />
-        <InputNumber :controls="false" size="small" type="number" v-model:value.number="backgroundEditorState.currentBackground[item.code]" />
+        <Slider @change="changeImageFilter" v-model:value="backgroundEditorState.currentBackground[item.code]" :min="item.min" :max="item.max" />
+        <InputNumber @change="changeImageFilter" :controls="false" size="small" type="number" v-model:value.number="backgroundEditorState.currentBackground[item.code]" />
       </div>
     </div>
 
@@ -56,12 +56,20 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, PropType, onMounted, onUnmounted } from 'vue';
+import { reactive, PropType, onMounted, onUnmounted, ref } from 'vue';
 import SimpleSelect from '../common/SimpleSelect.vue';
 import { state as backgroundEditorState, service as backgroundEditorService, defaultImage } from '../../';
 import { InputNumber, Slider } from 'ant-design-vue';
 import type { AppImageBackground } from '../../index.d';
 import { computed } from 'vue';
+import { openFileDialog, throttle } from '@/tools/common';
+import { toast } from '@/common/message';
+import { StyleValue } from 'vue';
+import { nextTick } from 'vue';
+
+const previewImageEl = ref<HTMLElement>();
+
+const previewImage = new Image();
 
 const props = defineProps({
   /** 当前背景图 */
@@ -71,71 +79,105 @@ const props = defineProps({
   },
 });
 
-const state = reactive({
-
-  /** 是否显示填充模式下拉框 */
-  showFillModeSelect: false,
-  /** 填充模式 */
-  fillModeList: [
-    { value: 'none', label: '不处理' },
-    { value: 'cover', label: '充满' },
-    { value: 'contain', label: '适应' },
-    { value: 'stretch', label: '拉伸' },
-    { value: 'repeat', label: '平铺' },
-    { value: 'repeat-x', label: '横向平铺' },
-    { value: 'repeat-y', label: '纵向平铺' },
-  ],
-
-  /** 特殊效果列表 */
-  specialEffectList: [
-    { title: '亮度', code: 'brightness', min: -100, max: 100 },
-    { title: '对比度', code: 'contrast', min: -100, max: 100, formatter: value => value / 100 },
-    { title: '模糊', code: 'blur', min: -100, max: 100, unit: 'px' },
-    { title: '灰度', code: 'grayscale', min: -100, max: 100, formatter: value => value / 100 },
-    { title: '色调', code: 'hueRotate', min: -360, max: 360 },
-    { title: '反相', code: 'invert', min: -100, max: 100, formatter: value => value / 100 },
-    { title: '饱和度', code: 'saturate', min: -100, max: 100, formatter: value => value / 100 },
-    { title: '深褐色', code: 'sepia', min: -100, max: 100, formatter: value => value / 100 },
-  ]
-});
-
 const emit = defineEmits<{
-  (event: 'change', value: AppImageBackground): void;
+  (event: 'change'): void;
   (event: 'update:value', value: AppImageBackground): void;
   (event: 'update:colorType', value: "hex" | "rgb" | "hsl" | "hsv"): void;
 }>();
 
-const currentBackground = computed(() => {
-  return backgroundEditorState.currentBackground as AppImageBackground;
+const state = reactive({
+  /** 是否显示填充模式下拉框 */
+  showFillModeSelect: false,
+  /** 图片样式 */
+  imageStyle: {} as StyleValue,
+  /** 图片特效 */
+  imageFilter: '',
 });
 
-const getRepeat = computed(() => {
-  switch (currentBackground.value.fillMode) {
-    case 'repeat': return 'repeat';
-    case 'repeat-x': return 'repeat-x';
-    case 'repeat-y': return 'repeat-y';
-    default: return '';
+/** 选择图片 */
+const selectImage = () => {
+  openFileDialog({
+    accept: 'image/*',
+  }).then(file => {
+    if (file) {
+      if (file?.size > 1024 * 1024 * 2) {
+        toast('选择的图片不能大于2mb');
+        return;
+      }
+      changeFillMode();
+      var reader = new FileReader();
+      reader.onload = function() {
+        if (typeof this.result === 'string') {
+          setImageUrl(this.result);
+          props.value.imageUrl = this.result;
+        } else {
+          toast('图片识别出错');
+        }
+      };
+      reader.readAsDataURL(file as Blob);
+    }
+  });
+};
+
+/** 修改图像特效 */
+const changeImageFilter = throttle(() => {
+  state.imageFilter = backgroundEditorService.getImageFilter(props.value);
+  nextTick(() => emit('change'));
+}, 50);
+
+/** 切换填充模式 */
+const changeFillMode = () => {
+  state.imageStyle = backgroundEditorService.getFillMode(props.value);
+  nextTick(() => emit('change'));
+};
+
+/** 设置图片Url */
+const setImageUrl = (url: string) => {
+  previewImage.onload = resetImgStyle;
+  previewImage.src = url;
+}
+
+const resetImgStyle = () => {
+  if (!previewImageEl.value) {
+    toast('未找到对应的图片DOM节点');
+    console.error('未找到对应的图片DOM节点');
+    return;
   }
-});
+  let _img = AlloyImage(previewImage);
+  nextTick(() => {
+    if (props.value.rotate) _img = _img.rotate(props.value.rotate);
+    if (props.value.xFlipOver) _img = _img.transform([-1, 0, 0, 1, 0, 0]);
+    if (props.value.yFlipOver) _img = _img.transform([1, 0, 0, -1, 0, 0]);
+
+    previewImageEl.value!.style.backgroundImage = `url(${_img.save()})`;
+    props.value.imageUrl = previewImageEl.value!.style.backgroundImage;
+    emit('change');
+  });
+}
 
 /** 获取填充模式标题 */
 const fillTypeTitle = computed(() => {
-  return state.fillModeList.find(i => i.value === currentBackground.value.fillMode)?.label ?? '-';
+  return backgroundEditorState.fillModeList.find(i => i.value === props.value.fillMode)?.label ?? '-';
 });
 
 /** 图片旋转90° */
 const rotate90 = () => {
-
+  props.value.rotate = (props.value.rotate + 90) % 360;
+  resetImgStyle();
 };
 
 /** 横向翻转 */
 const flipHorizontal = () => {
-
+  props.value.xFlipOver = !props.value.xFlipOver;
+  resetImgStyle();
 };
 
 /** 纵向翻转 */
 const flipVertical = () => {
-
+  if (previewImageEl.value) {
+  props.value.yFlipOver = !props.value.yFlipOver;
+  resetImgStyle();
+  }
 };
 
 onMounted(() => {
@@ -199,6 +241,10 @@ onUnmounted(() => {
       padding: 4px;
       border-radius: 4px;
       transition: 0.15s;
+
+      > .iconfont {
+        font-size: 18px;
+      }
 
       &:hover {
         background-color: rgba(0,0,0,0.08);
@@ -269,10 +315,46 @@ onUnmounted(() => {
     display: block;
     border: 1px solid #EEE;
     border-radius: 4px;
-    height: 180px;
+    height: 160px;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQBAMAAAB8P++eAAAAGFBMVEXv7+/////+/v7////v7+/////v7+/w8PCSTbPxAAAABXRSTlPy8vLl5ZnZbUAAAAB/SURBVEjHY3BggAFFQSgQYsAUE2ZIg4H0UDgowyLGwEacwsBRhaMK6aowDaEwDQ6QFLKXQwGyiZhiQQyq+KQRYgUMovgsRIglICksw+atUYWjCumpkOiES3RWIDpzEciug6xIGVU4qnC0nhlVOKqQPIWhxClMYzDE1zlBiLEAAFzGa7yLS3ZOAAAAAElFTkSuQmCC);
     background-size: 40px 40px;
     background-repeat: repeat;
+    overflow: hidden;
+
+    &:hover {
+      > .image-picker-preview-upload {
+        opacity: 1.0;
+        visibility: visible;
+      }
+    }
+
+    > .image-picker-preview-upload {
+      cursor: default;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.0;
+      transition: 0.15s;
+      background-color: rgba(210,210,210,0.3);
+      visibility: visible;
+
+      > .image-picker-preview-upload-btn {
+        cursor: pointer;
+        display: inline-block;
+        color: white;
+        background-color: @primary-color;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+    }
 
     > .image-picker-preview-content {
       position: absolute;
@@ -282,6 +364,21 @@ onUnmounted(() => {
       width: 100%;
       height: 100%;
       border-radius: 4px;
+
+      > .image-picker-preview-image {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+
+        background-repeat: var(--image-repeat);
+        background-position: var(--image-position);
+        background-size: var(--image-size);
+        transform: var(--image-transform);
+      }
     }
   }
 
@@ -298,7 +395,7 @@ onUnmounted(() => {
         flex-grow: 0;
         flex-shrink: 0;
         width: 50px;
-        font-size: 13px;
+        font-size: 12px;
         color: #666;
       }
 
@@ -306,13 +403,15 @@ onUnmounted(() => {
         flex-grow: 1;
         flex-shrink: 1;
         width: 100%;
+        margin: 8px 0px;
         margin-right: 15px;
       }
 
       > .ant-input-number {
         flex-grow: 0;
         flex-shrink: 0;
-        width: 45px;
+        width: 40px;
+        font-size: 12px;
       }
     }
   }

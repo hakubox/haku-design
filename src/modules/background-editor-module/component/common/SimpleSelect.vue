@@ -51,6 +51,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (event: 'update:visible', value: boolean): void;
   (event: 'update:value', value: string): void;
+  (event: 'change', value: string): void;
 }>();
 
 const value = () => {
@@ -72,6 +73,7 @@ const close = () => {
 
 const clickItem = (item: { label: string, value: string }) => {
   emit('update:value', item.value);
+  emit('change', item.value);
   setTimeout(() => {
     emit('update:visible', false);
   }, 10);

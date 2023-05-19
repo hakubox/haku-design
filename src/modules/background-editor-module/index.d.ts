@@ -166,8 +166,8 @@ export interface AppImageBackground extends AppBasicBackground {
   type: 'image';
   /** 图片路径 */
   imageUrl: string;
-  /** 填充方式 none:默认尺寸；stretch:拉伸；cover:充满；contain:适应；repeat:平铺；repeat-x:横向平铺；repeat-y:纵向平铺  */
-  fillMode: 'none' | 'stretch' | 'contain' | 'cover' | 'repeat' | 'repeat-x' | 'repeat-y';
+  /** 填充方式 auto:自动；stretch:拉伸；cover:充满；contain:适应；repeat:平铺；repeat-x:横向平铺；repeat-y:纵向平铺  */
+  fillMode: 'auto' | 'stretch' | 'contain' | 'cover' | 'repeat' | 'repeat-x' | 'repeat-y';
   /** 图片横向位置 */
   x: 'left' | 'center' | 'right' | number;
   /** 图片纵向位置 */

@@ -1,5 +1,5 @@
 import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
-import { reactive } from 'vue';
+import { StyleValue, reactive } from 'vue';
 import message, { toast } from '@/common/message';
 import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientRectInfo, AppImageBackground } from './index.d';
 import { distance } from '@/tools/common';
@@ -62,9 +62,30 @@ export const state = reactive({
   component: {
     x: 100,
     y: 100,
-    width: 200,
-    height: 200
-  }
+    width: 500,
+    height: 500
+  },
+  /** 填充模式 */
+  fillModeList: [
+    { value: 'auto', label: '不处理' },
+    { value: 'cover', label: '充满' },
+    { value: 'contain', label: '适应' },
+    { value: 'stretch', label: '拉伸' },
+    { value: 'repeat', label: '平铺' },
+    { value: 'repeat-x', label: '横向平铺' },
+    { value: 'repeat-y', label: '纵向平铺' },
+  ],
+  /** 特殊效果列表 */
+  specialEffectList: [
+    { title: '亮度', code: 'brightness', default: 0, min: -100, max: 200, unit: '%', formatter: value => value + 100 },
+    { title: '对比度', code: 'contrast', default: 0, min: -100, max: 200, unit: '%', formatter: value => value + 100 },
+    { title: '模糊', code: 'blur', default: 0, min: 0, max: 100, unit: 'px' },
+    { title: '灰度', code: 'grayscale', default: 0, min: 0, max: 100, unit: '%' },
+    { title: '色调', code: 'hueRotate', default: 0, min: 0, max: 360, unit: 'deg' },
+    { title: '反相', code: 'invert', default: 0, min: 0, max: 100, unit: '%' },
+    { title: '饱和度', code: 'saturate', default: 0, min: -100, max: 200, unit: '%', formatter: value => value + 100 },
+    { title: '复古', code: 'sepia', default: 0, min: 0, max: 100, unit: '%' },
+  ],
 });
 
 
@@ -261,7 +282,8 @@ export const service = {
       ratio: number;
     }
   ) {
-    let _style = {} as Record<string, any>;
+    let _parentStyle = {} as StyleValue;
+    let _style = {} as StyleValue;
     switch (gradientBg.type) {
       case 'color':
         _style = {
@@ -314,10 +336,74 @@ export const service = {
         };
         break;
       }
+      case 'image': {
+        _parentStyle = {
+          ...service.getFillMode(gradientBg),
+          filter: service.getImageFilter(gradientBg),
+        };
+        _style = {
+          left: `0px`, top: `0px`, width: `100%`, height: `100%`,
+          backgroundImage: gradientBg.imageUrl,
+        };
+        break;
+      }
       default:
         break;
     }
-    return _style;
+    return {
+      innerStyle: _style,
+      parentStyle: _parentStyle
+    };
+  },
+  /** 切换填充模式 */
+  getFillMode(gradientBg: AppImageBackground) {
+    let _size = 'auto';
+    let _repeat = 'no-repeat';
+    switch (gradientBg.fillMode) {
+      case 'contain':
+        _size = 'contain';
+        break;
+      case 'auto':
+        _size = 'auto';
+        break;
+      case 'cover':
+        _size = 'cover';
+        break;
+      case 'stretch':
+        _size = '100% 100%';
+        break;
+      default:
+        _size = 'auto';
+        break;
+      case 'repeat':
+        _repeat = 'repeat';
+        break;
+      case 'repeat-x':
+        _repeat = 'repeat-x';
+        break;
+      case 'repeat-y':
+        _repeat = 'repeat-y';
+        break;
+    }
+
+    return {
+      '--image-repeat': _repeat,
+      '--image-position': '50% 50%',
+      '--image-size': _size,
+    };
+  },
+  /** 修改图像特效 */
+  getImageFilter(gradientBg: AppImageBackground) {
+    const _imageFilter = [] as string[];
+    state.specialEffectList.filter(i => {
+      return gradientBg[i.code] !== i.default;
+    }).forEach(i => {
+      const _styleName = i.code.replace(/([A-Z])/g, (a) => `-${a.toLowerCase()}`);
+      const _value = i.formatter ? i.formatter(gradientBg[i.code]) : gradientBg[i.code];
+      _imageFilter.push(`${_styleName}(${_value}${i.unit || ''})`);
+    });
+    
+    return _imageFilter.join(' ');
   },
   /** 获取线性渐变中点及其他信息 */
   getLinearGradientRectInfo(gradientBg: AppLinearGradientBackground, width: number, height: number): GradientRectInfo {

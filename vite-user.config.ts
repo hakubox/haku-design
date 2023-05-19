@@ -56,6 +56,7 @@ export const config = () => {
     ],
     define: {
       'process.env': process.env,
+      AlloyImage: 'AlloyImage',
     },
     build: {
       rollupOptions: {

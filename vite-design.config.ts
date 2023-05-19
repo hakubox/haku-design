@@ -77,6 +77,7 @@ export const config = () => {
     define: {
       'process.env': process.env,
       monaco: 'monaco',
+      AlloyImage: 'AlloyImage',
     },
     build: {
       rollupOptions: {

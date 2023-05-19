@@ -547,11 +547,24 @@ export function toBlob(file: File): Promise<Blob> {
 }
 
 /** 打开文件选择框 */
-export function openFileDialog(): Promise<File[]> {
+export function openFileDialog<Multiple extends boolean = false>(config: {
+  /** 限制接受文件的类型 */
+  accept?: string,
+  /** 如果 accept是图片或者视频类型，则指定使用哪个摄像头去获取这些数据。 */
+  capture?: 'user' | 'environment',
+  /** 是否多选 */
+  multiple?: Multiple,
+  /** 仅选择文件夹 */
+  webkitdirectory?: boolean,
+} | undefined): Promise<Multiple extends true ? File[] : (File | undefined)> {
   return new Promise((resolve, reject) => {
     const inputObj = document.createElement('input');
     inputObj.setAttribute('type', 'file');
     inputObj.setAttribute('style', 'visibility:hidden');
+    if (config?.accept) inputObj.setAttribute('accept', config.accept);
+    if (config?.capture) inputObj.setAttribute('capture', config.capture);
+    if (config?.multiple === true) inputObj.setAttribute('multiple', 'true');
+    if (config?.webkitdirectory === true) inputObj.setAttribute('webkitdirectory', 'true');
     document.body.appendChild(inputObj);
     inputObj.addEventListener('change', (e: any) => {
       console.warn('选择文件', e);
@@ -561,7 +574,7 @@ export function openFileDialog(): Promise<File[]> {
         for (let i = 0; i < _fileCount; i++) {
           _fileList.push(e.target.files[i]);
         }
-        resolve(_fileList);
+        resolve((config?.multiple === true ? _fileList : _fileList?.[0]) as Multiple extends true ? File[] : File | undefined);
       }
       inputObj.remove();
     });

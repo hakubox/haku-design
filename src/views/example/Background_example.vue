@@ -3,7 +3,6 @@
     <!-- 目前暂时用于背景选择器测试 -->
     <BackgroundEditorDialog class="dialog1" @change="onBackgroundChange" />
 
-    {{ backgroundEditorState.currentBackground }} <br />
 
     <div class="gradient-editor-panel" ref="gradientEditorPanel">
       
@@ -11,9 +10,11 @@
       <div class="test-rect" ref="testRect" :style="{
         top: `${backgroundEditorState.component.x}px`,
         left: `${backgroundEditorState.component.y}px`,
+        width: `${backgroundEditorState.component.width}px`,
+        height: `${backgroundEditorState.component.height}px`,
         mixBlendMode: backgroundEditorState.currentBackground.blendType
       }">
-        <div class="bg-panel">
+        <div class="bg-panel" :style="state.parentLayerStyle">
           <div class="bg-panel-layer" :style="state.innerLayerStyle"></div>
         </div>
       </div>
@@ -94,10 +95,10 @@
         backgroundEditorState.currentBackground.type === 'radial-gradient' || 
         backgroundEditorState.currentBackground.type === 'conic-gradient'
       ">
-        <div class="mark-point" :style="{
+        <!-- <div class="mark-point" :style="{
           top: `${state.pointA.y}px`,
           left: `${state.pointA.x}px`,
-        }"></div>
+        }"></div> -->
         <!-- <div class="mark-point" :style="{
           top: `${state.pointB.y}px`,
           left: `${state.pointB.x}px`,
@@ -166,7 +167,7 @@
 
 <script lang="ts" setup>
 import BackgroundEditorDialog from '@/modules/background-editor-module/component/BackgroundEditorDialog.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { StyleValue, onMounted, reactive, ref } from 'vue';
 import { 
   state as backgroundEditorState, 
   service as backgroundEditorService, 
@@ -195,7 +196,8 @@ const state = reactive({
     y: 0,
   },
   /** 内部层样式 */
-  innerLayerStyle: { } as Record<string, any>,
+  innerLayerStyle: { } as StyleValue,
+  parentLayerStyle: { } as StyleValue,
 
   pointA: {} as { x: number; y: number; },
   pointB: {} as { x: number; y: number; },
@@ -497,12 +499,14 @@ const refreshStyle = () => {
 
     
 
-    state.innerLayerStyle = backgroundEditorService.getBackgroundStyle(
+    const { parentStyle, innerStyle } = backgroundEditorService.getBackgroundStyle(
       backgroundEditorState.currentBackground, 
       testRect.value.offsetWidth, 
       testRect.value.offsetHeight,
       _gradientBgRect
     );
+    state.parentLayerStyle = parentStyle;
+    state.innerLayerStyle = innerStyle;
   } else {
     return {};
   }
@@ -558,7 +562,7 @@ onUnmounted(() => {
 .gradient-editor-panel {
   position: absolute;
   top: 20%;
-  left: 30%;
+  left: 25%;
   width: 50vw;
   height: 80vh;
 
@@ -662,6 +666,9 @@ onUnmounted(() => {
   border: 1px solid #999;
 
   > .bg-panel {
+    --image-repeat: no-repeat;
+    --image-position: center center;
+    --image-size: auto;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -674,6 +681,9 @@ onUnmounted(() => {
       position: absolute;
       top: 0px;
       left: 0px;
+      background-repeat: var(--image-repeat);
+      background-position: var(--image-position);
+      background-size: var(--image-size);
     }
   }
 

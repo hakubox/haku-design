@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   globals: {
     monaco: true,
+    AlloyImage: true,
   },
   env: {
     node: true,
