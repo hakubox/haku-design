@@ -1,3 +1,4 @@
+<!-- 页面预览组件 -->
 <template>
   <div :style="{
     width: `${props.width}px`,
@@ -30,7 +31,7 @@
           height: `${getRangeHeight * scale}px`
         }"
         class="thumbnail-bar"
-        @mousedown.stop.prevent="onMouseDown"
+        @mousedown.stop.prevent="dragHook.startDrag"
       ></div>
     </div>
   </div>
@@ -41,6 +42,7 @@ import { Component, ComponentGroup } from '@/@types';
 import { computed, onMounted, onUnmounted, PropType, reactive } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import DesignCanvas from "@/components/module/DesignCanvas.vue";
+import { useDragHook } from '@/tools/drag';
 
 export interface Rect {
   left: number;
@@ -109,45 +111,12 @@ const emit = defineEmits<{
   (event: 'update:rangeLeft', value: number): void;
 }>();
 
-const state = reactive({
-  /** 拖拽状态 */
-  dragState: {
-    isStart: false,
-    originX: 0,
-    originY: 0,
-    x: 0,
-    y: 0,
-  },
-});
-
 /** 综合缩放比 */
 const scale = computed(() => {
   const widthScale = (props.width - 2) / props.contentWidth / props.canvasScale;
   const heightScale = (props.height - 2) / props.contentHeight / props.canvasScale;
   return widthScale < heightScale ? widthScale : heightScale;
 });
-
-const onMouseDown = (e: MouseEvent) => {
-  state.dragState.isStart = true;
-  state.dragState.originX = props.rangeLeft;
-  state.dragState.originY = props.rangeTop;
-  state.dragState.x = e.pageX;
-  state.dragState.y = e.pageY;
-};
-
-const onMouseMove = (e: MouseEvent) => {
-  if (state.dragState.isStart) {
-    let _x = state.dragState.originX + (e.pageX - state.dragState.x) / scale.value;
-    let _y = state.dragState.originY + (e.pageY - state.dragState.y) / scale.value;
-    if (_x < 0) _x = 0;
-    else if (_x > props.contentWidth * props.canvasScale - getRangeWidth.value) _x = props.contentWidth * props.canvasScale - getRangeWidth.value;
-    if (_y < 0) _y = 0;
-    else if (_y > props.contentHeight * props.canvasScale - getRangeHeight.value) _y = props.contentHeight * props.canvasScale - getRangeHeight.value;
-    emit('update:rangeLeft', _x);
-    emit('update:rangeTop', _y);
-    emit('drag', _x, _y);
-  }
-};
 
 const getRangeWidth = computed(() => {
   return props.rangeWidth > props.contentWidth * props.canvasScale ? props.contentWidth * props.canvasScale : props.rangeWidth;
@@ -157,24 +126,46 @@ const getRangeHeight = computed(() => {
   return props.rangeHeight > props.contentHeight * props.canvasScale ? props.contentHeight * props.canvasScale : props.rangeHeight;
 });
 
-const onMouseUp = (e: MouseEvent) => {
-  state.dragState.isStart = false;
-  state.dragState.x = 0;
-  state.dragState.y = 0;
-  state.dragState.originX = 0;
-  state.dragState.originY = 0;
-};
+/** 拖拽钩子 */
+const dragHook = useDragHook({
+  config: {
+    originX: 0,
+    originY: 0,
+    x: 0,
+    y: 0,
+  },
+  drag(e, config) {
+    let _x = config.originX + (e.pageX - config.x) / scale.value;
+    let _y = config.originY + (e.pageY - config.y) / scale.value;
+    if (_x < 0) _x = 0;
+    else if (_x > props.contentWidth * props.canvasScale - getRangeWidth.value) _x = props.contentWidth * props.canvasScale - getRangeWidth.value;
+    if (_y < 0) _y = 0;
+    else if (_y > props.contentHeight * props.canvasScale - getRangeHeight.value) _y = props.contentHeight * props.canvasScale - getRangeHeight.value;
+    emit('update:rangeLeft', _x);
+    emit('update:rangeTop', _y);
+    emit('drag', _x, _y);
+  },
+  dragStart(e) {
+    dragHook.config.originX = props.rangeLeft;
+    dragHook.config.originY = props.rangeTop;
+    dragHook.config.x = e.pageX;
+    dragHook.config.y = e.pageY;
+  },
+  dragEnd() {
+    dragHook.config.x = 0;
+    dragHook.config.y = 0;
+    dragHook.config.originX = 0;
+    dragHook.config.originY = 0;
+  }
+});
 
 onMounted(() => {
-  document.body.addEventListener('mousemove', onMouseMove);
-  document.body.addEventListener('mouseup', onMouseUp);
+  dragHook.init();
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mousemove', onMouseMove);
-  document.body.removeEventListener('mouseup', onMouseUp);
+  dragHook.destory();
 });
-
 </script>
 
 <style lang="less" scoped>

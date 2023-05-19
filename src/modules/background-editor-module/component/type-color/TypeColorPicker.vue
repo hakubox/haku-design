@@ -353,18 +353,6 @@ const diskBackGround = computed(() => {
   return `hsl(${state.color.hue}, 100%, 50%)`;
 });
 
-/** 颜色改变函数 */
-const changeColor = (e?) => {
-  const value = e ? e.target.value : state.color.value;
-
-  if (props.value != value) {
-    const rect = state.colorPickerDisk.getBoundingClientRect();
-    state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
-    state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
-
-    state.color.fromString(value.trim().toLowerCase());
-  }
-};
 /** 设置透明度（0 ~ 1） */
 const setAlpha = (alpha: number) => {
   if (state.color?.toRgb) {
@@ -498,9 +486,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  document.body.addEventListener('mouseup', handleEndDrag);
-  document.body.addEventListener('mousemove', handleDrag);
-  document.body.addEventListener('mousedown', shrinkPicker);
+  document.body.removeEventListener('mouseup', handleEndDrag);
+  document.body.removeEventListener('mousemove', handleDrag);
+  document.body.removeEventListener('mousedown', shrinkPicker);
 });
 </script>
 

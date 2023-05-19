@@ -10,7 +10,7 @@
         <div class="color-picker-slider-bg" :style="{ backgroundImage: getBackgroundImage }"></div>
         <div
           :style="{
-            '--leave': state.currentCursorLeaveWidth,
+            '--leave': dragHook.config.currentCursorLeaveWidth,
             left: `${item.progress * 100}%`
           }"
           :class="{
@@ -44,6 +44,7 @@ import { state as backgroundEditorState, service as backgroundEditorService } fr
 import { toDecimal } from '@/tools/common';
 import { toast } from '@/common/message';
 import { getLinearGradientItem } from '@/lib/color/Color';
+import { useDragHook } from '@/tools/drag';
 
 const props = defineProps({
   value: {
@@ -76,12 +77,7 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive({
-  /** 是否开始拖拽 */
-  isStartDrag: false,
-  /** 初始拖拽Y坐标（可以用于拖离渐变条） */
-  initDragY: 0,
-  /** 光标离轴长度 */
-  currentCursorLeaveWidth: 0,
+  
 });
 
 const rotate90 = () => {
@@ -169,42 +165,45 @@ const addCursor = (e: MouseEvent) => {
 }
 
 const setCursor = (e: MouseEvent, index: number) => {
-  state.isStartDrag = true;
-  state.initDragY = e.pageY;
+  dragHook.isStart.value = true;
+  dragHook.config.initDragY = e.pageY;
   emit('change');
   emit('update:currentCursorIndex', index);
 };
 
-const drag = (e) => {
-  if (state.isStartDrag && props.currentCursorIndex >= 0) {
-    // 小动画效果
-    // if (Math.abs(state.initDragY - e.pageY) > 30) {
+/** 拖拽钩子 */
+const dragHook = useDragHook({
+  config: {
+    /** 初始拖拽Y坐标（可以用于拖离渐变条） */
+    initDragY: 0,
+    /** 光标离轴长度 */
+    currentCursorLeaveWidth: 0,
+  },
+  drag(e, config) {
+    if (props.currentCursorIndex >= 0) {
+      // 小动画效果
+      // if (Math.abs(state.initDragY - e.pageY) > 30) {
 
-    // }
-    if (Math.abs(state.initDragY - e.pageY) > 50) {
-      removeCursor(props.currentCursorIndex);
-      state.isStartDrag = false;
-    } else {
-      const rect = slider.value!.getBoundingClientRect();
-      const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), rect.width);
-      props.gradientBackground.gradientList[props.currentCursorIndex].progress = toDecimal(_cursorLeft / slider.value!.offsetWidth, 3);
-      emit('change');
+      // }
+      if (Math.abs(config.initDragY - e.pageY) > 50) {
+        removeCursor(props.currentCursorIndex);
+        dragHook.isStart.value = false;
+      } else {
+        const rect = slider.value!.getBoundingClientRect();
+        const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), rect.width);
+        props.gradientBackground.gradientList[props.currentCursorIndex].progress = toDecimal(_cursorLeft / slider.value!.offsetWidth, 3);
+        emit('change');
+      }
     }
   }
-};
-
-const endDrag = () => {
-  state.isStartDrag = false;
-};
-
-onUnmounted(() => {
-  document.body.removeEventListener('mousemove', drag);
-  document.body.removeEventListener('mouseup', endDrag);
 });
 
 onMounted(() => {
-  document.body.addEventListener('mousemove', drag);
-  document.body.addEventListener('mouseup', endDrag);
+  dragHook.init();
+});
+
+onUnmounted(() => {
+  dragHook.destory();
 });
 </script>
 

@@ -9,6 +9,7 @@
 
 <script lang="ts" setup>
 import { toDecimal } from '@/tools/common';
+import { useDragHook } from '@/tools/drag';
 import { computed, onMounted, onUnmounted, PropType, reactive, ref, defineModel } from 'vue';
 
 /** 绑定value */
@@ -27,46 +28,33 @@ const props = defineProps({
 /** 控件画布 */
 const slider = ref<HTMLElement>();
 
-const state = reactive({
-  /** 是否开始拖拽 */
-  isStartDrag: false,
-});
-
 const startDrag = (e) => {
-  state.isStartDrag = true;
-  drag(e);
+  dragHook.startDrag(e);
+  if (dragHook.isStart.value) dragHook.drag(e);
 };
 
-const drag = (e) => {
-  if (state.isStartDrag) {
+/** 拖拽钩子 */
+const dragHook = useDragHook({
+  drag(e) {
     const rect = slider.value!.getBoundingClientRect();
     const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left - 5), (rect.width - 10));
     const _value = toDecimal((_cursorLeft / (slider.value!.offsetWidth - 10)) * props.max, 3);
     modelValue.value = _value;
   }
-};
-
-const endDrag = () => {
-  state.isStartDrag = false;
-};
+});
 
 /** 游标离左侧距离 */
 const cursorLeft = computed(() => {
-  if (slider.value) {
-    return ((slider.value.offsetWidth - 10) * modelValue.value) / props.max - 1;
-  } else {
-    return 0;
-  }
+  if (slider.value) return (slider.value.offsetWidth - 10) * modelValue.value / props.max - 1;
+  else return 0;
 });
 
 onMounted(() => {
-  document.body.addEventListener('mousemove', drag);
-  document.body.addEventListener('mouseup', endDrag);
+  dragHook.init();
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mousemove', drag);
-  document.body.removeEventListener('mouseup', endDrag);
+  dragHook.destory();
 });
 </script>
 

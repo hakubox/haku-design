@@ -64,6 +64,29 @@ export function distance(a: { x: number, y: number }, b: { x: number, y: number 
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+/** 获取垂点代码 */
+export function getPerpendicularPoint(a: [number, number], b: [number, number], c: [number, number]): { ratio: number, x: number, y: number } {
+  // 已知A, B, P三点坐标
+  const [x1, y1] = a;
+  const [x2, y2] = b;
+  const [x3, y3] = c;
+
+  // 向量
+  // AP = (x0-x1, y0-y1)
+  // AB = (x2-x1, y2-y1)
+  // 计算AP在AB方向上的投影长度
+  // 投影*|AB|
+  const dist1 = (x3-x1) * (x2-x1) + (y3-y1) * (y2-y1);
+  // |AB| * |AB|
+  const dist2 = (x2-x1) ** 2 + (y2 - y1) ** 2;
+
+  // AD = 投影 / |AB| * AB
+  const ratio = dist1 / dist2;
+  const x4 = x1 + ratio * (x2 - x1);
+  const y4 = y1 + ratio * (y2 - y1);
+  return { x: x4, y: y4, ratio };
+}
+
 /**
  * NPM版本号对比，前版本号是否大于后版本号
  * 

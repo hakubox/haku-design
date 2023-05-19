@@ -3,7 +3,6 @@
     <!-- 目前暂时用于背景选择器测试 -->
     <BackgroundEditorDialog class="dialog1" @change="onBackgroundChange" />
 
-
     <div class="gradient-editor-panel" ref="gradientEditorPanel">
       
       <!-- 带有背景的矩形 -->
@@ -66,7 +65,7 @@
           :cy="backgroundEditorState.component.y + backgroundEditorState.currentBackground.y1"
           v-if="backgroundEditorState.currentBackground.type === 'radial-gradient'"
           r="4"
-          @mousedown="$event => startDragSlidePoint($event, true)"
+          @mousedown="$event => dragSlidePointHook.startDrag($event)"
           :style="{
             transform: `rotate(${backgroundEditorService.getRotate(backgroundEditorState.currentBackground) - 90}deg)`,
             transformOrigin: `${backgroundEditorState.component.x + backgroundEditorState.currentBackground.x1}px ${backgroundEditorState.component.y + backgroundEditorState.currentBackground.y1}px`
@@ -78,7 +77,7 @@
           :cx="backgroundEditorState.component.x + backgroundEditorState.currentBackground.x1"
           :cy="backgroundEditorState.component.y + backgroundEditorState.currentBackground.y1"
           r="4"
-          @mousedown="$event => startDragPoint($event, true)"
+          @mousedown="$event => dragPointHook.startDrag($event, { isStartNode: true })"
         />
         <!-- B点 -->
         <circle
@@ -86,7 +85,7 @@
           :cx="backgroundEditorState.component.x + backgroundEditorState.currentBackground.x2"
           :cy="backgroundEditorState.component.y + backgroundEditorState.currentBackground.y2"
           r="4"
-          @mousedown="$event => startDragPoint($event, false)"
+          @mousedown="$event => dragPointHook.startDrag($event, { isStartNode: false })"
         />
       </svg>
 
@@ -114,7 +113,7 @@
           tabindex="-1"
           :class="{ 
             active: backgroundEditorState.currentGradientItemIndex === index,
-            disabled: state.dragConfig.isStart
+            disabled: dragPointHook.isStart.value || dragSlidePointHook.isStart.value
           }"
           :style="{
             '--item-color': `rgba(${item.color.r}, ${item.color.g}, ${item.color.b}, ${item.color.a})`,
@@ -143,25 +142,6 @@
       </template>
     </div>
 
-    <!-- {{ backgroundEditorState.currentBackground }} -- -->
-    <!-- <div style="position: absolute;left: 20vw;top: 35vh;">
-      x1: <Slider v-model:value="state.x1" :min="-500" :max="500" /><input type="number" v-model.number="state.x1" style="width: 150px;" /><br />
-      y1: <Slider v-model:value="state.y1" :min="-500" :max="500" /><input type="number" v-model.number="state.y1" style="width: 150px;" /><br />
-      x2: <Slider v-model:value="state.x2" :min="-500" :max="500" /><input type="number" v-model.number="state.x2" style="width: 150px;" /><br />
-      y2: <Slider v-model:value="state.y2" :min="-500" :max="500" /><input type="number" v-model.number="state.y2" style="width: 150px;" />
-    </div>
-    
-    <div class="test-rect2" :style="getBackground()">
-      <div class="test-rect-layer"
-        :style="getInnerLayerStyle2()"
-      ></div>
-    </div> -->
-
-    <!-- <div class="wrap">
-      <div class="left"></div>
-      <div class="right"></div>    
-    </div> -->
-
   </div>
 </template>
 
@@ -175,26 +155,12 @@ import {
   type GradientItem, 
   type GradientRectInfo
 } from '@/modules/background-editor-module'
-import { Slider } from 'ant-design-vue';
 import { onUnmounted } from 'vue';
 import { toast } from '@/common/message';
-import { toDecimal, distance } from '@/tools/common';
-// import { cloneLoop } from '@/lib/clone';
+import { toDecimal, distance, getPerpendicularPoint } from '@/tools/common';
+import { useDragHook } from '@/tools/drag';
 
 const state = reactive({
-  x1: -50,
-  y1: 0,
-  x2: 0,
-  y2: 150,
-
-  /** 拖拽配置 */
-  dragConfig: {
-    /** 开始拖拽 */
-    isStart: false,
-    isStartPoint: false,
-    x: 0,
-    y: 0,
-  },
   /** 内部层样式 */
   innerLayerStyle: { } as StyleValue,
   parentLayerStyle: { } as StyleValue,
@@ -205,20 +171,6 @@ const state = reactive({
 
   /** 椭圆侧边点 */
   slidePoint: { x: 0, y: 0 } as { x: number; y: number; },
-  /** 拖拽侧边点配置 */
-  dragSlideConfig: {
-    /** 开始拖拽 */
-    isStart: false,
-    isStartPoint: false,
-    x: 0,
-    y: 0,
-  },
-  /** 拖拽游标配置 */
-  dragCursorConfig: {
-    isStart: false,
-    /** 初始化拖拽Y点（用于判断是否拽离） */
-    initDragY: 0,
-  },
   /** 拖拽渐变色的游标栏 */
   dragSlider: {
     width: 0,
@@ -227,10 +179,6 @@ const state = reactive({
 });
 
 const testRect = ref<HTMLElement>();
-
-
-
-
 
 const gradientEditorPanel = ref<HTMLElement>();
 
@@ -282,22 +230,27 @@ const addCursor = (e: MouseEvent) => {
 }
 
 const setCursor = (e: MouseEvent, index: number) => {
-  state.dragCursorConfig.isStart = true;
-  state.dragCursorConfig.initDragY = e.pageY;
   backgroundEditorState.currentGradientItemIndex = index;
+  dragCursorHook.startDrag(e, { initDragY: e.pageY });
   refreshStyle();
 };
 
-const drag = (e) => {
-  if (
-    backgroundEditorState.currentBackground.type !== 'color' && 
-    backgroundEditorState.currentBackground.type !== 'image'
-  ) {
-    if (state.dragCursorConfig.isStart && backgroundEditorState.currentGradientItemIndex >= 0) {
-      // console.log('Math.abs(state.dragCursorConfig.initDragY - e.pageY)', Math.abs(state.dragCursorConfig.initDragY - e.pageY));
-      // if (Math.abs(state.dragCursorConfig.initDragY - e.pageY) > 100) {
+/** 拖拽游标钩子 */
+const dragCursorHook = useDragHook({
+  config: {
+    /** 初始化拖拽Y坐标 */
+    initDragY: 0
+  },
+  drag(e, config) {
+    if (
+      backgroundEditorState.currentGradientItemIndex >= 0 && 
+      backgroundEditorState.currentBackground.type !== 'color' && 
+      backgroundEditorState.currentBackground.type !== 'image'
+    ) {
+      // console.log('Math.abs(config.initDragY - e.pageY)', Math.abs(config.initDragY - e.pageY));
+      // if (Math.abs(config.initDragY - e.pageY) > 100) {
       //   removeCursor(backgroundEditorState.currentGradientItemIndex);
-      //   state.dragCursorConfig.isStart = false;
+      //   dragCursorHook.isStart = false;
       // } else {
         const rect = gradientEditorPanel.value!.getBoundingClientRect();
 
@@ -313,98 +266,55 @@ const drag = (e) => {
       // }
     }
   }
-};
-
-const endDrag = () => {
-  state.dragCursorConfig.isStart = false;
-};
-
-onUnmounted(() => {
-  document.body.removeEventListener('mousemove', drag);
-  document.body.removeEventListener('mouseup', endDrag);
 });
 
-onMounted(() => {
-  document.body.addEventListener('mousemove', drag);
-  document.body.addEventListener('mouseup', endDrag);
+/** 拖拽椭圆侧边点钩子 */
+const dragSlidePointHook = useDragHook({
+  drag(e) {
+    if (backgroundEditorState.currentBackground.type === 'radial-gradient') {
+      const { x1, y1 } = backgroundEditorState.currentBackground;
+      const _point1 = getPerpendicularPoint([ x1, y1 ], [ state.slidePoint.x, state.slidePoint.y ], [ e.offsetX - backgroundEditorState.component.x, e.offsetY - backgroundEditorState.component.y ]);
+      const _distance = distance({ x: _point1.x, y: _point1.y }, { x: x1, y: y1 });
+      backgroundEditorState.currentBackground.ovalityRatio = _distance / backgroundEditorState.currentBackground.radius;
+      refreshStyle();
+    }
+  }
 });
 
-/** 获取垂点代码 */
-function getPerpendicularPoint(a: [number, number], b: [number, number], c: [number, number]): { ratio: number, x: number, y: number } {
-  // 已知A, B, P三点坐标
-  const [x1, y1] = a;
-  const [x2, y2] = b;
-  const [x3, y3] = c;
-
-  // 向量
-  // AP = (x0-x1, y0-y1)
-  // AB = (x2-x1, y2-y1)
-  // 计算AP在AB方向上的投影长度
-  // 投影*|AB|
-  const dist1 = (x3-x1) * (x2-x1) + (y3-y1) * (y2-y1);
-  // |AB| * |AB|
-  const dist2 = (x2-x1) ** 2 + (y2 - y1) ** 2;
-
-  // AD = 投影 / |AB| * AB
-  const ratio = dist1 / dist2;
-  const x4 = x1 + ratio * (x2 - x1);
-  const y4 = y1 + ratio * (y2 - y1);
-  return { x: x4, y: y4, ratio };
-}
-
-const startDragSlidePoint = (e: MouseEvent, isStartPoint: boolean) => {
-  state.dragSlideConfig.isStart = true;
-  state.dragSlideConfig.isStartPoint = isStartPoint;
-  state.dragSlideConfig.x = e['layerX'];
-  state.dragSlideConfig.y = e['layerY'];
-}
-
-const startDragPoint = (e: MouseEvent, isStartPoint: boolean) => {
-  state.dragConfig.isStart = true;
-  state.dragConfig.isStartPoint = isStartPoint;
-  state.dragConfig.x = e['layerX'];
-  state.dragConfig.y = e['layerY'];
-}
-
-const dragPoint = (e: MouseEvent) => {
-  if (state.dragSlideConfig.isStart && backgroundEditorState.currentBackground.type === 'radial-gradient') {
-    const { x1, y1 } = backgroundEditorState.currentBackground;
-    const _point1 = getPerpendicularPoint([ x1, y1 ], [ state.slidePoint.x, state.slidePoint.y ], [ e.offsetX - backgroundEditorState.component.x, e.offsetY - backgroundEditorState.component.y ]);
-    const _distance = distance({ x: _point1.x, y: _point1.y }, { x: x1, y: y1 });
-    backgroundEditorState.currentBackground.ovalityRatio = _distance / backgroundEditorState.currentBackground.radius;
-    refreshStyle();
-  }
-
-  if (state.dragConfig.isStart && (
-    backgroundEditorState.currentBackground.type === 'linear-gradient' || 
-    backgroundEditorState.currentBackground.type === 'radial-gradient' || 
-    backgroundEditorState.currentBackground.type === 'conic-gradient'
-  )) {
-    if (state.dragConfig.isStartPoint) {
-      backgroundEditorState.currentBackground.x1 = e.offsetX - backgroundEditorState.component.x;
-      backgroundEditorState.currentBackground.y1 = e.offsetY - backgroundEditorState.component.y;
-    } else {
-      backgroundEditorState.currentBackground.x2 = e.offsetX - backgroundEditorState.component.x;
-      backgroundEditorState.currentBackground.y2 = e.offsetY - backgroundEditorState.component.y;
+/** 拖拽点钩子 */
+const dragPointHook = useDragHook({
+  config: {
+    isStartNode: false
+  },
+  drag(e, config) {
+    if (dragPointHook.isStart && (
+      backgroundEditorState.currentBackground.type === 'linear-gradient' || 
+      backgroundEditorState.currentBackground.type === 'radial-gradient' || 
+      backgroundEditorState.currentBackground.type === 'conic-gradient'
+    )) {
+      if (config.isStartNode) {
+        backgroundEditorState.currentBackground.x1 = e.offsetX - backgroundEditorState.component.x;
+        backgroundEditorState.currentBackground.y1 = e.offsetY - backgroundEditorState.component.y;
+      } else {
+        backgroundEditorState.currentBackground.x2 = e.offsetX - backgroundEditorState.component.x;
+        backgroundEditorState.currentBackground.y2 = e.offsetY - backgroundEditorState.component.y;
+      }
+      if (backgroundEditorState.currentBackground.type === 'radial-gradient' || backgroundEditorState.currentBackground.type === 'conic-gradient') {
+        backgroundEditorState.currentBackground.radius = distance(
+          { x: backgroundEditorState.currentBackground.x1, y: backgroundEditorState.currentBackground.y1 },
+          { x: backgroundEditorState.currentBackground.x2, y: backgroundEditorState.currentBackground.y2 }
+        );
+      }
+      refreshStyle();
     }
-    if (backgroundEditorState.currentBackground.type === 'radial-gradient' || backgroundEditorState.currentBackground.type === 'conic-gradient') {
-      backgroundEditorState.currentBackground.radius = distance(
-        { x: backgroundEditorState.currentBackground.x1, y: backgroundEditorState.currentBackground.y1 },
-        { x: backgroundEditorState.currentBackground.x2, y: backgroundEditorState.currentBackground.y2 }
-      );
-    }
-    refreshStyle();
   }
-}
-const endDragPoint = () => {
-  state.dragConfig.isStart = false;
-  state.dragSlideConfig.isStart = false;
-}
+});
 
 const onBackgroundChange = () => {
   refreshStyle();
 };
 
+/** 刷新样式 */
 const refreshStyle = () => {
   if (testRect.value) {
     let _gradientBgRect = undefined as GradientRectInfo | undefined;
@@ -497,8 +407,6 @@ const refreshStyle = () => {
       // state.slidePoint.y = slidePoint.y;
     }
 
-    
-
     const { parentStyle, innerStyle } = backgroundEditorService.getBackgroundStyle(
       backgroundEditorState.currentBackground, 
       testRect.value.offsetWidth, 
@@ -513,46 +421,21 @@ const refreshStyle = () => {
 }
 
 onMounted(() => {
-  document.addEventListener('mousemove', dragPoint);
-  document.addEventListener('mouseup', endDragPoint);
+  dragCursorHook.init();
+  dragPointHook.init();
+  dragSlidePointHook.init();
 
   refreshStyle();
 });
 
 onUnmounted(() => {
-  document.removeEventListener('mousemove', dragPoint);
-  document.removeEventListener('mouseup', endDragPoint);
+  dragCursorHook.destory();
+  dragPointHook.destory();
+  dragSlidePointHook.destory();
 });
 </script>
 
 <style lang="less">
-
-// .wrap {
-//   filter: contrast(20);
-//   background: #fff;
-//   overflow: hidden;
-//   padding:10px;
-// }
-// .left,.right {
-//   width: 100px;
-//   height: 100px;
-//   border-radius: 50%;
-//   filter: blur(6px);
-// }
-// .left {
-//   background-color: black;
-//   position:absolute;
-//   left:0;animation: move 10s infinite alternate;
-// }
-// @keyframes move{
-//   100% {
-//     left:250px;
-//   }
-// }
-// .right {
-//   background-color: red;
-//   margin-left:120px;
-// }
 
 .haku-dialog.dialog1 {
   left: 200px;
