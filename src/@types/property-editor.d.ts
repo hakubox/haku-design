@@ -1,3 +1,7 @@
+import { Component } from "./component";
+import { ComponentGroup } from "./component-group";
+import { ComponentProperty } from "./component-property";
+
 /** 属性编辑器 */
 export interface PropertyEditor {
   /** 编辑器名称 */
@@ -24,4 +28,19 @@ export interface PropertyEditor {
   propAttrs: Record<string, any>;
   /** 是否全屏 */
   canFullScreen?: boolean;
+  /** 工具栏 */
+  tools?: {
+    /** 图标 */
+    icon?: string,
+    /** 标签 */
+    label?: string,
+    /** 提示 */
+    tooltip?: string,
+    /** 点击事件 */
+    click: (e: MouseEvent, components: (Component | ComponentGroup)[], property: ComponentProperty) => void,
+    /** 是否禁用 */
+    disabled?: () => boolean,
+    /** 是否隐藏 */
+    hidden?: () => boolean,
+  }[];
 }

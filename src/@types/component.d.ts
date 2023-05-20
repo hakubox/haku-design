@@ -6,8 +6,26 @@ import {
   ComponentPropertyEditor,
   ComponentPropertyGroup,
   PageType,
+  LayoutType,
 } from '@/@types/enum';
 import { LayoutConfig, ComponentQuickTool, ComponentGroup } from '.';
+import { AllLayoutConfig } from './form-panel';
+
+
+/** 布局类型 */
+// export type LayoutType = 'none' | 'flex' | 'center' | 'absolute' | 'table';
+// {
+//   /** 无布局（直接放置） */
+//   none = 'none',
+//   /** 流式布局 */
+//   flex = 'flex',
+//   /** 中心布局 */
+//   center = 'center',
+//   /** 绝对布局 */
+//   absolute = 'absolute',
+//   /** 表格布局 */
+//   table = 'table',
+// }
 
 /** 组件答案类型 */
 export type ComponentAnswerType =
@@ -77,7 +95,7 @@ export interface Component {
   /** 子组件区域内容选择器（与插槽无关） */
   childrenContentSlot?: string;
   /** 布局配置 */
-  layoutConfig?: LayoutConfig;
+  layoutConfig?: AllLayoutConfig;
   /** 备注 */
   remark?: string;
   /** 组件快捷工具栏 */

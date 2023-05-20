@@ -1,3 +1,4 @@
+import { StyleValue } from "vue";
 
 /** 应用颜色 */
 export interface AppColor {
@@ -57,6 +58,11 @@ export interface AppBasicBackground {
   show: boolean;
   /** 透明度：0~1 */
   opacity: number;
+
+  /** 父级样式 */
+  parentStyle: Record<string, string>;
+  /** 子级样式 */
+  innerStyle: Record<string, string>;
 }
 
 /** 渐变相关尺寸信息 */

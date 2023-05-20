@@ -1,9 +1,12 @@
 <template>
   <HakuDialog
-    body-class="background-dialog"
-    :visible="true"
+    class="background-dialog"
+    v-model:visible="backgroundEditorState.isShow"
     :drag="true"
     :title="backgroundEditorState.currentBackgroundTypeText"
+    :body-style="{ width: '240px' }"
+    :style="[backgroundEditorState.dialogCss, { width: '240px', left: 'initial' }]"
+    @close="backgroundEditorState.isShow = false;"
   >
     <template #header-tools>
       
@@ -29,7 +32,7 @@
         class="background-type-tabs"
         :style="{
           '--background-type-count': backgroundEditorState.backgroundTypeList.length,
-          '--background-type-index': backgroundEditorState.currentBackgroundTypeIndex
+          '--background-type-index': currentBackgroundTypeIndex
         }"
       >
         <li
@@ -70,7 +73,6 @@
 </template>
 
 <script lang="ts" setup>
-import message from '@/common/message';
 import HakuDialog from '@/components/common/HakuDialog.vue';
 import { reactive, type PropType } from 'vue';
 import TypeColorPicker from './type-color/TypeColorPicker.vue';
@@ -80,6 +82,7 @@ import type { AppBackground, AppBackgroundType, AppColor } from '../index.d';
 import GradientSlider from './common/GradientSlider.vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '../';
 import { computed } from 'vue';
+import bus from '@/tools/bus';
 
 const props = defineProps({
   
@@ -118,12 +121,20 @@ const state = reactive({
   ],
 });
 
+const currentBackgroundTypeIndex = computed(() => {
+  return backgroundEditorState.backgroundTypeList.findIndex(i => i.name === backgroundEditorState.currentBackground.type);
+})
+
 const changeBackgroundType = (name: AppBackgroundType) => {
   backgroundEditorService.setBackgroundType(name);
   change();
 };
 
 const change = () => {
+  if (backgroundEditorState.currentBackground.type === 'color') {
+    backgroundEditorState.currentBackground.opacity = backgroundEditorState.currentBackground.color.a;
+  }
+  bus.$emit('background_editor_change');
   emit('change', backgroundEditorState.currentBackground);
 }
 
@@ -134,7 +145,11 @@ const currentColor = computed<AppColor>({
     } else if (backgroundEditorState.currentBackground.type === 'image') {
       return { r: 0, g: 0, b: 0, a: 0 };
     } else {
-      return backgroundEditorState.currentBackground.gradientList[backgroundEditorState.currentGradientItemIndex].color;
+      if (backgroundEditorState.currentGradientItemIndex >= 0) {
+        return backgroundEditorState.currentBackground.gradientList[backgroundEditorState.currentGradientItemIndex].color;
+      } else {
+        return { r: 0, g: 0, b: 0, a: 0 };
+      }
     }
   },
   set(color: AppColor) {
@@ -142,7 +157,9 @@ const currentColor = computed<AppColor>({
       backgroundEditorState.currentBackground.color = color;
     } else if (backgroundEditorState.currentBackground.type === 'image') {
     } else {
-      backgroundEditorState.currentBackground.gradientList[backgroundEditorState.currentGradientItemIndex].color = color;
+      if (backgroundEditorState.currentGradientItemIndex >= 0) {
+        backgroundEditorState.currentBackground.gradientList[backgroundEditorState.currentGradientItemIndex].color = color;
+      }
     }
   }
 });
@@ -152,7 +169,6 @@ const currentColor = computed<AppColor>({
 
 :deep(.background-dialog) {
   width: 240px;
-  
 }
 
 .background-dialog-content {

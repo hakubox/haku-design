@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, PropType, onMounted, onUnmounted, ref } from 'vue';
+import { reactive, PropType, onMounted, onUnmounted, ref, nextTick, type StyleValue } from 'vue';
 import SimpleSelect from '../common/SimpleSelect.vue';
 import { state as backgroundEditorState, service as backgroundEditorService, defaultImage } from '../../';
 import { InputNumber, Slider } from 'ant-design-vue';
@@ -64,8 +64,6 @@ import type { AppImageBackground } from '../../index.d';
 import { computed } from 'vue';
 import { openFileDialog, throttle } from '@/tools/common';
 import { toast } from '@/common/message';
-import { StyleValue } from 'vue';
-import { nextTick } from 'vue';
 
 const previewImageEl = ref<HTMLElement>();
 

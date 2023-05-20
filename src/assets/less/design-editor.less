@@ -1143,3 +1143,90 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
     // background-color: rgba(48, 166, 121, 0.3);
   }
 }
+
+
+// 小按钮
+.btn-tool {
+  position: relative;
+  flex-shrink: 0;
+  flex-grow: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: 0.15s;
+
+  > .iconfont {
+    font-size: 18px;
+  }
+
+  &[tooltip] {
+
+    &:hover {
+      background-color: rgba(0,0,0,0.08);
+  
+      &:before {
+        transform: translate(-50%, 0px);
+        opacity: 1.0;
+        visibility: visible;
+        z-index: 9;
+      }
+  
+      &:after {
+        transform: translate(-50%, 0px) rotate(45deg);
+        opacity: 1.0;
+        visibility: visible;
+        z-index: 8;
+      }
+    }
+
+    &:before {
+      content: attr(tooltip);
+      pointer-events: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translate(-50%, 4px);
+      display: inline-block;
+      visibility: hidden;
+      opacity: 0;
+      padding: 0px 10px;
+      background-color: #333333;
+      color: white;
+      border-radius: 4px;
+      transition: 0.15s;
+      font-size: 12px;
+      font-weight: normal;
+      white-space: nowrap;
+      line-height: 28px;
+      z-index: 0;
+    }
+    
+    &:after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      display: block;
+      bottom: calc(100% + 3px);
+      right: calc(50% - 7px);
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      transform: translate(-50%, 4px) rotate(45deg);
+      visibility: hidden;
+      opacity: 0.0;
+      background-image: linear-gradient(135deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(51,51,51,1) 51%);
+      transition: 0.18s;
+      z-index: -1;
+    }
+  }
+
+
+
+  + .btn-tool {
+    margin-left: 6px;
+  }
+}

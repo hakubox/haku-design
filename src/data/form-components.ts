@@ -48,6 +48,10 @@ export let formComponents: InitComponent[] = [
           confirm: (value) => `是否${value ? '隐藏' : '显示'}当前组件？`,
         }
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '单行问答题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -116,6 +120,10 @@ export let formComponents: InitComponent[] = [
         remark: '是否在界面上显示。', attrs: {
           confirm: (value) => `是否${value ? '隐藏' : '显示'}当前组件？`,
         }
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '数值填写题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -192,6 +200,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '单行问答组', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -262,6 +274,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '多行问答题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -322,6 +338,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '单项选择题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -410,6 +430,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '多项选择题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -494,6 +518,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '下拉选择题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -562,6 +590,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '日期选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -616,6 +648,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '日期选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -674,6 +710,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '评分题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -744,6 +784,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '多项评分题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -828,6 +872,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'label', title: '标题', default: '手写题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
@@ -887,6 +935,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '文件上传题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -965,6 +1017,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '表格题', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -1075,6 +1131,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'label', title: '标题', default: '可选择卡片', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
@@ -1196,6 +1256,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否吸附在当前区域内的顶部。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
         showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
@@ -1305,6 +1369,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
         showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'height', title: '最小组件高度', default: 100, 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
@@ -1345,6 +1413,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
         showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'minHeight', title: '最小组件高度', default: '100px', 
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.length
       }, {
@@ -1383,6 +1455,10 @@ export let formComponents: InitComponent[] = [
         attrs: {
           isTitleMode: true
         }
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -1497,6 +1573,10 @@ export let formComponents: InitComponent[] = [
         name: 'textClassName', title: '文本类名', default: '', visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine,
         remark: '文本内容关联代码的类名称。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'text', title: '内容', default: '文本',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.multiLine,
@@ -1635,6 +1715,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否显示音乐控制器'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
       }, {
@@ -1706,6 +1790,10 @@ export let formComponents: InitComponent[] = [
             { label: '较小等比填充', value: 'scale-down' }
           ]
         }
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
@@ -1795,6 +1883,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      }, {
         name: 'legend', title: '显示图例', default: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
       }, {
@@ -1850,6 +1942,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'legend', title: '显示图例', default: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
@@ -1907,6 +2003,10 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }, {
+        name: 'background', title: '背景', layout: PropertyLayout.block,
+        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }, {
         name: 'legend', title: '显示图例', default: false,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean

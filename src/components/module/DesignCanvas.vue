@@ -163,7 +163,7 @@ import { Button, Progress } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { service as formFillService } from '@/modules/form-fill-module';
-import { type DragConfig } from '@/modules/draggable-module/@types';
+import { type DragConfig } from '@/modules/draggable-module/index.d';
 import FormDesignComponent from './FormDesignComponent.vue';
 import CanvasNodeActionEditor from '@/components/common/CanvasNodeActionEditor.vue';
 import { toast } from '@/common/message';

@@ -16,13 +16,29 @@
       height: `${getComponentHeight}px`,
       top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
       left: `${props.component.attrs.x}px`,
-      transform: `rotate(${props.component.attrs.rotate || 0}deg)`
+      transform: `rotate(${props.component.attrs.rotate || 0}deg)`,
+      mixBlendMode: backgroundEditorState.currentBackground.blendType
     }: {
       margin: getBoxModel(props.component.attrs.margin),
     }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
   >
+  
+    <template v-if="props.component.attrs.background?.length">
+      <div
+        class="form-component-bg-panel"
+        :style="[item.parentStyle, {
+          opacity: item.opacity
+        }]"
+        v-for="item in (props.component.attrs.background as AppBackground[]).filter(i => i.show)"
+      >
+        <div
+          class="form-component-bg-panel-layer"
+          :style="item.innerStyle"
+        ></div>
+      </div>
+    </template>
     <!-- @mouseup="blankMouseUp($event)" -->
     <CanvasNodeActionEditor
       v-if="!props.isPreview && editorState.appConfig.appType === AppType.canvas"
@@ -241,6 +257,7 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { service as variableService } from '@/modules/variable-module';
 import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
+import { state as backgroundEditorState, service as backgroundEditorService, AppBackground } from '@/modules/background-editor-module';
 import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
 import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';

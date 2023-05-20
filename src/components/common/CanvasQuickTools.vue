@@ -27,6 +27,7 @@ const state = reactive({
       type: 'tool',
       title: '层级',
       icon: 'icon-zhiding',
+      get disabled() { return !editorState.currentSelectedComponents.length },
       children: [{
         type: 'tool',
         title: '置顶',
@@ -108,6 +109,7 @@ const state = reactive({
       type: 'tool',
       title: '对齐',
       icon: 'icon-zuoceduiqi',
+      get disabled() { return editorState.currentSelectedComponents.length < 2 },
       children: [{
         type: 'tool',
         title: '左侧对齐',
@@ -304,39 +306,6 @@ const state = reactive({
       transition: background-color 0.15s;
       border-radius: 4px;
 
-      > .canvas-quick-tool-title {
-        content: attr(tip);
-        position: absolute;
-        top: calc(100% + 12px);
-        left: 50%;
-        padding: 2px 12px;
-        white-space: nowrap;
-        color: white;
-        font-size: 12px;
-        background-color: rgba(0,0,0,0.6);
-        border-radius: 4px;
-        transform: translate(-50%, 6px);
-        z-index: 999;
-        opacity: 0.0;
-        visibility: hidden;
-        transition: visibility 0.15s, opacity 0.15s, transform 0.15s;
-
-        &:before {
-          content: '';
-          position: absolute;
-          top: calc(100% - 27px);
-          left: 50%;
-          width: 0px;
-          height: 0px;
-          transform: translate(-50%, 0px) rotate(45deg);
-          border-top-left-radius: 3px;
-          border-top: 5px solid rgba(0,0,0,0.6);
-          border-right: 5px solid transparent;
-          border-bottom: 5px solid transparent;
-          border-left: 5px solid rgba(0,0,0,0.6);
-        }
-      }
-
       &:hover {
         background-color: #F5F5F5;
 
@@ -350,10 +319,13 @@ const state = reactive({
           color: #5874d8;
         }
 
-        > .canvas-quick-tool-group {
-          visibility: visible;
-          opacity: 1;
-          transform: translateY(0px);
+        &:not(.disabled) {
+          
+          > .canvas-quick-tool-group {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0px);
+          }
         }
       }
 
@@ -385,6 +357,39 @@ const state = reactive({
       }
       + .canvas-quick-split {
         margin-left: 10px;
+      }
+
+      > .canvas-quick-tool-title {
+        content: attr(tip);
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 50%;
+        padding: 2px 12px;
+        white-space: nowrap;
+        color: white;
+        font-size: 12px;
+        background-color: rgba(0,0,0,0.6);
+        border-radius: 4px;
+        transform: translate(-50%, 6px);
+        z-index: 999;
+        opacity: 0.0;
+        visibility: hidden;
+        transition: visibility 0.15s, opacity 0.15s, transform 0.15s;
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: calc(100% - 27px);
+          left: 50%;
+          width: 0px;
+          height: 0px;
+          transform: translate(-50%, 0px) rotate(45deg);
+          border-top-left-radius: 3px;
+          border-top: 5px solid rgba(0,0,0,0.6);
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+          border-left: 5px solid rgba(0,0,0,0.6);
+        }
       }
 
       > .iconfont {
@@ -472,26 +477,21 @@ const state = reactive({
             padding: 6px 16px 6px 6px;
             height: 32px;
 
-            > .canvas-quick-tool-title {
-              white-space: nowrap;
-              font-size: 12px;
-              border-radius: 4px;
-            }
-
             &:hover {
+              background-color: #F5F5F5;
 
               > .canvas-quick-tool-title {
               }
               
               > .iconfont {
                 color: #5874d8;
-                background-color: #F5F5F5;
               }
             }
 
             &.disabled {
               cursor: not-allowed;
               color: #DDD;
+              background-color: white !important;
               
               > .iconfont {
                 color: #DDD !important;
@@ -513,6 +513,12 @@ const state = reactive({
               }
             }
 
+            > .canvas-quick-tool-title {
+              white-space: nowrap;
+              font-size: 12px;
+              border-radius: 4px;
+            }
+
             > .iconfont {
               display: inline-flex;
               justify-content: center;
@@ -520,7 +526,6 @@ const state = reactive({
               border-radius: 4px;
               height: 30px;
               width: 30px;
-              background-color: white;
               color: #8f95ab;
               font-size: 18px;
               transition: 0.12s;

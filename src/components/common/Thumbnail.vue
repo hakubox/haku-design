@@ -134,9 +134,9 @@ const dragHook = useDragHook({
     x: 0,
     y: 0,
   },
-  drag(e, config) {
-    let _x = config.originX + (e.pageX - config.x) / scale.value;
-    let _y = config.originY + (e.pageY - config.y) / scale.value;
+  drag(e) {
+    let _x = dragHook.config.originX + (e.pageX - dragHook.config.x) / scale.value;
+    let _y = dragHook.config.originY + (e.pageY - dragHook.config.y) / scale.value;
     if (_x < 0) _x = 0;
     else if (_x > props.contentWidth * props.canvasScale - getRangeWidth.value) _x = props.contentWidth * props.canvasScale - getRangeWidth.value;
     if (_y < 0) _y = 0;

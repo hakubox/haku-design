@@ -120,7 +120,7 @@ const componentList = computed(() => {
       })
       .map((i) => ({
         value: i.attrs.id,
-        label: i.attrs.name || i.title,
+        label: i.isGroup ? i.name : (i.attrs.name || i.title),
         icon: editorState.menuComponents.find(o => o.name === i.name)?.icon ?? '---',
       })),
   }));

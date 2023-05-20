@@ -1,6 +1,7 @@
 <template>
   <div>
     <component @focus="onFocus(prop)"
+      v-if="getEditor"
       v-bind="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
       :component="model"
       :value="getValue"

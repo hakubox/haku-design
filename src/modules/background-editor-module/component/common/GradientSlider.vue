@@ -179,13 +179,13 @@ const dragHook = useDragHook({
     /** 光标离轴长度 */
     currentCursorLeaveWidth: 0,
   },
-  drag(e, config) {
+  drag(e) {
     if (props.currentCursorIndex >= 0) {
       // 小动画效果
       // if (Math.abs(state.initDragY - e.pageY) > 30) {
 
       // }
-      if (Math.abs(config.initDragY - e.pageY) > 50) {
+      if (Math.abs(dragHook.config.initDragY - e.pageY) > 50) {
         removeCursor(props.currentCursorIndex);
         dragHook.isStart.value = false;
       } else {

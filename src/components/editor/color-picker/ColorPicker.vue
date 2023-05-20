@@ -207,9 +207,9 @@ const init = () => {
   state.color.fromString(props.value.trim().toLowerCase());
   state.color.format = props.colorType;
   alpha.value = state.color._alpha;
-  document.body.addEventListener('mouseup', handleEndDrag);
-  document.body.addEventListener('mousemove', handleDrag);
-  document.body.addEventListener('mousedown', shrinkPicker);
+  document.body.addEventListener('mouseup', handleEndDrag, { capture: true, passive: true });
+  document.body.addEventListener('mousemove', handleDrag, { capture: true, passive: true });
+  document.body.addEventListener('mousedown', shrinkPicker, { capture: true, passive: true });
 
   let _historyList: any = sessionStorage.getItem('colorPickerHistory');
 

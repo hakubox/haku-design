@@ -1,7 +1,17 @@
 import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { StyleValue, reactive } from 'vue';
 import message, { toast } from '@/common/message';
-import type { AppBackground, AppBackgroundType, AppColor, AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientRectInfo, AppImageBackground } from './index.d';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
+import type {
+  AppBackground,
+  AppBackgroundType,
+  AppColor,
+  AppLinearGradientBackground,
+  AppConicGradientBackground,
+  AppRadialGradientBackground,
+  GradientRectInfo,
+  AppImageBackground
+} from './index.d';
 import { distance } from '@/tools/common';
 
 export * from './index.d';
@@ -11,8 +21,14 @@ export const defaultImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAA
 
 /** 背景编辑器模块状态 */
 export const state = reactive({
+  /** 是否显示 */
+  isShow: false,
+  /** 弹出框样式 */
+  dialogCss: {} as Record<string, any>,
+  /** 显示背景操作面板 */
+  showBackgroundPanel: false,
   /** 当前背景 */
-  currentBackground: { type: 'color', blendType: 'normal', color: { r: 216, g: 216, b: 216, a: 1 } } as AppBackground,
+  currentBackground: { type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 } } as AppBackground,
   /** 背景类型列表 */
   backgroundTypeList: [
     { name: 'color', title: '纯色', url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAACLSURBVFiF7dexDcMwDETRT6fOAhkjWUNzODN5Dy+QnlogAygDeAC6kArDcM00d4AgQc09ljR6HsBz3BlpwA+oBrzG+UdWgALM7h5ZcfcAZqDYeBARS+boZvYGmDJLryKAAAIIIIAAAggggAACCDDRF0VqrWmlh65m9I24pLWfLDdgO3zck4ob8AG+OxCjg8ww/O8tAAAAAElFTkSuQmCC' },
@@ -46,8 +62,6 @@ export const state = reactive({
     { value: 'initial', label: '初始' },
     { value: 'inherit', label: '继承' }
   ],
-  /** 当前背景类型索引 */
-  currentBackgroundTypeIndex: 0,
   /** 当前背景类型文本 */
   currentBackgroundTypeText: '纯色',
   /** 当前渐变项索引 */
@@ -57,14 +71,6 @@ export const state = reactive({
   gradientListItemLocs: [
 
   ] as { x: number, y: number, rotate: number }[],
-
-  /** 对照测试组件 */
-  component: {
-    x: 100,
-    y: 100,
-    width: 500,
-    height: 500
-  },
   /** 填充模式 */
   fillModeList: [
     { value: 'auto', label: '不处理' },
@@ -91,91 +97,104 @@ export const state = reactive({
 
 /** 背景编辑器模块逻辑 */
 export const service = {
-  
+  mergeBackground(style: Record<string, any>) {
+    Object.entries(style).forEach(([key, value]) => {
+      state.currentBackground[key] = value;
+    });
+  },
   /** 修改背景类型 */
   setBackgroundType(name: AppBackgroundType) {
+    const _component = editorState.currentSelectedComponents[0];
+    if (!_component) return;
     const _typeIndex = state.backgroundTypeList.findIndex(i => i.name === name);
     if (_typeIndex >= 0) {
-      state.currentBackgroundTypeIndex = _typeIndex;
       state.currentBackgroundTypeText = state.backgroundTypeList[_typeIndex].title;
       
       switch (state.backgroundTypeList[_typeIndex].name) {
         case 'color':
-          state.currentBackground = {
+          service.mergeBackground({
             type: 'color',
             show: state.currentBackground.show,
             opacity: state.currentBackground.opacity,
             blendType: 'normal',
-            color: { r: 216, g: 216, b: 216, a: 1 }
-          };
+            color: { r: 216, g: 216, b: 216, a: 1 },
+            innerStyle: {},
+            parentStyle: {},
+          });
           state.currentGradientItemIndex = -1;
           break;
         case 'linear-gradient': {
           const _background = state.currentBackground as AppLinearGradientBackground;
-          state.currentBackground = {
+          service.mergeBackground({
             type: 'linear-gradient',
-            x1: state.component.width / 2,
+            x1: _component.attrs.width / 2,
             y1: 0,
-            x2: state.component.width / 2,
-            y2: state.component.height,
+            x2: _component.attrs.width / 2,
+            y2: _component.attrs.height,
             show: _background.show,
             opacity: _background.opacity,
             blendType: 'normal',
             repeating: false,
             gradientList: [
               { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
-              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
-            ]
-          };
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 0 } },
+            ],
+            innerStyle: {},
+            parentStyle: {},
+          });
           state.currentGradientItemIndex = 0;
           break;
         }
         case 'radial-gradient': {
           const _background = state.currentBackground as AppRadialGradientBackground;
-          state.currentBackground = {
+          service.mergeBackground({
             type: 'radial-gradient',
-            x1: state.component.width / 2,
-            y1: state.component.height / 2,
-            x2: state.component.width / 2,
-            y2: state.component.height,
+            x1: _component.attrs.width / 2,
+            y1: _component.attrs.height / 2,
+            x2: _component.attrs.width / 2,
+            y2: _component.attrs.height,
             show: _background.show,
             opacity: _background.opacity,
-            radius: state.component.width / 2,
-            ovalityRatio: state.component.height / state.component.width,
+            radius: _component.attrs.width / 2,
+            ovalityRatio: _component.attrs.height / _component.attrs.width,
             blendType: 'normal',
             repeating: false,
             gradientList: [
               { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
-              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
-            ]
-          };
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 0 } },
+            ],
+            innerStyle: {},
+            parentStyle: {},
+          });
           state.currentGradientItemIndex = 0;
           break;
         }
         case 'conic-gradient': {
           const _background = state.currentBackground as AppConicGradientBackground;
-          state.currentBackground = {
+          service.mergeBackground({
             type: 'conic-gradient',
-            x1: state.component.width / 2,
-            y1: state.component.height / 2,
-            x2: state.component.width / 2,
-            y2: state.component.height,
+            x1: _component.attrs.width / 2,
+            y1: _component.attrs.height / 2,
+            x2: _component.attrs.width / 2,
+            y2: _component.attrs.height,
             show: _background.show,
             opacity: _background.opacity,
-            radius: state.component.width / 2,
-            ovalityRatio: state.component.height / state.component.width,
+            radius: _component.attrs.width / 2,
+            ovalityRatio: _component.attrs.height / _component.attrs.width,
             blendType: 'normal',
             gradientList: [
               { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
-              { progress: 1, color: { r: 255, g: 255, b: 255, a: 1 } },
-            ]
-          };
+              { progress: 1, color: { r: 255, g: 255, b: 255, a: 0 } },
+            ],
+            innerStyle: {},
+            parentStyle: {},
+          });
           state.currentGradientItemIndex = 0;
           break;
         }
         case 'image': {
           const _background = state.currentBackground as AppImageBackground;
-          state.currentBackground = {
+          service.mergeBackground({
             blendType: 'normal',
             show: _background.show,
             opacity: _background.opacity,
@@ -194,8 +213,10 @@ export const service = {
             hueRotate: 0,
             invert: 0,
             saturate: 0,
-            sepia: 0
-          };
+            sepia: 0,
+            innerStyle: {},
+            parentStyle: {},
+          });
           state.currentGradientItemIndex = 0;
           break;
         }
@@ -281,7 +302,9 @@ export const service = {
       /** 线段和整条延长线的比值 */
       ratio: number;
     }
-  ) {
+  ): { innerStyle: StyleValue, parentStyle: StyleValue } | undefined {
+    const _component = editorState.currentSelectedComponents[0];
+    if (!_component) return;
     let _parentStyle = {} as StyleValue;
     let _style = {} as StyleValue;
     switch (gradientBg.type) {
@@ -308,13 +331,13 @@ export const service = {
         /** 角度 */
         const _rotate = service.getRotate(gradientBg);
         _style = {
-          backgroundImage: `radial-gradient(${_distance * gradientBg.ovalityRatio}px ${_distance}px at ${gradientBg.x1 + state.component.width * 0.5}px ${gradientBg.y1 + state.component.height * 0.5}px, ${
+          backgroundImage: `radial-gradient(${_distance * gradientBg.ovalityRatio}px ${_distance}px at ${gradientBg.x1 + _component.attrs.width * 0.5}px ${gradientBg.y1 + _component.attrs.height * 0.5}px, ${
             service.getGradientCSSColors(gradientBg)
           })`,
-          left: `${-state.component.width * 0.5}px`,
-          top: `${-state.component.height * 0.5}px`,
-          width: `${state.component.width * 2}px`,
-          height: `${state.component.height * 2}px`,
+          left: `${-_component.attrs.width * 0.5}px`,
+          top: `${-_component.attrs.height * 0.5}px`,
+          width: `${_component.attrs.width * 2}px`,
+          height: `${_component.attrs.height * 2}px`,
           transform: `rotate(${_rotate + 90}deg)`
         };
         break;
@@ -331,8 +354,8 @@ export const service = {
           })`,
           left: `0px`,
           top: `0px`,
-          width: `${state.component.width}px`,
-          height: `${state.component.height}px`,
+          width: `${_component.attrs.width}px`,
+          height: `${_component.attrs.height}px`,
         };
         break;
       }

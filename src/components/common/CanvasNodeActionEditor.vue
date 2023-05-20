@@ -374,14 +374,14 @@ watch(() => editorState.currentSelectedIds, (newVal, oldVal) => {
   }
 });
 
+onMounted(async () => {
+  document.body.addEventListener('mousemove', onMoveDrag, { passive: true });
+  document.body.addEventListener('mouseup', onEndDrag, { passive: true });
+});
+
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', onMoveDrag);
   document.body.removeEventListener('mouseup', onEndDrag);
-})
-
-onMounted(async () => {
-  document.body.addEventListener('mousemove', onMoveDrag);
-  document.body.addEventListener('mouseup', onEndDrag);
 });
 </script>
 

@@ -32,6 +32,8 @@ import ConfigDialog from '@/components/module/ConfigDialog.vue';
 import packageInfo from '../package.json';
 import { init } from '@/lib/monitor';
 import { service as pluginModule } from '@/modules/plugin-module';
+import { init as messageInit } from '@/common/message';
+import BackgroundEditor from '@/modules/background-editor-module/component/BackgroundEditor.vue';
 // import { registerTestPlugin } from '@/plugin/test-plugin';
 // import { registerLogoComponent } from '@/plugin/logo-component-plugin';
 // import { registerImageEditor } from '@/plugin/image-editor-plugin';
@@ -61,8 +63,6 @@ dayjs.locale(zhCN);
 dayjs.extend(relativeTime);
 
 globalStore.state.antdConfigProvider.locale = AntdZHCN;
-
-import { init as messageInit } from '@/common/message';
 
 messageInit({ toastModule: message, confirmModule: Modal });
 
@@ -114,6 +114,7 @@ app.component('FilePicker', FilePicker);
 app.component('ConfigDialog', ConfigDialog);
 app.component('FormulaEditor', FormulaEditor);
 app.component('RulesEditor', RulesEditor);
+app.component('BackgroundEditor', BackgroundEditor);
 
 changeConfig(process.env.Environment as ServerEnvironment);
 

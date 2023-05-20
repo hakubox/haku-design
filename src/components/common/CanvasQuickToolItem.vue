@@ -20,12 +20,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
-import { reactive, computed, type PropType } from 'vue';
+import { reactive, type PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { AppType } from '@/@types/enum';
 import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
-import message from '@/common/message';
 
 const props = defineProps({
   config: {

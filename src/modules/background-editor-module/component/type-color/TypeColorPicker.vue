@@ -292,7 +292,6 @@ const setColorInput = (e: any) => {
       if (/^#([0-9a-fA-F]{3}){1,2}$/.test(_colorStr)) {
         const _color = state.color.fromString(_colorStr, state.color._tempHue);
         if (_color) {
-          console.error('颜色', _color);
           state.color = _color;
           submitColor();
           state.colorInput = _colorStr;
@@ -367,9 +366,9 @@ const init = () => {
   state.color.fromString(backgroundEditorService.getColorStr(props.value) || '');
   state.color.format = state.colorType;
   alpha.value = state.color._alpha;
-  document.body.addEventListener('mouseup', handleEndDrag);
-  document.body.addEventListener('mousemove', handleDrag);
-  document.body.addEventListener('mousedown', shrinkPicker);
+  document.body.addEventListener('mouseup', handleEndDrag, { capture: true, passive: true });
+  document.body.addEventListener('mousemove', handleDrag, { capture: true, passive: true });
+  document.body.addEventListener('mousedown', shrinkPicker, { capture: true, passive: true });
 
   let _historyList: any = sessionStorage.getItem('colorPickerHistory');
 

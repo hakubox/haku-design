@@ -2,6 +2,8 @@ import { icons } from '@/data/icon-editor';
 import { PropertyEditor, SetPartial } from '@/@types';
 import { ComponentPropertyEditor } from '@/@types/enum';
 import { watch, computed } from 'vue';
+import { state as backgroundEditorState, service as backgroundEditorService } from '@/modules/background-editor-module';
+import bus from '@/tools/bus';
 
 export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
 
@@ -380,6 +382,39 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     canFullScreen: false,
     attrs: {},
     editor: ComponentPropertyEditor.slider,
+  },
+  {
+    name: 'background',
+    description: '背景',
+    component: 'background-editor',
+    attrs: {},
+    editor: ComponentPropertyEditor.background,
+    tools: [
+      {
+        icon: 'iconfont icon-add',
+        tooltip: '新增',
+        click(e, components, property) {
+          // 显示弹出框
+          let _top = e.pageY - 100;
+          if (_top < 50) _top = 50;
+          else if (_top > window.innerHeight - 600) _top = window.innerHeight - 600;
+          backgroundEditorState.dialogCss = {
+            top: `${_top}px`,
+            right: `520px`,
+          };
+
+          if (components && !components[0].isGroup) {
+            const _bgs = components[0].attrs[property.name];
+            _bgs.push({
+              type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 }
+            });
+            backgroundEditorState.isShow = true;
+            backgroundEditorState.currentBackground = _bgs[_bgs.length - 1];
+            bus.$emit('background_editor_change');
+          }
+        }
+      }
+    ],
   },
 ];
 

@@ -569,6 +569,7 @@ export function toBlob(file: File): Promise<Blob> {
   });
 }
 
+let _prevFileDialog: HTMLElement;
 /** 打开文件选择框 */
 export function openFileDialog<Multiple extends boolean = false>(config: {
   /** 限制接受文件的类型 */
@@ -581,16 +582,16 @@ export function openFileDialog<Multiple extends boolean = false>(config: {
   webkitdirectory?: boolean,
 } | undefined): Promise<Multiple extends true ? File[] : (File | undefined)> {
   return new Promise((resolve, reject) => {
+    _prevFileDialog?.remove();
     const inputObj = document.createElement('input');
     inputObj.setAttribute('type', 'file');
-    inputObj.setAttribute('style', 'visibility:hidden');
+    inputObj.setAttribute('style', 'visibility:hidden;position: fixed; left: -100px; top: -100px;');
     if (config?.accept) inputObj.setAttribute('accept', config.accept);
     if (config?.capture) inputObj.setAttribute('capture', config.capture);
     if (config?.multiple === true) inputObj.setAttribute('multiple', 'true');
     if (config?.webkitdirectory === true) inputObj.setAttribute('webkitdirectory', 'true');
     document.body.appendChild(inputObj);
     inputObj.addEventListener('change', (e: any) => {
-      console.warn('选择文件', e);
       if (e.target.files && e.target.files.length) {
         const _fileCount = e.target.files.length;
         const _fileList: File[] = [];
@@ -601,7 +602,11 @@ export function openFileDialog<Multiple extends boolean = false>(config: {
       }
       inputObj.remove();
     });
+    inputObj.addEventListener('close', (e) => {
+      console.log('e:close', e);
+    });
     inputObj.click();
+    _prevFileDialog = inputObj;
   });
 }
 

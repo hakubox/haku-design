@@ -6,6 +6,8 @@ interface ComponentLayout {
   none: void;
   /** 流式布局 */
   flex: FlexLayout;
+  /** 中心布局（未实现） */
+  center: void;
   /** 绝对定位布局 */
   absolute: AbsoluteLayout;
   /** 表格布局 */

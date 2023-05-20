@@ -8,7 +8,7 @@
     }"
     @click.self.stop="closeDialog"
   >
-    <div class="haku-dialog-body" :class="props.bodyClass">
+    <div class="haku-dialog-body" :class="props.bodyClass" :style="props.bodyStyle">
       <!-- 顶部栏 -->
       <div class="haku-dialog-header" v-if="props.header === true && !slots.header">
         <!-- 标题 -->
@@ -17,7 +17,7 @@
         <div class="haku-dialog-header-tools">
           <slot name="header-tools"></slot>
           <!-- 关闭按钮 -->
-          <div class="haku-dialog-header-tool haku-dialog-close">
+          <div class="haku-dialog-header-tool haku-dialog-close" @click="closeDialog">
             <i class="iconfont icon-guanbi"></i>
           </div>
         </div>
@@ -38,9 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref, VNode } from "vue";
-import { AppType, ComponentPropertyEditor, PageType } from '@/@types/enum';
-import { Button } from "ant-design-vue";
+import { reactive, PropType, Ref, onMounted, onUnmounted, VNode, StyleValue } from "vue";
 import { useSlots } from "vue";
 
 const slots = useSlots();
@@ -71,6 +69,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  bodyStyle: {
+    type: Object as PropType<StyleValue>,
+    default: () => ({})
+  },
   /** 拖拽 */
   drag: {
     type: Boolean,
@@ -80,6 +82,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (event: 'update:visible', val: boolean): void;
+  (event: 'close'): void;
 }>();
 
 const state = reactive({
@@ -90,6 +93,7 @@ const state = reactive({
 /** 关闭弹出框 */
 const closeDialog = () => {
   state.isLeaving = true;
+  emit('close');
   setTimeout(() => {
     emit('update:visible', false);
     setTimeout(() => {

@@ -30,7 +30,7 @@ const slider = ref<HTMLElement>();
 
 const startDrag = (e) => {
   dragHook.startDrag(e);
-  if (dragHook.isStart.value) dragHook.drag(e);
+  dragHook.drag(e);
 };
 
 /** 拖拽钩子 */

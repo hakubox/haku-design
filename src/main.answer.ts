@@ -40,7 +40,7 @@ dayjs.extend(relativeTime);
 window.addEventListener('load', () => {
   if (window.opener) {
     serverConfig.whiteList.forEach(path => {
-      window.opener.postMessage({ msg: '加载完毕' }, path);
+      window.opener.postMessage({ event: 'onload', msg: '加载完毕' }, path);
     });
   }
 });

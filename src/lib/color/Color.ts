@@ -37,7 +37,7 @@ const bound01 = function (value, max) {
 
 const INT_HEX_MAP = { 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F' };
 
-export const toHex = function ({ r, g, b, a }) {
+export const toHex = function ({ r, g, b, a }, showAlpha = false) {
   const hexOne = function (value) {
     value = Math.min(Math.round(value), 255);
     const high = Math.floor(value / 16);
@@ -47,7 +47,7 @@ export const toHex = function ({ r, g, b, a }) {
 
   if (isNaN(r) || isNaN(g) || isNaN(b)) return '';
 
-  return '#' + hexOne(r) + hexOne(g) + hexOne(b) + (a != undefined ? hexOne(a) : '');
+  return '#' + hexOne(r) + hexOne(g) + hexOne(b) + (showAlpha && a != undefined ? hexOne(a) : '');
 };
 
 const HEX_INT_MAP = { A: 10, B: 11, C: 12, D: 13, E: 14, F: 15 };

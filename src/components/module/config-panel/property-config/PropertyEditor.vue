@@ -40,7 +40,15 @@
               </Popover>
             </div>
             <div class="form-design-body-property-item-label-tools">
-              <template v-if="prop.layout == 'block' || (prop.attach && prop.attach.length)">
+              <template v-if="prop.layout == 'block'">
+                
+                <div
+                  class="btn-tool"
+                  :tooltip="tool.tooltip"
+                  v-for="tool in state.propertyEditors[prop.editor].tools"
+                  @click="tool.click($event, editorState.currentSelectedComponents, prop)"
+                ><i :class="tool.icon"></i></div>
+
                 <Tooltip
                   placement="topRight"
                   class="prop-tool-btn"
@@ -109,7 +117,7 @@
               </template>
             </component>
           </div>
-          <template v-if="!(prop.layout == 'block' || (prop.attach && prop.attach.length))">
+          <template v-if="!(prop.layout == 'block' || prop.attach?.length)">
             <Tooltip placement="topLeft" class="fullscreen" v-if="state.propertyEditors[prop.editor]?.canFullScreen">
               <template #title>最大化</template>
               <Button size="small" @click="fullScreen(state.propertyEditors[prop.editor], prop)">

@@ -107,8 +107,9 @@ watch(() => state.isExpanded, (val, oldVal) => {
     return;
   }
   setTimeout(() => {
+    if (state.scrollParent) state.scrollParent.removeEventListener('scroll', scrollHandler);
     state.scrollParent = document.querySelector('.page-component__scroll > .el-scrollbar__wrap');
-    state.scrollParent && state.scrollParent.addEventListener('scroll', scrollHandler);
+    if (state.scrollParent) state.scrollParent.addEventListener('scroll', scrollHandler, { passive: true });
     scrollHandler();
   }, 200);
 });

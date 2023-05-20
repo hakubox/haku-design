@@ -174,6 +174,9 @@
                 <DesignCanvas ref="componentCanvas" :isPreview="false" :isReadonly="false" />
               </div>
             </div>
+
+            <!-- 背景编辑器 -->
+            <BackgroundEditorPanel />
           </div>
 
           <!-- 欢迎界面 -->
@@ -212,6 +215,8 @@
         <!-- 主体右侧菜单栏 -->
         <ConfigPanel v-if="editorState.appConfig.designConfig.isInit"></ConfigPanel>
 
+        <!-- 背景编辑器 -->
+        <BackgroundEditorDialog />
       </div>
       
       <!-- 底部状态部分 -->
@@ -316,6 +321,8 @@ import WelComePanel from '@/components/module/WelcomePanel.vue';
 import AppPreviewDialog from '@/components/module/AppPreviewDialog.vue';
 import ThemeConfig from '@/modules/theme-module/component/ThemeConfig.vue';
 import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
+import BackgroundEditorDialog from '@/modules/background-editor-module/component/BackgroundEditorDialog.vue';
+import BackgroundEditorPanel from '@/modules/background-editor-module/component/BackgroundEditorPanel.vue';
 import { AppType } from '@/@types/enum';
   
 import { initCommands } from '@/data/form-commands';
@@ -537,8 +544,8 @@ onMounted(() => {
   editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
     componentHandle(eventName, params, component);
   });
-  document.body.addEventListener('mousemove', globalMouseMove);
-  document.body.addEventListener('mouseup', globalMouseUp);
+  document.body.addEventListener('mousemove', globalMouseMove, { passive: true });
+  document.body.addEventListener('mouseup', globalMouseUp, { passive: true });
   if (route.query.qid) {
     getDataById(route.query.qid);
   }

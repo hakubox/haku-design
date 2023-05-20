@@ -57,8 +57,8 @@ const endDrag = () => {
 
 /** 初始化 */
 const init = () => {
-  document.body.addEventListener('mousemove', drag);
-  document.body.addEventListener('mouseup', endDrag);
+  document.body.addEventListener('mousemove', drag, { capture: true, passive: true });
+  document.body.addEventListener('mouseup', endDrag, { capture: true, passive: true });
 };
 
 /** 游标离左侧距离 */
