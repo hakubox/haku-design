@@ -28,7 +28,7 @@ export declare interface FlexLayout extends BasicLayout {
   /** 次轴配置 */
   crossAxisAlignment: CrossAxisAlignment;
   /** 最大子组件数 */
-  maxChildCount: number;
+  maxChildCount?: number;
 }
 
 /** 绝对定位布局配置类 */

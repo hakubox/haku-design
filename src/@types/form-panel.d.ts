@@ -2,7 +2,7 @@ import { Component } from './component';
 import { LayoutType } from './enum';
 import { ComponentLayout } from './layout-config';
 
-export type AllLayoutConfig = LayoutConfig<LayoutType.flex> | LayoutConfig<LayoutType.absolute> | LayoutConfig<LayoutType.absolute>;
+export type AllLayoutConfig = LayoutConfig<LayoutType.flex> | LayoutConfig<LayoutType.absolute> | LayoutConfig<LayoutType.table>;
 
 /** 布局配置 */
 export type LayoutConfig<T extends LayoutType> = {

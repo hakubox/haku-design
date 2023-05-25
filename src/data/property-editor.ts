@@ -3,6 +3,7 @@ import { PropertyEditor, SetPartial } from '@/@types';
 import { ComponentPropertyEditor } from '@/@types/enum';
 import { watch, computed } from 'vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '@/modules/background-editor-module';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import bus from '@/tools/bus';
 
 export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
@@ -402,16 +403,19 @@ export const propertyEditors: Array<InitPropertyEditor> = [
             top: `${_top}px`,
             right: `520px`,
           };
-
-          if (components && !components[0].isGroup) {
-            const _bgs = components[0].attrs[property.name];
-            _bgs.push({
-              type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 }
-            });
-            backgroundEditorState.isShow = true;
-            backgroundEditorState.currentBackground = _bgs[_bgs.length - 1];
-            bus.$emit('background_editor_change');
+          let _bgs = [] as Record<string, any>;
+          if (!components?.length) {
+            _bgs = editorState.appConfig.background;
+          } else if (components && !components[0].isGroup) {
+            // TODO: property.name不能强转为string类型
+            _bgs = components[0].attrs[property.name as string];
           }
+          _bgs.push({
+            type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 }
+          });
+          backgroundEditorState.isShow = true;
+          backgroundEditorState.currentBackground = _bgs[_bgs.length - 1];
+          bus.$emit('background_editor_change');
         }
       }
     ],

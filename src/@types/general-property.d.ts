@@ -64,4 +64,6 @@ export interface GeneralProperty {
 
   /** 属性名 */
   names?: string[] | string[][];
+  /** 子属性 */
+  children?: GeneralProperty[];
 }

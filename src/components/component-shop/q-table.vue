@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, defineOptions } from 'vue';
+import { PropType, reactive } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import { getQBasicProps } from '@/tools/common';
 import { Button, Empty, Loading } from 'vant';

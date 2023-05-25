@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineOptions } from 'vue';
+import { ref } from 'vue';
 
 defineOptions({
   inheritAttrs: false

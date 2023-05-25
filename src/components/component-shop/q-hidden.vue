@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, defineOptions } from 'vue';
+import { reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 
 defineOptions({

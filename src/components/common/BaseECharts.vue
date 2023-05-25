@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive, onMounted, nextTick, defineOptions } from 'vue';
+import { watch, ref, reactive, onMounted, nextTick } from 'vue';
 import { init as echartInit, type ECharts } from 'echarts';
 import { throttle } from '@/tools/common';
 import { useElementSize } from '@vueuse/core';

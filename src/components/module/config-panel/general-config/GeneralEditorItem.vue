@@ -1,37 +1,35 @@
 <template>
-  <div>
-    <component @focus="onFocus(prop)"
-      v-if="getEditor"
-      v-bind="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      :component="model"
-      :value="getValue"
-      :disabled="prop.disabled"
-      :attrs="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      @change="(val) => onChange(val, prop, propertys, model)"
-      :is="getEditor.component"
-    >
-      {{getEditor.html}}
-      <template v-for="slot in Object.keys(getEditor.slot)" #[slot]>
-        <component v-for="(detailComponent, index3) in getEditor.slot[slot]" 
-          :key="slot + detailComponent.component + index3"
-          v-bind="detailComponent.attrs" 
-          :is="detailComponent.component" 
-        >
-          {{detailComponent.html}}
-          <template v-for="detailSlot in Object.keys(detailComponent.slot)" #[detailSlot]>
-            <component 
-              v-for="(detail2Component, index4) in detailComponent.slot[detailSlot]" 
-              :key="detailSlot + detail2Component.component + index4"
-              v-bind="detail2Component.attrs" 
-              :is="detail2Component.component" 
-            >
-            {{detail2Component.html}}
-            </component>
-          </template>
-        </component>
-      </template>
-    </component>
-  </div>
+  <component @focus="onFocus(prop)"
+    v-if="getEditor"
+    v-bind="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
+    :component="model"
+    :value="getValue"
+    :disabled="prop.disabled"
+    :attrs="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
+    @change="(val) => onChange(val, prop, model)"
+    :is="getEditor.component"
+  >
+    {{getEditor.html}}
+    <template v-for="slot in Object.keys(getEditor.slot)" #[slot]>
+      <component v-for="(detailComponent, index3) in getEditor.slot[slot]" 
+        :key="slot + detailComponent.component + index3"
+        v-bind="detailComponent.attrs" 
+        :is="detailComponent.component" 
+      >
+        {{detailComponent.html}}
+        <template v-for="detailSlot in Object.keys(detailComponent.slot)" #[detailSlot]>
+          <component 
+            v-for="(detail2Component, index4) in detailComponent.slot[detailSlot]" 
+            :key="detailSlot + detail2Component.component + index4"
+            v-bind="detail2Component.attrs" 
+            :is="detail2Component.component" 
+          >
+          {{detail2Component.html}}
+          </component>
+        </template>
+      </component>
+    </template>
+  </component>
 </template>
 
 <script lang="ts" setup>
@@ -64,18 +62,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (event: 'change', value: any, prop: GeneralProperty, propertys: GeneralProperty[], model: Record<string, any>): void;
+  (event: 'change', value: any, prop: GeneralProperty, propMap, model: Record<string, any>): void;
 }>();
 
 const onFocus = (prop) => {
   editorState.currentProp = prop;
-};
-/** 属性修改触发的事件 */
-const propChangeListener = (e, prop, propMap, target?: Record<string, any>) => {
-  if (e.target) {
-    console.warn('属性值包含val.target', e);
-    return;
-  }
 };
 
 const getEditor = computed(() => {
@@ -83,9 +74,9 @@ const getEditor = computed(() => {
 });
 
 /** 值改变 */
-const onChange = (value, prop: GeneralProperty, propertys: GeneralProperty[], model: Record<string, any>) => {
+const onChange = (value, prop: GeneralProperty, model: Record<string, any>) => {
   if (value?.target) return;
-  emit('change', value, prop, propertys, model);
+  emit('change', value, prop, editorState.currentSelectedComponentPropertyMap, model);
 };
 
 /** 获取值 */

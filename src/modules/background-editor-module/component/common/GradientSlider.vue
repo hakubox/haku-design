@@ -19,8 +19,8 @@
           tabindex="-1"
           class="color-picker-slider-bar"
           v-for="(item, index) in props.gradientBackground.gradientList"
-          @mousedown.stop="$event => setCursor($event, index)"
-          @keydown.stop="$event => onKeyDown($event, index)"
+          @mousedown.stop="setCursor($event, index)"
+          @keydown.stop="onKeyDown($event, index)"
         >
         </div>
       </div>
@@ -38,9 +38,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive, ref, type StyleValue } from 'vue';
 import type { AppLinearGradientBackground, AppConicGradientBackground, AppRadialGradientBackground, GradientItem } from '../../index.d';
-import { state as backgroundEditorState, service as backgroundEditorService } from '../../';
+import { service as backgroundEditorService } from '../../';
 import { toDecimal } from '@/tools/common';
 import { toast } from '@/common/message';
 import { getLinearGradientItem } from '@/lib/color/Color';
@@ -52,7 +52,7 @@ const props = defineProps({
     default: 0,
   },
   sliderStyle: {
-    type: Object as PropType<Record<string, any>>,
+    type: Object as PropType<StyleValue>,
   },
   /** 渐变背景 */
   gradientBackground: {
@@ -76,10 +76,6 @@ const emit = defineEmits<{
   (event: 'update:currentCursorIndex', value: number): void;
 }>();
 
-const state = reactive({
-  
-});
-
 const rotate90 = () => {
   backgroundEditorService.rotate90Gradient(props.gradientBackground);
   emit('change');
@@ -99,6 +95,7 @@ const flipGradient = () => {
   emit('change');
 }
 
+/** 获取从左到右线性渐变背景 */
 const getBackgroundImage = computed(() => {
   let _str = '';
   const _rgbList = props.gradientBackground.gradientList
@@ -147,14 +144,10 @@ const addCursor = (e: MouseEvent) => {
       break;
     }
   }
-  let color;
-  // 计算颜色
+  let color = { r: 255, g: 255, b: 255, a: 0 };
   if (prev && next) {
     color = getLinearGradientItem(prev.color, next.color, (_progress - prev.progress) / (next.progress - prev.progress) * 100);
-  } else {
-    color = { r: 255, g: 255, b: 255, a: 0 };
   }
-  
   
   _cursorList.push({ color, progress: _progress });
   _cursorList = _cursorList.sort((a, b) => a.progress - b.progress);

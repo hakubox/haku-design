@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAttrs, reactive, defineOptions } from 'vue';
+import { useAttrs, reactive } from 'vue';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { getQBasicProps } from '@/tools/common';

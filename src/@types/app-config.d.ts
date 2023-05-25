@@ -6,6 +6,7 @@ import { FormEndPageConfig } from './form-end-page-config';
 import { RatingConfig } from './rating-config';
 import { DeviceType, AppType, LayoutType } from './enum';
 import { LayoutConfig } from './form-panel';
+import { AppBackground } from '@/modules/background-editor-module';
 
 /** 应用类型独有配置项 */
 // type AppTypeDetailConfig<T = any> = {
@@ -83,6 +84,8 @@ export interface DesignConfig {
   themeCode: string;
   /** 上一次选择的编辑器主题 */
   prevThemeCode: string;
+  /** 网点间隔 */
+  gridSize?: number;
 }
 
 
@@ -102,12 +105,14 @@ export interface AppConfig {
   headerContent: string;
   /** 描述 */
   description: string;
+  /** 背景 */
+  background: AppBackground[];
   /** 备注 */
   remark: string;
   /** 客户端主题 */
   appTheme: string;
   /** 页面布局形式 */
-  layoutConfig: LayoutConfig;
+  layoutConfig: LayoutConfig<LayoutType.flex | LayoutType.absolute>;
   /** 设计器配置 */
   designConfig: DesignConfig;
   /** 应用类型配置 - 问卷 */

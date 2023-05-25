@@ -642,11 +642,18 @@ export const service = {
 
         // 标准拖拽（到根节点）
         // TODO: 后续需要添加直接拖拽到父组件中的方式
+
+        const _gridSize = editorState.appConfig.designConfig.gridSize;
         
         if (state.isExisted) {
           // TODO: 拖拽吸附还需继续扩展
           let _x = state.dragConfig.mouseX - state.dragConfig.startLoc.x;
           let _y = state.dragConfig.mouseY - state.dragConfig.startLoc.y;
+
+          if (_gridSize) {
+            _x = Math.round(_x / _gridSize) * _gridSize;
+            _y = Math.round(_y / _gridSize) * _gridSize;
+          }
 
           // 单个拖拽和多个拖拽采用不同的逻辑
           if (editorState.currentSelectedComponents.length > 1) {
@@ -698,6 +705,11 @@ export const service = {
               if (item.attrs.x + item.attrs.width > maxX) maxX = item.attrs.x + item.attrs.width;
               if (item.attrs.y + item.attrs.height > maxY) maxY = item.attrs.y + item.attrs.height;
             }
+            
+            if (_gridSize) {
+              minX = toDecimal(Math.round(minX / _gridSize) * _gridSize);
+              minY = toDecimal(Math.round(minY / _gridSize) * _gridSize);
+            }
 
             // 最后处理整体选择框
             editorState.currentRangeEditorRect.x = minX;
@@ -727,6 +739,10 @@ export const service = {
               } else if (_yLines[0].direction === 'end') {
                 _y = _yLines[0].y! - state.dragConfig.component.attrs.height;
               }
+            }
+            if (_gridSize) {
+              _x = Math.round(_x / _gridSize) * _gridSize;
+              _y = Math.round(_y / _gridSize) * _gridSize;
             }
             _x = toDecimal(_x);
             _y = toDecimal(_y);

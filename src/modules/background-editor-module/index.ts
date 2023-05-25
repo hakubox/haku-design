@@ -1,7 +1,6 @@
-import { Component, ComponentGroup, FormDimensionItem } from '@/@types';
 import { StyleValue, reactive } from 'vue';
-import message, { toast } from '@/common/message';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { toast } from '@/common/message';
+import { state as editorState } from '@/modules/editor-module';
 import type {
   AppBackground,
   AppBackgroundType,
@@ -13,6 +12,7 @@ import type {
   AppImageBackground
 } from './index.d';
 import { distance } from '@/tools/common';
+import { AppType } from '@/@types/enum';
 
 export * from './index.d';
 
@@ -103,9 +103,8 @@ export const service = {
     });
   },
   /** 修改背景类型 */
-  setBackgroundType(name: AppBackgroundType) {
-    const _component = editorState.currentSelectedComponents[0];
-    if (!_component) return;
+  setBackgroundType(name: AppBackgroundType, attrs: { width: number, height: number }) {
+    if (!attrs) return;
     const _typeIndex = state.backgroundTypeList.findIndex(i => i.name === name);
     if (_typeIndex >= 0) {
       state.currentBackgroundTypeText = state.backgroundTypeList[_typeIndex].title;
@@ -127,10 +126,10 @@ export const service = {
           const _background = state.currentBackground as AppLinearGradientBackground;
           service.mergeBackground({
             type: 'linear-gradient',
-            x1: _component.attrs.width / 2,
+            x1: attrs.width / 2,
             y1: 0,
-            x2: _component.attrs.width / 2,
-            y2: _component.attrs.height,
+            x2: attrs.width / 2,
+            y2: attrs.height,
             show: _background.show,
             opacity: _background.opacity,
             blendType: 'normal',
@@ -149,14 +148,14 @@ export const service = {
           const _background = state.currentBackground as AppRadialGradientBackground;
           service.mergeBackground({
             type: 'radial-gradient',
-            x1: _component.attrs.width / 2,
-            y1: _component.attrs.height / 2,
-            x2: _component.attrs.width / 2,
-            y2: _component.attrs.height,
+            x1: attrs.width / 2,
+            y1: attrs.height / 2,
+            x2: attrs.width / 2,
+            y2: attrs.height,
             show: _background.show,
             opacity: _background.opacity,
-            radius: _component.attrs.width / 2,
-            ovalityRatio: _component.attrs.height / _component.attrs.width,
+            radius: attrs.width / 2,
+            ovalityRatio: attrs.height / attrs.width,
             blendType: 'normal',
             repeating: false,
             gradientList: [
@@ -173,14 +172,14 @@ export const service = {
           const _background = state.currentBackground as AppConicGradientBackground;
           service.mergeBackground({
             type: 'conic-gradient',
-            x1: _component.attrs.width / 2,
-            y1: _component.attrs.height / 2,
-            x2: _component.attrs.width / 2,
-            y2: _component.attrs.height,
+            x1: attrs.width / 2,
+            y1: attrs.height / 2,
+            x2: attrs.width / 2,
+            y2: attrs.height,
             show: _background.show,
             opacity: _background.opacity,
-            radius: _component.attrs.width / 2,
-            ovalityRatio: _component.attrs.height / _component.attrs.width,
+            radius: attrs.width / 2,
+            ovalityRatio: attrs.height / attrs.width,
             blendType: 'normal',
             gradientList: [
               { progress: 0, color: { r: 216, g: 216, b: 216, a: 1 } },
@@ -225,7 +224,7 @@ export const service = {
           break;
       }
     } else {
-      message.toast('背景类型不存在', 'error');
+      toast('背景类型不存在', 'error');
       throw new Error('背景类型不存在');
     }
   },
@@ -281,11 +280,26 @@ export const service = {
     }
     return _str;
   },
+  /** 获取组件属性 */
+  getComponentAttrs() {
+    let _attrs = {} as { width: number; height: number; };
+    if (editorState.currentSelectedComponents?.length) {
+      _attrs = editorState.currentSelectedComponents[0]?.attrs as unknown as { width: number; height: number; };
+    } else if (editorState.appConfig.appType === AppType.questionnaire && editorState.canvasEl) {
+      const _rect = (editorState.canvasEl as HTMLElement).getBoundingClientRect();
+      _attrs = _rect;
+    } else if (editorState.appConfig.appType === AppType.canvas) {
+      _attrs = editorState.appConfig.canvasConfig;
+    } else {
+    }
+    return _attrs;
+  },
   /** 获取背景样式 */
   getBackgroundStyle(
     gradientBg: AppBackground, 
     width: number, 
-    height: number, 
+    height: number,
+    attrs: { width: number, height: number }, 
     gradientBgRect?: {
       /** 中点X坐标 */
       centerX: number;
@@ -303,8 +317,7 @@ export const service = {
       ratio: number;
     }
   ): { innerStyle: StyleValue, parentStyle: StyleValue } | undefined {
-    const _component = editorState.currentSelectedComponents[0];
-    if (!_component) return;
+    if (!attrs) return;
     let _parentStyle = {} as StyleValue;
     let _style = {} as StyleValue;
     switch (gradientBg.type) {
@@ -331,13 +344,13 @@ export const service = {
         /** 角度 */
         const _rotate = service.getRotate(gradientBg);
         _style = {
-          backgroundImage: `radial-gradient(${_distance * gradientBg.ovalityRatio}px ${_distance}px at ${gradientBg.x1 + _component.attrs.width * 0.5}px ${gradientBg.y1 + _component.attrs.height * 0.5}px, ${
+          backgroundImage: `radial-gradient(${_distance * gradientBg.ovalityRatio}px ${_distance}px at ${gradientBg.x1 + attrs.width * 0.5}px ${gradientBg.y1 + attrs.height * 0.5}px, ${
             service.getGradientCSSColors(gradientBg)
           })`,
-          left: `${-_component.attrs.width * 0.5}px`,
-          top: `${-_component.attrs.height * 0.5}px`,
-          width: `${_component.attrs.width * 2}px`,
-          height: `${_component.attrs.height * 2}px`,
+          left: `${-attrs.width * 0.5}px`,
+          top: `${-attrs.height * 0.5}px`,
+          width: `${attrs.width * 2}px`,
+          height: `${attrs.height * 2}px`,
           transform: `rotate(${_rotate + 90}deg)`
         };
         break;
@@ -354,8 +367,8 @@ export const service = {
           })`,
           left: `0px`,
           top: `0px`,
-          width: `${_component.attrs.width}px`,
-          height: `${_component.attrs.height}px`,
+          width: `${attrs.width}px`,
+          height: `${attrs.height}px`,
         };
         break;
       }

@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, onMounted, PropType, reactive, defineOptions, watch } from 'vue';
+import { inject, onMounted, PropType, reactive, watch } from 'vue';
 import { state as globalState } from '@/common/global';
 import { dateFormat, getQBasicProps } from '@/tools/common';
 import VueDatepickerLocal from '../common/data-picker/VueDatepickerLocal.vue';

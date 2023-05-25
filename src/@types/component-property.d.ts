@@ -1,11 +1,10 @@
 import { Component } from './component';
-import { PropertyGroup } from './property-group';
 import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from './enum';
 
 /** 可拖拽组件属性 */
 export declare class ComponentProperty {
   /** 属性名 */
-  name: string;
+  name: string | string[];
   /** 是否禁用 */
   disabled?: boolean;
   /** 属性标题 */
@@ -61,4 +60,6 @@ export declare class ComponentProperty {
 
   /** 绑定多个属性，会自动忽略name属性 */
   names?: string[];
+  /** 子属性 */
+  children?: ComponentProperty[];
 }

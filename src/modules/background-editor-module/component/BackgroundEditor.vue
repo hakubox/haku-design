@@ -1,6 +1,6 @@
 <template>
   <div class="background-editor">
-    <div class="background-editor-list">
+    <div class="background-editor-list" v-if="value?.length">
       <!-- 每项背景 -->
       <div
         class="background-editor-item"
@@ -9,7 +9,7 @@
       >
         <div class="background-editor-item-group">
           <!-- 图片 -->
-          <div class="background-editor-item-img" :style="getParentStyle(item)" @mousedown="setBackground($event, index)">
+          <div class="background-editor-item-img" :style="getParentStyle(item)" @mousedown="toggleDialog($event, index)">
             <div class="background-editor-item-img-content" :style="getStyle(item)"></div>
           </div>
           <!-- 文本 -->
@@ -20,29 +20,36 @@
             <Slider v-else v-model:value="item.color.a" :step="0.01" :min="0" :max="1" @change="onChange" />
             <span>{{ toDecimal((item.type !== 'color' ? item.opacity : item.color.a) * 100, 0) }}%</span>
           </div>
+          <!-- 混合模式 -->
+          <div class="background-editor-item-blend">
+            {{ getBlendTxt(item) }}
+          </div>
           <!-- 是否显示 -->
           <div class="background-editor-item-isshow btn-tool" tooltip="是否显示" @click.stop="toggleShow(item, index)">
             <i class="iconfont" :class="item.show ? 'icon-eye' : 'icon-eye-close'"></i>
           </div>
         </div>
-        <!-- 移除 -->
+        <!-- 移除按钮 -->
         <div class="background-editor-item-remove btn-tool" tooltip="移除" @click="removeItem(index)">
           <i class="iconfont icon-minus"></i>
         </div>
       </div>
     </div>
+    <div v-else class="background-editor-empty">
+      <Empty :image="Empty.PRESENTED_IMAGE_SIMPLE" description="暂无背景" />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, computed, type StyleValue } from 'vue';
+import { PropType, type StyleValue } from 'vue';
 import {
   state as backgroundEditorState,
   service as backgroundEditorService,
   type AppBackground
 } from '@/modules/background-editor-module';
-import { distance, throttle, toDecimal } from '@/tools/common';
-import { InputNumber, Slider } from 'ant-design-vue';
+import { throttle, toDecimal } from '@/tools/common';
+import { Slider, Empty } from 'ant-design-vue';
 import { toHex } from '@/lib/color/Color';
 import bus from '@/tools/bus';
 
@@ -52,10 +59,6 @@ const props = defineProps({
     type: Array as PropType<AppBackground[]>,
     required: true,
   },
-});
-
-const state = reactive({
-
 });
 
 const removeItem = (index: number) => {
@@ -84,9 +87,6 @@ const getParentStyle = (item: AppBackground) => {
       };
       break;
     }
-    default:
-      _css = {};
-      break;
   }
   return _css;
 }
@@ -142,6 +142,11 @@ const toggleShow = (item: AppBackground, index: number) => {
   item.show = !item.show;
 };
 
+const getBlendTxt = (item: AppBackground) => {
+  return backgroundEditorState.blendModeList.find(i => i.value === item.blendType)?.label ?? '-';
+}
+
+/** 获取标题 */
 const getTxt = (item: AppBackground) => {
   switch (item.type) {
     case 'color':
@@ -157,8 +162,8 @@ const getTxt = (item: AppBackground) => {
   }
 };
 
-/** 根据索引选择背景色 */
-const setBackground = (e: MouseEvent, index: number) => {
+/** 弹出或关闭弹出框 */
+const toggleDialog = (e: MouseEvent, index: number) => {
   
   if (!backgroundEditorState.isShow || backgroundEditorState.currentGradientItemIndex !== index) {
     // 显示弹出框
@@ -182,7 +187,26 @@ const setBackground = (e: MouseEvent, index: number) => {
 </script>
 
 <style lang="less" scoped>
+@import '/src/assets/less/variable.less';
+
 .background-editor {
+
+  > .background-editor-empty {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    background-color: #FCFCFC;
+    border-radius: 6px;
+    
+    > .ant-empty {
+      margin: 12px 0px 8px 0px;
+
+      > :deep(.ant-empty-description) {
+        margin-bottom: 0px;
+        font-size: 13px;
+      }
+    }
+  }
 
   > .background-editor-list {
     display: block;
@@ -253,6 +277,20 @@ const setBackground = (e: MouseEvent, index: number) => {
           flex-shrink: 1;
           flex-grow: 1;
           width: 50%;
+        }
+
+        > .background-editor-item-blend {
+          cursor: default;
+          flex-shrink: 0;
+          flex-grow: 0;
+          width: 50px;
+          text-align: center;
+          margin-right: 15px;
+          height: 22px;
+          font-size: 12px;
+          line-height: 22px;
+          color: #666;
+          border-radius: 3px;
         }
 
         > .background-editor-item-opacity {

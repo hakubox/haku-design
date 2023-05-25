@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, defineOptions } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Picker, Popup } from 'vant';
 

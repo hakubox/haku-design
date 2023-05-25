@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, defineOptions } from 'vue';
+import { PropType, reactive } from 'vue';
 import { Stepper } from 'vant';
 import { getQBasicProps } from '@/tools/common';
 

@@ -1,9 +1,17 @@
-import { Component } from '@/@types';
+import { Component, ComponentProperty } from '@/@types';
 import { CommandType, Props } from '@/@types/command';
 import { VarType } from '@/@types/enum';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { cloneLoop } from '@/lib/clone';
 import { createModelId } from '@/tools/common';
+import { useAppHandle } from '@/common/app-handle';
+import { getEditors } from '@/data/property-editor';
+import { toast } from '@/common/message';
+
+const {
+  setVal,
+  getVal
+} = useAppHandle();
 
 
 /** 设置通用属性值 */
@@ -185,27 +193,33 @@ export function initCommands() {
     updatable: true,
     objectType: 'component',
     propertys: {
-      /** 组件标题 */
-      componentTitle: { type: VarType.string, required: true },
       /** 属性 */
       property: { type: VarType.object, required: true },
-      /** 属性标题 */
-      propertyTitle: { type: VarType.string, required: true },
-      /** 属性名（Code） */
-      propertyName: { type: VarType.string, required: true },
+      /** 编辑器 */
+      editor: { type: VarType.string, required: false },
     },
     exec(command) {
+      // if (!getEditors.value[command.attrs.editor]) {
+      //   toast('未找到对应的编辑器', 'error');
+      //   throw new Error('未找到对应的编辑器');
+      // }
+      const prop = command.attrs.property as ComponentProperty;
       const component = editorService.findComponent(command.objectId);
-      if (component) {
-        command.oldVal = component.attrs[command.attrs.propertyName];
-        editorService.setComponentAttr(component, command.attrs.propertyName, command.newVal);
+      if (component && !component.isGroup) {
+        command.oldVal = getVal(component.attrs, prop);
+        setVal(component.attrs, prop, command.newVal, command.attrs.editor ? getEditors.value[command.attrs.editor] : undefined);
         // console.log('property', command.attrs.property.change);
       }
     },
     undo(command) {
+      // if (!getEditors.value[command.attrs.editor]) {
+      //   toast('未找到对应的编辑器', 'error');
+      //   throw new Error('未找到对应的编辑器');
+      // }
+      const prop = command.attrs.property as ComponentProperty;
       const component = editorService.findComponent(command.objectId);
-      if (component) {
-        editorService.setComponentAttr(component, command.attrs.propertyName, command.oldVal);
+      if (component && !component.isGroup) {
+        setVal(component.attrs, prop, command.oldVal, command.attrs.editor ? getEditors.value[command.attrs.editor] : undefined);
       }
     },
   });

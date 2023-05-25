@@ -95,7 +95,7 @@
 
 <script lang="ts" setup>
 import PlayControl from './q-anx-video-play-control.vue';
-import { computed, onMounted, onUnmounted, PropType, reactive, ref, useAttrs, watch, watchEffect, defineOptions } from 'vue';
+import { computed, onMounted, onUnmounted, PropType, reactive, ref, useAttrs, watch, watchEffect } from 'vue';
 import { timeFormat, toggleFullScreen, getQBasicProps } from '@/tools/common';
 import { Slider } from 'vant';
 import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';

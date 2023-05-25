@@ -1,7 +1,7 @@
 <template>
   <div>
     <component @focus="onFocus(props.prop)"
-      v-bind="Object.assign({}, getEditor.attrs, props.prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
+      v-bind="Object.assign({}, getEditor.attrs, props.prop.attrs)"
       v-if="getEditor?.component && editorState.currentSelectedComponents.length"
       :component="editorState.currentSelectedComponents?.[0]"
       :components="editorState.currentSelectedComponents"
@@ -38,9 +38,14 @@
 <script lang="ts" setup>
 import { PropType, computed, watch } from "vue";
 import { state as editorState } from "@/modules/editor-module";
-import { service as historyService } from "@/modules/history-module";
 import { ComponentProperty } from "@/@types/component-property";
 import { type Component } from "@/@types";
+import { useAppHandle } from '@/common/app-handle';
+
+const {
+  setVal,
+  getVal
+} = useAppHandle();
 
 const props = defineProps({
   /** 属性 */
@@ -49,11 +54,6 @@ const props = defineProps({
     required: true,
     default: () => ({})
   },
-  /** 是否全屏状态 */
-  isFullScreen: {
-    type: Boolean,
-    default: false
-  }
 });
 
 const onFocus = (prop) => {
@@ -77,54 +77,16 @@ const propChangeListener = (value) => {
     return;
   }
   for (let i = 0; i < _components.length; i++) {
-    const _component = _components[i];
-    if (props.prop.names) {
-      props.prop.names.forEach((name, index) => {
-        if (_component && _component.attrs[name] !== value[index]) {
-          historyService.exec('set-property', {
-            objectId: _component.id,
-            attrs: {
-              property: props.prop,
-              propertyName: name,
-              propertyTitle: props.prop.title,
-              componentTitle: _component.title,
-            },
-            value: value[index]
-          });
-          _component.attrs['__' + name] = value[index];
-          if (props.prop?.change) {
-            return props.prop.change.call(this, props.prop, _propMap, _component, value[index], (editorState.componentCanvas as any).$refs);
-          }
-        }
-      });
-    } else {
-      if (_component && _component.attrs[props.prop.name] !== value) {
-        historyService.exec('set-property', {
-          objectId: _component.id,
-          attrs: {
-            property: props.prop,
-            propertyName: props.prop.name,
-            propertyTitle: props.prop.title,
-            componentTitle: _component.title,
-          },
-          value
-        });
-        _component.attrs['__' + props.prop.name] = value;
-        if (props.prop?.change) {
-          return props.prop.change.call(this, props.prop, _propMap, _component, value, (editorState.componentCanvas as any).$refs);
-        }
-      }
-    }
+    setVal(_components[i].attrs, props.prop, value, getEditor.value, _components[i]);
   }
 }
 
 const getValue = computed(() => {
   if (editorState.currentSelectedComponents.length) {
-    if (props.prop.names) {
-      return props.prop.names.map(name => editorState.currentSelectedComponents[0].attrs[name]) ?? props.prop.default;
-    } else {
-      return editorState.currentSelectedComponents[0].attrs[props.prop.name] ?? props.prop.default;
+    if (editorState.currentSelectedComponents.length > 1) {
+      console.warn('多个组件的情况下只取第一个选中组件的属性');
     }
+    return getVal(editorState.currentSelectedComponents[0].attrs, props.prop);
   } else {
     return undefined;
   }

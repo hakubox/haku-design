@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, nextTick, watch, inject, defineOptions } from "vue";
+import { onMounted, PropType, reactive, nextTick, watch, inject } from "vue";
 import { service as storageService } from '@/modules/storage-module';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';

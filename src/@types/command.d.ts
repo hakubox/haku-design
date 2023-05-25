@@ -18,6 +18,8 @@ type RealVarType = {
   array: any[];
 };
 
+type GetArrayVarType<T> = T;
+
 type GetVarType<T extends keyof RealVarType> = RealVarType[T];
 
 type GetVarRequired<T, K> = T extends true ? K : K | undefined;
@@ -25,7 +27,7 @@ type GetVarRequired<T, K> = T extends true ? K : K | undefined;
 /** 命令类型 */
 export interface CommandType<T> {
   /** 命令名称 */
-  name: Commands;
+  name: string;
   /** 图标 */
   icon?: string;
   /** 格式化行为文本 */
@@ -41,13 +43,17 @@ export interface CommandType<T> {
   /** 后退 */
   undo: (
     command: Command<{
-      [K in keyof T]: T[K] extends Props ? GetVarRequired<T[K]['required'], GetVarType<T[K]['type']>> : never;
+      [K in keyof T]: T[K] extends Props ? GetVarRequired<T[K]['required'], (
+        T[K]['type'] extends VarTypeStr ? GetVarType<T[K]['type']> : GetArrayVarType<T[K]['type']>
+      )> : never;
     }>,
   ) => void;
   /** 执行/前进 */
   exec: (
     command: Command<{
-      [K in keyof T]: T[K] extends Props ? GetVarRequired<T[K]['required'], GetVarType<T[K]['type']>> : never;
+      [K in keyof T]: T[K] extends Props ? GetVarRequired<T[K]['required'], (
+        T[K]['type'] extends VarTypeStr ? GetVarType<T[K]['type']> : GetArrayVarType<T[K]['type']>
+      )> : never;
     }>,
   ) => void;
 }

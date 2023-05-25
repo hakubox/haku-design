@@ -675,7 +675,8 @@ export function recursive(
 }
 
 /** 获取盒模型CSS值 */
-export function getBoxModel(arr: number[]) {
+export function getBoxModel(arr?: number[]) {
+  if (!arr?.length) return '0px 0px 0px 0px';
   return [arr[0] + 'px', arr[1] + 'px', arr[2] + 'px', arr[3] + 'px'].join(' ');
 }
 

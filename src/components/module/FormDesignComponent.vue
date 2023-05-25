@@ -17,7 +17,6 @@
       top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
       left: `${props.component.attrs.x}px`,
       transform: `rotate(${props.component.attrs.rotate || 0}deg)`,
-      mixBlendMode: backgroundEditorState.currentBackground.blendType
     }: {
       margin: getBoxModel(props.component.attrs.margin),
     }"
@@ -29,7 +28,8 @@
       <div
         class="form-component-bg-panel"
         :style="[item.parentStyle, {
-          opacity: item.opacity
+          opacity: item.opacity,
+          mixBlendMode: item.blendType
         }]"
         v-for="item in (props.component.attrs.background as AppBackground[]).filter(i => i.show)"
       >
@@ -257,7 +257,7 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { service as variableService } from '@/modules/variable-module';
 import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
-import { state as backgroundEditorState, service as backgroundEditorService, AppBackground } from '@/modules/background-editor-module';
+import { AppBackground } from '@/modules/background-editor-module';
 import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
 import { any } from 'vue-types';
 import { Tooltip } from 'ant-design-vue';

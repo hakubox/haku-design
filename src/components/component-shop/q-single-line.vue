@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, PropType, reactive, defineOptions } from 'vue';
+import { inject, PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Component } from '@/@types';
 

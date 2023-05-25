@@ -84,6 +84,8 @@ export interface Component {
   events?: Record<string, any>;
   /** 默认组件属性编辑器 */
   propertyEditors?: Record<string, ComponentPropertyEditor>;
+  /** 额外组件属性编辑器 */
+  extraEditors?: Record<string, ComponentPropertyEditor>;
   /** 属性 */
   propertys: ComponentProperty[];
   /** [NEW]子组件属性 */

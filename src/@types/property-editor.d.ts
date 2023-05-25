@@ -1,6 +1,7 @@
 import { Component } from "./component";
 import { ComponentGroup } from "./component-group";
 import { ComponentProperty } from "./component-property";
+import { GeneralProperty } from "./general-property";
 
 /** 属性编辑器 */
 export interface PropertyEditor {
@@ -37,7 +38,7 @@ export interface PropertyEditor {
     /** 提示 */
     tooltip?: string,
     /** 点击事件 */
-    click: (e: MouseEvent, components: (Component | ComponentGroup)[], property: ComponentProperty) => void,
+    click: (e: MouseEvent, components: (Component | ComponentGroup)[], property: ComponentProperty | GeneralProperty) => void,
     /** 是否禁用 */
     disabled?: () => boolean,
     /** 是否隐藏 */

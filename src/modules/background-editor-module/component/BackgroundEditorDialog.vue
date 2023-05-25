@@ -21,7 +21,7 @@
         <SimpleSelect
           ref="colorTypeSelect"
           v-model:visible="state.showBlendModeSelect"
-          :options="state.blendModeList"
+          :options="backgroundEditorState.blendModeList"
           v-model:value="backgroundEditorState.currentBackground.blendType"
         ></SimpleSelect>
       </div>
@@ -74,19 +74,17 @@
 
 <script lang="ts" setup>
 import HakuDialog from '@/components/common/HakuDialog.vue';
-import { reactive, type PropType } from 'vue';
+import { reactive } from 'vue';
 import TypeColorPicker from './type-color/TypeColorPicker.vue';
 import TypeImagePicker from './type-image/TypeImagePicker.vue';
 import SimpleSelect from './common/SimpleSelect.vue';
 import type { AppBackground, AppBackgroundType, AppColor } from '../index.d';
 import GradientSlider from './common/GradientSlider.vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '../';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
 import bus from '@/tools/bus';
-
-const props = defineProps({
-  
-});
+import { AppType } from '@/@types/enum';
 
 const emit = defineEmits<{
   (event: 'change', value: AppBackground): void;
@@ -95,30 +93,6 @@ const emit = defineEmits<{
 const state = reactive({
   /** 混合模式下拉框是否显示 */
   showBlendModeSelect: false,
-  /** 混合模式列表 */
-  blendModeList: [
-    { value: 'normal', label: '正常' },
-    { type: 'split' },
-    { value: 'darken', label: '变暗' },
-    { value: 'multiply', label: '正片叠底' },
-    { value: 'color-burn', label: '颜色加深' },
-    { type: 'split' },
-    { value: 'lighten', label: '变亮' },
-    { value: 'screen', label: '滤色' },
-    { value: 'color-dodge', label: '颜色减淡' },
-    { type: 'split' },
-    { value: 'overlay', label: '叠加' },
-    { value: 'soft-light', label: '柔光' },
-    { value: 'hard-light', label: '强光' },
-    { type: 'split' },
-    { value: 'difference', label: '差值' },
-    { value: 'exclusion', label: '排除' },
-    { type: 'split' },
-    { value: 'hue', label: '色相' },
-    { value: 'saturation', label: '饱和度' },
-    { value: 'color', label: '颜色' },
-    { value: 'luminosity', label: '明度' },
-  ],
 });
 
 const currentBackgroundTypeIndex = computed(() => {
@@ -126,7 +100,7 @@ const currentBackgroundTypeIndex = computed(() => {
 })
 
 const changeBackgroundType = (name: AppBackgroundType) => {
-  backgroundEditorService.setBackgroundType(name);
+  backgroundEditorService.setBackgroundType(name, backgroundEditorService.getComponentAttrs());
   change();
 };
 
@@ -145,7 +119,7 @@ const currentColor = computed<AppColor>({
     } else if (backgroundEditorState.currentBackground.type === 'image') {
       return { r: 0, g: 0, b: 0, a: 0 };
     } else {
-      if (backgroundEditorState.currentGradientItemIndex >= 0) {
+      if (backgroundEditorState.currentGradientItemIndex >= 0 && backgroundEditorState.currentGradientItemIndex < backgroundEditorState.currentBackground.gradientList.length - 1) {
         return backgroundEditorState.currentBackground.gradientList[backgroundEditorState.currentGradientItemIndex].color;
       } else {
         return { r: 0, g: 0, b: 0, a: 0 };
@@ -166,10 +140,6 @@ const currentColor = computed<AppColor>({
 </script>
 
 <style lang="less" scoped>
-
-:deep(.background-dialog) {
-  width: 240px;
-}
 
 .background-dialog-content {
   > .gradient-config {
@@ -234,7 +204,6 @@ const currentColor = computed<AppColor>({
       &.active {
         cursor: default;
         color: white;
-        // background-color: rgba(51, 122, 183, 0.2);
       }
     }
   }

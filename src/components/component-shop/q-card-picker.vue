@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, defineOptions, watch } from 'vue';
+import { onMounted, PropType, reactive, watch } from 'vue';
 import SimpleEditor from '@/components/editor/simple-editor/SimpleEditor.vue';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';

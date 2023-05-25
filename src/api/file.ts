@@ -5,6 +5,18 @@ const _baseUrl = () => {
   return serverConfig.serverConfig.environment === 'development' ? '/userapi/api' : 'https://bpmtest-userapi.gejinet.com/api';
 };
 
+/** 文件夹 */
+export interface DirectoryDto {
+  /** 父文件夹Id */
+  parentId: string,
+  /** 文件夹名称 */
+  directoryName: string,
+  /** 备注 */
+  remarks?: string,
+  /** 序号 */
+  displayOrder?: number
+}
+
 /** 企业Id */
 const businessId = '';
 /** 企业名称 */
@@ -80,4 +92,22 @@ export function setFileRemarks(
   return post(`${_baseUrl()}/File/SetFileRemarks`, {
     key: fileId, value: remark
   });
+}
+
+/** 新增文件夹 */
+export function addDirectory(directory: DirectoryDto) {
+  return post(`${_baseUrl()}/AppResource/AddDirectory`, {
+    parentId: directory.parentId,
+    directoryName: directory.directoryName,
+  });
+}
+
+/** 编辑文件夹 */
+export function editDirectory(directory: DirectoryDto) {
+  return post(`${_baseUrl()}/AppResource/EditDirectory`);
+}
+
+/** 删除文件夹（最好改成传入数组） */
+export function deleteDirectory(directoryId: string) {
+  return deletes(`${_baseUrl()}/AppResource/DeleteDirectory?id=${directoryId}`);
 }

@@ -185,9 +185,9 @@ export interface AppImageBackground extends AppBasicBackground {
   /** 纵向翻转 */
   yFlipOver: boolean;
 
-  /** 亮度：0~100 */
+  /** 亮度：0~2 */
   brightness: number;
-  /** 对比度：0~1 */
+  /** 对比度：0~2 */
   contrast: number;
   /** 模糊：0~100 */
   blur: number;
@@ -197,7 +197,7 @@ export interface AppImageBackground extends AppBasicBackground {
   hueRotate: number;
   /** 反相：0~1 */
   invert: number;
-  /** 饱和度：0~1 */
+  /** 饱和度：0~2 */
   saturate: number;
   /** 深褐色：0~1 */
   sepia: number;

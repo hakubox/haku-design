@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, computed, defineOptions } from 'vue';
+import { onMounted, PropType, reactive, computed } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { ImagePreview, Uploader } from 'vant';
 

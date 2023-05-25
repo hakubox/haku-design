@@ -75,16 +75,6 @@ export const state = reactive({
   currentPage: computed((): AppPage => {
     return state.pages[state.currentPageIndex];
   }),
-  /** 获取问题列表 */
-  questionList: computed(() => {
-    // @ts-ignore
-    return state.pages.map(i => i.children).filter(i => i.map(o => o.isFormItem)).flat(2);
-    // return (state.currentPage as unknown as AppPage).children.filter(i => [
-    //   ComponentCategory.complex,
-    //   ComponentCategory.normal,
-    //   ComponentCategory.special
-    // ].includes(i.type));
-  }),
   /** 当前控件对应的属性编辑器字典 */
   currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
     const _selected = state.currentSelectedComponents;
@@ -123,7 +113,7 @@ export const service = {
   /** 显示组件 */
   showComponentInFormPage(componentId: string): boolean {
     let componentIndex: number | undefined = undefined;
-    let component: Component | undefined = undefined;
+    let component: Component | ComponentGroup | undefined = undefined;
     let _index = 0;
     for (let i = 0; i < state.currentPage.children.length; i++) {
       const _componet = state.currentPage.children[i];
@@ -189,7 +179,7 @@ export const service = {
       state.pages = body.pages;
       eventState.allEvents = body.events;
 
-      state.currentSelectedComponent = undefined;
+      state.currentSelectedComponents = [];
       state.currentSelectedFirstComponentId = '';
       state.currentSelectedComponentPropertyGroups = [];
       state.currentSelectedComponentPropertyMap = {};
@@ -347,7 +337,7 @@ export const service = {
   },
   /** 根据组件列表（树）查询所有表单项，返回列表，如果不传则默认查询普通页面下所有组件 */
   getAllFormItem(rootComponents?: Component[], filter?: (component: Component | ComponentGroup) => boolean): Component[] {
-    const _rootComponents: Component[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
+    const _rootComponents: (Component | ComponentGroup)[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
     const _components: Component[] = [];
     const _cb = (parentComponent: Component | ComponentGroup) => {
       if (filter && !parentComponent.isGroup) {
@@ -472,19 +462,16 @@ export const service = {
       return undefined;
     }
   },
-  /** 设置组件的属性值 */
-  setComponentAttr(component: Component, propertyName: string, value: any) {
-    component.attrs[propertyName] = value;
-  },
   /** 设置组件的属性值类型 */
   setComponentAttrType(component: Component, property: ComponentProperty, propertyType: any) {
     const _index = state.currentPage.children.findIndex(i => i.id == component.id);
     if (_index >= 0) {
-      state.currentPropertyEditors[property.name] = propertyType;
+      const _name = Array.isArray(property.name) ? property.name.join('_') : property.name;
+      state.currentPropertyEditors[_name] = propertyType;
 
-      if (component?.propertyEditors) component.propertyEditors[property.name] = propertyType;
-      component.attrs[property.name] = property.default;
-      component.attrs['__' + property.name] = '';
+      if (component?.propertyEditors) component.propertyEditors[_name] = propertyType;
+      component.attrs[_name] = property.default;
+      component.attrs['__' + _name] = '';
     }
   },
 }

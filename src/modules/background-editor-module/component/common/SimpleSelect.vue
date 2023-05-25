@@ -18,25 +18,30 @@
         <span class="select-option-text">{{ item.label }}</span>
       </div>
     </template>
+    <template v-if="!props.options?.length">
+      <slot name="blank"></slot>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, type PropType, nextTick } from 'vue';
+import { type PropType } from 'vue';
 
 const props = defineProps({
   /** 选项列表 */
   options: {
     type: Array as PropType<{ type: string, label: string, value: string }[]>,
   },
+  /** 选项class */
   optionClass: {
     type: String,
   },
-  /** 值 */
+  /** 绑定值 */
   value: {
     type: String,
     required: true
   },
+  /** 是否显示 */
   visible: {
     type: Boolean,
     required: true,
@@ -53,13 +58,6 @@ const emit = defineEmits<{
   (event: 'update:value', value: string): void;
   (event: 'change', value: string): void;
 }>();
-
-const value = () => {
-
-};
-
-const state = reactive({
-});
 
 /** 打开下拉框 */
 const open = () => {
@@ -82,7 +80,7 @@ const clickItem = (item: { label: string, value: string }) => {
 defineExpose({
   open,
   close
-})
+});
 
 </script>
 

@@ -4,6 +4,11 @@ import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
 import bus from '@/tools/bus';
 import { state as editorState } from "@/modules/editor-module";
+import { useAppHandle } from '@/common/app-handle';
+
+const {
+  getDefaultProp
+} = useAppHandle();
 
 export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component' | 'isGroup'>;
 
@@ -35,6 +40,34 @@ export let formComponents: InitComponent[] = [
       visible: true,
     },
     propertys: [
+      // 多层级属性（测试用
+      {
+        name: ['config', 'showA'],
+        title: '测试A',
+        default: false,
+        group: ComponentPropertyGroup.style,
+        editor: ComponentPropertyEditor.boolean,
+        children: [
+          {
+            name: ['config', 'aObj', 'showB'],
+            title: '测试A-B',
+            default: false,
+            editor: ComponentPropertyEditor.boolean,
+            showCondition: (prop, propMap, component, value, refs) => component.attrs.config?.showA,
+            children: [
+              {
+                name: ['config', 'aObj', 'bObj', 'showC'],
+                title: '测试A-B-C',
+                default: false,
+                editor: ComponentPropertyEditor.boolean,
+                showCondition: (prop, propMap, component, value, refs) => component.attrs.config?.aObj?.showB,
+                children: [
+                ]
+              }
+            ]
+          }
+        ]
+      },
       {
         name: '', names: ['x', 'y'], title: '位置', visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
@@ -2281,36 +2314,32 @@ export const getComponents = computed<InitComponent[]>(() => {
   return initComponents();
 });
 
-export function initComponents(componentList?: InitComponent[]): InitComponent[] {
-  if (!componentList) {
+export function initComponents(componentList: InitComponent[] = []): InitComponent[] {
+  if (!componentList.length) {
     componentList = formComponents;
   }
-  return (componentList ?? []).map(i => {
-    const _propertys = i.propertys
-      .filter(o => o.default !== undefined && o.default !== null)
-      .map(o => {
-        if (o.names) {
-          const _obj = {};
-          o.names.forEach((name, index) => {
-            _obj[name] = o.default[index];
-          });
-          return _obj;
-        } else {
-          return { [o.name]: o.default };
-        }
-      });
+  const _re = componentList.map(i => {
+    const _defaultAttrs = getDefaultProp(i.propertys);
     const component = {
       ...i,
-      propertyEditors: Object.assign.apply({}, 
-        [{}].concat(
-          i.propertys.filter(o => o.attach?.length).map(o => ({[o.name]: o.editor}))
-        ) as [object, ...ComponentProperty[]]
+      propertyEditors: Object.assign({}, 
+        ...i.propertys.map(o => {
+          const _name = Array.isArray(o.name) ? o.name.join('_') : o.name;
+          return { [_name]: o.editor };
+        })
+      ),
+      extraEditors: Object.assign({}, 
+        ...i.propertys.filter(o => o.attach?.length).map(o => {
+          const _name = Array.isArray(o.name) ? o.name.join('_') : o.name;
+          return { [_name]: o.attach };
+        })
       ),
       isGroup: false,
-      attrs: Object.assign({}, ..._propertys, i.attrs ?? {}),
+      attrs: { ..._defaultAttrs, ...i.attrs },
     } as InitComponent;
     return component;
   });
+  return _re;
 }
 
 export const setFormComponents = (items) => {

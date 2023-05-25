@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, ref, defineOptions } from 'vue';
+import { onMounted, watch, ref } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
 import BaseECharts from '@/components/common/BaseECharts.vue';

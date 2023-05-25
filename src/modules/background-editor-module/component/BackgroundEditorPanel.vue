@@ -59,8 +59,6 @@
       <!-- 椭圆侧边点 -->
       <circle
         fill="#FFFFFF"
-        :aaa="backgroundEditorState.currentBackground.radius"
-        :bbb="currentComponent.width / 2"
         :cx="currentComponent.x - (backgroundEditorState.currentBackground.radius * backgroundEditorState.currentBackground.ovalityRatio - currentComponent.width / 2)"
         :cy="currentComponent.y + backgroundEditorState.currentBackground.y1"
         v-if="backgroundEditorState.currentBackground.type === 'radial-gradient'"
@@ -97,15 +95,6 @@
       <!-- <div class="mark-point" :style="{
         top: `${state.pointA.y}px`,
         left: `${state.pointA.x}px`,
-      }"></div> -->
-      <!-- <div class="mark-point" :style="{
-        top: `${state.pointB.y}px`,
-        left: `${state.pointB.x}px`,
-      }"></div>
-      <div class="mark-point" :style="{
-        backgroundColor: '#00CCCC',
-        top: `${state.pointC.y}px`,
-        left: `${state.pointC.x}px`,
       }"></div> -->
       
       <div
@@ -144,7 +133,7 @@
 </template>
 
 <script lang="ts" setup>
-import { StyleValue, onMounted, onUnmounted, reactive, computed, ref } from 'vue';
+import { StyleValue, onMounted, onUnmounted, reactive, computed, ref, watch } from 'vue';
 import { 
   state as backgroundEditorState, 
   service as backgroundEditorService, 
@@ -163,8 +152,6 @@ const state = reactive({
   parentLayerStyle: { } as StyleValue,
 
   pointA: {} as { x: number; y: number; },
-  pointB: {} as { x: number; y: number; },
-  pointC: {} as { x: number; y: number; },
 
   /** 椭圆侧边点 */
   slidePoint: { x: 0, y: 0 } as { x: number; y: number; },
@@ -332,6 +319,8 @@ const refreshStyle = () => {
   if (state.componentEl) {
     let _gradientBgRect = undefined as GradientRectInfo | undefined;
     if (backgroundEditorState.currentBackground.type === 'linear-gradient') {
+      console.log('state.componentEl.offsetWidth', state.componentEl.offsetWidth);
+      console.log('state.componentEl.offsetHeight', state.componentEl.offsetHeight);
       _gradientBgRect = backgroundEditorService.getLinearGradientRectInfo(
         backgroundEditorState.currentBackground,
         state.componentEl.offsetWidth, 
@@ -418,6 +407,7 @@ const refreshStyle = () => {
       backgroundEditorState.currentBackground, 
       state.componentEl.offsetWidth, 
       state.componentEl.offsetHeight,
+      backgroundEditorService.getComponentAttrs(),
       _gradientBgRect
     );
     if (backgroundStyle) {
@@ -427,17 +417,20 @@ const refreshStyle = () => {
   }
 }
 
+watch(() => backgroundEditorState.isShow && backgroundEditorState.currentBackground.show, () => {
+  const _components = editorState.currentSelectedComponents.find(i => !i.isGroup);
+  if (_components) {
+    const _dom = editorState.canvasPanelEl.querySelector<HTMLElement>(`[component-id="${_components.id}"]`);
+    if (_dom) {
+      state.componentEl = _dom;
+    }
+  }
+});
+
 onMounted(() => {
   dragCursorHook.init();
   dragPointHook.init();
   dragSlidePointHook.init();
-
-  const _dom = gradientEditorPanel?.value?.parentElement;
-  if (_dom) {
-    state.componentEl = _dom;
-  } else {
-    throw new Error('未获取到Dom节点');
-  }
 
   refreshStyle();
 });

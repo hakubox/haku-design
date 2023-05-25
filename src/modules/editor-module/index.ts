@@ -19,6 +19,11 @@ import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/
 import { addQuestionary, saveQuestionary } from "@/api/questionnaire";
 import { AppPage } from '@/@types/app-page';
 import { state as globalState } from '@/common/global';
+import { useAppHandle } from '@/common/app-handle';
+
+const {
+  setDefaultProp
+} = useAppHandle();
 
 /** 设备信息表 */
 const remoteDevices = initRemoteDevices();
@@ -68,6 +73,7 @@ export const service = {
       headerContent: '',
       appTheme: 'default',
       remark: '',
+      background: [],
       layoutConfig: layoutConfig ?? {
         layout: LayoutType.flex,
         layoutDetailConfig: {
@@ -404,11 +410,7 @@ export const service = {
       if (!component.answerType) component.answerType = state.componentList[_index].answerType;
       component.propertys = cloneLoop(state.componentList[_index].propertys);
       if (loadDefault) {
-        component.propertys.forEach(prop => {
-          if (prop.default && !component.attrs[prop.name]) {
-            component.attrs[prop.name] = typeof prop.default === 'function' ? prop.default() : prop.default;
-          }
-        });
+        setDefaultProp(component.attrs, component.propertys);
       }
     }
   },
@@ -694,18 +696,12 @@ export const service = {
           });
         }
 
-        _propertys.forEach(prop => {
-          const _default = prop.default;
-          if (isNotBlank(_default) && isBlank(formComponent.attrs[prop.name])) {
-            if (typeof _default === 'function') {
-              formComponent.attrs[prop.name] = _default();
-            } else {
-              formComponent.attrs[prop.name] = _default;
-            }
-          }
-        });
+        setDefaultProp(formComponent.attrs, _propertys);
 
-        state.currentSelectedComponentPropertyMap = Object.assign({}, ..._propertys.map(i => ({[i.name]: i})));
+        state.currentSelectedComponentPropertyMap = Object.assign({}, ..._propertys.map(i => {
+          const _name = Array.isArray(i.name) ? i.name.join('_') : i.name;
+          return { [_name]: i };
+        }));
         state.currentSelectedComponentPropertyGroups = Object.entries(ComponentPropertyGroup).map(([key, value]) => ({
           title: value,
           propertys: _propertys.filter(i => i.group === value) as ComponentProperty[]
@@ -1211,15 +1207,7 @@ export const service = {
   /** 设置父组件默认属性值 */
   setParentDefaultProps(component: Component | ComponentGroup, parentComponent?: Component | ComponentGroup, isPush: boolean = true) {
     if (parentComponent && !parentComponent.isGroup && parentComponent.childPropertys?.length) {
-      parentComponent.childPropertys.forEach(prop => {
-        if (isPush) {
-          if (isNotBlank(prop.default) && isBlank(component.attrs[prop.name])) {
-            component.attrs[prop.name] = typeof prop.default == 'function' ? prop.default() : prop.default;
-          }
-        } else {
-          component.attrs[prop.name] = undefined;
-        }
-      });
+      setDefaultProp(component.attrs, parentComponent.childPropertys);
     }
   },
   /** 删除组件 */
@@ -1230,19 +1218,16 @@ export const service = {
       _component?.component?.children.splice(_component.index, 1);
     }
   },
-  /** 设置组件的属性值 */
-  setComponentAttr(component: Component | ComponentGroup, propertyName: string, value: any) {
-    component.attrs[propertyName] = value;
-  },
   /** 设置组件的属性值类型 */
   setComponentAttrType(component: Component, property: ComponentProperty, propertyType: any) {
     const _index = state.currentPage.children.findIndex(i => i.id == component.id);
     if (_index >= 0) {
-      state.currentPropertyEditors[property.name] = propertyType;
+      const _name = Array.isArray(property.name) ? property.name.join('_') : property.name;
 
-      if (component?.propertyEditors) component.propertyEditors[property.name] = propertyType;
-      component.attrs[property.name] = property.default;
-      component.attrs['__' + property.name] = '';
+      state.currentPropertyEditors[_name] = propertyType;
+      if (component?.propertyEditors) component.propertyEditors[_name] = propertyType;
+      component.attrs[_name] = property.default;
+      component.attrs['__' + _name] = '';
     }
   },
 };
@@ -1355,7 +1340,7 @@ export const state = reactive({
     return state.pages[state.currentPageIndex];
   }),
   /** 当前控件对应的属性编辑器字典 */
-  currentPropertyEditors: computed((): Record<string, ComponentPropertyEditor> => {
+  currentPropertyEditors: computed<Record<string, ComponentPropertyEditor>>(() => {
     const _selected = state.currentSelectedComponents;
     if (_selected.length) {
       let _propEditors: Record<string, any> = {};

@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch, ref, defineOptions } from 'vue';
+import { useAttrs, onMounted, PropType, reactive, watch, ref } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import signature from 'signature_pad';
 

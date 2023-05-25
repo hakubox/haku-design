@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, defineOptions } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getBoxModel } from '@/tools/common';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getQBasicProps } from '@/tools/common';

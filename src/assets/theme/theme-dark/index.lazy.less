@@ -183,9 +183,12 @@ html.theme-dark {
           }
         }
 
-        .form-design-body-property-item {
-          > .form-design-body-property-item-label {
-            color: #8d8e8f;
+        .attr-editor-item {
+          
+          > .attr-editor-item-panel {
+            > .attr-editor-item-label {
+              color: #8d8e8f;
+            }
           }
         }
       }
@@ -213,104 +216,107 @@ html.theme-dark {
     }
   }
 
-  .form-design-body-property-item {
-    > .form-design-body-property-item-value {
-      .ant-input-sm,
-      .ant-input-number-sm,
-      .ant-input-affix-wrapper {
-        border-color: #3c3c3c;
-        color: #cccccc;
-      }
-      .ant-input.ant-input-sm,
-      .ant-input-number.ant-input-number-sm,
-      .ant-input-affix-wrapper {
-        background-color: #3c3c3c;
-        color: #cccccc;
-        line-height: 2;
-      }
-      .ant-input-affix-wrapper {
-        > .ant-input {
-          background-color: #3c3c3c;
+  .attr-editor-item {
+    
+    > .attr-editor-item-panel {
+      > .attr-editor-item-value {
+        .ant-input-sm,
+        .ant-input-number-sm,
+        .ant-input-affix-wrapper {
+          border-color: #3c3c3c;
           color: #cccccc;
         }
-      }
-
-      .ant-select {
-        &.ant-select-sm {
+        .ant-input.ant-input-sm,
+        .ant-input-number.ant-input-number-sm,
+        .ant-input-affix-wrapper {
+          background-color: #3c3c3c;
+          color: #cccccc;
           line-height: 2;
-
-          > .ant-select-selector {
+        }
+        .ant-input-affix-wrapper {
+          > .ant-input {
             background-color: #3c3c3c;
             color: #cccccc;
           }
         }
-      }
 
-      .ant-table {
-        background: #252526;
+        .ant-select {
+          &.ant-select-sm {
+            line-height: 2;
 
-        .ant-table-thead > tr > th {
-          background: #2d2d2d;
-        }
-      }
-
-      // 文本框
-      .text-editor {
-        background-color: #3c3c3c !important;
-        border-color: #3c3c3c;
-
-        > input {
-          color: #cccccc;
-        }
-      }
-
-      // 富文本框
-      .richtext-editor {
-        background-color: #2d2d2d !important;
-
-        .w-e-toolbar {
-          background-color: #2d2d2d !important;
-        }
-
-        .w-e-text-container {
-          background-color: #3c3c3c;
-          color: #cccccc;
-        }
-      }
-
-      // 颜色选择器
-      .color-picker {
-        border-color: #3c3c3c;
-
-        > .color-picker-input {
-          background-color: #3c3c3c;
-          color: #cccccc;
-        }
-      }
-
-      // 盒子模型编辑器
-      .box-editor {
-        > div {
-          > .box-editor-label {
-            color: #8d8e8f;
+            > .ant-select-selector {
+              background-color: #3c3c3c;
+              color: #cccccc;
+            }
           }
+        }
+
+        .ant-table {
+          background: #252526;
+
+          .ant-table-thead > tr > th {
+            background: #2d2d2d;
+          }
+        }
+
+        // 文本框
+        .text-editor {
+          background-color: #3c3c3c !important;
+          border-color: #3c3c3c;
 
           > input {
-            background-color: #3c3c3c;
-            border: 1px solid #3c3c3c;
+            color: #cccccc;
           }
         }
-      }
 
-      .ant-input-number-group-addon {
-        background-color: #141414;
-        border-color: #141414;
+        // 富文本框
+        .richtext-editor {
+          background-color: #2d2d2d !important;
 
-        > .ant-select {
-          &.ant-select-sm {
-            > .ant-select-selector {
-              background-color: #141414;
-              color: rgba(255, 255, 255, 0.45);
+          .w-e-toolbar {
+            background-color: #2d2d2d !important;
+          }
+
+          .w-e-text-container {
+            background-color: #3c3c3c;
+            color: #cccccc;
+          }
+        }
+
+        // 颜色选择器
+        .color-picker {
+          border-color: #3c3c3c;
+
+          > .color-picker-input {
+            background-color: #3c3c3c;
+            color: #cccccc;
+          }
+        }
+
+        // 盒子模型编辑器
+        .box-editor {
+          > div {
+            > .box-editor-label {
+              color: #8d8e8f;
+            }
+
+            > input {
+              background-color: #3c3c3c;
+              border: 1px solid #3c3c3c;
+            }
+          }
+        }
+
+        .ant-input-number-group-addon {
+          background-color: #141414;
+          border-color: #141414;
+
+          > .ant-select {
+            &.ant-select-sm {
+              > .ant-select-selector {
+                background-color: #141414;
+                color: rgba(255, 255, 255, 0.45);
+              }
             }
           }
         }

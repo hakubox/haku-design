@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, defineOptions } from 'vue';
+import { PropType } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Rate } from 'vant';
 

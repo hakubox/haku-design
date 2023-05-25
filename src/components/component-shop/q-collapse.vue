@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, useAttrs, onMounted, ref, watch, nextTick, defineOptions } from 'vue';
+import { PropType, reactive, useAttrs, onMounted, ref, watch, nextTick } from 'vue';
 import { Component } from '@/@types';
 import { cloneForce } from '@/lib/clone';
 

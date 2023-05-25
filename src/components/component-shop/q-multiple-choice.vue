@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, PropType, reactive, watch, defineOptions } from 'vue';
+import { onMounted, PropType, reactive, watch } from 'vue';
 import { service as storageService } from '@/modules/storage-module';
 import { computed } from 'vue';
 import { getQBasicProps } from '@/tools/common';

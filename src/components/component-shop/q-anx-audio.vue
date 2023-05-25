@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, PropType, reactive, ref, watch, useAttrs, defineOptions } from 'vue';
+import { computed, onMounted, PropType, reactive, ref, watch, useAttrs } from 'vue';
 import { timeFormat } from '@/tools/common';
 import { service as storageService } from '@/modules/storage-module';
 import { service as eventService, EventTriggerType } from '@/modules/event-module';

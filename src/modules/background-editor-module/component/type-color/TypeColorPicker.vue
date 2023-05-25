@@ -125,9 +125,6 @@
             </div>
           </template>
         </div>
-        <!-- HSL -->
-        <!-- HSB -->
-        
       </div>
     </div>
 
@@ -145,28 +142,11 @@
     </div>
 
     <hr style="border: none; border-top: 1px solid #F2F2F2; margin-top: 4px" v-show="state.history.length" />
-
-    <!-- <div class="color-picker-footer">
-      <div class="color-picker-footer-text">
-        <input type="text" v-model="state.newValue" />
-        <div class="color-picker-footer-text-type">{{ state.colorType }}</div>
-        <i
-          v-if="canChangeColorType"
-          title="切换类型"
-          class="color-picker-footer-text-changetype fal fa-exchange"
-          @click="changeColorType"
-        ></i>
-      </div>
-      <div class="color-picker-footer-tools">
-        <button class="color-picker-footer-tools-clear" v-if="canClear">清空</button>
-        <button class="color-picker-footer-tools-confirm" @click="comfirm">确定</button>
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-import Color, { rgb2hsl } from '@/lib/color/Color';
+import Color from '@/lib/color/Color';
 import { reactive, ref, watch, PropType, computed, onMounted, onUnmounted, onErrorCaptured } from 'vue';
 import TypeColorPickerSlider from './TypeColorPickerSlider.vue';
 import SimpleSelect from '../common/SimpleSelect.vue';
