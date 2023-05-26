@@ -25,7 +25,8 @@
     "build:lib": "cross-env buildProj=userlib buildMode=development vite build",
     "docs:dev": "vuepress dev docs",
     "lint": "eslint src --fix --ext .ts,.tsx,.vue,.js,.jsx",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "commit": "git-cz"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -67,7 +68,6 @@
     "commitizen": "^4.3.0",
     "compression-webpack-plugin": "^10.0.0",
     "cross-env": "^7.0.3",
-    "cz-customizable": "^7.0.0",
     "echarts": "^5.4.0",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.5.0",
