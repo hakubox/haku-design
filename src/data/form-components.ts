@@ -40,34 +40,6 @@ export let formComponents: InitComponent[] = [
       visible: true,
     },
     propertys: [
-      // 多层级属性（测试用
-      {
-        name: ['config', 'showA'],
-        title: '测试A',
-        default: false,
-        group: ComponentPropertyGroup.style,
-        editor: ComponentPropertyEditor.boolean,
-        children: [
-          {
-            name: ['config', 'aObj', 'showB'],
-            title: '测试A-B',
-            default: false,
-            editor: ComponentPropertyEditor.boolean,
-            showCondition: (prop, propMap, component, value, refs) => component.attrs.config?.showA,
-            children: [
-              {
-                name: ['config', 'aObj', 'bObj', 'showC'],
-                title: '测试A-B-C',
-                default: false,
-                editor: ComponentPropertyEditor.boolean,
-                showCondition: (prop, propMap, component, value, refs) => component.attrs.config?.aObj?.showB,
-                children: [
-                ]
-              }
-            ]
-          }
-        ]
-      },
       {
         name: '', names: ['x', 'y'], title: '位置', visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,

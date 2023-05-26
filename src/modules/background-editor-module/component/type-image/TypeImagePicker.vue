@@ -103,6 +103,11 @@ const selectImage = () => {
         return;
       }
       changeFillMode();
+      // const _url = URL.createObjectURL(file);
+      // setImageUrl(_url);
+      // props.value.imageUrl = _url;
+      // revokeObjectURL // 销毁时调用
+      
       var reader = new FileReader();
       reader.onload = function() {
         if (typeof this.result === 'string') {
@@ -112,7 +117,7 @@ const selectImage = () => {
           toast('图片识别出错');
         }
       };
-      reader.readAsDataURL(file as Blob);
+      reader.readAsDataURL(file);
     }
   });
 };

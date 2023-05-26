@@ -1,0 +1,21 @@
+#!/bin/bash
+
+MESSAGE=$(cat $1) 
+
+COMMITFORMAT="^(feat|fix|docs|style|refactor|perf|test|build|revert): (.*)$"
+
+if ! [[ "$MESSAGE" =~ $COMMITFORMAT ]]; then
+  echo "提交信息不规范" 
+  echo ""
+  echo "请使用一下格式:"
+  echo "feat: xxx" "(新特性)"
+  echo "fix: xxx" "(修改问题)"
+  echo "docs: xxx" "(文档修改)"
+  echo "style: xxx" "(代码格式修改)"
+  echo "refactor: xxx" "(代码重构)"
+  echo "perf: xxx" "(提升性能)"
+  echo "test: xxx" "(新测试)"
+  echo "build: xxx" "(开发工具变动)"
+  echo "revert: xxx" "(代码回退)"
+  exit 1
+fi
