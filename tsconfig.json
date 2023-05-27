@@ -2,7 +2,9 @@
   "compilerOptions": {
     "types": [
       "howler",
+      "@haku-design/command"
     ],
+    "declaration": true,
     "target": "ES2021",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -19,7 +21,11 @@
     "esModuleInterop": true,
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "noEmit": true,
-    "typeRoots": ["./node_modules/@types", "./src/@types", "./modules/*/@types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types",
+      "./modules/*/@types"
+    ],
     "paths": {
       "@/*": [
         "./src/*",
@@ -35,7 +41,8 @@
     "src/**/*.ts", 
     "src/**/*.d.ts", 
     "src/**/*.tsx", 
-    "src/**/*.vue", 
+    "src/**/*.vue",
+    "packages/command/index.ts",
   ],
   "exclude": [
     "node_modules",

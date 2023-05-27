@@ -2,7 +2,7 @@
 
 MESSAGE=$(cat $1) 
 
-COMMITFORMAT="^(feat|fix|docs|style|refactor|perf|test|build|revert): (.*)$"
+COMMITFORMAT="^(feat|fix|docs|style|refactor|perf|test|build|revert)[!]?: (.*)$"
 
 if ! [[ "$MESSAGE" =~ $COMMITFORMAT ]]; then
   echo "提交信息不规范" 

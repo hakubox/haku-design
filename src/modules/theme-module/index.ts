@@ -6,6 +6,7 @@ import { themeList } from './data/theme-list';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 
 export * from './index.d';
 
@@ -94,8 +95,17 @@ export const service = {
 
   },
   /** 设置主题 */
-  setTheme(theme: ThemeConfig) {
-
+  selectTheme(themeCode: 'default' | 'dark' | 'translucent', themeTitle: string, loc?: {
+    x: number;
+    y: number;
+  } | undefined) {
+    historyService.exec('change-theme', {
+      value: themeCode,
+      attrs: {
+        themeTitle: themeTitle,
+        loc: loc,
+      }
+    });
   },
   /** 根据当前主题重设（重新从远程加载当前主题） */
   resetTheme() {

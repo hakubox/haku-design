@@ -81,7 +81,7 @@ export interface DesignConfig {
   /** 当前控件索引（自增） */
   componentIndex: number;
   /** 编辑器主题（非客户端主题） */
-  themeCode: string;
+  themeCode: 'default' | 'dark' | 'translucent';
   /** 上一次选择的编辑器主题 */
   prevThemeCode: string;
   /** 网点间隔 */

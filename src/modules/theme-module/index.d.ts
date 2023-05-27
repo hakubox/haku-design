@@ -8,6 +8,23 @@
 // 7、按钮。（默认背景色、字体大小）
 // 8、标签文本。（默认字体颜色、默认行高）
 
+declare module '@haku-design/command' {
+
+  /** 全局命令  */
+  interface GlobalCommand {
+    /** 切换主题 */
+    'change-theme': {
+      value: 'default' | 'dark' | 'translucent',
+      attrs: {
+        /** 主题标题 */
+        themeTitle: string,
+        /** 鼠标事件（坐标） */
+        loc?: { x: number, y: number },
+      }
+    }
+  }
+}
+
 /** 主题配置 */
 export interface ThemeConfig {
   /** 主题Id */

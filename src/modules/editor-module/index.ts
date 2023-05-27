@@ -138,16 +138,6 @@ export const service = {
     state.asideFold = !state.asideFold;
     this.refresh();
   },
-  /** 选择主题 */
-  selectTheme(themeCode: string, themeTitle: string, loc: { x: number, y: number }) {
-    historyService.exec('change-theme', {
-      value: themeCode,
-      attrs: {
-        themeTitle: themeTitle,
-        event: loc,
-      }
-    });
-  },
   /** 获取选择的组件范围 */
   getSelectedComponentRect(selected?: (Component | ComponentGroup)[]): ComponentRect {
     const _selected = selected ?? state.currentSelectedComponents;
@@ -1150,7 +1140,7 @@ export const service = {
     x, y
   }: {
     /** 组件插入索引 */
-    toIndex: number,
+    toIndex: number | undefined,
     /** 插入父组件Id */
     toParentComponentId?: string,
     /** 插入父组件插槽索引 */
@@ -1160,6 +1150,7 @@ export const service = {
     /** Y坐标 */
     y?: number,
   } = { toIndex: 0 }) {
+    const _toIndex = toIndex ?? 0;
     // TODO: 需要组件移动后需要处理slotIndex属性
     let _fromChildren: (Component | ComponentGroup)[];
     let _toChildren: (Component | ComponentGroup)[];
@@ -1189,9 +1180,9 @@ export const service = {
     // 判断如果拖拽到父组件下，则自动赋值子属性默认值
     service.setParentDefaultProps(_component, _toComponent);
 
-    _toChildren.splice(toIndex, 0, _component);
+    _toChildren.splice(_toIndex, 0, _component);
     if (_fromParent?.component.id === _toComponent?.id) {
-      if (toIndex > _fromIndex) _fromChildren.splice(_fromIndex, 1);
+      if (_toIndex > _fromIndex) _fromChildren.splice(_fromIndex, 1);
       else _fromChildren.splice(_fromIndex + 1, 1);
     } else {
       _fromChildren.splice(_fromIndex, 1);

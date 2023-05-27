@@ -7,11 +7,11 @@ import '@/assets/theme/theme-dark/index.lazy.less';
 import '@/assets/theme/theme-translucent/index.lazy.less';
 
 /** 切换编辑器主题（非客户端主题） */
-const toggleTheme = (loc: { x: number, y: number }, themeCode: 'default' | 'dark' | 'translucent') => {
+const toggleTheme = (themeCode: 'default' | 'dark' | 'translucent', loc?: { x: number, y: number }) => {
   if (themeCode === editorState.appConfig.designConfig.themeCode) return;
   
-  const x = loc.x;
-  const y = loc.y;
+  const x = loc ? loc.x : window.innerWidth / 2;
+  const y = loc ? loc.y : window.innerHeight / 2;
   const endRadius = Math.hypot(
     Math.max(x, innerWidth - x),
     Math.max(y, innerHeight - y)
@@ -50,23 +50,18 @@ const toggleTheme = (loc: { x: number, y: number }, themeCode: 'default' | 'dark
   });
 };
 
-defineCommand({
-  name: 'change-theme',
+defineCommand('change-theme', {
   description: '修改系统主题',
   icon: 'iconfont icon-theme',
   format: '修改为{{themeTitle}}',
   updatable: true,
   objectType: 'global',
-  propertys: {
-    themeTitle: { type: VarType.string, required: true },
-    event: { type: VarType.object, required: true },
-  },
   async exec(command) {
     command.oldVal = editorState.appConfig.designConfig.themeCode;
-    toggleTheme(command.attrs.event as { x: number, y: number }, command.newVal);
+    toggleTheme(command.newVal, command.attrs.loc);
   },
   undo(command) {
     editorState.appConfig.designConfig.themeCode = command.oldVal;
-    toggleTheme(command.attrs.event as { x: number, y: number }, command.oldVal);
+    toggleTheme(command.oldVal, command.attrs.loc);
   },
 });

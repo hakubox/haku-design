@@ -1,5 +1,4 @@
-import { FormulaParamType, FormulaType } from '../type';
-
+import { FormulaParamType, FormulaType } from "./type";
 
 /** 公式 */
 export interface Formula {
@@ -30,14 +29,6 @@ type RealVarType<K = any> = {
   array: K[];
   object: Record<string, K>;
 };
-
-type GetVarType<T extends keyof RealVarType> = RealVarType[T];
-
-type GetVarRequired<T> = T['required'] extends true
-  ? GetVarType<T['type']>
-  : T['default'] extends GetVarType<T['type']> | (() => GetVarType<T['type']>)
-  ? GetVarType<T['type']>
-  : GetVarType<T['type']> | undefined;
 
 export type AddFormula = <Params extends FormulaParam[], ReturnValue extends FormulaParamType>(formula: Formula & {
   /** 公式代码 */

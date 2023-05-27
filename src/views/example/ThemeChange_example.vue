@@ -7,9 +7,9 @@
     <p>示例文本示例文本示例文本示例文本示例文本示例例文本示例文本示例文本</p>
     <p>示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本示例文本</p>
 
-    <button @click="$event => toggleTheme($event, 'default')">明亮主题</button>&nbsp;
-    <button @click="$event => toggleTheme($event, 'dark')">黑暗主题</button>&nbsp;
-    <button @click="$event => toggleTheme($event, 'translucent')">半透明主题</button>&nbsp;
+    <button @click="toggleTheme('default', $event)">明亮主题</button>&nbsp;
+    <button @click="toggleTheme('dark', $event)">黑暗主题</button>&nbsp;
+    <button @click="toggleTheme('translucent', $event)">半透明主题</button>&nbsp;
     <br />
     themeName: {{ state.themeName }} <br />
     prevThemeName: {{ state.prevThemeName }} <br />
@@ -66,7 +66,7 @@ const toggleTheme2 = (event: MouseEvent) => {
 };
 
 /** 切换主题 */
-const toggleTheme = (event: MouseEvent, themeName: 'default' | 'dark' | 'translucent') => {
+const toggleTheme = (themeName: 'default' | 'dark' | 'translucent', event: MouseEvent) => {
   if (themeName === state.themeName) return;
   
   const x = event.clientX;

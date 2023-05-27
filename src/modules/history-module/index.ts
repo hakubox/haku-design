@@ -1,4 +1,6 @@
-import { Command, CommandType } from '@/@types/command';
+
+
+import { Command, CommandType, GlobalCommand, CommandHistory } from '@haku-design/command';
 import { formCommands } from '@/data/form-commands';
 import { createModelId } from '@/tools/common';
 import { reactive } from 'vue';
@@ -8,7 +10,7 @@ export const state = reactive({
   /** 历史记录列表 */
   historyData: [
     { id: 'init', type: 'init', objectId: 'global', objectType: 'global', attrs: {}, executeTime: Date.now() },
-  ] as Command[],
+  ] as CommandHistory<keyof GlobalCommand>[],
   /** 当前状态位于历史记录的索引 */
   historyIndex: 0,
   /** 保存时历史记录的索引（用于判断是否需要升版本号） */
@@ -25,12 +27,20 @@ export const state = reactive({
 
 /** 历史记录模块逻辑 */
 export const service = {
+  /** 判断命令类型 */
+  isCommand<T extends keyof GlobalCommand>(item: Command<keyof GlobalCommand>, type: T | T[]): item is Command<T> {
+    if (Array.isArray(type)) {
+      return (type as Array<keyof GlobalCommand>).includes(item.type);
+    } else {
+      return item.type === type;
+    }
+  },
   /** 获取历史记录图标 */
   getCommandIcon(commandType: string) {
     return formCommands[commandType].icon;
   },
   /** 获取格式化标题 */
-  getFormatTitle(command: Command) {
+  getFormatTitle<T extends keyof GlobalCommand>(command: Command<T>) {
     const format = formCommands[command.type].format;
 
     const reg = /\{\{.*?\}\}/g;
@@ -53,30 +63,30 @@ export const service = {
     return _re;
   },
   /** 执行命令 */
-  exec(
-    commandType: string,
+  exec<T extends keyof GlobalCommand>(
+    commandType: T,
     {
       objectId = 'global',
       value,
       oldValue,
-      attrs = {},
+      attrs,
     }: {
       /** 关联对象Id（组件Id/'global'） */
       objectId?: string | 'global';
       /** 相关属性 */
-      attrs?: Record<string, any>;
+      attrs: GlobalCommand[T]['attrs'];
       /** 值 */
-      value: any;
+      value: GlobalCommand[T]['value'];
       /** 旧值 */
-      oldValue?: any;
+      oldValue?: GlobalCommand[T]['value'];
     },
   ) {
     if (!objectId) {
       throw new Error('没有传入objectId');
     }
-    const _commandType = formCommands[commandType] as CommandType<Record<string, any>>;
+    const _commandType = formCommands[commandType] as CommandType<T>;
     if (_commandType) {
-      const newCommand: Command = {
+      const newCommand: Command<T> = {
         id: createModelId(10),
         type: commandType,
         objectType: _commandType.objectType,
@@ -86,11 +96,11 @@ export const service = {
         executeTime: Date.now(),
         oldVal: oldValue,
       };
-      Object.entries(_commandType.propertys).forEach(([key, value]) => {
-        if (value.required && (attrs[key] === null || attrs[key] === undefined)) {
-          throw new Error(`触发${commandType}命令的必要属性${key}不存在。`);
-        }
-      });
+      // Object.entries(_commandType.).forEach(([key, value]) => {
+      //   if (value.required && (attrs[key] === null || attrs[key] === undefined)) {
+      //     throw new Error(`触发${commandType}命令的必要属性${key}不存在。`);
+      //   }
+      // });
       _commandType.exec(newCommand);
       state.historyData.splice(state.historyIndex + 1, state.historyData.length - state.historyIndex);
       state.historyIndex++;
@@ -104,7 +114,7 @@ export const service = {
     if (!state.canUndo) return false;
     const _command = state.historyData[state.historyIndex];
     if (_command) {
-      const _commandType = formCommands[_command.type] as CommandType<Record<string, any>>;
+      const _commandType = formCommands[_command.type];
       if (_commandType.updatable) _commandType.undo(_command);
       state.historyIndex--;
       return true;
@@ -123,7 +133,7 @@ export const service = {
     if (!state.canRedo) return false;
     const _command = state.historyData[state.historyIndex + 1];
     if (_command) {
-      const _commandType = formCommands[_command.type] as CommandType<Record<string, any>>;
+      const _commandType = formCommands[_command.type];
       if (_commandType.updatable) _commandType.exec(_command);
       state.historyIndex++;
       return true;
