@@ -66,4 +66,6 @@ export interface GeneralProperty {
   names?: string[] | string[][];
   /** 子属性 */
   children?: GeneralProperty[];
+  /** 排序索引 */
+  sort?: number;
 }

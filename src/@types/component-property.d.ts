@@ -55,6 +55,7 @@ export declare class ComponentProperty {
   /** 值格式化函数 */
   format?: (val: any) => any;
 
+
   /** 属性当前的编辑器 */
   // currentEditor?: ComponentPropertyEditor;
 
@@ -62,4 +63,6 @@ export declare class ComponentProperty {
   names?: string[];
   /** 子属性 */
   children?: ComponentProperty[];
+  /** 排序索引 */
+  sort?: number;
 }

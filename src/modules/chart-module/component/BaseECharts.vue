@@ -1,6 +1,6 @@
 <template>
-  <div class="basic-echart" :style="{ height: props.height }">
-    <div ref="echartEl" class="basic-echart-body" :style="{ height: props.height }"></div>
+  <div class="basic-echart">
+    <div ref="echartEl" class="basic-echart-body"></div>
     <Empty class="basic-echart-empty" v-if="props.empty" description="图表暂无数据" />
   </div>
 </template>
@@ -22,49 +22,34 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  /** 图表高度 */
-  height: {
-    type: String,
-    default: '200px',
-  },
 });
+
+let chart: ECharts;
 
 const echartEl = ref<HTMLElement>();
 const state = reactive({
-  chart: undefined as unknown as ECharts,
 });
 
 const { width, height } = useElementSize(echartEl);
 
 const init = () => {
-  if (!state.chart) {
+  if (!chart) {
     if (echartEl.value) {
-      state.chart = echartInit(echartEl.value);
+      chart = echartInit(echartEl.value);
     }
   }
 };
 
 /** 获得ECharts实例 */
-const getChart = () => state.chart;
+const getChart = () => chart;
 /** 更新ECharts配置 */
 const setOption = (option) => {
-  state.chart.setOption(option);
+  chart.setOption(option);
 };
 /** 重置大小 */
 const resize = (width: number, height: number) => {
-  state.chart.resize({ width, height });
+  chart.resize({ width, height });
 };
-
-/** 高度改变事件 */
-const changeHeight = throttle((val) => {
-  nextTick(() => {
-    if (echartEl.value) {
-      resize(echartEl.value.offsetWidth, echartEl.value.offsetHeight);
-    }
-  });
-});
-
-watch(() => props.height, changeHeight);
 
 watch([width, height], () => {
   resize(width.value, height.value);
@@ -78,6 +63,8 @@ defineExpose({
   getChart,
   setOption,
   resize,
+  get chart() { return chart },
+  set chart(chartOption) { chart = chartOption },
 });
 </script>
 

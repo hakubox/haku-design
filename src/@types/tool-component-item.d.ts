@@ -1,5 +1,6 @@
 import { ComponentCategory } from '@/@types/enum';
 import { PageType, AppType } from '@/@types/enum';
+import { ComponentAnswerType } from './component';
 
 /** 工具箱组件项 */
 export declare interface ToolComponentItem {

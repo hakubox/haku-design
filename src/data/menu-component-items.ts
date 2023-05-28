@@ -203,27 +203,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     category: ComponentCategory.attachment,
     pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
-  {
-    title: '柱状图',
-    name: 'q-chart-bar',
-    icon: 'iconfont icon-chart-bar',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
-  {
-    title: '折线图',
-    name: 'q-chart-line',
-    icon: 'iconfont icon-chart-line',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
-  {
-    title: '饼图',
-    name: 'q-chart-pie',
-    icon: 'iconfont icon-chart-pie',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
+  
   {
     title: '完成得分',
     name: 'q-complete-score',

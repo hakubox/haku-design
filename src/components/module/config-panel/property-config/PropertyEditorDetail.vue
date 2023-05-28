@@ -4,13 +4,16 @@
     :class="{
       block: prop.layout == 'block' || prop.attach?.length,
       parent: prop.children?.length,
-      expand: prop.children?.length && getValue
+      expand: prop.editor === 'none' ? true : prop.children?.length && getValue
     }"
     v-show="propShowListener(prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)"
   >
-    <div class="attr-editor-item-panel" @click="parentExpand(prop)">
-      <Switch v-if="prop.children?.length" :checked="getValue" size="small" />
-      <span class="attr-editor-item-label" :class="{ require: prop.require, leaf: prop.leaf }">
+    <div class="attr-editor-item-panel" @click="prop.editor !== 'none' ? parentExpand(prop) : undefined">
+      <template v-if="prop.children?.length">
+        <Switch v-if="prop.editor !== 'none'" :checked="getValue" size="small" />
+        <i v-else class="iconfont icon-config3" style="color: #648DDF;" />
+      </template>
+        <span class="attr-editor-item-label" :class="{ require: prop.require, leaf: prop.leaf }">
         <div>
           <span>{{prop.title}}&nbsp;</span>
           <Popover v-if="prop.remark" placement="topRight" arrow-point-at-center>
@@ -112,7 +115,7 @@
     </div>
 
     <!-- 子属性列表 -->
-    <div class="attr-editor-children" v-if="prop.children?.length">
+    <div class="attr-editor-children" v-if="prop.editor === 'none' ? true : prop.children?.length && getValue">
       <PropertyEditorDetail
         :prop="detailProp"
         :propertyEditors="props.propertyEditors"
@@ -136,7 +139,6 @@ import { PropType } from 'vue';
 import { useAppHandle } from '@/common/app-handle';
 
 const {
-  setVal,
   getVal
 } = useAppHandle();
 

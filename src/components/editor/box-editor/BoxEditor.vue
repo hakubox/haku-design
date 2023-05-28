@@ -77,7 +77,7 @@ const valueToArray = computed<number[][]>(() => {
 
 /** 初始化 */
 const init = () => {
-  if (!props.value[0] || !props.value[1]) {
+  if (!props.value[0] && !props.value[1]) {
     const _defaultData = [] as number[][];
     if (!props.value[0]) {
       _defaultData[0] = [0,0,0,0];
@@ -109,7 +109,7 @@ const init = () => {
 };
 /** 改变值 */
 const change = throttle(() => {
-  if (valueToArray.value[0].join(',') != props.value[0].join(',') || valueToArray.value[1].join(',') != props.value[1].join(',')) {
+  if (valueToArray.value[0].join(',') != props.value?.[0]?.join(',') || valueToArray.value[1].join(',') != props.value?.[1]?.join(',')) {
     emit('change', valueToArray.value);
   }
 });

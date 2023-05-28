@@ -77,7 +77,7 @@ const propChangeListener = (value) => {
     return;
   }
   for (let i = 0; i < _components.length; i++) {
-    setVal(_components[i].attrs, props.prop, value, getEditor.value, _components[i]);
+    setVal(_components[i].attrs, props.prop, value, getEditor.value);
   }
 }
 

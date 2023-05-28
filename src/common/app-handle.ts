@@ -1,6 +1,5 @@
 import { reactive, h, toRefs, ConcreteComponent, ref } from 'vue';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
-import { service as historyService } from "@/modules/history-module";
 import { Component, ComponentProperty, GeneralProperty, PropertyEditor } from '@/@types';
 
 /** 应用操作模块 */

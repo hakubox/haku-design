@@ -82,9 +82,9 @@ export const propertyEditors: Array<InitPropertyEditor> = [
   {
     name: 'width',
     description: '长度',
-    component: 'length-editor',
+    component: 'width-editor',
     attrs: {},
-    editor: ComponentPropertyEditor.length,
+    editor: ComponentPropertyEditor.width,
     format: (val) => val + 'px',
   },
   {

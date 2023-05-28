@@ -15,7 +15,7 @@
           :prop="prop"
           :propertys="propertys"
           @change="propChangeListener"
-          v-for="prop in props.propertys.filter(i => i.group === propGroup.name && checkVisible(i))"
+          v-for="prop in propertyList(propGroup)"
         />
       </div>
     </div>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, PropType, reactive } from "vue";
+import { PropType, reactive } from "vue";
 import { state as editorState } from "@/modules/editor-module";
 import { Component } from "@/@types/component";
 import { ComponentPropertyEditor } from "@/@types/enum";
@@ -92,6 +92,15 @@ const state = reactive({
     isFullScreen: false,
   },
 });
+
+/** 排序后属性列表 */
+const propertyList = (propGroup: { title: string, name: string, icon?: string }) => {
+  const _props = props.propertys.filter(i => i.group === propGroup.name && checkVisible(i)).slice();
+  _props.sort((a, b) => {
+      return (a?.sort ?? 999) - (b?.sort ?? 999);
+  });
+  return _props;
+};
 
 const emit = defineEmits<{
   (event: 'change', val: string): void;

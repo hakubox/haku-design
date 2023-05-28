@@ -19,7 +19,7 @@ export async function registerPlugin(plugin: PluginInfo) {
 
   try {
     // 插件重复安装
-    if (pluginState.plugins.findIndex(i => i.name === plugin.name) >= 0) {
+    if (pluginState.plugins.findIndex(i => i.name === plugin.name && i.pluginType === plugin.pluginType) >= 0) {
       message.toast(`插件[${plugin.name}]重复安装`);
       console.error(`插件[${plugin.name}]重复安装`);
       return;

@@ -139,12 +139,6 @@ const showDialogPicker = () => {
   }
 };
 
-/** 禁用日期 */
-const disabledDate = (time) => {
-  const day = time.getDay();
-  return day === 0 || day === 6;
-}
-
 watch(() => props.value, (val, oldVal) => {
   if (val !== oldVal) {
     if (props.isRange && Array.isArray(val)) {

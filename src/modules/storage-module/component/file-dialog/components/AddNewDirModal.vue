@@ -43,7 +43,7 @@ const props = defineProps({
     default: false,
     required: true,
   },
-  parentDirId: {
+  parentFolderId: {
     type: String,
     default: '0',
     required: true,
@@ -60,7 +60,7 @@ const useUploadFileForm = () => {
   const useForm = Form.useForm;
   const modelRef = reactive({
     des: '', // 描述
-    parentDirId: props.parentDirId, // 父文件夹id
+    parentDirId: props.parentFolderId, // 父文件夹id
     dirName: '', // 文件夹名称
   });
 
@@ -125,12 +125,9 @@ const onCancel = () => {
   resetFields();
 };
 
-watch(
-  () => props.parentDirId,
-  () => {
-    parentDirId.value = props.parentDirId;
-  },
-);
+watch(() => props.parentFolderId, () => {
+  parentDirId.value = props.parentFolderId;
+});
 
 watchEffect(() => {
   if (props.visible) {

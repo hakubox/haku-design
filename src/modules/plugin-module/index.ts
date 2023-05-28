@@ -190,4 +190,8 @@ export default {
   state,
   /** 插件模块逻辑 */
   service,
+
+  install() {
+    service.onInit();
+  }
 };

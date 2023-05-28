@@ -92,7 +92,7 @@
       <!-- 添加新文件夹弹窗-->
       <AddNewDirModal
         :dir-tree="treeData"
-        :parent-dir-id="curDirId"
+        :parent-folder-id="curDirId"
         :visible="state.addNewDirModalVisible"
         @ok="onAddNewDir"
         @cancel="toogleAddNewDirModal"

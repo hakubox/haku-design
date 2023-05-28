@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, ref, useAttrs } from 'vue';
+import { onMounted, watch, ref } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
-import BaseECharts from '@/components/common/BaseECharts.vue';
+import BaseECharts from './BaseECharts.vue';
 
 defineOptions({
   inheritAttrs: false
@@ -33,6 +33,11 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** 设置颜色 */
+  color: {
+    type: String,
+    default: '',
+  },
   /** 显示图例 */
   legend: {
     type: Boolean,
@@ -40,36 +45,24 @@ const props = defineProps({
   },
 });
 
-const attrs = useAttrs();
-
 const chartRef = ref<ECharts>();
 
-const getOption = () => {
+const init = () => {
   const option = {
     title: {
       text: props.title
     },
-    legend: {},
-    tooltip: {},
-    xAxis: {
-      type: 'category',
-    },
-    yAxis: {
-      type: 'value',
+    tooltip: {
+      trigger: 'item'
     },
     series: [
       {
-        type: 'bar',
+        type: 'pie',
         data: JSON.parse(props.dataSource),
-        color: attrs.color
       }
     ]
   };
-  return option;
-};
-
-const init = () => {
-  chartRef.value?.setOption(getOption());
+  chartRef.value?.setOption(option);
 }
 
 watch(() => [props.position, props.position], (val, oldVal) => {
@@ -77,14 +70,13 @@ watch(() => [props.position, props.position], (val, oldVal) => {
     init();
   }
 });
-
-watch(() => attrs.color, (val, oldVal) => {
+watch(() => props.color, (val, oldVal) => {
   console.log(val)
   if (val !== oldVal) {
-    // init();
-    chartRef.value?.setOption(getOption());
+    init();
   }
 });
+
 onMounted(() => {
   init();
 });

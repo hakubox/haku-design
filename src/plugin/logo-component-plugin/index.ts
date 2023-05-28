@@ -1,10 +1,10 @@
-import global from '@/common/global';
 import LogoComponent from './LogoComponent.vue';
 import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup } from '@/@types/enum';
 import { PluginType, type PluginInfo, registerComponent } from '@/modules/plugin-module';
+import { App } from 'vue';
 
 /** 注册Logo组件（插件测试） */
-export function registerLogoComponent() {
+export function registerLogoComponent(app: App) {
   const _pluginInfo: PluginInfo = {
     name: 'logo-component',
     title: 'LOGO组件',
@@ -13,7 +13,7 @@ export function registerLogoComponent() {
     description: '测试用LOGO组件，暂时用于展示百度的LOGO',
     pluginType: PluginType.component,
     async onloadApp() {
-      global.state.app.component('LogoComponent', LogoComponent);
+      app.component('LogoComponent', LogoComponent);
     }
   };
 
@@ -46,4 +46,10 @@ export function registerLogoComponent() {
     icon: 'iconfont icon-sun',
     category: ComponentCategory.attachment
   });
+}
+
+export default {
+  install(app: App) {
+    registerLogoComponent(app);
+  }
 }

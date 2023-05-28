@@ -3,7 +3,7 @@ import mobile from 'is-mobile';
 import { Router } from 'vue-router';
 
 /** 全局模块状态 */
-export const state = reactive({
+export const state = {
   app: {} as App<Element>,
   router: {} as Router,
   /** 用户信息 */
@@ -27,7 +27,7 @@ export const state = reactive({
   antdConfigProvider: {
     locale: {} as any,
   }
-});
+};
 
 /** 全局模块逻辑 */
 export const service = {

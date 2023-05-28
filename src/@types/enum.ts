@@ -89,7 +89,7 @@ export enum ComponentPropertyEditor {
   /** 浮点数 */
   float = 'float',
   /** 长度 */
-  length = 'length',
+  width = 'width',
   /** 颜色 */
   color = 'color',
   /** Json类型 */
@@ -131,6 +131,8 @@ export enum ComponentPropertyEditor {
   slider = 'slider',
   /** 背景 */
   background = 'background',
+  /** 无编辑器（适用于不可操作的子属性面板） */
+  none = 'none',
 }
 
 /** 控件属性组 */

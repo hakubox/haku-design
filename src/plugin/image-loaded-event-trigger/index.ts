@@ -24,3 +24,9 @@ export function registerImageLoadedEventTrigger() {
     format: '当前组件图片加载完毕'
   });
 }
+
+export default {
+  install() {
+    registerImageLoadedEventTrigger();
+  }
+}

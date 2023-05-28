@@ -8,7 +8,7 @@
 import { onMounted, watch, ref } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
-import BaseECharts from '@/components/common/BaseECharts.vue';
+import BaseECharts from './BaseECharts.vue';
 
 defineOptions({
   inheritAttrs: false
@@ -52,13 +52,17 @@ const init = () => {
     title: {
       text: props.title
     },
-    tooltip: {
-      trigger: 'item'
+    xAxis: {
+      type: 'category',
+    },
+    yAxis: {
+      type: 'value',
     },
     series: [
       {
-        type: 'pie',
+        type: 'line',
         data: JSON.parse(props.dataSource),
+        color: props.color
       }
     ]
   };
@@ -70,6 +74,7 @@ watch(() => [props.position, props.position], (val, oldVal) => {
     init();
   }
 });
+
 watch(() => props.color, (val, oldVal) => {
   console.log(val)
   if (val !== oldVal) {

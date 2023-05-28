@@ -74,11 +74,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, watch } from "vue";
+import { reactive } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
-import type { ComponentProperty } from "@/@types/component-property";
 import { initPropertyEditors } from '@/data/property-editor';
-import type { Component, ComponentGroup, GeneralProperty } from "@/@types";
+import type { Component, ComponentGroup } from "@/@types";
 import { Modal } from "ant-design-vue";
 import PropertyEditorItem from './PropertyEditorItem.vue';
 import PropertyEditorDetail from './PropertyEditorDetail.vue';
@@ -135,7 +134,7 @@ const fullScreen = (eidtor: any, prop: any) => {
     margin-left: 8px;
   }
 }
-:deep(.ant-btn-sm) {
-    padding: 0;
-}
+// :deep(.ant-btn-sm) {
+//   padding: 0;
+// }
 </style>
