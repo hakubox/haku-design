@@ -1,5 +1,5 @@
 <template>
-  <ComponentBasic class="component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-chart-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height"></BaseECharts>
   </ComponentBasic>
 </template>
@@ -86,3 +86,7 @@ onMounted(() => {
   init();
 });
 </script>
+
+<style lang="less" scoped>
+@import '../assets/less/index.less';
+</style>

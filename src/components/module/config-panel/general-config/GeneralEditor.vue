@@ -95,7 +95,9 @@ const state = reactive({
 
 /** 排序后属性列表 */
 const propertyList = (propGroup: { title: string, name: string, icon?: string }) => {
-  const _props = props.propertys.filter(i => i.group === propGroup.name && checkVisible(i)).slice();
+  const _props = props.propertys.filter(i => 
+    i.group === propGroup.name && (!i.appType || i.appType?.includes(editorState.appConfig.appType)) && checkVisible(i)
+  ).slice();
   _props.sort((a, b) => {
       return (a?.sort ?? 999) - (b?.sort ?? 999);
   });

@@ -1,5 +1,5 @@
 import { ComponentProperty } from "@/@types";
-import { ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
+import { AppType, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
 
 /** 获取文本样式属性 */
 export function getTextStyle(name: string[], title: string = '文本'): ComponentProperty {
@@ -17,6 +17,21 @@ export function getTextStyle(name: string[], title: string = '文本'): Componen
  */
 export const basicChartPropertys: ComponentProperty[] = [
   {
+    name: '', names: ['x', 'y'], title: '位置', appType: [AppType.canvas],
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
+    attrs: {
+      options: [ { label: 'x', prop: 'x' }, { label: 'y', prop: 'y' } ]
+    },
+  }, {
+    name: '', names: ['width', 'height'], title: '尺寸', appType: [AppType.canvas],
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
+    attrs: {
+      options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+    },
+  }, {
+    name: 'height', title: '高度', appType: [AppType.questionnaire],
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
+  }, {
     name: 'visible', title: '是否显示', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     remark: '是否在界面上显示。'

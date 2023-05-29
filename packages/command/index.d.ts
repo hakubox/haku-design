@@ -1,4 +1,4 @@
-import { Component, ComponentGroup, ComponentProperty } from "@/@types"
+import { Component, ComponentProperty } from "../../src/@types"
 
 /** 基础命令类型 */
 export interface BasicCommand {
@@ -10,8 +10,8 @@ export interface BasicCommand {
 export interface GlobalCommand {
   /** 开始编辑 */
   'init': {
-    value: never,
-    attrs: never,
+    value: undefined,
+    attrs: undefined,
   }
   /** 移动组件 */
   'move-component': {
@@ -109,13 +109,13 @@ export interface GlobalCommand {
   }
   /** 调整窗口大小 */
   'change-page-size': {
-    value: never,
-    attrs: never;
+    value: undefined;
+    attrs: undefined;
   }
   /** 保存 */
   'save': {
-    value: never,
-    attrs: never,
+    value: undefined;
+    attrs: undefined;
   }
 }
 

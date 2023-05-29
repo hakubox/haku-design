@@ -4,6 +4,7 @@ import { Command, CommandType, GlobalCommand, CommandHistory } from '@haku-desig
 import { formCommands } from '@/data/form-commands';
 import { createModelId } from '@/tools/common';
 import { reactive } from 'vue';
+import { SetPartials } from '@/@types';
 
 /** 历史记录模块状态 */
 export const state = reactive({
@@ -62,15 +63,13 @@ export const service = {
     }
     return _re;
   },
+
+  
+
   /** 执行命令 */
   exec<T extends keyof GlobalCommand>(
     commandType: T,
-    {
-      objectId = 'global',
-      value,
-      oldValue,
-      attrs,
-    }: {
+    config: SetPartials<{
       /** 关联对象Id（组件Id/'global'） */
       objectId?: string | 'global';
       /** 相关属性 */
@@ -79,9 +78,10 @@ export const service = {
       value: GlobalCommand[T]['value'];
       /** 旧值 */
       oldValue?: GlobalCommand[T]['value'];
-    },
+    }>,
   ) {
-    if (!objectId) {
+    const _config: Record<string, any> = config ?? {};
+    if (!_config.objectId) {
       throw new Error('没有传入objectId');
     }
     const _commandType = formCommands[commandType] as CommandType<T>;
@@ -90,11 +90,11 @@ export const service = {
         id: createModelId(10),
         type: commandType,
         objectType: _commandType.objectType,
-        objectId: objectId,
-        attrs: attrs,
-        newVal: value,
+        objectId: _config.objectId,
+        attrs: _config.attrs,
+        newVal: _config.value,
         executeTime: Date.now(),
-        oldVal: oldValue,
+        oldVal: _config.oldValue,
       };
       // Object.entries(_commandType.).forEach(([key, value]) => {
       //   if (value.required && (attrs[key] === null || attrs[key] === undefined)) {

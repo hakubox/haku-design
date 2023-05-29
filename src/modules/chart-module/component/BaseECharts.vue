@@ -1,16 +1,20 @@
 <template>
   <div class="basic-echart">
-    <div ref="echartEl" class="basic-echart-body"></div>
+    <div ref="echartEl" class="basic-echart-body"
+      :class="{ 'echart-canvas': editorState.appConfig.appType === AppType.canvas }"
+      :style="{ height: props.height + 'px' }"
+    ></div>
     <Empty class="basic-echart-empty" v-if="props.empty" description="图表暂无数据" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watch, ref, reactive, onMounted, nextTick } from 'vue';
+import { watch, ref, reactive, onMounted } from 'vue';
 import { init as echartInit, type ECharts } from 'echarts';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { throttle } from '@/tools/common';
-import { useElementSize } from '@vueuse/core';
 import { Empty } from 'vant';
+import { AppType } from '@/@types/enum';
 
 defineOptions({
   inheritAttrs: false
@@ -22,6 +26,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  width: {
+    type: Number,
+    default: 0
+  },
+  height: {
+    type: Number,
+    default: 0
+  }
 });
 
 let chart: ECharts;
@@ -29,8 +41,6 @@ let chart: ECharts;
 const echartEl = ref<HTMLElement>();
 const state = reactive({
 });
-
-const { width, height } = useElementSize(echartEl);
 
 const init = () => {
   if (!chart) {
@@ -49,11 +59,12 @@ const setOption = (option) => {
 /** 重置大小 */
 const resize = (width: number, height: number) => {
   chart.resize({ width, height });
+  // chart.setOption({ width, height });
 };
 
-watch([width, height], () => {
-  resize(width.value, height.value);
-});
+watch(() => [props.width, props.height], throttle(() => {
+  resize(props.width, props.height);
+}, 15));
 
 onMounted(() => {
   init();
@@ -70,9 +81,13 @@ defineExpose({
 
 <style lang="less" scoped>
 .basic-echart {
+  flex-grow: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
   width: 100%;
-  height: 200px;
 
   > .basic-echart-empty {
     position: absolute;
@@ -87,8 +102,18 @@ defineExpose({
   }
 
   > .basic-echart-body {
-    width: 100%;
-    height: 200px;
+    position: relative;
+    // flex-grow: 1;
+    // width: 100%;
+    // height: 100%;
+
+    &.echart-canvas {
+
+      // > :deep(div:first-child) {
+      //   height: 100% !important;
+      // }
+    }
+
   }
 }
 </style>

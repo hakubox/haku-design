@@ -1,5 +1,5 @@
 import { Component } from './component';
-import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from './enum';
+import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup, AppType } from './enum';
 
 /** 可拖拽组件属性 */
 export declare class ComponentProperty {
@@ -65,4 +65,6 @@ export declare class ComponentProperty {
   children?: ComponentProperty[];
   /** 排序索引 */
   sort?: number;
+  /** 应用类型筛选 */
+  appType?: AppType[];
 }

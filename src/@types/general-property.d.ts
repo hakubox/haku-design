@@ -1,6 +1,6 @@
 import { Component } from './component';
 import { PropertyGroup } from './property-group';
-import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup } from './enum';
+import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup, AppType } from './enum';
 
 /** 通用属性 */
 export interface GeneralProperty {
@@ -68,4 +68,6 @@ export interface GeneralProperty {
   children?: GeneralProperty[];
   /** 排序索引 */
   sort?: number;
+  /** 应用类型筛选 */
+  appType?: AppType[];
 }

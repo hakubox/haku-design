@@ -22,3 +22,8 @@ export { ComponentRect } from './component-rect';
 export { DataEditorValue } from './data-editor-value';
 
 export type SetPartial<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
+
+export type GetPartialPropName<K> = keyof {
+  [P in keyof K as K[P] extends undefined ? P : never]: K[P];
+};
+export type SetPartials<T> = Partial<Pick<T, GetPartialPropName<T>>> & Omit<T, GetPartialPropName<T>>;

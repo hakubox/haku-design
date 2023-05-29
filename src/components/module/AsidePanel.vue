@@ -15,7 +15,7 @@
     </div>
     <div class="design-form-aside-content">
       <!-- 控件列表菜单 -->
-      <div v-show="state.activeKey === 'components' && state.groups.length" class="design-form-aside-toolbox">
+      <div v-if="state.activeKey === 'components' && state.groups.length" class="design-form-aside-toolbox">
         <div class="design-form-aside-toolbox-group" v-for="groupItem in state.groups" :key="groupItem.category">
           <template
             v-if="
@@ -51,7 +51,7 @@
       </div>
 
       <!-- 题库菜单 -->
-      <div v-show="state.activeKey === 'component-shop' && state.groups.length" class="design-form-aside-toolbox">
+      <div v-if="state.activeKey === 'component-shop' && state.groups.length" class="design-form-aside-toolbox">
         <div class="design-form-aside-toolbox-group">
           <ul class="design-form-aside-components">
             <li
@@ -72,28 +72,28 @@
       </div>
 
       <!-- 页面配置菜单 -->
-      <AsidePageConfig v-show="state.activeKey === 'page'"></AsidePageConfig>
+      <AsidePageConfig v-if="state.activeKey === 'page'"></AsidePageConfig>
 
       <!-- 当前页面控件菜单 -->
-      <AsideComponentView v-show="state.activeKey === 'outline'"></AsideComponentView>
+      <AsideComponentView v-if="state.activeKey === 'outline'"></AsideComponentView>
 
       <!-- 数据源配置菜单 -->
-      <DataSourceConfig v-show="state.activeKey === 'data'"></DataSourceConfig>
+      <DataSourceConfig v-if="state.activeKey === 'data'"></DataSourceConfig>
 
       <!-- 存储服务配置菜单 -->
-      <FileStorageConfig v-show="state.activeKey === 'storage'"></FileStorageConfig>
+      <FileStorageConfig v-if="state.activeKey === 'storage'"></FileStorageConfig>
 
       <!-- 历史记录菜单 -->
-      <HistoryLog v-show="state.activeKey === 'log'"></HistoryLog>
+      <HistoryLog v-if="state.activeKey === 'log'"></HistoryLog>
 
       <!-- 版本记录菜单 -->
-      <HistoryVersionConfig v-show="state.activeKey === 'version'"></HistoryVersionConfig>
+      <HistoryVersionConfig v-if="state.activeKey === 'version'"></HistoryVersionConfig>
 
       <!-- 主题模板菜单 -->
-      <ThemeTemplateConfig v-show="state.activeKey === 'theme'"></ThemeTemplateConfig>
+      <ThemeTemplateConfig v-if="state.activeKey === 'theme'"></ThemeTemplateConfig>
 
       <!-- 插件菜单 -->
-      <PluginConfig v-show="state.activeKey === 'plugin'"></PluginConfig>
+      <PluginConfig v-if="state.activeKey === 'plugin'"></PluginConfig>
     </div>
   </div>
 </template>

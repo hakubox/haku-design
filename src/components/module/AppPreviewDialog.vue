@@ -2,7 +2,7 @@
   <!-- 预览界面 -->
   <div class="preview-modal"
     :class="{
-      show: typeof props.visible === 'boolean' ? props.visible : props.visible.value,
+      show: isShow,
       leave: state.isLeaving
     }"
     @click.self.stop="closePreview"
@@ -26,6 +26,7 @@
         }"
       >
         <DesignCanvas
+          v-if="isShow"
           :style="{
             width: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.width}px` : '',
             height: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.height}px` : '',
@@ -37,7 +38,7 @@
       </div>
 
       <!-- 调试器 -->
-      <div class="canvas-data-editor" v-if="editorState.currentPage.pageType === PageType.normalPage">
+      <div class="canvas-data-editor" v-if="isShow && editorState.currentPage.pageType === PageType.normalPage">
         <div class="canvas-data-editor-body">
           <Tabs v-model:activeKey="state.activeKey" type="card">
             <template #rightExtra>
@@ -224,6 +225,10 @@ let tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, Form
 
 /** 临时appPages数据 */
 let tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
+
+const isShow = computed(() => {
+  return typeof props.visible === 'boolean' ? props.visible : props.visible.value
+});
 
 const components = computed(() => {
   return editorService.getAllFormItem();

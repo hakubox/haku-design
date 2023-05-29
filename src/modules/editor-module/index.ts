@@ -337,6 +337,11 @@ export const service = {
     }
     themeService.changeTheme();
   },
+  /** 获取基本Dom节点 */
+  getBasicDom() {
+    state.canvasPanelEl = document.querySelector('.form-canvas')!;
+    state.canvasEl = document.querySelector('.design-form-canvas')!;
+  },
   /** 初始化 */
   init() {
     if (state.appConfig.designConfig.deviceType === 'pc') {
@@ -347,8 +352,7 @@ export const service = {
     
     configService.init();
     nextTick(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas')!;
-      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      service.getBasicDom();
       pluginModule.onAppLoad();
     });
   },
@@ -387,8 +391,7 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas')!;
-      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      service.getBasicDom();
       service.refresh();
     }, 200);
     service.init();
@@ -472,8 +475,7 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas')!;
-      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      service.getBasicDom();
       service.refresh();
     }, 200);
     service.init();
@@ -516,8 +518,7 @@ export const service = {
     state.currentSelectedComponentPropertyMap = {};
 
     setTimeout(() => {
-      state.canvasPanelEl = document.querySelector('.form-canvas')!;
-      state.canvasEl = document.querySelector('.design-form-canvas')!;
+      service.getBasicDom();
       service.refresh();
     }, 200);
     service.init();
@@ -710,8 +711,7 @@ export const service = {
   /** 页面重绘 */
   refresh() {
     if (!state.canvasPanelEl) return;
-    state.canvasPanelEl = document.querySelector('.form-canvas')!;
-    state.canvasEl = document.querySelector('.design-form-canvas')!;
+    service.getBasicDom();
     const { y, x } = state.canvasPanelEl.getBoundingClientRect();
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;

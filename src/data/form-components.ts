@@ -41,11 +41,11 @@ export let formComponents: InitComponent[] = [
     },
     propertys: [
       {
-        name: '', names: ['x', 'y'], title: '位置', visible: true,
+        name: '', names: ['x', 'y'], title: '位置', visible: true, appType: [AppType.canvas],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
         attrs: {
           options: [ { label: 'x', prop: 'x' }, { label: 'y', prop: 'y' } ]
-        }
+        },
       }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -2101,7 +2101,7 @@ export function initComponents(componentList: InitComponent[] = []): InitCompone
     componentList = formComponents;
   }
   const _re = componentList.map(i => {
-    const _propertys = i.propertys.slice().sort((a, b) => {
+    const _propertys = i.propertys.filter(i => !i.appType || i.appType?.includes(editorState.appConfig.appType)).slice().sort((a, b) => {
       return (a?.sort ?? 999) - (b?.sort ?? 999);
     });
     const _defaultAttrs = getDefaultProp(_propertys);

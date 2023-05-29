@@ -432,7 +432,9 @@ onMounted(() => {
   dragPointHook.init();
   dragSlidePointHook.init();
 
-  refreshStyle();
+  setTimeout(() => {
+    refreshStyle();
+  }, 50);
 });
 
 onUnmounted(() => {

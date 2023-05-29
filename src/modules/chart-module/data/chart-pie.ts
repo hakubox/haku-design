@@ -4,7 +4,7 @@ import { mergeBasicProps } from './basic-chart-propertys';
 import ChartPie from '../component/ChartPie.vue';
 import { App } from "vue";
 
-/** 折线图组件 */
+/** 饼图组件 */
 export function componentPieChart(app: App) {
   const _pluginInfo: PluginInfo = {
     name: 'ChartPie',

@@ -61,7 +61,7 @@
                   :class="{ 'ant-menu-item-active': editorState.appConfig.designConfig.themeCode == theme.code }"
                   v-for="(theme, index) in state.formThemes"
                   :key="'sub1-2-' + index"
-                  @click="$event => editorService.selectTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
+                  @click="$event => themeService.selectTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
                 >
                   <CheckOutlined v-show="editorState.appConfig.designConfig.themeCode == theme.code" />
                   {{theme.title}}
@@ -332,6 +332,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { state as configState, service as configService } from '@/modules/config-module';
+import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { state as versionHistoryState } from '@/modules/version-history-module';
 import { service as globalSearchService } from '@/modules/global-search-module';
 import { useComponentHandle } from '@/common/component-handle';
@@ -488,7 +489,7 @@ const menu_exportImage = () => {
 };
 /** 保存功能 */
 const save = () => {
-  historyService.exec('save', { value: 'save' });
+  historyService.exec('save', {});
 };
     
 const instance = getCurrentInstance();
@@ -605,7 +606,7 @@ const state = reactive({
     { code: 'default', title: '浅色主题' },
     { code: 'dark', title: '深色主题' },
     { code: 'translucent', title: '半透明主题' }
-  ] as { code: string, title: string }[],
+  ] as { code: "default" | "dark" | "translucent", title: string }[],
 });
 
 editorState.componentCanvas = ref(DesignCanvas);

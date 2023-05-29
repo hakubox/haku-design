@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <!-- <span style="display: block; font-size: 16px; font-weight: bold;">props</span> <span style="font-size: 12px;line-height: 10px;">{{ props }}</span> <br /> -->
-    <!-- <span style="display: block; font-size: 16px; font-weight: bold;">$attrs</span> <span style="font-size: 12px;line-height: 10px;">{{ attrs.legend }}</span> -->
-    <ComponentBasic class="component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
-      <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="attrs.height"></BaseECharts>
-    </ComponentBasic>
-  </div>
+  <!-- <span style="display: block; font-size: 16px; font-weight: bold;">props</span> <span style="font-size: 12px;line-height: 10px;">{{ props }}</span> <br /> -->
+  <!-- <span style="display: block; font-size: 16px; font-weight: bold;">$attrs</span> <span style="font-size: 12px;line-height: 10px;">{{ attrs.legend }}</span> -->
+  <ComponentBasic class="component-chart-body component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+    <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
+  </ComponentBasic>
 </template>
 
 <script lang="ts" setup>
@@ -23,6 +21,37 @@ const props = defineProps({
     type: String,
     default: () => '',
   },
+  width: {
+    type: Number,
+    default: 0
+  },
+  height: {
+    type: Number,
+    default: 0
+  },
+  title: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  legend: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  chartPadding: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  xAxis: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  yAxis: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  color: {
+    type: String
+  }
 });
 
 const attrs = useAttrs();
@@ -30,10 +59,10 @@ const attrs = useAttrs();
 const chartRef = ref<ECharts>();
 
 const getOption = () => {
-  const _gridPadding = (attrs.chartPadding as number[]).length ? (attrs.chartPadding as number[])[0] : [];
+  const _gridPadding = (props.chartPadding as number[]).length ? (props.chartPadding as number[])[0] : [];
   const option = {
-    title: attrs.title,
-    legend: attrs.legend,
+    title: props.title,
+    legend: props.legend,
     tooltip: {},
     grid: {
       top: `${_gridPadding[0]}px`,
@@ -43,18 +72,18 @@ const getOption = () => {
     },
     padding: [0, 0, 0, 0],
     xAxis: {
-      type: (attrs.xAxis as any)?.type ?? 'category',
-      ...(attrs.xAxis as any)
+      type: (props.xAxis as any)?.type ?? 'category',
+      ...(props.xAxis as any)
     },
     yAxis: {
-      type: (attrs.yAxis as any)?.type ?? 'value',
-      ...(attrs.yAxis as any)
+      type: (props.yAxis as any)?.type ?? 'value',
+      ...(props.yAxis as any)
     },
     series: JSON.parse(props.dataSource ?? []).map(i => ({
       type: i.type ?? 'bar',
       name: i.name,
       data: i.data ?? [],
-      color: i.color ?? attrs.color
+      color: i.color ?? props.color
     }))
   };
   return option;
@@ -64,16 +93,27 @@ const init = () => {
   chartRef.value?.setOption(getOption());
 }
 
-watch([attrs.position, attrs.position], (val, oldVal) => {
-  init();
-});
-
-watch(() => attrs, (val, oldVal) => {
+const setOption = (txt: string, val: any, oldVal: any) => {
+  // console.log('修改部分', txt, JSON.stringify(val), JSON.stringify(oldVal));
   chartRef.value?.setOption(getOption());
-}, {
-  deep: true
-});
+};
+
+watch([
+  props.title, props.legend, props.xAxis, props.yAxis
+], (val, oldVal) => setOption('title', val, oldVal), { deep: true });
+watch(() => props.color, (val, oldVal) => setOption('color', val, oldVal));
+watch(() => props.chartPadding, (val, oldVal) => setOption('padding', val, oldVal), { deep: true });
+
+// watch(() => props.title, (val, oldVal) => setOption('title', val, oldVal), { deep: true });
+// watch(() => attrs.legend, (val, oldVal) => setOption('legend', val, oldVal));
+// watch(() => attrs.xAxis, (val, oldVal) => setOption('xAxis', val, oldVal));
+// watch(() => attrs.yAxis, (val, oldVal) => setOption('yAxis', val, oldVal));
+// watch(() => attrs.color, (val, oldVal) => setOption('color', val, oldVal));
 onMounted(() => {
   init();
 });
 </script>
+
+<style lang="less" scoped>
+@import '../assets/less/index.less';
+</style>

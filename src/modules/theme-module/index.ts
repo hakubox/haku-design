@@ -100,6 +100,7 @@ export const service = {
     y: number;
   } | undefined) {
     historyService.exec('change-theme', {
+      objectId: 'global',
       value: themeCode,
       attrs: {
         themeTitle: themeTitle,

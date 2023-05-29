@@ -191,7 +191,7 @@ export function useComponentHandle() {
   ) {
     historyService.exec('copy-component', {
       objectId: component.id,
-      value: component,
+      value: component as Component,
       attrs: {
         index: index + 1,
         parentComponentId,
@@ -211,7 +211,7 @@ export function useComponentHandle() {
   ) {
     historyService.exec('remove-component', {
       objectId: componentId,
-      value: component,
+      value: component as Component,
       attrs: { index: index + 1, componentId, parentComponentId },
     });
     refresh();

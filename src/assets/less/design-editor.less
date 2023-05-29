@@ -887,6 +887,28 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
+  
+  > .app-canvas-bg-panel {
+    --image-repeat: no-repeat;
+    --image-position: center center;
+    --image-size: auto;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    > .app-canvas-bg-panel-layer {
+      pointer-events: none;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      background-repeat: var(--image-repeat);
+      background-position: var(--image-position);
+      background-size: var(--image-size);
+    }
+  }
 
   &.preview {
     .form-component {

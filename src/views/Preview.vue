@@ -2,6 +2,22 @@
   <Loading v-if="state.isLoading" size="36px" vertical style="margin-top: 50vh; transform: translateY(-50%);">加载中...</Loading>
   <Empty v-else-if="!state.isLoading && state.errorMsg" image="error" :description="state.errorMsg" style="margin-top: 50vh; transform: translateY(-50%);" />
   <div v-else class="app-canvas" :class="editorState.currentPage.pageType" style="height: 100vh;">
+    <!-- 背景 -->
+    <template v-if="editorState.appConfig.background?.length">
+      <div
+        class="app-canvas-bg-panel"
+        :style="[item.parentStyle, {
+          opacity: item.opacity,
+          mixBlendMode: item.blendType
+        }]"
+        v-for="item in editorState.appConfig.background.filter(i => i.show)"
+      >
+        <div
+          class="app-canvas-bg-panel-layer"
+          :style="item.innerStyle"
+        ></div>
+      </div>
+    </template>
     <!-- 问卷标题 -->
     <div class="form-header" v-show="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.appType === AppType.questionnaire">
       <span class="form-title">{{editorState.appConfig.appTitle}}</span>
