@@ -1,5 +1,5 @@
 <template>
-  <ComponentBasic class="component-chart-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-chart-pie" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height"></BaseECharts>
   </ComponentBasic>
 </template>
@@ -25,8 +25,8 @@ const props = defineProps({
   },
   /** 高度 */
   height: {
-    type: String,
-    default: '200px',
+    type: Number,
+    default: 200,
   },
   /** 绑定数据 */
   position: {
@@ -52,17 +52,13 @@ const init = () => {
     title: {
       text: props.title
     },
-    xAxis: {
-      type: 'category',
-    },
-    yAxis: {
-      type: 'value',
+    tooltip: {
+      trigger: 'item'
     },
     series: [
       {
-        type: 'line',
+        type: 'pie',
         data: JSON.parse(props.dataSource),
-        color: props.color
       }
     ]
   };
@@ -74,7 +70,6 @@ watch(() => [props.position, props.position], (val, oldVal) => {
     init();
   }
 });
-
 watch(() => props.color, (val, oldVal) => {
   console.log(val)
   if (val !== oldVal) {

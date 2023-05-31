@@ -22,7 +22,7 @@ const props = defineProps({
     default: false,
   },
   options: {
-    type: Array as PropType<{ label?: string, prop: string, min?: number, unit?: string }[]>,
+    type: Array as PropType<{ label?: string, prop?: string, min?: number, unit?: string }[]>,
     default: () => []
   }
 });

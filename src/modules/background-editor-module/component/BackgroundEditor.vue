@@ -51,7 +51,7 @@ import {
 import { throttle, toDecimal } from '@/tools/common';
 import { Slider, Empty } from 'ant-design-vue';
 import { toHex } from '@/lib/color/Color';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 const props = defineProps({
   /** 当前值 */
@@ -69,7 +69,7 @@ const removeItem = (index: number) => {
 }
 
 const onChange = throttle(() => {
-  bus.$emit('background_editor_change');
+  bus.$emit(GlobalBusType.backgroundEditorChange);
 }, 30);
 
 const changeCurrentBg = (index: number) => {
@@ -178,7 +178,7 @@ const toggleDialog = (e: MouseEvent, index: number) => {
     backgroundEditorState.isShow = true;
     backgroundEditorState.currentGradientItemIndex = index;
     backgroundEditorState.currentBackground = props.value[index];
-    bus.$emit('background_editor_change');
+    bus.$emit(GlobalBusType.backgroundEditorChange);
   } else {
     backgroundEditorState.currentGradientItemIndex = -1;
     backgroundEditorState.isShow = false;

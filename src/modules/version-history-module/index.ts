@@ -1,6 +1,6 @@
 import type { VersionHistoryInstance } from './index.d';
 import { getQuestionaryVersionList, setQuestionaryVersion } from "@/api/questionnaire";
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
 
@@ -39,7 +39,7 @@ export const service = {
   setQuestionaryVersion(id: string, version: number) {
     setQuestionaryVersion(id, version).then(res => {
       toast('问卷版本切换成功', 'success');
-      state.bus.$emit('version_change');
+      state.bus.$emit(GlobalBusType.versionChange);
       service.getQuestionaryVersionList(id);
     }).catch(([err]) => {
       

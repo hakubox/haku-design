@@ -2,7 +2,7 @@ import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@/lib/clone';
 import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect, FormDimensionItem } from '@/@types';
 import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@/@types/enum';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { getComponents } from '@/data/form-components';
 import { initRemoteDevices } from '@/data/form-devices';
 import { getEditors } from '../../data/property-editor';
@@ -635,8 +635,8 @@ export const service = {
     
     await timeout(20);
 
-    state.bus.$emit('component_change', formComponents);
-    state.bus.$emit('prop_change');
+    state.bus.$emit(GlobalBusType.componentChange, formComponents);
+    state.bus.$emit(GlobalBusType.propChange);
 
     state.currentSelectedComponents = formComponents;
 
@@ -753,7 +753,7 @@ export const service = {
   },
   /** 根据Id获取表单控件（默认获取编辑模式主画板下组件） */
   getComponentElementById(componentId?: string, canvasEl?: HTMLElement): HTMLElement | undefined {
-    return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector<HTMLElement>(`[component-id="${componentId}"]`) ?? undefined : undefined;
+    return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector(`[component-id="${componentId}"]`) ?? undefined : undefined;
   },
   /** 显示或隐藏游标 */
   changeComponentCursorByLine(component: HTMLElement | undefined | false, isAfter: boolean = false, isInner: boolean = true) {
@@ -1263,10 +1263,14 @@ export const state = reactive({
   currentFormPageIndex: 0,
   /** 【题目页】上一次分页索引 */
   prevFormPageIndex: 0,
-  /** 画板 */
-  canvasEl: {} as HTMLElement,
-  /** 画板主面板元素 */
-  canvasPanelEl: {} as HTMLElement,
+  /** 画板（HTMLElement） */
+  canvasEl: {} as any,
+  /** 画板主面板元素（HTMLElement） */
+  canvasPanelEl: {} as any,
+  /** 组件放置游标（HTMLElement） */
+  componentCursorEl: document.createElement('div') as any,
+  /** Footer Dom（HTMLElement） */
+  footerDom: undefined as any | undefined,
   /** 页面列表 */
   pages: [
     { pageTitle: '主页', pageType: PageType.normalPage, children: [] },
@@ -1304,16 +1308,12 @@ export const state = reactive({
   componentCursorParentEl: undefined as any,
   /** 游标父元素前后位置 */
   componentCursorIsAfter: undefined as boolean | undefined,
-  /** 组件放置游标 */
-  componentCursorEl: document.createElement('div') as HTMLElement,
   /** 画布主panel */
   rootPanelEl: null as any,
   /** 设备类型列表 */
   devices: initRemoteDevices() as Record<string, RemoteDevice>,
   /** 属性编辑器库 */
   propertyEditors: getEditors,
-  /** Footer Dom */
-  footerDom: undefined as HTMLElement | undefined,
   /** 已选择的所有组件Id列表 */
   currentSelectedIds: computed((): string[] => {
     return state.currentSelectedComponents.map(i => i.id);

@@ -1,6 +1,7 @@
 import { reactive, h, toRefs, ConcreteComponent, ref } from 'vue';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
 import { Component, ComponentProperty, GeneralProperty, PropertyEditor } from '@/@types';
+import { cloneLoop } from '@/lib/clone';
 
 /** 应用操作模块 */
 export function useAppHandle() {
@@ -16,31 +17,59 @@ export function useAppHandle() {
       const prop = props[i];
       if (prop.default !== undefined && prop.default !== null) {
         if (prop.names) {
+          if (prop.children) {
+            console.warn('属性定义不能同时包含names及children属性，会自动忽略children属性。', prop);
+          }
+          /** 如果也同时包含name的情况 */
+          let _objf = model;
+          if (prop.name) {
+            if (typeof prop.name === 'string') {
+              _objf = model[prop.name];
+            } else {
+              for (let i = 0; i < prop.name.length; i++) {
+                const _name = prop.name[i];
+                if (!_objf[_name]) _objf[_name] = {};
+                _objf = _objf[_name];
+              }
+            }
+          }
           prop.names.forEach((name, nameIndex) => {
             const _default = typeof prop.default[nameIndex] === 'function' ? prop.default[nameIndex]() : prop.default[nameIndex];
-            let _obj = model;
             if (Array.isArray(name)) {
+              let _obj = _objf;
               const _names = name as string[];
               for (let i = 0; i < _names.length - 1; i++) {
                 _obj = _obj[_names[i]];
               }
               _obj[_names.at(-1)!] = _default;
             } else {
-              _obj[name] = _default;
+              _objf[name] = _default;
             }
           });
+
+          if (prop.names.includes('dd')) {
+            console.log('dd', model);
+          }
         } else {
           let _name = '';
           if (Array.isArray(prop.name)) {
+            // if (Array.isArray(prop.name) && prop.name.includes('xAxis') && prop.name.includes('position')) {
+            //   debugger;
+            // }
+            const objArr = [model];
             for (let i = 0; i < prop.name.length - 1; i++) {
               _name = prop.name[i];
-              if (!model[_name]) model[_name] = {};
+              const _obj = objArr[i];
+              if (!_obj[_name]) _obj[_name] = {};
+              objArr[i + 1] = _obj[_name];
             }
-            _name = prop.name.at(-1)!;
+            objArr.at(-1)![prop.name.at(-1)!] = typeof prop.default === 'function' ? prop.default() : prop.default;
+            if (prop.children) getDefaultProp(prop.children, model);
           } else if (!model[prop.name]) {
             _name = prop.name;
+            if (prop.children) getDefaultProp(prop.children, model);
+            if (_name) model[_name] = typeof prop.default === 'function' ? prop.default() : prop.default;
           }
-          if (_name) model[_name] = typeof prop.default === 'function' ? prop.default() : prop.default;
         }
       }
     }
@@ -87,9 +116,22 @@ export function useAppHandle() {
   function getVal(model: Record<string, any>, prop: ComponentProperty | GeneralProperty) {
     let _returnValue;
     if (prop.names) {
+      /** 如果也同时包含name的情况 */
+      let _objf = model;
+      if (prop.name) {
+        if (typeof prop.name === 'string') {
+          _objf = model[prop.name];
+        } else {
+          for (let i = 0; i < prop.name.length; i++) {
+            const _name = prop.name[i];
+            if (!_objf[_name]) _objf[_name] = {};
+            _objf = _objf[_name];
+          }
+        }
+      }
       _returnValue = prop.names.map(name => {
         if (Array.isArray(name)) {
-          let _obj = model;
+          let _obj = _objf;
           const _names = name;
           for (let i = 0; i < _names.length; i++) {
             _obj = _obj[_names[i]];
@@ -97,7 +139,7 @@ export function useAppHandle() {
           if (prop.format && _obj?.value === undefined) _obj = prop.format(_obj);
           return _obj;
         } else {
-          return model[name]
+          return _objf[name]
         }
       });
     } else {
@@ -134,25 +176,37 @@ export function useAppHandle() {
     if (prop.names) {
       for (let i = 0; i < prop.names.length; i++) {
         const name = prop.names[i];
-        let _obj = model;
+        /** 如果也同时包含name的情况 */
+        let _objf = model;
+        if (prop.name) {
+          if (typeof prop.name === 'string') {
+            _objf = model[prop.name];
+          } else {
+            for (let i = 0; i < prop.name.length; i++) {
+              const _name = prop.name[i];
+              if (!_objf[_name]) _objf[_name] = {};
+              _objf = _objf[_name];
+            }
+          }
+        }
         let _name;
         if (Array.isArray(name)) {
           const _names = name as string[];
           for (let i = 0; i < _names.length - 1; i++) {
-            _obj = _obj[_names[i]];
+            _objf = _objf[_names[i]];
           }
           _name = _names[_names.length - 1];
         } else {
           _name = name;
         }
-        if (_obj[_name].type) {
-          if (_obj[_name].value !== value[i]) {
-            _obj[_name].value = value[i];
-            if (editor && editor.name === prop.editor) _obj['__' + _name].value = value[i];
+        if (_objf[_name].type) {
+          if (_objf[_name].value !== value[i]) {
+            _objf[_name].value = value[i];
+            if (editor && editor.name === prop.editor) _objf['__' + _name].value = value[i];
           }
         } else {
-          _obj[_name] = value[i];
-          if (editor && editor.name === prop.editor) _obj['__' + _name] = value[i];
+          _objf[_name] = value[i];
+          if (editor && editor.name === prop.editor) _objf['__' + _name] = value[i];
         }
       }
     } else {

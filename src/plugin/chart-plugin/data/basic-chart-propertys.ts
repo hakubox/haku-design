@@ -2,13 +2,35 @@ import { ComponentProperty } from "@/@types";
 import { AppType, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
 
 /** 获取文本样式属性 */
-export function getTextStyle(name: string[], title: string = '文本'): ComponentProperty {
+export function getTextStyle({
+  name, title = '文本'
+}: {
+  name: string[],
+  title: string
+}): ComponentProperty {
+  const _textProps = [
+    { name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color },
+    { name: [...name, 'fontSize'], title: '字体大小', default: 12, editor: ComponentPropertyEditor.int },
+    { name: [...name, 'fontStyle'], title: '字体风格', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+      { label: 'normal', value: 'normal' }, { label: 'italic', value: 'italic' }, { label: 'oblique', value: 'oblique' }
+    ] } },
+    { name: [...name, 'fontWeight'], title: '字体粗细', default: 'normal', editor: ComponentPropertyEditor.int, attrs: { options: [
+      { label: 'normal', value: 'normal' }, { label: 'bold', value: 'bold' }, { label: 'bolder', value: 'bolder' }, { label: 'lighter', value: 'lighter' },
+    ] }  },
+    { name: [...name, 'align'], title: '水平对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+      { label: 'auto', value: 'auto' }, { label: 'left', value: 'left' }, { label: 'center', value: 'center' }, { label: 'right', value: 'right' },
+    ] } },
+    { name: [...name, 'verticalAlign'], title: '垂直对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+      { label: 'auto', value: 'auto' }, { label: 'top', value: 'top' }, { label: 'middle', value: 'middle' }, { label: 'bottom', value: 'bottom' },
+    ] } },
+    { name: [...name, 'lineHeight'], title: '行高', editor: ComponentPropertyEditor.int },
+    { name: [...name, 'padding'], title: '文字边距', editor: ComponentPropertyEditor.box, attrs: { single: true } },
+    { name: [...name, 'backgroundColor'], title: '文字背景色', editor: ComponentPropertyEditor.color },
+    
+  ];
   return {
     name: name, title: title, group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.json,
-    children: [
-      { name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color },
-      { name: [...name, 'fontSize'], title: '文字大小', editor: ComponentPropertyEditor.color },
-    ]
+    children: _textProps
   };
 }
 
@@ -36,8 +58,8 @@ export const basicChartPropertys: ComponentProperty[] = [
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     remark: '是否在界面上显示。'
   }, {
-    name: ['title', 'isShow'], title: '标题', default: false,
-    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine,
+    name: ['title', 'show'], title: '标题', default: false,
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
       {
         name: ['title', 'text'], title: '标题', default: '图表标题',
@@ -46,13 +68,13 @@ export const basicChartPropertys: ComponentProperty[] = [
         name: ['title', 'link'], title: '跳转链接',
         editor: ComponentPropertyEditor.singerLine,
       }, {
-        name: ['title', 'left'], title: '左侧距离', default: 'auto',
+        name: ['title', 'left'], title: '左侧距离', default: 'center',
         editor: ComponentPropertyEditor.singerLine,
       }, {
         name: ['title', 'right'], title: '右侧距离', default: 'auto',
         editor: ComponentPropertyEditor.singerLine,
       }, {
-        name: ['title', 'top'], title: '顶部距离', default: 'auto',
+        name: ['title', 'top'], title: '顶部距离', default: 'top',
         editor: ComponentPropertyEditor.singerLine,
       }, {
         name: ['title', 'bottom'], title: '底部距离', default: 'auto',
@@ -94,10 +116,22 @@ export const basicChartPropertys: ComponentProperty[] = [
     children: [
       { name: ['legend', 'itemGap'], title: '图例间隔', editor: ComponentPropertyEditor.width, },
       { name: ['legend', 'itemWidth'], title: '图例宽度', editor: ComponentPropertyEditor.width, },
-      { name: ['legend', 'left'], title: '左侧距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, },
+      { name: ['legend', 'left'], title: '左侧距离', default: 'right', editor: ComponentPropertyEditor.singerLine, },
       { name: ['legend', 'right'], title: '右侧距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, },
       { name: ['legend', 'top'], title: '顶部距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, },
       { name: ['legend', 'bottom'], title: '底部距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, }, 
+    ]
+  }, {
+    name: ['label', 'show'], title: '标签', default: true,
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+    children: [
+      { name: ['label', 'distance'], title: '距离', editor: ComponentPropertyEditor.width, },
+      { name: ['label', 'rotate'], title: '旋转角度', editor: ComponentPropertyEditor.int, attrs: { min: -90, max: 90 } },
+      { name: ['label', 'offset'], title: '偏移', default: [0, 0], editor: ComponentPropertyEditor.numbers, attrs: {
+        options: [ { label: 'x', unit: 'px' }, { label: 'y', unit: 'px' } ]
+      } },
+      { name: ['label', 'formatter'], title: '格式化', editor: ComponentPropertyEditor.singerLine, },
+      // getTextStyle({ name: ['label'], title: '文本' })
     ]
   }, {
     names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
@@ -106,8 +140,8 @@ export const basicChartPropertys: ComponentProperty[] = [
     name: ['xAxis', 'show'], title: 'x轴', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
-      { name: ['xAxis', 'name'], title: 'x轴名称', editor: ComponentPropertyEditor.singerLine, },
-      { name: ['xAxis', 'position'], title: 'x轴位置', editor: ComponentPropertyEditor.dropdownList, attrs: {
+      // { name: ['xAxis', 'name'], title: 'x轴名称', editor: ComponentPropertyEditor.singerLine, },
+      { name: ['xAxis', 'position'], title: 'x轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'bottom', attrs: {
         options: [
           { label: '上方', value: 'top' },
           { label: '下方', value: 'bottom' },
@@ -126,8 +160,8 @@ export const basicChartPropertys: ComponentProperty[] = [
     name: ['yAxis', 'show'], title: 'y轴', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
-      { name: ['yAxis', 'name'], title: 'y轴名称', editor: ComponentPropertyEditor.singerLine, },
-      { name: ['yAxis', 'position'], title: 'x轴位置', editor: ComponentPropertyEditor.dropdownList, attrs: {
+      // { name: ['yAxis', 'name'], title: 'y轴名称', editor: ComponentPropertyEditor.singerLine, },
+      { name: ['yAxis', 'position'], title: 'y轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'left', attrs: {
         options: [
           { label: '左侧', value: 'left' },
           { label: '右侧', value: 'right' },

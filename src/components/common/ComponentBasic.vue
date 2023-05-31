@@ -7,7 +7,7 @@
     :class="[{ required: props.required }, className]"
     :layout="layout"
   >
-    <label class="component-item-label" v-if="componentLabel ?? label">
+    <label class="component-item-label" v-if="props.show && (componentLabel ?? label)">
       {{ editerState.appConfig.questionnaireConfig.showNo && component.isFormItem ? serialNumberService.getQuestionNo(id) : '' }}
       <span v-html="componentLabel ?? label"></span>
     </label>
@@ -33,6 +33,11 @@ const props = defineProps({
   id: {
     type: String,
     required: true,
+  },
+  /** 是否显示 */
+  show: {
+    type: Boolean,
+    default: true,
   },
   /** 标签 */
   label: {

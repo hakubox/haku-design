@@ -19,7 +19,7 @@
         class="color-picker-disk"
         ref="colorPickerDisk"
         :style="{ 'background-color': diskBackGround }"
-        @mousedown="handleStartDrag"
+        @mousedown.stop="handleStartDrag"
       >
         <div class="color-picker-disk-point" :style="{ transform: `translate(${state.cursorLeft}px, ${state.cursorTop}px)` }"></div>
       </div>
@@ -35,14 +35,16 @@
         :max="360"
         class="color-picker-slider-disk"
         :slider-style="{ background: 'linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)' }"
+        @change="refreshHue"
       />
       <!-- 透明度 -->
       <color-picker-slider
-        v-if="showAlpha"
         v-model:value="alpha"
-        :max="100"
+        :max="1"
+        :decimal="2"
         class="color-picker-slider-alpha"
         :slider-style="{ background: `linear-gradient(90deg,${setAlpha(0)} 0%,${setAlpha(1)} 100%)` }"
+        @change="refreshAlpha"
       />
 
       <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 9px" />
@@ -73,7 +75,7 @@
         </div>
         <div class="color-picker-footer-tools">
           <button class="color-picker-footer-tools-clear" v-if="canClear">清空</button>
-          <button class="color-picker-footer-tools-confirm" @click="comfirm">确定</button>
+          <!-- <button class="color-picker-footer-tools-confirm" @click="comfirm">确定</button> -->
         </div>
       </div>
     </div>
@@ -82,18 +84,13 @@
 
 <script lang="ts" setup>
 import Color from '@/lib/color/Color';
-import { toRefs, reactive, ref, watch, PropType, defineComponent, computed, onMounted, onUnmounted } from 'vue';
+import { reactive, ref, PropType, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   /** 当前颜色 */
   value: {
     type: String,
     default: '',
-  },
-  /** 显示透明色 */
-  showAlpha: {
-    type: Boolean,
-    default: true,
   },
   /** 颜色类型 */
   colorType: {
@@ -207,15 +204,12 @@ const init = () => {
   state.color.fromString(props.value.trim().toLowerCase());
   state.color.format = props.colorType;
   alpha.value = state.color._alpha;
-  document.body.addEventListener('mouseup', handleEndDrag, { capture: true, passive: true });
-  document.body.addEventListener('mousemove', handleDrag, { capture: true, passive: true });
-  document.body.addEventListener('mousedown', shrinkPicker, { capture: true, passive: true });
 
   let _historyList: any = sessionStorage.getItem('colorPickerHistory');
 
   if (!_historyList || !_historyList.length) {
     const _color = new Color({
-      enableAlpha: props.showAlpha,
+      enableAlpha: true,
       format: props.colorType,
     });
     _historyList = [];
@@ -231,8 +225,27 @@ const init = () => {
   state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
 };
 const handleStartDrag = (e) => {
+  console.log('开始取色');
   state.isStartDrag = true;
   handleDrag(e);
+};
+/** 刷新颜色色环值 */
+const refreshHue = (val) => {
+  state.color.set({
+    hue: val,
+  });
+  state.newValue = state.color.value;
+  emit('update:value', state.newValue);
+  emit('change', state.newValue);
+};
+/** 刷新颜色透明度 */
+const refreshAlpha = (val) => {
+  state.color.set({
+    alpha: val,
+  });
+  state.newValue = state.color.value;
+  emit('update:value', state.newValue);
+  emit('change', state.newValue);
 };
 /** 在色板取色 */
 const handleDrag = (e) => {
@@ -249,6 +262,9 @@ const handleDrag = (e) => {
       value: 100 - (top / rect.height) * 100,
     });
     state.newValue = state.color.value;
+    
+    emit('update:value', state.newValue);
+    emit('change', state.newValue);
   }
 };
 /** 拖拽完毕 */
@@ -304,6 +320,7 @@ const extendPicker = () => {
 };
 /** 收缩 */
 const shrinkPicker = () => {
+  console.log('收缩了');
   state.showPicker = false;
 };
 /** 确定 */
@@ -331,13 +348,17 @@ onMounted(() => {
     format: props.colorType,
   }) as Color;
 
+  document.body.addEventListener('mouseup', handleEndDrag, { passive: true });
+  document.body.addEventListener('mousemove', handleDrag, { passive: true });
+  document.body.addEventListener('mousedown', shrinkPicker, { passive: true });
+
   init();
 });
 
 onUnmounted(() => {
-  document.body.addEventListener('mouseup', handleEndDrag);
-  document.body.addEventListener('mousemove', handleDrag);
-  document.body.addEventListener('mousedown', shrinkPicker);
+  document.body.removeEventListener('mouseup', handleEndDrag);
+  document.body.removeEventListener('mousemove', handleDrag);
+  document.body.removeEventListener('mousedown', shrinkPicker);
 });
 </script>
 

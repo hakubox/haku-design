@@ -4,7 +4,7 @@ import { ComponentPropertyEditor } from '@/@types/enum';
 import { watch, computed } from 'vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '@/modules/background-editor-module';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
 
@@ -97,7 +97,7 @@ export const propertyEditors: Array<InitPropertyEditor> = [
       addonAfter: '颜色',
       size: 'small',
       showAlpha: false,
-      colorType: 'hex',
+      colorType: 'rgb',
       canChangeColorType: false,
       canClear: false,
     },
@@ -415,7 +415,7 @@ export const propertyEditors: Array<InitPropertyEditor> = [
           });
           backgroundEditorState.isShow = true;
           backgroundEditorState.currentBackground = _bgs[_bgs.length - 1];
-          bus.$emit('background_editor_change');
+          bus.$emit(GlobalBusType.backgroundEditorChange);
         }
       }
     ],

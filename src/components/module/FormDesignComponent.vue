@@ -266,7 +266,7 @@ import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from
 import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@/@types/enum';
 import { getBoxModel } from '@/tools/common';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 
 const props = defineProps({
@@ -322,27 +322,6 @@ const emit = defineEmits<{
   (event: 'setData', id: string, value: any): void;
 }>();
 
-const getStyle = () => {
-  if (editorState.appConfig.appType === AppType.canvas) {
-    if (props.component.isGroup) {
-      return getComponentsRectStyle(props.component.children, {
-        position: position
-      });
-    } else {
-      return {
-        position: position,
-        zIndex: props.component.attrs.sticky ? 1 : 'initial',
-        width: `${getComponentWidth.value}px`,
-        height: `${getComponentHeight.value}px`,
-        top: `${editorState.appConfig.appType === AppType.canvas ? props.component.attrs.y : (props.component.attrs.sticky ? '0px' : 'initial')}px`,
-        left: `${props.component.attrs.x}px`,
-        transform: `rotate(${props.component.attrs.rotate || 0}deg)`
-      } as unknown as StyleValue;
-    }
-  }
-  return {};
-};
-
 /** 获取组件宽度 */
 const getComponentWidth = computed(() => {
   let width = 0;
@@ -391,7 +370,7 @@ const getComponentHeight = computed(() => {
   return height;
 });
 
-bus.$on('onAutoSizeChange', (component: Component) => {
+bus.$on(GlobalBusType.autoSizeChange, (component: Component) => {
   if (props.componentId === component.id) {
     if (component.attrs.autowidth || component.attrs.autoheight) {
       nextTick(() => {
@@ -408,7 +387,7 @@ const getAttr = (value: any) => {
   if (!value) return value;
   if (value?.value?.dataOrigin === 'data-editor') {
     return formFillService.getOriginDataValue(value.value);
-  } else if (value.type) {
+  } else if (value.type && value.value !== undefined) {
     switch (value.type) {
       case 'data-variable':
         return variableService.getVar(value.value);

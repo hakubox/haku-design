@@ -14,8 +14,8 @@
     :placeholder="placeholder"
     @change="change"
   >
-    <template v-if="$attrs.suffix" #addonAfter>
-      <span>{{ $attrs.suffix }}</span>
+    <template v-if="props.suffix" #addonAfter>
+      <span>{{ props.suffix }}</span>
     </template>
     <!-- <template v-else #addonAfter>
       <slot name="suffix"></slot>
@@ -54,6 +54,10 @@ const props = defineProps({
   width: {
     type: String,
     default: '100%'
+  },
+  suffix: {
+    type: String,
+    default: ''
   },
   /** 是否开启节流事件 */
   openThrottle: {

@@ -6,6 +6,7 @@ import { createModelId, timeFormat } from '@/tools/common';
 import type { VariableTreeNode, VariableType } from './index.d';
 import { cloneForce } from '@/lib/clone';
 import { computed, reactive } from 'vue';
+import { GlobalBusType } from '@/tools/bus';
 
 export * from './index.d';
 
@@ -102,7 +103,7 @@ export const state = reactive({
 export const service = {
   /** 更新变量 */
   updateVariable() {
-    editorState.bus.$emit('update-variable');
+    editorState.bus.$emit(GlobalBusType.updateVariable);
   },
   /** 获取系统变量Map */
   getSystemVariableMap() {

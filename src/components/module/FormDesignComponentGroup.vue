@@ -240,7 +240,7 @@ import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@/@types/enum';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 
 const props = defineProps({
@@ -344,7 +344,7 @@ const getComponentHeight = computed(() => {
   return height;
 });
 
-bus.$on('onAutoSizeChange', (component: Component) => {
+bus.$on(GlobalBusType.autoSizeChange, (component: Component) => {
   if (props.componentId === component.id) {
     if (component.attrs.autowidth || component.attrs.autoheight) {
       nextTick(() => {

@@ -1,7 +1,7 @@
 import type { IDomEditor, IButtonMenu } from '@wangeditor/editor';
 import { reactive, ConcreteComponent } from 'vue';
 import { Boot } from '@wangeditor/editor';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import VariablePickerDialog from './VariablePickerDialog.vue';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
 
@@ -14,7 +14,7 @@ const state = reactive({
 
 let _editor: IDomEditor | undefined;
 
-bus.$on('variable-picker-select', (val) => {
+bus.$on(GlobalBusType.variablePickerSelect, (val) => {
   if (_editor) {
     _editor.focus();
     _editor.insertText(`{{ ${val} }}`);

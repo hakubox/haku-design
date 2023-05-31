@@ -1,7 +1,7 @@
 <template>
   <!-- <span style="display: block; font-size: 16px; font-weight: bold;">props</span> <span style="font-size: 12px;line-height: 10px;">{{ props }}</span> <br /> -->
   <!-- <span style="display: block; font-size: 16px; font-weight: bold;">$attrs</span> <span style="font-size: 12px;line-height: 10px;">{{ attrs.legend }}</span> -->
-  <ComponentBasic class="component-chart-body component-chart-bar" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-chart-body component-chart-bar" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
   </ComponentBasic>
 </template>
@@ -49,6 +49,10 @@ const props = defineProps({
     type: Object,
     default: () => ({ show: false })
   },
+  label: {
+    type: Object,
+    default: () => ({ show: false })
+  },
   color: {
     type: String
   }
@@ -71,14 +75,9 @@ const getOption = () => {
       left: `${_gridPadding[3]}px`,
     },
     padding: [0, 0, 0, 0],
-    xAxis: {
-      type: (props.xAxis as any)?.type ?? 'category',
-      ...(props.xAxis as any)
-    },
-    yAxis: {
-      type: (props.yAxis as any)?.type ?? 'value',
-      ...(props.yAxis as any)
-    },
+    label: props.label,
+    xAxis: props.xAxis,
+    yAxis: props.yAxis,
     series: JSON.parse(props.dataSource ?? []).map(i => ({
       type: i.type ?? 'bar',
       name: i.name,
@@ -99,7 +98,7 @@ const setOption = (txt: string, val: any, oldVal: any) => {
 };
 
 watch([
-  props.title, props.legend, props.xAxis, props.yAxis
+  props.title, props.legend, props.xAxis, props.yAxis, props.label,
 ], (val, oldVal) => setOption('title', val, oldVal), { deep: true });
 watch(() => props.color, (val, oldVal) => setOption('color', val, oldVal));
 watch(() => props.chartPadding, (val, oldVal) => setOption('padding', val, oldVal), { deep: true });

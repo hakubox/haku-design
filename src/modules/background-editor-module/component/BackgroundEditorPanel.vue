@@ -143,7 +143,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { toast } from '@/common/message';
 import { toDecimal, distance, getPerpendicularPoint } from '@/tools/common';
 import { useDragHook } from '@/tools/drag';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { Component } from '@/@types';
 
 const state = reactive({
@@ -166,7 +166,7 @@ const state = reactive({
 
 const gradientEditorPanel = ref<HTMLElement>();
 
-bus.$on('background_editor_change', () => {
+bus.$on(GlobalBusType.backgroundEditorChange, () => {
   refreshStyle();
 });
 
@@ -420,7 +420,7 @@ const refreshStyle = () => {
 watch(() => backgroundEditorState.isShow && backgroundEditorState.currentBackground.show, () => {
   const _components = editorState.currentSelectedComponents.find(i => !i.isGroup);
   if (_components) {
-    const _dom = editorState.canvasPanelEl.querySelector<HTMLElement>(`[component-id="${_components.id}"]`);
+    const _dom = editorState.canvasPanelEl.querySelector(`[component-id="${_components.id}"]`);
     if (_dom) {
       state.componentEl = _dom;
     }
@@ -457,6 +457,7 @@ onUnmounted(() => {
   &.visible {
     visibility: visible;
     opacity: 1.0;
+    z-index: 1;
   }
 
   > .mark-point {

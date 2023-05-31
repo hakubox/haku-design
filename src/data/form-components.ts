@@ -2,7 +2,7 @@ import { Component, ComponentProperty, LayoutConfig, SetPartial } from "@/@types
 import { LayoutType, PropertyLayout, ComponentPropertyEditor, ComponentPropertyGroup, ComponentCategory, MainAxisAlignment, CrossAxisAlignment, AppType } from '@/@types/enum';
 import { createModelId } from "@/tools/common";
 import { watch, computed } from 'vue';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { state as editorState } from "@/modules/editor-module";
 import { useAppHandle } from '@/common/app-handle';
 
@@ -1552,7 +1552,7 @@ export let formComponents: InitComponent[] = [
           } else {
             component.attrs.disabledWidth = false;
           }
-          bus.$emit('onAutoSizeChange', component);
+          bus.$emit(GlobalBusType.autoSizeChange, component);
         }
       }, {
         name: 'autoheight', title: '自动高度', default: true, visible: true,
@@ -1564,7 +1564,7 @@ export let formComponents: InitComponent[] = [
           } else {
             component.attrs.disabledHeight = false;
           }
-          bus.$emit('onAutoSizeChange', component);
+          bus.$emit(GlobalBusType.autoSizeChange, component);
         }
       }, {
         name: 'visible', title: '是否显示', default: true, visible: true,
@@ -1586,13 +1586,13 @@ export let formComponents: InitComponent[] = [
         name: 'text', title: '内容', default: '文本',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.multiLine,
         change(prop, propMap, component) {
-          bus.$emit('onAutoSizeChange', component);
+          bus.$emit(GlobalBusType.autoSizeChange, component);
         }
       }, {
         name: 'description', title: '富文本内容', default: '', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         change(prop, propMap, component) {
-          bus.$emit('onAutoSizeChange', component);
+          bus.$emit(GlobalBusType.autoSizeChange, component);
         }
       }, {
         name: 'margin', title: '外边距', default: [0,0,0,0],
@@ -2091,9 +2091,15 @@ export let formComponents: InitComponent[] = [
   // },
 ];
 
+/** 组件列表 */
+let _components;
+
 /** 获取所有组件 */
 export const getComponents = computed<InitComponent[]>(() => {
-  return initComponents();
+  if (!_components) {
+    _components = initComponents();
+  }
+  return _components;
 });
 
 export function initComponents(componentList: InitComponent[] = []): InitComponent[] {
@@ -2127,6 +2133,10 @@ export function initComponents(componentList: InitComponent[] = []): InitCompone
   });
   return _re;
 }
+
+bus.$on(GlobalBusType.addShopComponent, () => {
+  _components = initComponents();
+});
 
 export const setFormComponents = (items) => {
   formComponents = items;

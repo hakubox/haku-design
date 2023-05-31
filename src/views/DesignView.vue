@@ -357,6 +357,7 @@ import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue
 import Thumbnail from '@/components/common/Thumbnail.vue';
 import domtoimage from 'dom-to-image-more';
 import { ApiMethodType, download } from '@/lib/api';
+import { GlobalBusType } from '@/tools/bus';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
@@ -373,7 +374,7 @@ const onScroll = throttle((e) => {
   const { y, x } = editorState.canvasPanelEl.getBoundingClientRect();
   editorState.canvasLocation.y = editorState.canvasPanelEl.scrollTop - y;
   editorState.canvasLocation.x = editorState.canvasPanelEl.scrollLeft - x;
-}, 150);
+}, 50);
 
 /** 画布缩放事件 */
 const onResize = (e) => {
@@ -526,7 +527,7 @@ const getDataById = id => {
 }
 
 /** 监听问卷版本切换 */
-versionHistoryState.bus.$on('version_change', () => {
+versionHistoryState.bus.$on(GlobalBusType.versionChange, () => {
   getDataById(route.query.qid);
 });
 
@@ -563,7 +564,7 @@ onMounted(() => {
   window.onresize = () => {
     editorService.onPageSize();
   };
-  editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
+  editorState.bus.$on(GlobalBusType.componentHandle, (eventName, params, component: Component) => {
     componentHandle(eventName, params, component);
   });
   document.body.addEventListener('mousemove', globalMouseMove, { passive: true });

@@ -83,7 +83,7 @@ import GradientSlider from './common/GradientSlider.vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '../';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { AppType } from '@/@types/enum';
 
 const emit = defineEmits<{
@@ -108,7 +108,7 @@ const change = () => {
   if (backgroundEditorState.currentBackground.type === 'color') {
     backgroundEditorState.currentBackground.opacity = backgroundEditorState.currentBackground.color.a;
   }
-  bus.$emit('background_editor_change');
+  bus.$emit(GlobalBusType.backgroundEditorChange);
   emit('change', backgroundEditorState.currentBackground);
 }
 

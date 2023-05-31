@@ -25,8 +25,7 @@
       
       <div
         :style="{
-          top: `${props.rangeTop * scale}px`,
-          left: `${props.rangeLeft * scale}px`,
+          transform: `translate(${props.rangeLeft * scale}px, ${props.rangeTop * scale}px)`,
           width: `${getRangeWidth * scale}px`,
           height: `${getRangeHeight * scale}px`
         }"
@@ -210,7 +209,7 @@ onUnmounted(() => {
       position: absolute;
       display: block;
       left: 0;
-      right: 0;
+      top: 0;
       outline: 1px solid #4d8ce4;
       background-color: rgba(51, 122, 183, 0.2);
       box-shadow: 0px 0px 4px 2px rgba(0,0,0,0.15);

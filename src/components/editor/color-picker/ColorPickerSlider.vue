@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts" setup>
+import { toDecimal } from '@/tools/common';
 import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
 
 const props = defineProps({
@@ -21,14 +22,19 @@ const props = defineProps({
     type: Number,
     default: 100,
   },
+  /** 小数位数 */
+  decimal: {
+    type: Number,
+    default: 0,
+  }
 });
 
 /** 控件画布 */
 const slider = ref<HTMLElement>();
 
 const emit = defineEmits<{
-  (event: 'input', value: number): void;
   (event: 'update:value', value: number): void;
+  (event: 'change', value: number): void;
 }>();
 
 const state = reactive({
@@ -45,8 +51,8 @@ const drag = (e) => {
   if (state.isStartDrag && slider.value?.offsetWidth !== undefined) {
     const rect = slider.value!.getBoundingClientRect();
     const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left), rect.width);
-    const _value = Math.round((_cursorLeft / slider.value.offsetWidth) * props.max);
-    emit('input', _value);
+    const _value = toDecimal((_cursorLeft / slider.value.offsetWidth) * props.max, props.decimal);
+    emit('change', _value);
     emit('update:value', _value);
   }
 };

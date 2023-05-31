@@ -23,6 +23,7 @@ import { state as formulaState } from '../../';
 import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
 import { state as editorState } from '@/modules/editor-module';
 import { Tooltip } from 'ant-design-vue';
+import { GlobalBusType } from '@/tools/bus';
 // import monaco from 'monaco-editor';
 
 /** LibModel */
@@ -194,7 +195,7 @@ declare const ${i.name} = (${i.params.map(p => `${p.isExtend ? '...' : ''}${p.na
   }, 100);
 }
   
-editorState.bus.$on('update-variable', () => {
+editorState.bus.$on(GlobalBusType.updateVariable, () => {
   refreshLibSource();
 });
 

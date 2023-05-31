@@ -53,7 +53,7 @@
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import DesignCanvas from "@/components/module/DesignCanvas.vue";
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { Button } from 'ant-design-vue';
 import { PageType } from '@/@types/enum';
 import { Vue3Menus } from 'vue3-menus';
@@ -114,7 +114,7 @@ const state = reactive({
   rightClickMenuVisible: false,
 });
 
-bus.$on('onRefresh', () => {
+bus.$on(GlobalBusType.onRefresh, () => {
   editorService.refresh();
   getScale();
 });

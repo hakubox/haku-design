@@ -54,7 +54,7 @@ import EventConfig from '@/modules/event-module/component/EventConfig.vue';
 import { Drawer, TabPane, Tabs, Button } from 'ant-design-vue';
 import { GeneralProperty } from '@/@types';
 import { getAppConfigPropertys } from "@/data/app-config";
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 
 const state = reactive({
@@ -86,13 +86,13 @@ const setPageConfigProps = () => {
 
 const changePageProps = (val: Record<string, any>, prop: GeneralProperty, propMap: any, model?: Record<string, any> | undefined) => {
   if (prop.names && Array.isArray(prop.names[0]) && prop.names[0]?.includes('width')) {
-    bus.$emit('onRefresh');
+    bus.$emit(GlobalBusType.onRefresh);
   }
 }
 
 /** 切换右侧主Tabs */
 const changeMainPropertyPanel = (e) => {
-  editorState.bus.$emit('prop_change');
+  editorState.bus.$emit(GlobalBusType.propChange);
 };
 
 watch(() => editorState.appConfig.appType, () => {

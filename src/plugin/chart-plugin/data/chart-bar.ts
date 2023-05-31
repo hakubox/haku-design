@@ -30,10 +30,18 @@ export function componentBarChart(app: App) {
       visible: true,
       width: 350,
       height: 260,
+      // xAxis: {
+      //   show: true,
+      //   type: 'category'
+      // },
+      // yAxis: {
+      //   show: true,
+      //   type: 'value'
+      // }
     },
     propertys: mergeBasicProps([
       {
-        name: 'color', title: '颜色', default: '#5470C6',
+        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
       }, {
         name: 'dataSource', title: '数据', default: `[
