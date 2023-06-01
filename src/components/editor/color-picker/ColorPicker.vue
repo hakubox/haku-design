@@ -320,8 +320,9 @@ const extendPicker = () => {
 };
 /** 收缩 */
 const shrinkPicker = () => {
-  console.log('收缩了');
-  state.showPicker = false;
+  if (state.showPicker) {
+    state.showPicker = false;
+  }
 };
 /** 确定 */
 const comfirm = () => {

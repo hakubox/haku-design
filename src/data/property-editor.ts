@@ -143,7 +143,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     component: 'number-editor',
     attrs: {
       precision: 0,
-      min: 0,
       style: { width: '100%' },
       allowClear: true,
       size: 'small',
@@ -156,7 +155,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     component: 'number-editor',
     attrs: {
       step: 0.1,
-      min: 0,
       style: { width: '100%' },
       allowClear: true,
       size: 'small',

@@ -30,28 +30,35 @@ export function componentPieChart(app: App) {
       visible: true,
       width: 350,
       height: 260,
+      chartType: 'pie',
     },
-    propertys: mergeBasicProps([
+    propertys: mergeBasicProps('pie', [
       {
-        name: 'color', title: '颜色', default: 'name',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
+        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
       }, {
-        name: 'dataSource', title: '数据', default: `[{
-  "name": "其他消费",
-  "value": "6371664"
-}, {
-  "name": "生活用品",
-  "value": "7216301"
-}, {
-  "name": "通讯物流",
-  "value": "1500621"
-}, {
-  "name": "交通出行",
-  "value": "586622"
-}, {
-  "name": "饮食",
-  "value": "900000"
-}]`,
+        name: 'dataSource', title: '数据', default: `[
+  {
+    "name": "测试数据",
+    "data": [{
+      "name": "其他消费",
+      "value": 6371664
+    }, {
+      "name": "生活用品",
+      "value": 7216301
+    }, {
+      "name": "通讯物流",
+      "value": 1500621
+    }, {
+      "name": "交通出行",
+      "value": 586622
+    }, {
+      "name": "饮食",
+      "value": 900000
+    }]
+  }
+]`,
+
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.code, layout: PropertyLayout.block
       }
     ])

@@ -1,20 +1,20 @@
 import { PluginInfo, PluginType, registerComponent } from "@/modules/plugin-module";
 import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
 import { mergeBasicProps } from './basic-chart-propertys';
-import ChartLine from '../component/ChartLine.vue';
+import ChartScatter from '../component/ChartScatter.vue';
 import { App } from "vue";
 
-/** 折线图组件 */
-export function componentLineChart(app: App) {
+/** 散点图组件 */
+export function componentScatterChart(app: App) {
   const _pluginInfo: PluginInfo = {
-    name: 'ChartLine',
-    title: '折线图',
+    name: 'ChartScatter',
+    title: '散点图',
     version: '0.0.1',
     author: 'haku',
-    description: '通用e-chart折线图',
+    description: '通用e-chart散点图',
     pluginType: PluginType.component,
     async onloadApp() {
-      app.component(_pluginInfo.name, ChartLine);
+      app.component(_pluginInfo.name, ChartScatter);
     }
   };
   
@@ -30,9 +30,9 @@ export function componentLineChart(app: App) {
       visible: true,
       width: 350,
       height: 260,
-      chartType: 'line',
+      chartType: 'scatter',
     },
-    propertys: mergeBasicProps('line', [
+    propertys: mergeBasicProps('scatter', [
       {
         name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
@@ -55,7 +55,7 @@ export function componentLineChart(app: App) {
   }, {
     title: _pluginInfo.title,
     name: _pluginInfo.name,
-    icon: 'iconfont icon-chart-line',
+    icon: 'iconfont icon-app2',
     category: ComponentCategory.attachment
   });
 }

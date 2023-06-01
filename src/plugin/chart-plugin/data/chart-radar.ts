@@ -1,20 +1,20 @@
 import { PluginInfo, PluginType, registerComponent } from "@/modules/plugin-module";
 import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
 import { mergeBasicProps } from './basic-chart-propertys';
-import ChartLine from '../component/ChartLine.vue';
+import ChartRadar from '../component/ChartRadar.vue';
 import { App } from "vue";
 
-/** 折线图组件 */
-export function componentLineChart(app: App) {
+/** 雷达图组件 */
+export function componentRadarChart(app: App) {
   const _pluginInfo: PluginInfo = {
-    name: 'ChartLine',
-    title: '折线图',
+    name: 'ChartRadar',
+    title: '雷达图',
     version: '0.0.1',
     author: 'haku',
-    description: '通用e-chart折线图',
+    description: '通用e-chart雷达图',
     pluginType: PluginType.component,
     async onloadApp() {
-      app.component(_pluginInfo.name, ChartLine);
+      app.component(_pluginInfo.name, ChartRadar);
     }
   };
   
@@ -30,9 +30,9 @@ export function componentLineChart(app: App) {
       visible: true,
       width: 350,
       height: 260,
-      chartType: 'line',
+      chartType: 'radar',
     },
-    propertys: mergeBasicProps('line', [
+    propertys: mergeBasicProps('radar', [
       {
         name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
@@ -40,22 +40,32 @@ export function componentLineChart(app: App) {
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",
-    "data": [
-      ["Sports", 275],
-      ["Strategy", 115],
-      ["Action", 120],
-      ["Shooter", 350],
-      ["Other", 150]
-    ]
+    "data": [{
+      "name": "其他消费",
+      "value": 6371664
+    }, {
+      "name": "生活用品",
+      "value": 7216301
+    }, {
+      "name": "通讯物流",
+      "value": 1500621
+    }, {
+      "name": "交通出行",
+      "value": 586622
+    }, {
+      "name": "饮食",
+      "value": 900000
+    }]
   }
 ]`,
+
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.code, layout: PropertyLayout.block
       }
     ])
   }, {
     title: _pluginInfo.title,
     name: _pluginInfo.name,
-    icon: 'iconfont icon-chart-line',
-    category: ComponentCategory.attachment
+    icon: 'iconfont icon-app2',
+    category: ComponentCategory.attachment,
   });
 }

@@ -1,6 +1,4 @@
 <template>
-  <!-- <span style="display: block; font-size: 16px; font-weight: bold;">props</span> <span style="font-size: 12px;line-height: 10px;">{{ props }}</span> <br /> -->
-  <!-- <span style="display: block; font-size: 16px; font-weight: bold;">$attrs</span> <span style="font-size: 12px;line-height: 10px;">{{ attrs.legend }}</span> -->
   <ComponentBasic class="component-chart-body component-chart-bar" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
   </ComponentBasic>
@@ -37,10 +35,6 @@ const props = defineProps({
     type: Object,
     default: () => ({ show: false })
   },
-  chartPadding: {
-    type: Object,
-    default: () => ({ show: false })
-  },
   xAxis: {
     type: Object,
     default: () => ({ show: false })
@@ -53,27 +47,23 @@ const props = defineProps({
     type: Object,
     default: () => ({ show: false })
   },
+  grid: {
+    type: Object,
+    default: () => ({ show: false })
+  },
   color: {
     type: String
   }
 });
 
-const attrs = useAttrs();
-
 const chartRef = ref<ECharts>();
 
 const getOption = () => {
-  const _gridPadding = (props.chartPadding as number[]).length ? (props.chartPadding as number[])[0] : [];
   const option = {
     title: props.title,
     legend: props.legend,
     tooltip: {},
-    grid: {
-      top: `${_gridPadding[0]}px`,
-      right: `${_gridPadding[1]}px`,
-      bottom: `${_gridPadding[2]}px`,
-      left: `${_gridPadding[3]}px`,
-    },
+    grid: props.grid,
     padding: [0, 0, 0, 0],
     label: props.label,
     xAxis: props.xAxis,
@@ -92,22 +82,15 @@ const init = () => {
   chartRef.value?.setOption(getOption());
 }
 
-const setOption = (txt: string, val: any, oldVal: any) => {
-  // console.log('修改部分', txt, JSON.stringify(val), JSON.stringify(oldVal));
+const setOption = () => {
   chartRef.value?.setOption(getOption());
 };
 
 watch([
-  props.title, props.legend, props.xAxis, props.yAxis, props.label,
-], (val, oldVal) => setOption('title', val, oldVal), { deep: true });
-watch(() => props.color, (val, oldVal) => setOption('color', val, oldVal));
-watch(() => props.chartPadding, (val, oldVal) => setOption('padding', val, oldVal), { deep: true });
+  props.title, props.legend, props.xAxis, props.yAxis, props.label, props.grid,
+], (val, oldVal) => setOption(), { deep: true });
+watch(() => props.color, (val, oldVal) => setOption());
 
-// watch(() => props.title, (val, oldVal) => setOption('title', val, oldVal), { deep: true });
-// watch(() => attrs.legend, (val, oldVal) => setOption('legend', val, oldVal));
-// watch(() => attrs.xAxis, (val, oldVal) => setOption('xAxis', val, oldVal));
-// watch(() => attrs.yAxis, (val, oldVal) => setOption('yAxis', val, oldVal));
-// watch(() => attrs.color, (val, oldVal) => setOption('color', val, oldVal));
 onMounted(() => {
   init();
 });

@@ -1,8 +1,24 @@
 import { ComponentProperty } from "@/@types";
 import { AppType, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
 
-/** 获取文本样式属性 */
-export function getTextStyle({
+/** 获取工具提示属性列表 */
+export function getTooltipProps({
+  name, title = '提示'
+}: {
+  name: string[],
+  title: string
+}): ComponentProperty {
+  const _textProps = [
+    { name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color },
+  ];
+  return {
+    name: name, title: title, group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.json,
+    children: _textProps
+  };
+}
+
+/** 获取文本样式属性列表 */
+export function getTextStyleProps({
   name, title = '文本'
 }: {
   name: string[],
@@ -108,9 +124,6 @@ export const basicChartPropertys: ComponentProperty[] = [
     default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
   }, {
-    name: 'chartPadding', title: '图表边距', default: [[40,20,30,50]],
-    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box, attrs: { single: true },
-  }, {
     name: ['legend', 'show'], title: '图例', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
@@ -137,46 +150,6 @@ export const basicChartPropertys: ComponentProperty[] = [
     names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
   }, {
-    name: ['xAxis', 'show'], title: 'x轴', default: true,
-    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-    children: [
-      // { name: ['xAxis', 'name'], title: 'x轴名称', editor: ComponentPropertyEditor.singerLine, },
-      { name: ['xAxis', 'position'], title: 'x轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'bottom', attrs: {
-        options: [
-          { label: '上方', value: 'top' },
-          { label: '下方', value: 'bottom' },
-        ]
-      } },
-      { name: ['xAxis', 'type'], title: '坐标轴类型', editor: ComponentPropertyEditor.dropdownList, default: 'category', attrs: {
-        options: [
-          { label: '数值轴 - 适用连续数据', value: 'value' },
-          { label: '类目轴 - 适用离散数据', value: 'category' },
-          { label: '时间轴 - 适用于连续时序数据', value: 'time' },
-          { label: '对数轴 - 适用于对数数据', value: 'log' },
-        ]
-      } }
-    ]
-  }, {
-    name: ['yAxis', 'show'], title: 'y轴', default: true,
-    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-    children: [
-      // { name: ['yAxis', 'name'], title: 'y轴名称', editor: ComponentPropertyEditor.singerLine, },
-      { name: ['yAxis', 'position'], title: 'y轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'left', attrs: {
-        options: [
-          { label: '左侧', value: 'left' },
-          { label: '右侧', value: 'right' },
-        ]
-      } },
-      { name: ['yAxis', 'type'], title: '坐标轴类型', editor: ComponentPropertyEditor.dropdownList, default: 'value', attrs: {
-        options: [
-          { label: '数值轴 - 适用连续数据', value: 'value' },
-          { label: '类目轴 - 适用离散数据', value: 'category' },
-          { label: '时间轴 - 适用于连续时序数据', value: 'time' },
-          { label: '对数轴 - 适用于对数数据', value: 'log' },
-        ]
-      } }
-    ]
-  }, {
     name: 'name', title: '组件名称', default: '',
     group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
   }, {
@@ -186,10 +159,127 @@ export const basicChartPropertys: ComponentProperty[] = [
 ] as ComponentProperty[];
 
 /** 合并基础属性 */
-export function mergeBasicProps(propertys: ComponentProperty[]): ComponentProperty[] {
+export function mergeBasicProps(chartType: string, propertys: ComponentProperty[]): ComponentProperty[] {
+  const _props = propertys;
+
+    switch (chartType) {
+      case 'bar':
+      case 'line':
+      case 'scatter':
+        _props.push(
+          {
+            name: ['grid'], names: ['top', 'right', 'bottom', 'left'], title: '边距', default: [40,20,30,50],
+            editor: ComponentPropertyEditor.numbers, attrs: {
+              options: [
+                { label: '左', prop: 'left', unit: 'px' }, { label: '右', prop: 'right', unit: 'px' },
+                { label: '上', prop: 'top', unit: 'px' }, { label: '下', prop: 'bottom', unit: 'px' },
+              ]
+            }
+          }, {
+            name: ['grid', 'show'], title: '网格', default: false,
+            group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+            children: [
+              { name: ['grid', 'zIndex'], title: 'zIndex', editor: ComponentPropertyEditor.int, },
+              { name: ['grid', 'backgroundColor'], title: '背景色', editor: ComponentPropertyEditor.color },
+              { name: ['grid', 'borderColor'], title: '边框色', editor: ComponentPropertyEditor.color },
+              { name: ['grid', 'borderWidth'], title: '边框宽度', default: 1, editor: ComponentPropertyEditor.float },
+              // { name: ['grid', 'containLabel'], title: '刻度标签', default: false, editor: ComponentPropertyEditor.boolean },
+              
+              // getTextStyle({ name: ['label'], title: '文本' })
+            ]
+          }, {
+            name: ['xAxis', 'show'], title: 'x轴', default: true,
+            group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
+            children: [
+              // { name: ['xAxis', 'name'], title: 'x轴名称', editor: ComponentPropertyEditor.singerLine, },
+              { name: ['xAxis', 'position'], title: 'x轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'bottom', attrs: {
+                options: [
+                  { label: '上方', value: 'top' },
+                  { label: '下方', value: 'bottom' },
+                ]
+              } },
+              { name: ['xAxis', 'type'], title: '坐标轴类型', editor: ComponentPropertyEditor.dropdownList, default: 'category', attrs: {
+                options: [
+                  { label: '数值轴 - 适用连续数据', value: 'value' },
+                  { label: '类目轴 - 适用离散数据', value: 'category' },
+                  { label: '时间轴 - 适用于连续时序数据', value: 'time' },
+                  { label: '对数轴 - 适用于对数数据', value: 'log' },
+                ]
+              } }, 
+              { name: '', title: '标题', editor: ComponentPropertyEditor.none, children: [
+                { name: ['xAxis', 'name'], title: '标题文本', default: '', editor: ComponentPropertyEditor.singerLine }, 
+                { name: ['xAxis', 'nameLocation'], title: '标题位置', default: 'middle', editor: ComponentPropertyEditor.dropdownList, attrs: {
+                  options: [
+                    { label: '头部', value: 'start' },
+                    { label: '居中', value: 'middle' },
+                    { label: '尾部', value: 'end' },
+                  ]
+                } }, 
+                { name: ['xAxis', 'nameGap'], title: '标题轴距', default: 15, editor: ComponentPropertyEditor.int, attrs: { suffix: '像素(px)' } },
+                { name: ['xAxis', 'nameRotate'], title: '标题角度', default: 0, editor: ComponentPropertyEditor.int, attrs: { suffix: '度(°)' } },
+                { name: ['xAxis', 'offset'], title: '偏移', default: 0, editor: ComponentPropertyEditor.int, attrs: { suffix: '像素(px)' } },
+              ] },
+              { name: ['xAxis', 'inverse'], title: '是否反向', default: false, editor: ComponentPropertyEditor.boolean },
+              { name: ['xAxis', 'min'], title: '最小值', editor: ComponentPropertyEditor.float, },
+              { name: ['xAxis', 'max'], title: '最大值', editor: ComponentPropertyEditor.float, },
+              { name: ['xAxis', 'minInterval'], title: '最小间隔', editor: ComponentPropertyEditor.float,
+                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
+              },
+              { name: ['xAxis', 'maxInterval'], title: '最大间隔', editor: ComponentPropertyEditor.float,
+                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
+              },
+              { name: ['xAxis', 'silent'], title: '阻止交互', editor: ComponentPropertyEditor.boolean, },
+            ]
+          }, {
+            name: ['yAxis', 'show'], title: 'y轴', default: true,
+            group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+            children: [
+              // { name: ['yAxis', 'name'], title: 'y轴名称', editor: ComponentPropertyEditor.singerLine, },
+              { name: ['yAxis', 'position'], title: 'y轴位置', editor: ComponentPropertyEditor.dropdownList, default: 'left', attrs: {
+                options: [
+                  { label: '左侧', value: 'left' },
+                  { label: '右侧', value: 'right' },
+                ]
+              } },
+              { name: ['yAxis', 'type'], title: '坐标轴类型', editor: ComponentPropertyEditor.dropdownList, default: 'value', attrs: {
+                options: [
+                  { label: '数值轴 - 适用连续数据', value: 'value' },
+                  { label: '类目轴 - 适用离散数据', value: 'category' },
+                  { label: '时间轴 - 适用于连续时序数据', value: 'time' },
+                  { label: '对数轴 - 适用于对数数据', value: 'log' },
+                ]
+              } },
+              { name: '', title: '标题', editor: ComponentPropertyEditor.none, children: [
+                { name: ['yAxis', 'name'], title: '标题文本', default: '', editor: ComponentPropertyEditor.singerLine }, 
+                { name: ['yAxis', 'nameLocation'], title: '标题位置', default: 'middle', editor: ComponentPropertyEditor.dropdownList, attrs: {
+                  options: [
+                    { label: '头部', value: 'start' },
+                    { label: '居中', value: 'middle' },
+                    { label: '尾部', value: 'end' },
+                  ]
+                } }, 
+                { name: ['yAxis', 'nameGap'], title: '标题轴距', default: 15, editor: ComponentPropertyEditor.int, attrs: { suffix: '像素(px)' } },
+                { name: ['yAxis', 'nameRotate'], title: '标题角度', default: 0, editor: ComponentPropertyEditor.int, attrs: { suffix: '度(°)' } },
+                { name: ['yAxis', 'offset'], title: '偏移', default: 0, editor: ComponentPropertyEditor.int, attrs: { suffix: '像素(px)' } },
+              ] },
+              { name: ['yAxis', 'inverse'], title: '是否反向', default: false, editor: ComponentPropertyEditor.boolean },
+              { name: ['yAxis', 'min'], title: '最小值', editor: ComponentPropertyEditor.float, },
+              { name: ['yAxis', 'max'], title: '最大值', editor: ComponentPropertyEditor.float, },
+              { name: ['yAxis', 'minInterval'], title: '最小间隔', editor: ComponentPropertyEditor.float,
+                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
+              },
+              { name: ['yAxis', 'maxInterval'], title: '最大间隔', editor: ComponentPropertyEditor.float,
+                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
+              },
+              { name: ['yAxis', 'silent'], title: '阻止交互', editor: ComponentPropertyEditor.boolean, },
+            ]
+          }
+        );
+        break;
+    }
 
   return [
     ...basicChartPropertys,
-    ...propertys
+    ..._props
   ];
 }

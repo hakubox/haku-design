@@ -30,6 +30,7 @@ export function componentBarChart(app: App) {
       visible: true,
       width: 350,
       height: 260,
+      chartType: 'bar',
       // xAxis: {
       //   show: true,
       //   type: 'category'
@@ -39,7 +40,7 @@ export function componentBarChart(app: App) {
       //   type: 'value'
       // }
     },
-    propertys: mergeBasicProps([
+    propertys: mergeBasicProps('bar', [
       {
         name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color

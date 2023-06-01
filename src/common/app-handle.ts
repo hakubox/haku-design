@@ -64,14 +64,13 @@ export function useAppHandle() {
               objArr[i + 1] = _obj[_name];
             }
             objArr.at(-1)![prop.name.at(-1)!] = typeof prop.default === 'function' ? prop.default() : prop.default;
-            if (prop.children) getDefaultProp(prop.children, model);
           } else if (!model[prop.name]) {
             _name = prop.name;
-            if (prop.children) getDefaultProp(prop.children, model);
             if (_name) model[_name] = typeof prop.default === 'function' ? prop.default() : prop.default;
           }
         }
       }
+      if (prop.children) getDefaultProp(prop.children, model);
     }
     return model;
   }

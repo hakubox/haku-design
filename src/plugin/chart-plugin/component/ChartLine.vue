@@ -1,6 +1,6 @@
 <template>
-  <ComponentBasic class="component-chart-line" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
-    <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height"></BaseECharts>
+  <ComponentBasic class="component-chart-body component-chart-line" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
+    <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
   </ComponentBasic>
 </template>
 
@@ -15,72 +15,81 @@ defineOptions({
 });
 
 const props = defineProps({
-  title: {
-    type: String,
-    default: () => '',
-  },
   dataSource: {
     type: String,
     default: () => '',
   },
-  /** 高度 */
+  width: {
+    type: Number,
+    default: 0
+  },
   height: {
     type: Number,
-    default: 200,
+    default: 0
   },
-  /** 绑定数据 */
-  position: {
-    type: String,
-    default: '',
+  title: {
+    type: Object,
+    default: () => ({ show: false })
   },
-  /** 设置颜色 */
-  color: {
-    type: String,
-    default: '',
-  },
-  /** 显示图例 */
   legend: {
-    type: Boolean,
-    default: true,
+    type: Object,
+    default: () => ({ show: false })
   },
+  xAxis: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  yAxis: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  label: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  grid: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  color: {
+    type: String
+  }
 });
 
 const chartRef = ref<ECharts>();
 
-const init = () => {
+const getOption = () => {
   const option = {
-    title: {
-      text: props.title
-    },
-    xAxis: {
-      type: 'category',
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        type: 'line',
-        data: JSON.parse(props.dataSource),
-        color: props.color
-      }
-    ]
+    title: props.title,
+    legend: props.legend,
+    tooltip: {},
+    grid: props.grid,
+    padding: [0, 0, 0, 0],
+    label: props.label,
+    xAxis: props.xAxis,
+    yAxis: props.yAxis,
+    series: JSON.parse(props.dataSource ?? []).map(i => ({
+      type: i.type ?? 'line',
+      name: i.name,
+      data: i.data ?? [],
+      color: i.color ?? props.color
+    }))
   };
-  chartRef.value?.setOption(option);
+  return option;
+};
+
+const init = () => {
+  chartRef.value?.setOption(getOption());
 }
 
-watch(() => [props.position, props.position], (val, oldVal) => {
-  if (val !== oldVal) {
-    init();
-  }
-});
+const setOption = () => {
+  chartRef.value?.setOption(getOption());
+};
 
-watch(() => props.color, (val, oldVal) => {
-  console.log(val)
-  if (val !== oldVal) {
-    init();
-  }
-});
+watch([
+  props.title, props.legend, props.xAxis, props.yAxis, props.label, props.grid,
+], (val, oldVal) => setOption(), { deep: true });
+watch(() => props.color, (val, oldVal) => setOption());
 
 onMounted(() => {
   init();

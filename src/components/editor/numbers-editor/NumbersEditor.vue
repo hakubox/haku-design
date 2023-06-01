@@ -82,6 +82,7 @@ onMounted(() => {
   position: relative;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -103,7 +104,10 @@ onMounted(() => {
     }
   }
 
-  > div {
+  > .numbers-editor-item {
+    flex-shrink: 1;
+    flex-grow: 1;
+    width: calc(50% - 5px);
     position: relative;
     height: 24px;
     padding: 0px;
@@ -113,8 +117,16 @@ onMounted(() => {
     align-items: center;
     justify-content: space-between;
 
-    + div {
+    + .numbers-editor-item {
       margin-left: 10px;
+
+      &:nth-child(2n - 1) {
+        margin-left: 0px;
+      }
+
+      &:nth-child(n + 3) {
+        margin-top: 10px;
+      }
     }
 
     > .numbers-editor-label {
@@ -122,6 +134,7 @@ onMounted(() => {
       vertical-align: top;
       line-height: 24px;
       margin-right: 8px;
+      font-size: 12px;
       white-space: nowrap;
     }
 

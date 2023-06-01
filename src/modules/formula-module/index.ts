@@ -13,12 +13,6 @@ export const state = reactive({
   formulaList: formulas as Formula[],
 });
 
-/** 新增公式 */
-export const addFormula: AddFormula = (formula) => {
-  state.formulaList.push(formula);
-  return formula;
-};
-
 /** 公式模块逻辑 */
 export const service = {
   /** 获取函数头 */
@@ -51,5 +45,8 @@ export const service = {
 
 export default {
   state,
-  service
+  service,
+  install() {
+    
+  }
 }

@@ -43,7 +43,7 @@ export interface GlobalBusEvent {
   [GlobalBusType.backgroundEditorChange]: () => void;
 }
 
-/** Bus */
+/** 事件总线 */
 export class Bus {
   constructor() {
     // 收集订阅信息,调度中心

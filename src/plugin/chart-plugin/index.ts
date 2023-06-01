@@ -2,7 +2,9 @@ import { App, reactive } from 'vue';
 import {
   componentBarChart,
   componentLineChart,
-  componentPieChart
+  componentScatterChart,
+  componentPieChart,
+  componentRadarChart,
 } from './data';
 
 export * from './index.d';
@@ -21,6 +23,8 @@ export default {
   install(app: App) {
     componentBarChart(app);
     componentLineChart(app);
+    componentScatterChart(app);
     componentPieChart(app);
+    componentRadarChart(app);
   }
 }

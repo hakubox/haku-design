@@ -1,5 +1,5 @@
 <template>
-  <ComponentBasic class="component-chart-body component-chart-pie" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
+  <ComponentBasic class="component-chart-body component-chart-radar" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
   </ComponentBasic>
 </template>
@@ -53,7 +53,7 @@ const getOption = () => {
     tooltip: {},
     label: props.label,
     series: JSON.parse(props.dataSource ?? []).map(i => ({
-      type: i.type ?? 'pie',
+      type: i.type ?? 'radar',
       name: i.name,
       data: i.data ?? [],
       color: i.color ?? props.color
