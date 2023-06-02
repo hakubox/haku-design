@@ -235,7 +235,7 @@ const toggleDialog = (e: MouseEvent, index: number) => {
         align-items: center;
         background-color: rgba(0,0,0,0.1);
         border-radius: 6px;
-        background-color: #F8F9FC;
+        background-color: #F7F9FC;
         border-radius: 6px;
         width: 100%;
         margin-right: 10px;

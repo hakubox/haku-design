@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts" setup>
+import bus, { GlobalBusType } from '@/tools/bus';
 import { toDecimal } from '@/tools/common';
 import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
 
@@ -61,24 +62,20 @@ const endDrag = () => {
   state.isStartDrag = false;
 };
 
-/** 初始化 */
-const init = () => {
-  document.body.addEventListener('mousemove', drag, { capture: true, passive: true });
-  document.body.addEventListener('mouseup', endDrag, { capture: true, passive: true });
-};
-
 /** 游标离左侧距离 */
 const cursorLeft = computed(() => {
   return ((slider.value?.offsetWidth || 0) * props.value) / props.max - 8;
 });
 
-onUnmounted(() => {
-  document.body.removeEventListener('mousemove', drag);
-  document.body.removeEventListener('mouseup', endDrag);
+onMounted(() => {
+  bus.$on(GlobalBusType.onBodyMouseMove, drag);
+  bus.$on(GlobalBusType.onBodyMouseUp, endDrag);
 });
 
-onMounted(() => {
-  init();
+onUnmounted(() => {
+  bus.$off(GlobalBusType.onBodyMouseMove, drag);
+  bus.$off(GlobalBusType.onBodyMouseUp, endDrag);
+  document.body.removeEventListener('mouseup', endDrag);
 });
 </script>
 

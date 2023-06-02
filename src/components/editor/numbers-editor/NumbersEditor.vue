@@ -24,6 +24,10 @@ const props = defineProps({
   options: {
     type: Array as PropType<{ label?: string, prop?: string, min?: number, unit?: string }[]>,
     default: () => []
+  },
+  /** 格式化函数 */
+  formatter: {
+    type: Function,
   }
 });
 
@@ -55,7 +59,7 @@ const change = throttle(() => {
       state.vals = state.vals.map((i, index) => {
         const _min = props.options[index].min;
         if (_min !== undefined && i < _min) return _min;
-        else return toDecimal(i);
+        else return props.formatter ? props.formatter(toDecimal(i)) : toDecimal(i);
       });
       emit('change', state.vals);
     } else {
@@ -163,6 +167,11 @@ onMounted(() => {
       color: #666;
       font-size: 12px;
       transition: 0.3s;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+      }
 
       &:hover {
         border-color: fadeout(@primary-color, 20%);

@@ -125,14 +125,14 @@ watch(() => props.value, (count, prevCount) => {
 });
 
 onBeforeMount(() => {
-  if (props.isExpression) {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {}
-    });
+  monaco.editor.defineTheme('gj-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+    colors: {}
+  });
 
+  if (props.isExpression) {
     // validation settings
     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: true,
@@ -145,13 +145,6 @@ onBeforeMount(() => {
       allowNonTsExtensions: true,
     });
   } else {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {}
-    });
-
     const _languages = monaco.languages.getLanguages().map((i) => i.id);
     if (!_languages.includes(props.language)) {
       switch (props.language) {

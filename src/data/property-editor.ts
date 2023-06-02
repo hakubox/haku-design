@@ -234,6 +234,14 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     editor: ComponentPropertyEditor.json,
   },
   {
+    name: 'tags',
+    description: '标签列表',
+    component: 'tags-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.tags,
+  },
+  {
     name: 'text-list',
     description: '文本列表',
     component: 'text-list-editor',

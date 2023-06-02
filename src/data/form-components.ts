@@ -2134,7 +2134,7 @@ export function initComponents(componentList: InitComponent[] = []): InitCompone
   return _re;
 }
 
-bus.$on(GlobalBusType.addShopComponent, () => {
+bus.$on(GlobalBusType.refreshShopComponent, () => {
   _components = initComponents();
 });
 

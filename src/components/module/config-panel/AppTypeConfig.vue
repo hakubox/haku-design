@@ -44,7 +44,7 @@ const beforeChange = (value, prop, propertys, model) => {
     objectId: 'global',
     attrs: {
       model: editorState.appConfig,
-      property: prop,
+      // property: prop,
       propertyName: prop.name,
       propertyTitle: prop.title,
     },

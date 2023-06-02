@@ -27,7 +27,7 @@ export function setGeneralPropertyValue(propName: string | string[], model, valu
 }
 
 /** 定义命令 */
-export function defineCommand<CommandName extends keyof GlobalCommand>(commandName: CommandName, commandType: GlobalCommand[CommandName] extends BasicCommand ? CommandType<CommandName> : never): void {
+export function defineCommand<CommandName extends keyof GlobalCommand>(commandName: CommandName, commandType: GlobalCommand[CommandName] extends BasicCommand ? CommandType<CommandName> : CommandType<any>): void {
   // @ts-ignore
   if (!formCommands) formCommands = {};
   if (formCommands[commandName]) {

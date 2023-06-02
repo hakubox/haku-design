@@ -28,7 +28,7 @@
           </template>
           <QuestionCircleOutlined style="font-size:12px;color: #AAA;" />
         </Popover>
-        <template v-if="prop.layout == 'block' || prop.attach?.length">
+        <template v-if="prop.layout == 'block' && (prop.attach?.length || getTools(prop.editor).length)">
             
           <div
             class="btn-tool"
@@ -97,7 +97,7 @@
           </template>
         </component> -->
       </div>
-      <template v-if="!(prop.layout === 'block' || prop.attach?.length)">
+      <template v-if="!(prop.layout === 'block' && prop.attach?.length)">
         <Tooltip placement="topLeft" class="prop-tool-btn" v-if="prop?.canFullScreen">
           <template #title>最大化</template>
           <Button size="small" @click="fullScreen(prop, prop)">

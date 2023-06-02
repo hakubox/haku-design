@@ -166,10 +166,6 @@ const state = reactive({
 
 const gradientEditorPanel = ref<HTMLElement>();
 
-bus.$on(GlobalBusType.backgroundEditorChange, () => {
-  refreshStyle();
-});
-
 const currentComponent = computed(() => {
   const component = editorState.currentSelectedComponents.find(i => !i.isGroup) as Component | undefined;
   if (component) {
@@ -432,12 +428,15 @@ onMounted(() => {
   dragPointHook.init();
   dragSlidePointHook.init();
 
+  bus.$on(GlobalBusType.backgroundEditorChange, refreshStyle);
+
   setTimeout(() => {
     refreshStyle();
   }, 50);
 });
 
 onUnmounted(() => {
+  bus.$off(GlobalBusType.backgroundEditorChange, refreshStyle);
   dragCursorHook.destory();
   dragPointHook.destory();
   dragSlidePointHook.destory();

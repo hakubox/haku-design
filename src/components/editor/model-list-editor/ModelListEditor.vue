@@ -17,18 +17,6 @@
               <template #icon><plus-outlined /></template>
             </Button>
           </Tooltip>
-          <!-- &nbsp; <Tooltip v-if="state.fullscreen">
-            <template #title>还原</template>
-            <Button @click="state.fullscreen = false" size="small">
-              <template #icon><fullscreen-exit-outlined /></template>
-            </Button>
-          </Tooltip>
-          <Tooltip v-else>
-            <template #title>最大化</template>
-            <Button @click="state.fullscreen = true" size="small">
-              <template #icon><fullscreen-outlined /></template>
-            </Button>
-          </Tooltip> -->
         </template>
         <template v-else>
           {{ title }}
@@ -42,7 +30,7 @@
                 <div style="width: 800px">
                   <component
                     :ref="component.id"
-                    v-bind="Object.assign({}, record.attrs || {}, component.attrs || {}, col.attrs || {})"
+                    v-bind="Object.assign({}, record.attrs || {}, col.attrs || {})"
                     :value="value[index][col.name]"
                     :is="editorState.propertyEditors[col.editor].component"
                     @change="(val) => changeValue(val, index, col.name)"
@@ -78,7 +66,7 @@
           <component
             :ref="component.id"
             v-else-if="column.dataIndex === col.name && !col.buttonEditorText"
-            v-bind="Object.assign({}, record.attrs || {}, component.attrs || {}, col.attrs || {})"
+            v-bind="Object.assign({}, record.attrs || {}, col.attrs || {})"
             :value="getValue(value, index, col.name)"
             :is="editorState.propertyEditors[col.editor].component"
             :openThrottle="false"
@@ -219,7 +207,7 @@ const changeValue = throttle((val: any, index: number, name: string) => {
     return;
   }
   _newVal[index][name] = val;
-  emit('update:value', _newVal);
+  // emit('update:value', _newVal);
   emit('change', _newVal);
 }, 500, { leading: true, trailing: true });
 
@@ -231,7 +219,7 @@ watch(() => props.isTree, (val, oldVal) => {
 
 const getValue = (value, index: number, name: string) => {
   const _val = value[index][name];
-  if (!_val) {
+  if (_val === undefined) {
     const _col = props.columns.find(i => i.name === name);
     if (_col) {
       const _defaultValue = _col?.default ? typeof _col.default === 'function' ? _col.default() : _col.default : undefined;
@@ -261,7 +249,7 @@ const copyRow = (index) => {
   props.columns.forEach((i) => {
     if (props.rowKey === i.name) {
       if (i.default) _item[i.name] = i.default;
-    } else if (!_item[i.name]) {
+    } else if (_item[i.name] === undefined) {
       if (i.default) _item[i.name] = i.default;
     }
   });
@@ -343,7 +331,8 @@ const tableColumns = () => {
       > thead.ant-table-thead {
         > tr {
           > th {
-            padding: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
           }
         }
       }

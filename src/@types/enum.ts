@@ -70,6 +70,8 @@ export enum ComponentPropertyEditor {
   label = 'label',
   /** 数据 */
   data = 'data',
+  /** 标签列表 */
+  tags = 'tags',
   /** 文本列表 */
   textList = 'text-list',
   /** 代码 */

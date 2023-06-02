@@ -351,6 +351,7 @@ export const service = {
     }
     
     configService.init();
+    bus.$emit(GlobalBusType.refreshShopComponent);
     nextTick(() => {
       service.getBasicDom();
       pluginModule.onAppLoad();
@@ -635,8 +636,8 @@ export const service = {
     
     await timeout(20);
 
-    state.bus.$emit(GlobalBusType.componentChange, formComponents);
-    state.bus.$emit(GlobalBusType.propChange);
+    bus.$emit(GlobalBusType.componentChange, formComponents);
+    bus.$emit(GlobalBusType.propChange);
 
     state.currentSelectedComponents = formComponents;
 
@@ -1296,8 +1297,6 @@ export const state = reactive({
     x: 0,
     y: 0
   },
-  /** 事件总线 */
-  bus,
   /** 控件画布 */
   componentCanvas : {} as any,
   /** 工具箱列表 */

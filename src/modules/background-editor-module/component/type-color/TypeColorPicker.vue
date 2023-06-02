@@ -153,6 +153,7 @@ import SimpleSelect from '../common/SimpleSelect.vue';
 import { service as backgroundEditorService } from '../../';
 import type { AppColor } from '../../index.d';
 import { toDecimal } from '@/tools/common';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 const formatterTypeSelect = ref<typeof SimpleSelect>();
 const colorTypeSelect = ref<typeof SimpleSelect>();
@@ -346,9 +347,6 @@ const init = () => {
   state.color.fromString(backgroundEditorService.getColorStr(props.value) || '');
   state.color.format = state.colorType;
   alpha.value = state.color._alpha;
-  document.body.addEventListener('mouseup', handleEndDrag, { capture: true, passive: true });
-  document.body.addEventListener('mousemove', handleDrag, { capture: true, passive: true });
-  document.body.addEventListener('mousedown', shrinkPicker, { capture: true, passive: true });
 
   let _historyList: any = sessionStorage.getItem('colorPickerHistory');
 
@@ -456,6 +454,10 @@ watch(() => props.value, (val) => {
 });
 
 onMounted(() => {
+  bus.$on(GlobalBusType.onBodyMouseUp, handleEndDrag);
+  bus.$on(GlobalBusType.onBodyMouseMove, handleDrag);
+  bus.$on(GlobalBusType.onBodyMouseDown, shrinkPicker);
+
   state.color = new Color({
     enableAlpha: true,
     format: state.colorType,
@@ -465,9 +467,9 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mouseup', handleEndDrag);
-  document.body.removeEventListener('mousemove', handleDrag);
-  document.body.removeEventListener('mousedown', shrinkPicker);
+  bus.$off(GlobalBusType.onBodyMouseUp, handleEndDrag);
+  bus.$off(GlobalBusType.onBodyMouseMove, handleDrag);
+  bus.$off(GlobalBusType.onBodyMouseDown, shrinkPicker);
 });
 </script>
 

@@ -74,7 +74,7 @@
 
 <script lang="ts" setup>
 import HakuDialog from '@/components/common/HakuDialog.vue';
-import { reactive } from 'vue';
+import { onMounted, onUnmounted, reactive } from 'vue';
 import TypeColorPicker from './type-color/TypeColorPicker.vue';
 import TypeImagePicker from './type-image/TypeImagePicker.vue';
 import SimpleSelect from './common/SimpleSelect.vue';
@@ -112,6 +112,10 @@ const change = () => {
   emit('change', backgroundEditorState.currentBackground);
 }
 
+const hide = () => {
+  backgroundEditorState.isShow = false;
+}
+
 const currentColor = computed<AppColor>({
   get() {
     if (backgroundEditorState.currentBackground.type === 'color') {
@@ -137,6 +141,15 @@ const currentColor = computed<AppColor>({
     }
   }
 });
+
+onMounted(() => {
+  bus.$on(GlobalBusType.onBodyMouseDown, hide);
+});
+
+onUnmounted(() => {
+  bus.$off(GlobalBusType.onBodyMouseDown, hide);
+});
+
 </script>
 
 <style lang="less" scoped>

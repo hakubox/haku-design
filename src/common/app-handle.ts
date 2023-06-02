@@ -198,7 +198,7 @@ export function useAppHandle() {
         } else {
           _name = name;
         }
-        if (_objf[_name].type) {
+        if (_objf[_name]?.type) {
           if (_objf[_name].value !== value[i]) {
             _objf[_name].value = value[i];
             if (editor && editor.name === prop.editor) _objf['__' + _name].value = value[i];
@@ -210,7 +210,7 @@ export function useAppHandle() {
       }
     } else {
       if (typeof prop.name === 'string') {
-        if (model[prop.name].type) {
+        if (model[prop.name]?.type) {
           if (model[prop.name].value !== value) {
             model[prop.name].value = value;
           }

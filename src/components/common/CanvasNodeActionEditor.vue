@@ -63,6 +63,7 @@ import message from '@/common/message';
 import { onUnmounted } from 'vue';
 import { getAngle, toDecimal } from '@/tools/common';
 import { getHeight, getWidth } from '@/common/component-handle';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 /** 动作类型（不同方向拖拽及旋转） */
 type ActionType = 'rotate' | 'topleft' | 'top' | 'topright' | 'left' | 'right' | 'bottomleft' | 'bottom' | 'bottomright';
@@ -179,6 +180,7 @@ const getComponentHeight = computed(() => {
 
 /** 开始拖拽 */
 const onStartDrag = (e, actionType: ActionType) => {
+  bus.$disabled(GlobalBusType.onBodyMouseMove);
   state.actionType = actionType;
   draggableState.dragConfig.isPause = true;
   const rect = nodeEditorEl.value?.getBoundingClientRect();
@@ -348,6 +350,7 @@ const onMoveDrag = (e: MouseEvent) => {
 
 /** 结束拖拽 */
 const onEndDrag = (e: MouseEvent) => {
+  bus.$enable(GlobalBusType.onBodyMouseMove);
   if (state.startDrag && state.actionType) {
     state.startDrag = false;
     draggableState.tipConfig.isShow = false;
@@ -376,12 +379,12 @@ watch(() => editorState.currentSelectedIds, (newVal, oldVal) => {
 
 onMounted(async () => {
   document.body.addEventListener('mousemove', onMoveDrag, { passive: true });
-  document.body.addEventListener('mouseup', onEndDrag, { passive: true });
+  bus.$on(GlobalBusType.onBodyMouseUp, onEndDrag);
 });
 
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', onMoveDrag);
-  document.body.removeEventListener('mouseup', onEndDrag);
+  bus.$off(GlobalBusType.onBodyMouseUp, onEndDrag);
 });
 </script>
 

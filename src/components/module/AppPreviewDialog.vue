@@ -248,7 +248,7 @@ const formFillProps = computed<GeneralProperty[]>(() => {
           _editor = ComponentPropertyEditor.singerLine;
           break;
         case 'text-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'option':
           _editor = ComponentPropertyEditor.singerLine;
@@ -257,10 +257,10 @@ const formFillProps = computed<GeneralProperty[]>(() => {
           _editor = ComponentPropertyEditor.int;
           break;
         case 'number-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'option-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'boolean':
           _editor = ComponentPropertyEditor.boolean;

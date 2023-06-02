@@ -178,8 +178,8 @@ export function request<ReturnResponse extends boolean, ReturnPageList extends b
         globalState.router.push('/login');
         authService.logout();
         reject(_data);
-      } else if (!_data.isSuccess) {
-        if (!_data.isSuccess && _data.message) {
+      } else if (_data.isSuccess === false) {
+        if (_data.isSuccess === false && _data.message) {
           toast(`[Bad Request]${_data.message}`, 'error');
         }
         reject(_data);
@@ -196,8 +196,7 @@ export function request<ReturnResponse extends boolean, ReturnPageList extends b
         /** router.push('/login'); */
         reject(_data);
       } else {
-        toast(_data.msg, 'error');
-        reject(_data);
+        resolve(_data);
       }
     }).catch((err) => {
       let _err = err;

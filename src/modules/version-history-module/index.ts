@@ -9,7 +9,6 @@ export * from './index.d';
 export const state = reactive({
   /** 版本历史列表 */
   versionHistoryList: [] as VersionHistoryInstance[],
-  bus,
 });
 
 export const service = {
@@ -39,7 +38,7 @@ export const service = {
   setQuestionaryVersion(id: string, version: number) {
     setQuestionaryVersion(id, version).then(res => {
       toast('问卷版本切换成功', 'success');
-      state.bus.$emit(GlobalBusType.versionChange);
+      bus.$emit(GlobalBusType.versionChange);
       service.getQuestionaryVersionList(id);
     }).catch(([err]) => {
       

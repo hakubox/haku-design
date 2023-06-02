@@ -34,9 +34,6 @@ export function componentPieChart(app: App) {
     },
     propertys: mergeBasicProps('pie', [
       {
-        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
-      }, {
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",
@@ -55,7 +52,8 @@ export function componentPieChart(app: App) {
     }, {
       "name": "饮食",
       "value": 900000
-    }]
+    }],
+    "colorBy": "series"
   }
 ]`,
 

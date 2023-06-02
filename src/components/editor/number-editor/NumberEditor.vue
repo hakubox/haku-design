@@ -6,7 +6,7 @@
     v-else
     class="number-editor"
     v-model:value="state.inputValue"
-    v-bind="Object.assign({}, $attrs)"
+    v-bind="Object.assign({}, $attrs, { precision: props.precision })"
     :max="props.max"
     :min="props.min"
     :controls="props.controls"
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { isNotBlank, throttle } from '@/tools/common';
+import { isNotBlank, throttle, toDecimal } from '@/tools/common';
 import { InputNumber } from 'ant-design-vue';
 import { onMounted, PropType, reactive, toRefs, watch } from 'vue';
 
@@ -59,17 +59,24 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  /** 数值精度 */
+  precision: {
+    type: Number,
+  },
   /** 是否开启节流事件 */
   openThrottle: {
     type: Boolean,
     default: true
+  },
+  /** 格式化函数 */
+  formatter: {
+    type: Function,
   }
 });
 
 const emit = defineEmits<{
   (event: 'update:value', val: number | undefined): void;
   (event: 'change', val: number | undefined): void;
-  (event: 'input', val: number | undefined): void;
 }>();
 
 const state = reactive({
@@ -78,21 +85,41 @@ const state = reactive({
 
 const _change = () => {
   if (state.inputValue != props.value) {
-    emit('change', state.inputValue);
+    const _val = props.formatter ? props.formatter(state.inputValue) : state.inputValue;
+    emit('update:value', _val);
+    emit('change', _val);
   }
 };
 
 /** 改变值 */
 const change = props.openThrottle ? throttle(_change) : _change;
 
+const init = (val: number | undefined) => {
+  if (val === undefined) {
+    state.inputValue = val;
+  } else if (typeof val === 'string') {
+    if (props.precision === 0) {
+      state.inputValue = parseInt(val);
+    } else {
+      state.inputValue = parseFloat(val);
+    }
+  } else {
+    if (props.precision !== undefined) {
+      state.inputValue = toDecimal(val, props.precision);
+    } else {
+      state.inputValue = val;
+    }
+  }
+}
+
 watch(() => props.value, (val, oldVal) => {
   if (val !== oldVal) {
-    state.inputValue = val;
+    init(val);
   }
 });
 
 onMounted(() => {
-  state.inputValue = isNotBlank(props.value) ? +props.value! : undefined;
+  init(props.value);
 });
 </script>
 
@@ -100,6 +127,7 @@ onMounted(() => {
 @import '/src/assets/less/variable.less';
 
 .number-editor {
+  width: 100%;
 
   &.ant-input-number {
     background-color: #f7f9fc;

@@ -7,6 +7,7 @@ import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig 
 import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
 import { reactive } from 'vue';
 import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 export * from './index.d';
 
@@ -267,6 +268,7 @@ export const service = {
   },
   /** 开始范围框选 */
   startRangeSelect(e: MouseEvent) {
+    bus.$disabled(GlobalBusType.onBodyMouseMove);
     if (state.dragConfig.isDrag || state.dragConfig.isPreDrag) return;
     if (e.button != 0) return;
     if (state.pressSpaceKey) {
@@ -362,6 +364,7 @@ export const service = {
   startDrag(e, component: Component | ComponentGroup, isExisted: boolean = false) {
     if (state.dragConfig.isPause) return;
     if (e.button != 0) return;
+    bus.$disabled(GlobalBusType.onBodyMouseMove);
     state.isExisted = isExisted;
     if (state.dragConfig.shadowDom) {
       state.dragConfig.shadowDom.remove();
@@ -383,6 +386,7 @@ export const service = {
     if (component.attrs.lock) {
       return;
     }
+    bus.$disabled(GlobalBusType.onBodyMouseMove);
     const _el: HTMLElement = document.createElement('div');
     if (editorState.appConfig.appType === AppType.questionnaire && !component.isGroup) {
       _el.classList.add('form-design-drag-component');

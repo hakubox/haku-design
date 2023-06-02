@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch, ref } from 'vue';
+import { onMounted, watch, ref, PropType } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
 import BaseECharts from './BaseECharts.vue';
@@ -39,8 +39,13 @@ const props = defineProps({
     type: Object,
     default: () => ({ show: false })
   },
+  radar: {
+    type: Object,
+    default: () => ({})
+  },
   color: {
-    type: String
+    type: Array as PropType<{ color: string }[]>,
+    default: () => []
   }
 });
 
@@ -52,11 +57,13 @@ const getOption = () => {
     legend: props.legend,
     tooltip: {},
     label: props.label,
+    radar: props.radar,
+    color: props.color.map(i => i.color),
     series: JSON.parse(props.dataSource ?? []).map(i => ({
       type: i.type ?? 'radar',
       name: i.name,
       data: i.data ?? [],
-      color: i.color ?? props.color
+      colorBy: i.colorBy
     }))
   };
   return option;
@@ -71,9 +78,14 @@ const setOption = () => {
 };
 
 watch([
-  props.title, props.legend, props.label,
+  props.title, props.legend, props.label, props.radar, props.color,
 ], (val, oldVal) => setOption(), { deep: true });
-watch(() => props.color, (val, oldVal) => setOption());
+watch(() => props.dataSource, (val, oldVal) => {
+  try {
+    JSON.parse(props.dataSource ?? []);
+    setOption();
+  } catch (error) {}
+});
 
 onMounted(() => {
   init();

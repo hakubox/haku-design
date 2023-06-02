@@ -42,9 +42,6 @@ export function componentBarChart(app: App) {
     },
     propertys: mergeBasicProps('bar', [
       {
-        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
-      }, {
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",
@@ -54,7 +51,8 @@ export function componentBarChart(app: App) {
       ["Action", 120],
       ["Shooter", 350],
       ["Other", 150]
-    ]
+    ],
+    "colorBy": "data"
   }
 ]`,
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.code, layout: PropertyLayout.block

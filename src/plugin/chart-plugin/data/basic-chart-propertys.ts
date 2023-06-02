@@ -70,9 +70,33 @@ export const basicChartPropertys: ComponentProperty[] = [
     name: 'height', title: '高度', appType: [AppType.questionnaire],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
   }, {
+    names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+  }, {
     name: 'visible', title: '是否显示', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     remark: '是否在界面上显示。'
+  },
+  { name: 'colorTest', title: '测试颜色', group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color, attrs: { } }, 
+  
+  {
+    name: 'color', title: '颜色表', default: [
+      { color: 'rgba(93, 114, 194, 1)' },
+      { color: 'rgba(165, 200, 125, 1)' },
+      { color: 'rgba(237, 201, 102, 1)' },
+      { color: 'rgba(211, 114, 104, 1)' },
+      { color: 'rgba(142, 190, 220, 1)' },
+      { color: 'rgba(102, 158, 118, 1)' },
+      { color: 'rgba(226, 140, 89, 1)' },
+      { color: 'rgba(141, 103, 176, 1)' },
+      { color: 'rgba(210, 135, 200, 1)' },
+    ],
+    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.modelList, attrs: {
+      rowKey: 'color',
+      columns: [
+        { name: 'color', title: '颜色', editor: ComponentPropertyEditor.color, attrs: { } },
+      ]
+    }
   }, {
     name: ['title', 'show'], title: '标题', default: false,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -81,7 +105,13 @@ export const basicChartPropertys: ComponentProperty[] = [
         name: ['title', 'text'], title: '标题', default: '图表标题',
         editor: ComponentPropertyEditor.singerLine,
       }, {
-        name: ['title', 'link'], title: '跳转链接',
+        name: ['title', 'link'], title: '标题链接',
+        editor: ComponentPropertyEditor.singerLine,
+      }, {
+        name: ['title', 'subtext'], title: '子标题', default: '',
+        editor: ComponentPropertyEditor.singerLine,
+      }, {
+        name: ['title', 'sublink'], title: '子标题链接',
         editor: ComponentPropertyEditor.singerLine,
       }, {
         name: ['title', 'left'], title: '左侧距离', default: 'center',
@@ -135,7 +165,7 @@ export const basicChartPropertys: ComponentProperty[] = [
       { name: ['legend', 'bottom'], title: '底部距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, }, 
     ]
   }, {
-    name: ['label', 'show'], title: '标签', default: true,
+    name: ['label', 'show'], title: '标签', default: false,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
       { name: ['label', 'distance'], title: '距离', editor: ComponentPropertyEditor.width, },
@@ -146,9 +176,6 @@ export const basicChartPropertys: ComponentProperty[] = [
       { name: ['label', 'formatter'], title: '格式化', editor: ComponentPropertyEditor.singerLine, },
       // getTextStyle({ name: ['label'], title: '文本' })
     ]
-  }, {
-    names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
-    group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
   }, {
     name: 'name', title: '组件名称', default: '',
     group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
@@ -168,8 +195,8 @@ export function mergeBasicProps(chartType: string, propertys: ComponentProperty[
       case 'scatter':
         _props.push(
           {
-            name: ['grid'], names: ['top', 'right', 'bottom', 'left'], title: '边距', default: [40,20,30,50],
-            editor: ComponentPropertyEditor.numbers, attrs: {
+            name: ['grid'], names: ['top', 'right', 'bottom', 'left'], title: '图表边距', default: [40,20,30,50],
+            group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers, attrs: {
               options: [
                 { label: '左', prop: 'left', unit: 'px' }, { label: '右', prop: 'right', unit: 'px' },
                 { label: '上', prop: 'top', unit: 'px' }, { label: '下', prop: 'bottom', unit: 'px' },

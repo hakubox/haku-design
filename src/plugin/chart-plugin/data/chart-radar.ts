@@ -34,28 +34,51 @@ export function componentRadarChart(app: App) {
     },
     propertys: mergeBasicProps('radar', [
       {
-        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
+        name: '', title: '雷达图配置',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.none,
+        children: [
+          {
+            name: ['radar', 'center'], title: '中心坐标', default: ['50%', '50%'], 
+            editor: ComponentPropertyEditor.numbers, attrs: {
+              options: [ { label: 'x', unit: '%' }, { label: 'y', unit: '%' } ],
+              formatter: val => `${val}%`
+            } 
+          },{
+            name: ['radar', 'indicator'], title: '维度配置', default: [
+              { name: '销售额', min: 0, max: 6500 },
+              { name: '手续费', min: 0, max: 16000 },
+              { name: 'IT设备', min: 0, max: 30000 },
+              { name: '客户支撑', min: 0, max: 38000 },
+              { name: '开发', min: 0, max: 52000 },
+              { name: '营销活动', min: 0, max: 25000 }
+            ],
+            editor: ComponentPropertyEditor.modelList, layout: PropertyLayout.block,
+            attrs: { rowKey: 'name', columns: [
+              { name: 'name', title: '文本', editor: ComponentPropertyEditor.singerLine, attrs: { } },
+              { name: 'min', width: '60px', title: '最小值', editor: ComponentPropertyEditor.float, attrs: { controls: false } },
+              { name: 'max', width: '60px', title: '最大值', editor: ComponentPropertyEditor.float, attrs: { controls: false } },
+            ] }
+          },
+          { name: ['radar', 'radius'], title: '半径', default: '75%', editor: ComponentPropertyEditor.int, attrs: {
+              formatter: val => `${val}%`,
+              suffix: '%'
+            }
+          },
+        ]
       }, {
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",
-    "data": [{
-      "name": "其他消费",
-      "value": 6371664
-    }, {
-      "name": "生活用品",
-      "value": 7216301
-    }, {
-      "name": "通讯物流",
-      "value": 1500621
-    }, {
-      "name": "交通出行",
-      "value": 586622
-    }, {
-      "name": "饮食",
-      "value": 900000
-    }]
+    "data": [
+      {
+        "value": [4200, 3000, 20000, 35000, 50000, 18000],
+        "name": "预算"
+      }, {
+        "value": [5000, 14000, 28000, 26000, 42000, 21000],
+        "name": "支出"
+      }
+    ],
+    "colorBy": "series"
   }
 ]`,
 

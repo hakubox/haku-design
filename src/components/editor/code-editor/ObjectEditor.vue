@@ -125,33 +125,35 @@ watch(
   },
 );
 
-if (props.isExpression) {
-  monaco.editor.defineTheme('gj-dark', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-    colors: {},
-  });
+onBeforeUnmount(() => {
+  if (props.isExpression) {
+    monaco.editor.defineTheme('gj-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+      colors: {},
+    });
 
-  // validation settings
-  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-    noSemanticValidation: true,
-    noSyntaxValidation: false,
-  });
+    // validation settings
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: false,
+    });
 
-  // compiler options
-  monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-    target: monaco.languages.typescript.ScriptTarget.ESNext,
-    allowNonTsExtensions: true,
-  });
-} else {
-  monaco.editor.defineTheme('gj-dark', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-    colors: {},
-  });
-}
+    // compiler options
+    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+      allowNonTsExtensions: true,
+    });
+  } else {
+    monaco.editor.defineTheme('gj-dark', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+      colors: {},
+    });
+  }
+});
 
 onBeforeUnmount(() => {
   destory();

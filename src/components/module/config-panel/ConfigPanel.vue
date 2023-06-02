@@ -92,7 +92,7 @@ const changePageProps = (val: Record<string, any>, prop: GeneralProperty, propMa
 
 /** 切换右侧主Tabs */
 const changeMainPropertyPanel = (e) => {
-  editorState.bus.$emit(GlobalBusType.propChange);
+  bus.$emit(GlobalBusType.propChange);
 };
 
 watch(() => editorState.appConfig.appType, () => {

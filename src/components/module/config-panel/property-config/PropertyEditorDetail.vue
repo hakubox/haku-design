@@ -27,7 +27,7 @@
           </Popover>
         </div>
         <div class="attr-editor-item-label-tools">
-          <template v-if="prop.layout == 'block' || prop.attach?.length">
+          <template v-if="prop.layout == 'block' && (prop.attach?.length || props.propertyEditors[prop.editor].tools?.length)">
             
             <div
               class="btn-tool"
@@ -104,7 +104,7 @@
           </template>
         </component>
       </div>
-      <template v-if="!(prop.layout == 'block' || prop.attach?.length)">
+      <template v-if="prop.layout == 'block' && prop.attach?.length">
         <Tooltip placement="topLeft" class="fullscreen" v-if="props.propertyEditors[prop.editor]?.canFullScreen">
           <template #title>最大化</template>
           <Button size="small" @click="emit('fullscreen', props.propertyEditors[prop.editor], prop)">

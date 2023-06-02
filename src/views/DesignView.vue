@@ -357,7 +357,7 @@ import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue
 import Thumbnail from '@/components/common/Thumbnail.vue';
 import domtoimage from 'dom-to-image-more';
 import { ApiMethodType, download } from '@/lib/api';
-import { GlobalBusType } from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 const {
   showPrivateQuestionnaireLibraryDialog,
@@ -526,16 +526,12 @@ const getDataById = id => {
   });
 }
 
-/** 监听问卷版本切换 */
-versionHistoryState.bus.$on(GlobalBusType.versionChange, () => {
-  getDataById(route.query.qid);
-});
-
 const globalMouseMove = (e: MouseEvent) => {
   draggableService.dragMove(e);
   draggableService.moveRangeSelect(e);
 }
 const globalMouseUp = (e: MouseEvent) => {
+  bus.$enable(GlobalBusType.onBodyMouseMove);
   draggableService.endDrag(e);
   draggableService.endRangeSelect(e);
 }
@@ -564,11 +560,16 @@ onMounted(() => {
   window.onresize = () => {
     editorService.onPageSize();
   };
-  editorState.bus.$on(GlobalBusType.componentHandle, (eventName, params, component: Component) => {
+
+  bus.$on(GlobalBusType.versionChange, () => {
+    getDataById(route.query.qid);
+  });
+  bus.$on(GlobalBusType.componentHandle, (eventName, params, component: Component) => {
     componentHandle(eventName, params, component);
   });
   document.body.addEventListener('mousemove', globalMouseMove, { passive: true });
-  document.body.addEventListener('mouseup', globalMouseUp, { passive: true });
+  // bus.$on(GlobalBusType.onBodyMouseMove, globalMouseMove);
+  bus.$on(GlobalBusType.onBodyMouseUp, globalMouseUp);
   if (route.query.qid) {
     getDataById(route.query.qid);
   }
@@ -576,7 +577,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', globalMouseMove);
-  document.body.removeEventListener('mouseup', globalMouseUp);
+  // bus.$off(GlobalBusType.onBodyMouseMove, globalMouseMove);
+  bus.$off(GlobalBusType.onBodyMouseUp, globalMouseUp);
 });
 
 watch(() => route.fullPath, (newPath, oldPath) => {

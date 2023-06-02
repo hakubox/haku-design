@@ -16,7 +16,7 @@ export function registerComponent(plugin: PluginInfo, component: InitComponent, 
     pluginType: PluginType.component,
   });
   formComponents.push(component);
-  bus.$emit(GlobalBusType.addShopComponent);
+  bus.$emit(GlobalBusType.refreshShopComponent);
   if (menu) {
     registerPlugin({
       ...plugin,

@@ -1,5 +1,5 @@
 <template>
-  <ComponentBasic class="component-chart-body component-chart-pie" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
+  <ComponentBasic class="component-chart-body component-chart-map" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
     <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
   </ComponentBasic>
 </template>
@@ -7,8 +7,9 @@
 <script lang="ts" setup>
 import { onMounted, watch, ref, PropType } from 'vue';
 import { getQBasicProps } from '@/tools/common';
-import type { ECharts } from 'echarts';
+import { registerMap, type ECharts } from 'echarts';
 import BaseECharts from './BaseECharts.vue';
+import { get } from '@/lib/api';
 
 defineOptions({
   inheritAttrs: false
@@ -16,6 +17,10 @@ defineOptions({
 
 const props = defineProps({
   dataSource: {
+    type: String,
+    default: () => '',
+  },
+  geo: {
     type: String,
     default: () => '',
   },
@@ -42,7 +47,7 @@ const props = defineProps({
   color: {
     type: Array as PropType<{ color: string }[]>,
     default: () => []
-  }
+  },
 });
 
 const chartRef = ref<ECharts>();
@@ -53,13 +58,17 @@ const getOption = () => {
     legend: props.legend,
     tooltip: {},
     label: props.label,
-    color: props.color.map(i => i.color),
-    series: JSON.parse(props.dataSource ?? []).map(i => ({
-      type: i.type ?? 'pie',
-      name: i.name,
-      data: i.data ?? [],
-      colorBy: i.colorBy
-    }))
+    visualMap: {
+      min: 0,
+      max: 50000,
+      text: ['High', 'Low'],
+      realtime: false,
+      calculable: true,
+      inRange: {
+        color: props.color.map(i => i.color),
+      }
+    },
+    series: JSON.parse(props.dataSource ?? [])
   };
   return option;
 };
@@ -72,6 +81,28 @@ const setOption = () => {
   chartRef.value?.setOption(getOption());
 };
 
+/** 注册地图 */
+const registerMaps = (name: string, data: string | Record<string, any>) => {
+  return new Promise<void>((resolve) => {
+    if (typeof data === 'string') {
+      get(data).then(d => {
+        registerMap(name, d);
+        resolve();
+      })
+    } else {
+      registerMap(name, data as any);
+      resolve();
+    }
+  })
+}
+
+const loadMap = () => {
+  const _mapName = props.geo.substring(props.geo.lastIndexOf('/') + 1, props.geo.lastIndexOf('.'));
+  registerMaps(_mapName, props.geo).then(d => {
+    setOption();
+  });
+}
+
 watch([
   props.title, props.legend, props.label, props.color,
 ], (val, oldVal) => setOption(), { deep: true });
@@ -81,9 +112,14 @@ watch(() => props.dataSource, (val, oldVal) => {
     setOption();
   } catch (error) {}
 });
+watch(() => props.geo, (val, oldVal) => {
+  try {
+    loadMap();
+  } catch (error) {}
+});
 
 onMounted(() => {
-  init();
+  loadMap();
 });
 </script>
 

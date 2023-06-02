@@ -1,5 +1,6 @@
 import { StyleValue, UnwrapNestedRefs, reactive, ref } from "vue";
 import { throttle } from "./common";
+import bus, { GlobalBusType } from "./bus";
 
 /** 拖拽事件 */
 export interface DragEvent {
@@ -222,15 +223,16 @@ export const useDragHook = <T extends undefined | object = undefined, UseShadow 
   /** 拖拽初始化 */
   const _init = () => {
     if (el) el.addEventListener('mousedown', startDrag, { passive: true });
-    window.addEventListener('mousemove', dragging, { passive: true });
-    window.addEventListener('mouseup', endDrag, { passive: true });
+    
+    bus.$on(GlobalBusType.onBodyMouseMove, dragging);
+    bus.$on(GlobalBusType.onBodyMouseUp, endDrag);
     state.isInit = true;
   };
   /** 销毁拖拽事件 */
   const _destory = () => {
     if (el) el.removeEventListener('mousedown', startDrag);
-    window.removeEventListener('mousemove', dragging);
-    window.removeEventListener('mouseup', endDrag);
+    bus.$off(GlobalBusType.onBodyMouseMove, dragging);
+    bus.$off(GlobalBusType.onBodyMouseUp, endDrag);
     if (destory) destory();
   };
 

@@ -35,7 +35,6 @@
         :max="360"
         class="color-picker-slider-disk"
         :slider-style="{ background: 'linear-gradient(90deg,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red)' }"
-        @change="refreshHue"
       />
       <!-- 透明度 -->
       <color-picker-slider
@@ -44,7 +43,6 @@
         :decimal="2"
         class="color-picker-slider-alpha"
         :slider-style="{ background: `linear-gradient(90deg,${setAlpha(0)} 0%,${setAlpha(1)} 100%)` }"
-        @change="refreshAlpha"
       />
 
       <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 9px" />
@@ -84,7 +82,8 @@
 
 <script lang="ts" setup>
 import Color from '@/lib/color/Color';
-import { reactive, ref, PropType, computed, onMounted, onUnmounted } from 'vue';
+import bus, { GlobalBusType } from '@/tools/bus';
+import { reactive, ref, PropType, computed, onMounted, onUnmounted, watch, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   /** 当前颜色 */
@@ -157,6 +156,7 @@ const hue = computed({
   set: (val) => {
     state.color.set('hue', val);
     state.newValue = state.color.value;
+    emit('change', state.newValue);
   },
 });
 
@@ -174,6 +174,7 @@ const alpha = computed({
   set: (val) => {
     state.color.set('alpha', val);
     state.newValue = state.color.value;
+    emit('change', state.newValue);
   },
 });
 
@@ -225,28 +226,27 @@ const init = () => {
   state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
 };
 const handleStartDrag = (e) => {
-  console.log('开始取色');
   state.isStartDrag = true;
   handleDrag(e);
 };
 /** 刷新颜色色环值 */
-const refreshHue = (val) => {
-  state.color.set({
-    hue: val,
-  });
-  state.newValue = state.color.value;
-  emit('update:value', state.newValue);
-  emit('change', state.newValue);
-};
+// const refreshHue = (val) => {
+//   state.color.set({
+//     hue: val,
+//   });
+//   state.newValue = state.color.value;
+//   emit('update:value', state.newValue);
+//   emit('change', state.newValue);
+// };
 /** 刷新颜色透明度 */
-const refreshAlpha = (val) => {
-  state.color.set({
-    alpha: val,
-  });
-  state.newValue = state.color.value;
-  emit('update:value', state.newValue);
-  emit('change', state.newValue);
-};
+// const refreshAlpha = (val) => {
+//   state.color.set({
+//     alpha: val,
+//   });
+//   state.newValue = state.color.value;
+//   emit('update:value', state.newValue);
+//   emit('change', state.newValue);
+// };
 /** 在色板取色 */
 const handleDrag = (e) => {
   if (state.isStartDrag) {
@@ -263,7 +263,7 @@ const handleDrag = (e) => {
     });
     state.newValue = state.color.value;
     
-    emit('update:value', state.newValue);
+    // emit('update:value', state.newValue);
     emit('change', state.newValue);
   }
 };
@@ -284,7 +284,7 @@ const setColor = (color: string) => {
   state.cursorLeft = (state.color.get('saturation') * rect.width) / 100;
   state.cursorTop = ((100 - state.color.get('value')) * rect.height) / 100;
 
-  comfirm();
+  comfirm(false);
 };
 /** 切换颜色类型 */
 const changeColorType = () => {
@@ -325,10 +325,11 @@ const shrinkPicker = () => {
   }
 };
 /** 确定 */
-const comfirm = () => {
+const comfirm = (isClose = true) => {
   state.oldValue = state.newValue;
   emit('update:value', state.newValue);
   emit('change', state.newValue);
+  console.warn('关闭了啊');
   state.showPicker = false;
 
   const _color = new Color({
@@ -348,18 +349,18 @@ onMounted(() => {
   state.color = new Color({
     format: props.colorType,
   }) as Color;
-
-  document.body.addEventListener('mouseup', handleEndDrag, { passive: true });
-  document.body.addEventListener('mousemove', handleDrag, { passive: true });
-  document.body.addEventListener('mousedown', shrinkPicker, { passive: true });
+  
+  bus.$on(GlobalBusType.onBodyMouseMove, handleDrag);
+  bus.$on(GlobalBusType.onBodyMouseDown, shrinkPicker);
+  bus.$on(GlobalBusType.onBodyMouseUp, handleEndDrag);
 
   init();
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mouseup', handleEndDrag);
-  document.body.removeEventListener('mousemove', handleDrag);
-  document.body.removeEventListener('mousedown', shrinkPicker);
+  bus.$off(GlobalBusType.onBodyMouseUp, handleEndDrag);
+  bus.$off(GlobalBusType.onBodyMouseMove, handleDrag);
+  bus.$off(GlobalBusType.onBodyMouseDown, shrinkPicker);
 });
 </script>
 

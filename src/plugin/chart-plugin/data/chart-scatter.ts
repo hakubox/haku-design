@@ -34,9 +34,6 @@ export function componentScatterChart(app: App) {
     },
     propertys: mergeBasicProps('scatter', [
       {
-        name: 'color', title: '颜色', default: 'rgba(84, 112, 198, 1)',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color
-      }, {
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",

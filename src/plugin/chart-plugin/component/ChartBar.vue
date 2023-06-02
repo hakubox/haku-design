@@ -9,6 +9,7 @@ import { onMounted, watch, ref, useAttrs } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import type { ECharts } from 'echarts';
 import BaseECharts from './BaseECharts.vue';
+import { PropType } from 'vue';
 
 defineOptions({
   inheritAttrs: false
@@ -52,7 +53,8 @@ const props = defineProps({
     default: () => ({ show: false })
   },
   color: {
-    type: String
+    type: Array as PropType<{ color: string }[]>,
+    default: () => []
   }
 });
 
@@ -68,11 +70,12 @@ const getOption = () => {
     label: props.label,
     xAxis: props.xAxis,
     yAxis: props.yAxis,
+    color: props.color.map(i => i.color),
     series: JSON.parse(props.dataSource ?? []).map(i => ({
       type: i.type ?? 'bar',
       name: i.name,
       data: i.data ?? [],
-      color: i.color ?? props.color
+      colorBy: i.colorBy
     }))
   };
   return option;
@@ -87,13 +90,22 @@ const setOption = () => {
 };
 
 watch([
-  props.title, props.legend, props.xAxis, props.yAxis, props.label, props.grid,
+  props.title, props.legend, props.xAxis, props.yAxis, props.label, props.grid, props.color
 ], (val, oldVal) => setOption(), { deep: true });
-watch(() => props.color, (val, oldVal) => setOption());
+watch(() => props.dataSource, (val, oldVal) => {
+  try {
+    JSON.parse(props.dataSource ?? []);
+    setOption();
+  } catch (error) {}
+});
 
 onMounted(() => {
   init();
 });
+
+defineExpose({
+  
+})
 </script>
 
 <style lang="less" scoped>
