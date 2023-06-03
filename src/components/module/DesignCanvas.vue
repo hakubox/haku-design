@@ -8,26 +8,6 @@
     }"
     ref="formCanvas"
   >
-    <!-- 全屏区域 -->
-    <div class="form-canvas-full-screen-panel" v-if="props.isPreview">
-      <FormDesignComponent
-        v-for="(component, index) in currentPage.children.filter(
-          (i) => i.attrs.isFullScreen && i.attrs.visible !== false,
-        )"
-        v-show="!isPreview"
-        :component-id="component.id"
-        :isPreview="props.isPreview"
-        :dragConfig="dragConfig"
-        :children="component.children"
-        :component="component"
-        :key="index"
-        :index="index"
-        :isFullScreen="props.isPreview ? true : false"
-      >
-        {{ component }}
-      </FormDesignComponent>
-    </div>
-
     <div class="form-canvas-body">
       <div
         style="padding-top: 7px"
@@ -46,24 +26,6 @@
         />
       </div>
 
-      <!-- 置顶区域 -->
-      <div class="form-canvas-is-top-panel" v-if="props.isPreview">
-        <FormDesignComponent
-          v-for="(component, index) in currentPage.children.filter(
-            (i) => i.attrs.isTop && i.attrs.visible !== false,
-          )"
-          :component-id="component.id"
-          :isPreview="props.isPreview"
-          :dragConfig="dragConfig"
-          :children="component.children"
-          :component="component"
-          :key="index"
-          :index="index"
-          :isFullScreen="false"
-        >
-          {{ component }}
-        </FormDesignComponent>
-      </div>
       <div
         ref="form-canvas-mainpanel"
         class="form-canvas-mainpanel"
@@ -83,7 +45,7 @@
 
         <FormDesignComponent
           v-for="(component, index) in currentPage.children.filter(
-            (i) => !props.isPreview || (props.isPreview && !i.attrs.isTop && i.attrs.visible !== false),
+            (i) => !props.isPreview || (props.isPreview && i.attrs.visible !== false),
           )"
           v-show="!props.isPreview || editorService.showComponentInFormPage(component.id, props.pageIndex)"
           :component-id="component.id"
@@ -100,7 +62,6 @@
           :component="component"
           :key="index"
           :index="index"
-          :isFullScreen="false"
         >
           {{ component }}
         </FormDesignComponent>

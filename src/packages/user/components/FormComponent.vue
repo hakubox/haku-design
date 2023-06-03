@@ -3,7 +3,7 @@
     class="form-component"
     :component-id="componentId"
     :class="{
-      visible: !component.isHidden && component.attrs.visible && (!!isFullScreen === !!component.attrs.isFullScreen),
+      visible: !component.isHidden && component.attrs.visible,
       error: formFillService.getErrorByComponent(componentId).length
     }"
     :style="{
@@ -34,7 +34,6 @@
           :children="childComponent.children"
           :component="childComponent"
           :index="childIndex"
-          :isFullScreen="isFullScreen"
         />
         <div class="form-component-disabled" v-if="scoringState.isScoring"></div>
       </template>
@@ -127,11 +126,6 @@ const props = defineProps({
   /** 索引 */
   index: {
     type: Number,
-    required: true
-  },
-  /** 是否全屏组件 */
-  isFullScreen: {
-    type: Boolean,
     required: true
   },
 });

@@ -45,12 +45,12 @@ export function componentRadarChart(app: App) {
             } 
           },{
             name: ['radar', 'indicator'], title: '维度配置', default: [
-              { name: '销售额', min: 0, max: 6500 },
-              { name: '手续费', min: 0, max: 16000 },
-              { name: 'IT设备', min: 0, max: 30000 },
-              { name: '客户支撑', min: 0, max: 38000 },
-              { name: '开发', min: 0, max: 52000 },
-              { name: '营销活动', min: 0, max: 25000 }
+              { name: '维度A', min: 0, max: 10 },
+              { name: '维度B', min: 0, max: 10 },
+              { name: '维度C', min: 0, max: 10 },
+              { name: '维度D', min: 0, max: 10 },
+              { name: '维度E', min: 0, max: 10 },
+              { name: '维度F', min: 0, max: 10 }
             ],
             editor: ComponentPropertyEditor.modelList, layout: PropertyLayout.block,
             attrs: { rowKey: 'name', columns: [
@@ -59,7 +59,7 @@ export function componentRadarChart(app: App) {
               { name: 'max', width: '60px', title: '最大值', editor: ComponentPropertyEditor.float, attrs: { controls: false } },
             ] }
           },
-          { name: ['radar', 'radius'], title: '半径', default: '75%', editor: ComponentPropertyEditor.int, attrs: {
+          { name: ['radar', 'radius'], title: '半径', default: 75, editor: ComponentPropertyEditor.int, attrs: {
               formatter: val => `${val}%`,
               suffix: '%'
             }
@@ -71,14 +71,14 @@ export function componentRadarChart(app: App) {
     "name": "测试数据",
     "data": [
       {
-        "value": [4200, 3000, 20000, 35000, 50000, 18000],
-        "name": "预算"
+        "value": [3, 6, 8, 10, 7, 5],
+        "name": "数据A"
       }, {
-        "value": [5000, 14000, 28000, 26000, 42000, 21000],
-        "name": "支出"
+        "value": [6, 10, 3, 5, 2, 4],
+        "name": "数据B"
       }
     ],
-    "colorBy": "series"
+    "colorBy": "data"
   }
 ]`,
 

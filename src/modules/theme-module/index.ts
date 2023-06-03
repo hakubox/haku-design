@@ -3,7 +3,7 @@ import type { ThemeConfig } from './index.d';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';
 import { themeList } from './data/theme-list';
-import { reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import { toast } from '@/common/message';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/modules/history-module';
@@ -39,7 +39,7 @@ export const service = {
       }
       const _index = state.themeList.findIndex(i => i.code === state.currentThemeCode);
       if (_index >= 0) {
-        state.themeConfig = cloneLoop(state.themeList[_index]);
+        state.themeConfig = cloneLoop(toRaw(state.themeList[_index]));
         themePropertys.forEach(prop => {
           if (prop.default && !state.themeConfig[prop.name as string]) {
             state.themeConfig[prop.name as string] = typeof prop.default === 'function' ? prop.default() : prop.default;

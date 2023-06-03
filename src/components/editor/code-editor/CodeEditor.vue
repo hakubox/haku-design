@@ -74,6 +74,29 @@ const editorRef = shallowRef();
 const containerRef = ref<HTMLElement>();
 let _subscription: any;
 
+/** 获取值 */
+const getValue = () => {
+  const editor = editorRef.value;
+  return editor?.getValue?.() || '';
+};
+/** 销毁 */
+const destory = () => {
+  const editor = editorRef.value;
+  if (_subscription) _subscription.dispose()
+  const model = editor.getModel();
+  if (model) model.dispose();
+  editor.dispose();
+};
+/** 监听值 */
+watch(() => props.value, (count, prevCount) => {
+  const editor = editorRef.value;
+  if (editor) {
+    if (count != editor.getValue()) {
+      editor.setValue(count);
+    }
+  }
+});
+
 onMounted(()=>{
   const _options = {
     ...state.defaultOptions,
@@ -99,33 +122,10 @@ onMounted(()=>{
       emit('change', editor.getValue(), event);
     }
   }));
-})
-
-/** 获取值 */
-const getValue = () => {
-  const editor = editorRef.value;
-  return editor?.getValue?.() || '';
-};
-/** 销毁 */
-const destory = () => {
-  const editor = editorRef.value;
-  if (_subscription) _subscription.dispose()
-  const model = editor.getModel();
-  if (model) model.dispose();
-  editor.dispose();
-};
-/** 监听值 */
-watch(() => props.value, (count, prevCount) => {
-  const editor = editorRef.value;
-  if (editor) {
-    if (count != editor.getValue()) {
-      editor.setValue(count);
-    }
-  }
 });
 
 onBeforeMount(() => {
-  monaco.editor.defineTheme('gj-dark', {
+  monaco.editor.defineTheme(props.theme, {
     base: 'vs-dark',
     inherit: true,
     rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],

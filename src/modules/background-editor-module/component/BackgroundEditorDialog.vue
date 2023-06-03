@@ -7,6 +7,7 @@
     :body-style="{ width: '240px' }"
     :style="[backgroundEditorState.dialogCss, { width: '240px', left: 'initial' }]"
     @close="backgroundEditorState.isShow = false;"
+    @mousedown.stop
   >
     <template #header-tools>
       
@@ -81,10 +82,8 @@ import SimpleSelect from './common/SimpleSelect.vue';
 import type { AppBackground, AppBackgroundType, AppColor } from '../index.d';
 import GradientSlider from './common/GradientSlider.vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '../';
-import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
 import bus, { GlobalBusType } from '@/tools/bus';
-import { AppType } from '@/@types/enum';
 
 const emit = defineEmits<{
   (event: 'change', value: AppBackground): void;

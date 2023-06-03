@@ -15,24 +15,6 @@
       <slot name="empty" v-if="isEmptyForm">
         <Empty image="search" :description="props.empty || state.errorMsg" />
       </slot>
-      
-      <!-- 全屏区域 -->
-      <div class="form-canvas-full-screen-panel">
-        <FormComponent
-          v-for="(component, index) in editorState.currentPage.children.filter(
-            (i) => i.attrs.isFullScreen && i.attrs.visible !== false,
-          )"
-          v-show="editorService.showComponentInFormPage(component.id)"
-          :component-id="component.id"
-          :children="component.children"
-          :component="component"
-          :key="index"
-          :index="index"
-          :isFullScreen="true"
-        >
-          {{ component }}
-        </FormComponent>
-      </div>
 
       <div class="form-canvas-body">
 
@@ -54,27 +36,12 @@
           />
         </div>
 
-        <!-- 置顶区域 -->
-        <div class="form-canvas-is-top-panel">
-          <FormComponent
-            v-for="(component, index) in editorState.currentPage.children.filter(i => i.attrs.isTop && i.attrs.visible !== false)"
-            :component-id="component.id"
-            :children="component.children"
-            :component="component"
-            :key="index"
-            :index="index"
-            :isFullScreen="false"
-          >
-            {{component}}
-          </FormComponent>
-        </div>
-
         <div class="form-canvas-mainpanel" :class="{
           'type-flex': editorState.appConfig.appType === AppType.questionnaire,
           'type-canvas': editorState.appConfig.appType === AppType.canvas,
         }">
           <FormComponent
-            v-for="(component, index) in editorState.currentPage.children.filter(i => !i.attrs.isTop && i.attrs.visible !== false)"
+            v-for="(component, index) in editorState.currentPage.children.filter(i => i.attrs.visible !== false)"
             v-show="editorService.showComponentInFormPage(component.id)"
             :component-id="component.id"
             :class="{
@@ -84,7 +51,6 @@
             :component="component"
             :key="index"
             :index="index"
-            :isFullScreen="false"
           >
             {{ component }}
           </FormComponent>
@@ -667,11 +633,6 @@ defineExpose({
       box-sizing: border-box;
       overflow-x: hidden;
       overflow-y: auto;
-
-      > .form-canvas-is-top-panel {
-        display: flex;
-        flex-direction: column;
-      }
 
       > .form-canvas-mainpanel {
         display: block;

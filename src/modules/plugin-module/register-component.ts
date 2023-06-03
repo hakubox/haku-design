@@ -29,6 +29,7 @@ export function registerComponent(plugin: PluginInfo, component: InitComponent, 
       title: `${menu.title}`,
       icon: menu.icon,
       pluginType: PluginType.menuComponentItem,
+      onloadApp: undefined
     });
     menuComponentItems.push(menu);
   }

@@ -3,6 +3,8 @@ import { HandleType } from "@/common/component-handle";
 import { computed, reactive, ref } from "vue";
 
 export const enum GlobalBusType {
+  /** 屏幕大小改变 */
+  onPageResize = 'on_page_resize',
   /** 在body上的光标松开事件（一般用作拖拽结束） */
   onBodyMouseUp = 'on_body_mouse_up',
   /** 在body上的光标移动事件（一般用作拖拽） */
@@ -34,6 +36,7 @@ export const enum GlobalBusType {
 }
 
 export interface GlobalBusEvent {
+  [GlobalBusType.onPageResize]: () => void;
   [GlobalBusType.onBodyMouseUp]: (e: MouseEvent) => void;
   [GlobalBusType.onBodyMouseMove]: (e: MouseEvent) => void;
   [GlobalBusType.onBodyMouseDown]: () => void;

@@ -1,11 +1,11 @@
 <template>
   <component @focus="onFocus(prop)"
     v-if="getEditor"
-    v-bind="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
+    v-bind="Object.assign({}, getEditor.attrs, prop.attrs)"
     :component="model"
     :value="getValue"
     :disabled="prop.disabled"
-    :attrs="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
+    :attrs="Object.assign({}, getEditor.attrs, prop.attrs)"
     @change="(val) => onChange(val, prop, model)"
     :is="getEditor.component"
   >
@@ -53,11 +53,6 @@ const props = defineProps({
   model: {
     type: Object as PropType<Record<string, any>>,
     default: () => ({})
-  },
-  /** 是否全屏状态 */
-  isFullScreen: {
-    type: Boolean,
-    default: false
   }
 });
 

@@ -9,7 +9,7 @@
       >
         <div class="background-editor-item-group">
           <!-- 图片 -->
-          <div class="background-editor-item-img" :style="getParentStyle(item)" @mousedown="toggleDialog($event, index)">
+          <div class="background-editor-item-img" :style="getParentStyle(item)" @mousedown.stop="toggleDialog($event, index)">
             <div class="background-editor-item-img-content" :style="getStyle(item)"></div>
           </div>
           <!-- 文本 -->
@@ -164,8 +164,7 @@ const getTxt = (item: AppBackground) => {
 
 /** 弹出或关闭弹出框 */
 const toggleDialog = (e: MouseEvent, index: number) => {
-  
-  if (!backgroundEditorState.isShow || backgroundEditorState.currentGradientItemIndex !== index) {
+  if (!backgroundEditorState.isShow || backgroundEditorState.currentGradientItemIndex === index) {
     // 显示弹出框
     let _top = e.pageY - 100;
     if (_top < 50) _top = 50;

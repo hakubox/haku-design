@@ -44,7 +44,7 @@
             v-if="prop?.canFullScreen"
           >
             <template #title>最大化</template>
-            <Button size="small" @click="fullScreen(prop, prop)">
+            <Button size="small">
               <FullscreenOutlined :style="{ fontSize: '12px' }" />
             </Button>
           </Tooltip>
@@ -173,12 +173,6 @@ const props = defineProps({
 
 const state = reactive({
   propertyEditors: null,
-  /** 全屏配置 */
-  fullScreenConfig: {
-    prop: { title: '' } as any,
-    value: undefined as any,
-    isFullScreen: false,
-  },
 });
 
 const emit = defineEmits<{
@@ -208,23 +202,6 @@ const checkVisible = (i: GeneralProperty) => {
     return i.visible !== false;
   }
 };
-
-/** 最大化 */
-const fullScreen = (eidtor: any, prop: any) => {
-  state.fullScreenConfig.isFullScreen = true;
-  state.fullScreenConfig.prop = prop;
-};
-
-/** 关闭最大化 */
-const closeFullScreen = ($event) => {
-  propAttaChangeListener(
-    props.model[state.fullScreenConfig.prop.name],
-    state.fullScreenConfig.prop,
-    editorState.currentSelectedComponentPropertyMap,
-    editorState.currentSelectedComponents
-  );
-  state.fullScreenConfig.isFullScreen = false;
-}
 
 /** 属性修改触发的事件 */
 const propAttaChangeListener = (value, prop, propMap, components: (Component | ComponentGroup)[]) => {

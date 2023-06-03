@@ -1,14 +1,10 @@
 <template>
-  <span v-if="!$attrs.isPreview && props.isBackground" class="video-tooltip">当前为背景视频模式</span>
   <ComponentBasic
-    v-else
     class="component-video"
-    :class="{ 'full-screen-video': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :component-label="!$attrs.showLabel || props.isBackground ? '' : $attrs.label"
+    :component-label="!$attrs.showLabel ? '' : $attrs.label"
   >
     <div
-      v-if="props.isBackground"
       class="full-screen-video-mask"
       :style="{ backgroundColor: $attrs.maskColor as string }"
     ></div>
@@ -41,11 +37,6 @@ defineOptions({
 });
 
 const props = defineProps({
-  /** 是否为背景视频 */
-  isBackground: {
-    type: Boolean,
-    required: true,
-  },
   /** 记住播放位置 */
   rememberPosition: {
     type: Boolean,
@@ -69,27 +60,6 @@ const state = reactive({});
 <style lang="less" scoped>
 .component-video {
   padding: 5px;
-
-  &.full-screen-video {
-    position: relative;
-
-    > .full-screen-video-mask {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    > video {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-    }
-  }
 
   video {
     object-fit: cover;

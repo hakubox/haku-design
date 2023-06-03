@@ -13,6 +13,8 @@ export * from './register-event';
 
 /** 插件模块状态 */
 export const state = reactive({
+  /** 是否初始化 */
+  isInit: false,
   /** 获取插件分类信息 */
   typeCategorys: {
     /** 工具栏组件 */
@@ -179,9 +181,12 @@ export const service = {
   },
   /** APP加载事件 */
   onAppLoad() {
-    state.plugins.forEach(async plugin => {
-      if (plugin.onloadApp) await plugin.onloadApp();
-    });
+    if (!state.isInit) {
+      state.isInit = true;
+      state.plugins.forEach(plugin => {
+        if (plugin.onloadApp) plugin.onloadApp();
+      });
+    }
   },
 };
 

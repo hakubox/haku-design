@@ -1,21 +1,21 @@
 <template>
   <ComponentBasic class="component-drawing-board" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="q-drawing-board-clear" @click="clear">重写</div>
-    <canvas class="q-drawing-board" ref="widgetRef" :style="{ height: (height - 80) + 'px' }"></canvas>
+    <canvas class="q-drawing-board" ref="widgetRef" :style="{ height: height - 80 + 'px' }"></canvas>
     <span style="font-size: 12px; color: #aaa; padding: 5px 0px">{{ '在空白区域书写' }}</span>
   </ComponentBasic>
 </template>
 
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch, ref } from 'vue';
+import { useAttrs, onMounted, PropType, reactive, watch, ref, onUnmounted } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import signature from 'signature_pad';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 
-const attrs = useAttrs();
 const widgetRef = ref();
 
 const props = defineProps({
@@ -34,50 +34,105 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** 设置笔的宽度 */
+  penMinWidth: {
+    type: Number,
+    default: 0.5,
+  },
+  /** 设置笔的宽度 */
+  penMaxWidth: {
+    type: Number,
+    default: 0.5,
+  },
+  /** 速度权重 */
+  velocityFilterWeight: {
+    type: Number,
+    default: 0.7
+  }
 });
-
 
 const state = reactive({
   canvas: null as any,
 });
 
-watch(() => props.pencolor, (val, oldVal) => {
-  if (val !== oldVal) {
-    state.canvas.penColor = val;
-  }
-});
-watch(() => props.pencolor, (val, oldVal) => {
-  if (val !== oldVal) {
-    state.canvas.penColor = val;
-  }
-});
-watch(() => props.height, (val, oldVal) => {
-  if (val !== oldVal) {
-    state.canvas.changeSize(undefined, val);
-  }
-});
-watch(() => props.padding, (val, oldVal) => {
-  if (val !== oldVal) {
-    state.canvas.changeSize(undefined, val);
-  }
-});
+watch(
+  () => props.pencolor,
+  (val, oldVal) => {
+    if (val !== oldVal) {
+      state.canvas.penColor = val;
+    }
+  },
+);
+watch(
+  () => props.pencolor,
+  (val, oldVal) => {
+    if (val !== oldVal) {
+      state.canvas.penColor = val;
+    }
+  },
+);
+watch(
+  () => props.height,
+  (val, oldVal) => {
+    if (val !== oldVal) {
+      state.canvas.changeSize(undefined, val);
+    }
+  },
+);
+watch(
+  () => props.padding,
+  (val, oldVal) => {
+    if (val !== oldVal) {
+      state.canvas.changeSize(undefined, val);
+    }
+  },
+);
 
 const init = () => {
-  const _canvas: HTMLCanvasElement = widgetRef.value as HTMLCanvasElement;
-  state.canvas = new signature(_canvas);
-  state.canvas.penColor = 'black';
-}
+  if (state.canvas) state.canvas.clear();
+  setTimeout(() => {
+    const _rect = widgetRef.value.getBoundingClientRect();
+    widgetRef.value.width = _rect.width;
+    widgetRef.value.height = _rect.height;
+    const _canvas: HTMLCanvasElement = widgetRef.value as HTMLCanvasElement;
+    state.canvas = new signature(_canvas);
+    state.canvas.minWidth = props.penMinWidth;
+    state.canvas.maxWidth = props.penMaxWidth;
+    state.canvas.penColor = 'black';
+  }, 150);
+};
 
 const clear = () => {
   if (state.canvas) {
-        state.canvas.clear();
-      }
+    state.canvas.clear();
+  }
+};
+
+function resizeCanvas() {
+  if (widgetRef.value && state.canvas) {
+    const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+    widgetRef.value.width = widgetRef.value.offsetWidth * ratio;
+    widgetRef.value.height = widgetRef.value.offsetHeight * ratio;
+    widgetRef.value.getContext("2d").scale(ratio, ratio);
+    state.canvas.clear();
+  }
 }
 
+const onResize = () => {
+  resizeCanvas();
+  init();
+};
+
 onMounted(() => {
+  bus.$on(GlobalBusType.onPageResize, onResize);
   init();
 });
 
+onUnmounted(() => {
+  bus.$off(GlobalBusType.onPageResize, onResize);
+  state.canvas.clear();
+  state.canvas = undefined;
+})
 </script>
 
 <style lang="less" scoped>

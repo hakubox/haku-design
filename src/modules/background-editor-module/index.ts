@@ -339,6 +339,7 @@ export const service = {
         break;
       }
       case 'radial-gradient': {
+        debugger;
         /** 两点距离 */
         const _distance = distance({ x: gradientBg.x1, y: gradientBg.y1 }, { x: gradientBg.x2, y: gradientBg.y2 });
         /** 角度 */

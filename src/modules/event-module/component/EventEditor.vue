@@ -169,9 +169,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, PropType, reactive, toRaw, watch } from 'vue';
+import { computed, nextTick, reactive, toRaw, watch } from 'vue';
 import { state as eventState, service as eventService } from '../';
-import { AppEvent, AppEventAction, AppEventTrigger } from '../@types';
+import { AppEvent, AppEventAction, AppEventTrigger } from '../index.d';
 import { eventTriggerGroups, getEventTriggers } from '../data/event-trigger';
 import { createModelId } from '@/tools/common';
 import { getEventActions, eventActionGroups } from '../data/event-action';

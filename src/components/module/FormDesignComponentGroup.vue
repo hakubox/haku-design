@@ -4,7 +4,7 @@
     class="form-component form-component-group"
     :component-id="componentId"
     :class="{
-      visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible && !!isFullScreen === !!props.component.attrs.isFullScreen,
+      visible: (!props.component.isHidden || !props.isPreview) && props.component.attrs.visible,
       preselect: draggableState.rangeSelectConfig.componentIds.includes(componentId),
       lock: props.component.attrs.lock
     }"
@@ -55,7 +55,6 @@
             :isPreview="props.isPreview"
             :isFormItem="false"
             :index="detailIndex"
-            :isFullScreen="isFullScreen"
           />
         </template>
         <!-- <template v-for="slot in Object.keys(component.slot)" #[slot]>
@@ -109,7 +108,6 @@
           :isPreview="props.isPreview"
           :isFormItem="false"
           :index="index2"
-          :isFullScreen="isFullScreen"
         />
       </template>
       <!-- <template v-for="slot in Object.keys(component.slot)" #[slot]>
@@ -278,11 +276,6 @@ const props = defineProps({
   isReadonly: {
     type: Boolean,
     default: false,
-  },
-  /** 是否全屏组件 */
-  isFullScreen: {
-    type: Boolean,
-    required: true,
   },
 });
 

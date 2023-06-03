@@ -131,6 +131,7 @@ import { GeneralProperty } from "@/@types";
 import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
+import bus, { GlobalBusType } from "@/tools/bus";
 
 const deviceInfo = ref<HTMLElement>();
 
@@ -184,7 +185,7 @@ const state = reactive({
   previewUIConfigProps: [
     {
       name: 'deviceType',
-      title: '展现方式',
+      title: '设备类型',
       require: false,
       visible: true,
       group: 'ui',
@@ -195,10 +196,13 @@ const state = reactive({
           { label: '平板', value: 'tablet' },
           { label: '手机', value: 'mobile' }
         ]
+      },
+      change() {
+        onPageResize();
       }
     }, {
       name: 'direction',
-      title: '切换方向',
+      title: '方向',
       require: false,
       visible: true,
       group: 'ui',
@@ -209,13 +213,19 @@ const state = reactive({
           { label: '横向', value: 'landscape' }
         ]
       },
+      change() {
+        onPageResize();
+      }
     }, {
       name: 'useOriginScale',
       title: '原始缩放比',
       require: false,
       visible: true,
       group: 'ui',
-      editor: ComponentPropertyEditor.boolean
+      editor: ComponentPropertyEditor.boolean,
+      change() {
+        onPageResize();
+      }
     }
   ],
 });
@@ -333,6 +343,10 @@ watch(() => props.visible, (val) => {
   }
 });
 
+const onPageResize = () => {
+  bus.$emit(GlobalBusType.onPageResize);
+};
+
 const resetScale = () => {
   const _windowHeight = window.innerHeight - 60;
   if (editorState.appConfig.appType === AppType.questionnaire) {
@@ -349,6 +363,7 @@ const resetScale = () => {
     state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
     state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.canvasConfig.height, (390 - 30) / editorState.appConfig.canvasConfig.width);
   }
+  onPageResize();
 };
 
 onMounted(() => {

@@ -19,24 +19,6 @@
         />
       </div>
     </div>
-    <Modal
-      :centered="true" 
-      :footer="false"
-      :width="'80vw'" 
-      :height="'80vh'" 
-      :title="state.fullScreenConfig.prop.title" 
-      :visible="state.fullScreenConfig.isFullScreen" 
-      :destroyOnClose="true"
-      @cancel="closeFullScreen"
-    >
-      <GeneralEditorItem
-        :isFullScreen="true"
-        :model="model"
-        :prop="state.fullScreenConfig.prop"
-        :propertys="propertys"
-        @change="propChangeListener"
-      ></GeneralEditorItem>
-    </Modal>
   </div>
 </template>
 
@@ -85,12 +67,6 @@ const props = defineProps({
 
 const state = reactive({
   propertyEditors: null,
-  /** 全屏配置 */
-  fullScreenConfig: {
-    prop: { title: '' } as any,
-    value: undefined as any,
-    isFullScreen: false,
-  },
 });
 
 /** 排序后属性列表 */
@@ -130,36 +106,6 @@ const checkVisible = (i: GeneralProperty) => {
     return i.visible(props.model ?? {});
   } else {
     return i.visible !== false;
-  }
-};
-
-/** 最大化 */
-const fullScreen = (eidtor: any, prop: any) => {
-  state.fullScreenConfig.isFullScreen = true;
-  state.fullScreenConfig.prop = prop;
-};
-
-/** 关闭最大化 */
-const closeFullScreen = ($event) => {
-  propAttaChangeListener(props.model[state.fullScreenConfig.prop.name], state.fullScreenConfig.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents)
-  state.fullScreenConfig.isFullScreen = false;
-}
-
-/** 属性修改触发的事件 */
-const propAttaChangeListener = (value, prop, propMap, components: (Component | ComponentGroup)[]) => {
-  if (prop) {
-    if (value?.target) {
-      console.warn('属性值包含val.target', value);
-      return;
-    }
-    if (components.length) {
-      for (let i = 0; i < components.length; i++) {
-        components[i].attrs['__' + prop.name] = value;
-      }
-    }
-    if (prop?.change) {
-      return prop.change.call(this, prop, propMap, components, value, (editorState.componentCanvas as any).$refs);
-    }
   }
 };
 

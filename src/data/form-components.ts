@@ -1059,9 +1059,9 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
       }, {
         name: 'columns', title: '表格列', default: [ 
-          { name: 'col1', title: '列头1', disabled: false, score: 0 },
-          { name: 'col2', title: '列头2', disabled: false, score: 0 },
-          { name: 'col3', title: '列头3', disabled: false, score: 0 }
+          { name: 'col1', title: '列头1', readonly: false, score: 0 },
+          { name: 'col2', title: '列头2', readonly: false, score: 0 },
+          { name: 'col3', title: '列头3', readonly: false, score: 0 }
         ],
         layout: PropertyLayout.block,
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
@@ -1072,11 +1072,12 @@ export let formComponents: InitComponent[] = [
           // { name: 'type', width: '20%', title: '类型', editor: ComponentPropertyEditor.singerLine, attrs: { } },
           // { name: 'disabled', width: '60px', title: '禁用', editor: ComponentPropertyEditor.boolean, default: false, attrs: { } },
         ] }
-      }, {
-        name: 'dataSource', title: '表格数据', default: [
-          { col1: '张三', col2: '80', col3: '160' },
-          { col1: '李四', col2: '76', col3: '172' },
-        ],
+      },
+      {
+        name: 'dataSource', title: '数据源', default: [
+  { col1: '张三', col2: '80', col3: '160' },
+  { col1: '李四', col2: '76', col3: '172' },
+],
         layout: PropertyLayout.block, group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.json,
         attrs: { language: 'json' }
       }
@@ -1530,6 +1531,8 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '文本',
     attrs: {
+      width: 58,
+      height: 50,
       disabledWidth: true,
       disabledHeight: true,
       _width: 58,
@@ -1618,7 +1621,6 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '图片',
     attrs: {
-      isFullScreen: false,
       width: 300,
       height: 200,
       lock: false,
@@ -1630,27 +1632,19 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
       }, {
-        name: 'borderRadius', title: '圆角度数', default: 0,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
-        attrs: {
-          suffix: '像素',
-        }
+        name: 'borderRadius', title: '圆角', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
       }, {
-        name: 'blur', title: '滤镜（模糊）', default: 0,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
-        attrs: {
-          suffix: '像素',
-        }
-        // format: (val) => { return `blur(${val}px)`; }
+        name: 'blur', title: '模糊', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
       }, {
-        name: 'isBackground', title: '背景视频', default: false,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否为背景视频（在背景铺满）',
-        change(prop, propMap, component, value) {
-          component.attrs.isFullScreen = value;
-        }
+        name: 'opacity', title: '透明度', default: 100,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '%' }
       }, {
-        name: 'maskColor', title: '背景视频遮罩色', default: '',
+        name: 'maskColor', title: '遮罩', default: '',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color,
         attrs: {
           showAlpha: true,
@@ -1696,7 +1690,6 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '音频',
     attrs: {
-      isFullScreen: false,
       lock: false,
       visible: true,
       disabledHeight: true,
@@ -1708,13 +1701,6 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
-      }, {
-        name: 'isBackground', title: '背景音乐', default: false,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否为背景音乐（不在界面上显示）',
-        change(prop, propMap, component, value) {
-          component.attrs.isFullScreen = value;
-        }
       }, {
         name: 'showControls', title: '显示控制器', default: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -1754,7 +1740,6 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '视频',
     attrs: {
-      isFullScreen: false,
       lock: false,
       visible: true,
       width: 350,
@@ -1765,20 +1750,6 @@ export let formComponents: InitComponent[] = [
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
-      }, {
-        name: 'isBackground', title: '背景视频', default: false,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否为背景视频（在背景铺满）',
-        change(prop, propMap, component, value) {
-          component.attrs.isFullScreen = value;
-        }
-      }, {
-        name: 'maskColor', title: '背景视频遮罩色', default: '',
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color,
-        attrs: {
-          showAlpha: true,
-          colorType: 'rgb',
-        }
       }, {
         name: 'controls', title: '显示控制器', default: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,

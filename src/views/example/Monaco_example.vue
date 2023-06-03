@@ -10,7 +10,6 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
-// import { cloneLoop } from '@/lib/clone';
 
 const state = reactive({
   editorJson: '',

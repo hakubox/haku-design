@@ -215,7 +215,7 @@ export const service = {
       const _components: (Component | ComponentGroup)[] = [];
       if (formPageIndex !== undefined && formPageIndex >= 0) {
         _components.push(
-          ...editorService.getAllFormItem(undefined, i => !i.attrs.isTop && i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
+          ...editorService.getAllFormItem(undefined, i => i.attrs.visible !== false && editorService.showComponentInFormPage(i.id)),
         );
       } else {
         _components.push(...editorService.getAllFormItem());

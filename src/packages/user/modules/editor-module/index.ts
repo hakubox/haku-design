@@ -104,8 +104,8 @@ export const state = reactive({
   /** 总页数 */
   maxFormPageCount: computed((): number => {
     if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') return 1;
-    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
-    else return state.currentPage.children.filter(i => i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen).length + 1;
+    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.length;
+    else return state.currentPage.children.filter(i => i.name === 'q-page-split').length + 1;
   }),
 });
 
@@ -117,20 +117,15 @@ export const service = {
     let _index = 0;
     for (let i = 0; i < state.currentPage.children.length; i++) {
       const _componet = state.currentPage.children[i];
-      if (!_componet.attrs.isTop) {
-        if (componentId === _componet.id) {
-          componentIndex = _index;
-          component = _componet;
-          break;
-        }
-        _index++;
+      if (componentId === _componet.id) {
+        componentIndex = _index;
+        component = _componet;
+        break;
       }
+      _index++;
     }
     if (componentIndex !== undefined) {
       if (state.currentPage.pageType === PageType.normalPage && component) {
-        if (component.attrs.isTop) {
-          return false;
-        }
         if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') {
           return true;
         } else {

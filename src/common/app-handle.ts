@@ -1,7 +1,6 @@
 import { reactive, h, toRefs, ConcreteComponent, ref } from 'vue';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
 import { Component, ComponentProperty, GeneralProperty, PropertyEditor } from '@/@types';
-import { cloneLoop } from '@/lib/clone';
 
 /** 应用操作模块 */
 export function useAppHandle() {

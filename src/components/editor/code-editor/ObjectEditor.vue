@@ -4,7 +4,8 @@
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import { onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
+import { onBeforeMount, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, watch } from 'vue';
+import * as monaco from 'monaco-editor';
 
 const props = defineProps({
   value: {
@@ -71,32 +72,6 @@ const state = reactive({
 
 let _subscription: any;
 
-onMounted(() => {
-  const _options = {
-    ...state.defaultOptions,
-    ...props.options,
-    theme: props.theme,
-    language: 'json',
-    fontFamily: 'Courier New',
-    wordWrap: 'on',
-    minimap: {
-      enabled: false, // 是否启用预览图
-    },
-  };
-
-  const editor = (editorRef.value = monaco.editor.create(containerRef.value, {
-    value: JSON.stringify(props.value, undefined, '  '),
-    ..._options,
-  }));
-  editor.onDidFocusEditorText(() => {
-    emit('focus');
-  });
-  _subscription = editor.onDidChangeModelContent(throttle((event) => {
-    if (!state.preventTriggerChangeEvent) {
-      emit('change', editor.getValue(), event);
-    }
-  }));
-});
 /** 获取值 */
 const getValue = () => {
   const editor = editorRef.value;
@@ -124,6 +99,44 @@ watch(
     }
   },
 );
+
+onMounted(() => {
+  const _options = {
+    ...state.defaultOptions,
+    ...props.options,
+    theme: props.theme,
+    language: 'json',
+    fontFamily: 'Courier New',
+    wordWrap: 'on',
+    minimap: {
+      enabled: false, // 是否启用预览图
+    },
+  };
+
+  editorRef.value = monaco.editor.create(containerRef.value!, {
+    value: JSON.stringify(props.value, undefined, '  '),
+    ..._options,
+  } as monaco.editor.IStandaloneEditorConstructionOptions);
+  const editor = editorRef.value;
+
+  editor.onDidFocusEditorText(() => {
+    emit('focus');
+  });
+  _subscription = editor.onDidChangeModelContent(throttle((event) => {
+    if (!state.preventTriggerChangeEvent) {
+      emit('change', editor.getValue(), event);
+    }
+  }));
+});
+
+onBeforeMount(() => {
+  monaco.editor.defineTheme(props.theme, {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+    colors: {}
+  });
+});
 
 onBeforeUnmount(() => {
   if (props.isExpression) {

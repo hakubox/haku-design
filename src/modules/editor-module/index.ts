@@ -110,7 +110,7 @@ export const service = {
           resetButton: false,
           resetButtonText: '重置'
         },
-        hasScore: true,
+        hasScore: false,
         isAutoToGrade: true,
         startPageConfig: {
           isOpen: false,
@@ -164,20 +164,15 @@ export const service = {
     let _index = 0;
     for (let i = 0; i < state.pages[_pageIndex].children.length; i++) {
       const _componet = state.pages[_pageIndex].children[i];
-      if (!_componet.attrs.isTop) {
-        if ( componentId === _componet.id) {
-          componentIndex = _index;
-          component = _componet;
-          break;
-        }
-        _index++;
+      if ( componentId === _componet.id) {
+        componentIndex = _index;
+        component = _componet;
+        break;
       }
+      _index++;
     }
     if (componentIndex !== undefined) {
       if (state.pages[_pageIndex].pageType === PageType.normalPage && component) {
-        if (component.attrs.isTop) {
-          return false;
-        }
         if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') {
           return true;
         } else {
@@ -664,7 +659,7 @@ export const service = {
           }
           _propertys.push({
             name: 'score', title: '分数', default: 1,
-            group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int, attrs: { suffix: '分', min: 1, max: 100 }
+            group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int, attrs: { suffix: '分', min: 0, max: 100 }
           });
         }
 
@@ -673,12 +668,6 @@ export const service = {
         if (parentComponentInfo?.component?.childPropertys) {
           _propertys.push(...(parentComponentInfo?.component.childPropertys || []));
         }
-
-        // 所有组件添加上置顶功能
-        _propertys.push({
-          name: 'isTop', title: '是否置顶', default: false,
-          group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        });
 
         // 所有组件添加额外数据功能
         if (configState.config.showAttaProps) {
@@ -1358,12 +1347,12 @@ export const state = reactive({
   /** 总分页页数 */
   maxFormPageCount: computed((): number => {
     if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') return 1;
-    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.filter(i => !i.attrs.isTop && !i.attrs.isFullScreen).length;
+    else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.length;
     else return state.currentPage.children.filter(i => {
       if (i.isGroup) {
         return false;
       } else {
-        return i.name === 'q-page-split' && !i.attrs.isTop && !i.attrs.isFullScreen;
+        return i.name === 'q-page-split';
       }
     }).length + 1;
   }),

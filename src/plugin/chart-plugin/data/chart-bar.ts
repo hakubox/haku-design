@@ -17,7 +17,6 @@ export function componentBarChart(app: App) {
       app.component(_pluginInfo.name, ChartBar);
     }
   };
-  
   registerComponent(_pluginInfo, {
     name: _pluginInfo.name,
     title: _pluginInfo.title,

@@ -1,16 +1,10 @@
 <template>
-  <!-- <span v-if="!$attrs.isPreview && $attrs.isBackground" class="image-tooltip">当前为背景图片模式</span> -->
+  <!-- <span v-if="!$attrs.isPreview" class="image-tooltip">当前为背景图片模式</span> -->
   <ComponentBasic
     class="component-image"
-    :class="{ 'full-screen-image': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="!props.showLabel || props.isBackground ? '' : props.label"
+    :componentLabel="!props.showLabel ? '' : props.label"
   >
-    <div
-      v-if="props.isBackground"
-      class="full-screen-image-mask"
-      :style="{ backgroundColor: $attrs.maskColor as string }"
-    ></div>
     <img
       class="component-image-content"
       :src="src ? storageService.getFileInfo(src)?.src : defaultImg"
@@ -18,7 +12,8 @@
       :style="{
         'border-radius': props.borderRadius + 'px',
         'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
-        'filter': `blur(${$attrs.blur}px)`
+        'filter': `blur(${$attrs.blur}px)`,
+        opacity: $attrs.opacity as number / 100
       }"
     />
   </ComponentBasic>
@@ -38,11 +33,6 @@ defineOptions({
 const defaultImg = new URL('@/assets/img/temp/default-img.webp', import.meta.url).href;
 
 const props = defineProps({
-  /** 是否为背景图 */
-  isBackground: {
-    type: Boolean,
-    default: false,
-  },
   /** 是否显示标签 */
   showLabel: {
     type: Boolean,
@@ -94,27 +84,6 @@ const state = reactive({
   overflow: hidden;
   padding: 0px;
   height: 100%;
-
-  &.full-screen-image {
-    position: relative;
-    width: 100%;
-    height: 100%;
-
-    > .full-screen-image-mask {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    > .component-image-content {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-    }
-  }
 
   > .component-image-content {
     width: 100%;
