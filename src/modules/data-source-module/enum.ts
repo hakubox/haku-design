@@ -4,10 +4,8 @@ export enum DataSourceType {
   static = 'static',
   /** 使用API绑定 */
   api = 'api',
-  /** 数据库直连（配合后端接口完成，需要传入地址/账号密码/端口信息以连接） */
-  database = 'database',
-  /** mongodb直连（配合后端接口完成，需要传入地址/账号密码/端口信息以连接） */
-  mongodb = 'mongodb',
+  /** 数据源 */
+  source = 'source',
 }
 
 /** 数据类型 */

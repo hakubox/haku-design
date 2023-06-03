@@ -1,5 +1,6 @@
 <template>
   <div class="data-source-config">
+
     <Empty v-if="!dataSourceState.dataSourceList.length" description="暂无数据源" :style="{ marginTop: '20vh' }">
       <Dropdown :trigger="['click']">
         <Button type="primary" style="margin-top: 10px">
@@ -24,7 +25,7 @@
     <template v-else>
       <ul class="data-source-config-list">
         <li class="data-source-item" v-for="(item, index) in dataSourceState.dataSourceList" :key="index">
-          <div class="data-source-item-header">
+          <!-- <div class="data-source-item-header">
             <i :class="item.icon"></i>
             <span class="data-source-item-title" :class="{ 'blank-remark': !item.remark }">
               {{ item.title }}
@@ -81,7 +82,7 @@
                 <i class="iconfont icon-chucun"></i>
               </div>
             </Tooltip>
-          </div>
+          </div> -->
         </li>
       </ul>
       <div class="data-source-config-create">
@@ -311,7 +312,7 @@ import { computed, createVNode, reactive, ref } from 'vue';
 import { state as dataSourceState } from '../index';
 import { dataSourceTypes } from '../data/data-source-types';
 import { createModelId, recursive } from '@/tools/common';
-import type { DataSource, DataSourceTypeItem } from '../@types';
+import type { DataSource, DataSourceTypeItem } from '../index.d';
 import { Empty, Dropdown, message, Modal, Button, Menu, MenuItem, Table, FormItem, Tooltip, Form, Popconfirm, Input, Textarea, RadioGroup, RadioButton, SelectOption, Select, InputNumber, Switch, Badge } from 'ant-design-vue';
 import { service as variableService, type VariableType } from '@/modules/variable-module';
 import { cloneLoop } from '@/lib/clone';

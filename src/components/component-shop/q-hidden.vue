@@ -1,6 +1,6 @@
 <template>
   <ComponentBasic class="component-item-single" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
-    <input type="text" :value="value" @input="changeValue" />
+    <input type="type" :value="value" />
   </ComponentBasic>
 </template>
 
@@ -30,10 +30,6 @@ const state = reactive({
 const emit = defineEmits<{
   (event: 'update:value', val: string): void;
 }>();
-
-const changeValue = (e) => {
-  emit('update:value', e.target.value);
-}
 
 </script>
 

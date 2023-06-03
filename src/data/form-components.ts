@@ -1668,7 +1668,7 @@ export let formComponents: InitComponent[] = [
       }, {
         name: 'src', title: 'url地址', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.file,
-        remark: '音频的URL路径。', attrs: { multiple: false }
+        remark: '图片的URL路径。', attrs: { multiple: false }
       }, {
         name: 'name', title: '组件名称', default: '',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
@@ -1837,229 +1837,54 @@ export let formComponents: InitComponent[] = [
     ]
   },
 
-  // {
-  //   name: 'q-anx-stepper',
-  //   isHidden: false,
-  //   isFormItem: false,
-  //   isTopLevel: false,
-  //   type: ComponentCategory.special,
-  //   title: '步骤组件',
-  //   attrs: {
-  //     lock: false,
-  //     visible: true,
-  //     width: 350,
-  //     height: 260,
-  //   },
-  //   propertys: [
-  //     {
-  //       name: 'visible', title: '是否显示', default: true, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在界面上显示。'
-  //     }, {
-  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
-  //     }, {
-  //       name: 'options', title: '步骤列表', default: [], layout: PropertyLayout.block,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-  //       attrs: { rowKey: 'label', columns: [
-  //         { name: 'label', title: '步骤', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-  //       ] }
-  //     }, {
-  //       name: 'currentStep', title: '当前步骤', default: 0,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
-  //       attach: [ ComponentPropertyEditor.variable ],
-  //     }, {
-  //       name: 'remark', title: '备注', default: '',
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   name: 'q-anx-practise-score',
-  //   isHidden: false,
-  //   isFormItem: false,
-  //   isTopLevel: false,
-  //   type: ComponentCategory.special,
-  //   title: '仪表盘',
-  //   attrs: {
-  //     lock: false,
-  //     visible: true,
-  //     width: 350,
-  //     height: 260,
-  //   },
-  //   propertys: [
-  //     {
-  //       name: 'visible', title: '是否显示', default: true, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在界面上显示。'
-  //     }, {
-  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
-  //     }, {
-  //       name: 'showImage', title: '显示图片', default: false, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在仪表盘下方显示对应阶段图片。'
-  //     }, {
-  //       name: 'steps', title: '阶段列表', layout: PropertyLayout.block,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.modelList, default: [
-  //         { label: '正常', color: '#41D79C', image: undefined },
-  //         { label: '轻度焦虑', color: '#FEE225', image: undefined },
-  //         { label: '中度焦虑', color: '#FFA136', image: undefined },
-  //         { label: '重度焦虑', color: '#FF6165', image: undefined },
-  //       ],
-  //       attrs: { rowKey: 'id', columns: [
-  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-  //         { name: 'label', title: '名称', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-  //         { name: 'image', title: '图片', editor: ComponentPropertyEditor.file, attrs: { } },
-  //         { name: 'color', title: '颜色', editor: ComponentPropertyEditor.color, attrs: { } },
-  //       ] }
-  //     }, {
-  //       name: 'unit', title: '数值单位', default: '分',
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine
-  //     }, {
-  //       name: 'lineWidth', title: '圆环宽度', default: 6,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-  //         suffix: '像素'
-  //       }
-  //     }, {
-  //       name: 'thumbSize', title: '指示器大小', default: 15,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-  //         suffix: '像素'
-  //       }
-  //     }, {
-  //       name: 'spaceDeg', title: '每段间隔', default: 8,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int, attrs: {
-  //         suffix: '像素'
-  //       }
-  //     }, {
-  //       name: 'needAnima', title: '使用动画', default: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean
-  //     }, {
-  //       name: 'score', title: '当前数值', default: 0,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int,
-  //       attach: [ ComponentPropertyEditor.variable ],
-  //     }, {
-  //       name: 'max', title: '最大值', default: 100,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-  //     }, {
-  //       name: 'min', title: '最小值', default: 0,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-  //     }, {
-  //       name: 'remark', title: '备注', default: '',
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   name: 'q-anx-compelete-button',
-  //   isHidden: false,
-  //   isFormItem: false,
-  //   isTopLevel: false,
-  //   type: ComponentCategory.special,
-  //   title: '翻页按钮',
-  //   propertys: [
-  //     {
-  //       name: 'visible', title: '是否显示', default: true, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在界面上显示。'
-  //     }, {
-  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
-  //     }, {
-  //       name: 'prevDisabled', title: '禁用上一页', default: false,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
-  //     }, {
-  //       name: 'nextDisabled', title: '禁用下一页', default: false,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.boolean,
-  //     }, {
-  //       name: 'remark', title: '备注', default: '',
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   name: 'q-anx-video',
-  //   isHidden: false,
-  //   isFormItem: false,
-  //   isTopLevel: false,
-  //   type: ComponentCategory.special,
-  //   title: '视频播放器',
-  //   propertys: [
-  //     {
-  //       name: 'visible', title: '是否显示', default: true, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在界面上显示。'
-  //     }, {
-  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
-  //     }, {
-  //       name: 'playPosition', title: '当前视频索引', default: 0,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-  //     }, {
-  //       name: 'dataList', title: '视频列表', get default() { 
-  //         return [ { id: createModelId() } ];
-  //       },
-  //       layout: PropertyLayout.block,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-  //       attrs: { rowKey: 'id', columns: [
-  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-  //         { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
-  //         { name: 'poster', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
-  //         // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
-  //       ] }
-  //     }, {
-  //       name: 'remark', title: '备注', default: '',
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   name: 'q-anx-audio',
-  //   isHidden: false,
-  //   isFormItem: false,
-  //   isTopLevel: false,
-  //   type: ComponentCategory.special,
-  //   title: '音频播放器',
-  //   propertys: [
-  //     {
-  //       name: 'visible', title: '是否显示', default: true, visible: true,
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-  //       remark: '是否在界面上显示。'
-  //     }, {
-  //       name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [15,15,15,15]],
-  //       group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  //       showCondition: (prop, propMap, component, value, refs) => editorState.appConfig.appType === AppType.questionnaire,
-  //     }, {
-  //       name: 'playPosition', title: '当前音频', default: 0,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.int
-  //     }, {
-  //       name: 'dataList', title: '音频列表', get default() { 
-  //         return [ { id: createModelId() } ];
-  //       },
-  //       layout: PropertyLayout.block,
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.modelList,
-  //       attrs: { rowKey: 'id', columns: [
-  //         { name: 'id', visible: false, editor: ComponentPropertyEditor.singerLine, get default() { return createModelId(); } },
-  //         { name: 'title', width: '30%', title: '标题', editor: ComponentPropertyEditor.singerLine, attrs: { } },
-  //         { name: 'src', title: '文件', editor: ComponentPropertyEditor.file, attrs: { } },
-  //         { name: 'poster', width: '20%', title: '封面', editor: ComponentPropertyEditor.file, attrs: { } },
-  //         // { name: 'duration', width: '20%', title: '时长', editor: ComponentPropertyEditor.int, attrs: { } },
-  //         // { name: 'prevTime', title: '上次播放位置', editor: ComponentPropertyEditor.int, attrs: { } },
-  //       ] }
-  //     }, {
-  //       name: 'remark', title: '备注', default: '',
-  //       group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  //     }
-  //   ]
-  // },
+  /** 
+   * 网页
+   */
+   {
+    name: 'q-iframe',
+    isHidden: false,
+    isFormItem: false,
+    isTopLevel: false,
+    type: ComponentCategory.attachment,
+    title: '网页',
+    attrs: {
+      width: 300,
+      height: 200,
+      lock: false,
+      visible: true,
+    },
+    propertys: [
+      {
+        name: 'visible', title: '是否显示', default: true, visible: true,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
+        remark: '是否在界面上显示。'
+      }, {
+        name: 'height', title: '高度', default: '280px', appType: [AppType.questionnaire], 
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
+      }, {
+        name: 'borderRadius', title: '圆角', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
+      }, {
+        name: 'opacity', title: '透明度', default: 100,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '%' }
+      }, {
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
+      }, {
+        name: 'src', title: 'url地址', default: 'https://example.org/',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine,
+        remark: '网页的URL路径。', attrs: { multiple: false }
+      }, {
+        name: 'name', title: '组件名称', default: '',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
+      }, {
+        name: 'remark', title: '备注', default: '',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
+      }
+    ]
+  },
 ];
 
 /** 组件列表 */

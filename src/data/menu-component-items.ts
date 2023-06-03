@@ -157,7 +157,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     category: ComponentCategory.layout,
     isNew: true,
     appType: [AppType.questionnaire],
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   // {
   //   title: '中心布局',
@@ -174,7 +173,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     category: ComponentCategory.layout,
     isNew: true,
     appType: [AppType.questionnaire],
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '画布',
@@ -183,7 +181,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     category: ComponentCategory.layout,
     isNew: true,
     appType: [AppType.questionnaire],
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
 
   // 附加内容
@@ -201,36 +198,30 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-text',
     icon: 'iconfont icon-font',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '图片',
     name: 'q-image',
     icon: 'iconfont icon-picture',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '音频',
     name: 'q-audio',
     icon: 'iconfont icon-guize1',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '视频',
     name: 'q-video',
     icon: 'iconfont icon-video',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
-  
   {
-    title: '完成得分',
-    name: 'q-complete-score',
-    icon: 'iconfont icon-stars',
+    title: '网页',
+    name: 'q-iframe',
+    icon: 'iconfont icon-picture',
     category: ComponentCategory.attachment,
-    pageType: [PageType.endPage],
   },
 
   {
@@ -247,36 +238,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     },
     pageType: [PageType.normalPage],
   },
-  // {
-  //   title: '步骤条',
-  //   name: 'q-anx-stepper',
-  //   icon: 'iconfont icon-lianjieliu',
-  //   category: ComponentCategory.special,
-  // },
-  // {
-  //   title: '仪表盘',
-  //   name: 'q-anx-practise-score',
-  //   icon: 'iconfont icon-dashboard',
-  //   category: ComponentCategory.special,
-  // },
-  // {
-  //   title: '翻页按钮',
-  //   name: 'q-anx-compelete-button',
-  //   icon: 'iconfont icon-change',
-  //   category: ComponentCategory.special,
-  // },
-  // {
-  //   title: '视频播放器',
-  //   name: 'q-anx-video',
-  //   icon: 'iconfont icon-video',
-  //   category: ComponentCategory.special,
-  // },
-  // {
-  //   title: '音频播放器',
-  //   name: 'q-anx-audio',
-  //   icon: 'iconfont icon-rentijiance',
-  //   category: ComponentCategory.special,
-  // },
 ];
 
 export const setMenuItems = (items) => {

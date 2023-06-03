@@ -16,15 +16,9 @@ export const dataSourceTypes: DataSourceTypeItem[] = [
     enabled: true,
   },
   {
-    type: DataSourceType.database,
+    type: DataSourceType.source,
     icon: 'iconfont icon-lianjieliu',
-    title: '关系型数据库（待开发）',
-    enabled: false,
-  },
-  {
-    type: DataSourceType.mongodb,
-    icon: 'iconfont ',
-    title: 'MongoDB（待开发）',
+    title: '数据源',
     enabled: false,
   },
 ];
