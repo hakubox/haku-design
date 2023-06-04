@@ -47,10 +47,10 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
 import { simpleAnimeList } from '@/modules/anime-module';
-import { SimpleAnime, SimpleAnimeConfig } from '@/modules/anime-module';
+import { SimpleAnime } from '@/modules/anime-module';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
-import { GeneralProperty } from '@/@types';
-import { ComponentPropertyEditor } from '@/@types/enum';
+import { GeneralProperty } from '@haku-design/core';
+import { ComponentPropertyEditor } from '@haku-design/core';
 import type { gsap } from 'gsap';
 
 const state = reactive({
@@ -71,7 +71,7 @@ const state = reactive({
   /** 动画配置 */
   animeConfig: {} as Record<string, any>,
   /** 动画配置列表 */
-  animeConfigList: [] as GeneralProperty[],
+  animeConfigList: [] as GeneralProperty<any>[],
 });
 
 const animeList = ref<HTMLElement>();
@@ -220,7 +220,7 @@ const setAnime = (animeName: string) => {
       }
     }: undefined),
     ...(_props ?? [])
-  ].filter(i => i !== undefined) as GeneralProperty[];
+  ].filter(i => i !== undefined) as GeneralProperty<any>[];
   state.animeConfig = {
     animeName: state.currentAnimeName,
     animeTitle: simpleAnimeList[_animeIndex].animeTitle,

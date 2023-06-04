@@ -8,12 +8,12 @@
 </template>
 
 <script lang="ts" setup>
-import { Component, ComponentGroup } from '@/@types';
+import { Component, ComponentGroup } from '@haku-design/core';
 import { reactive, computed } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 import CanvasQuickToolItem from './CanvasQuickToolItem.vue';
-import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
+import type { CanvasQuickTool } from '@haku-design/core/canvas-quick-tool';
 import message from '@/common/message';
 import { mergeComponent, splitComponent } from '@/common/component-handle';
 

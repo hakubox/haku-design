@@ -14,7 +14,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import { getAppConfigPropertys } from '@/data/app-config';
-import type { GeneralProperty } from '@/@types';
+import type { GeneralProperty } from '@haku-design/core';
 
 const props = defineProps({
   /** 标签宽度 */
@@ -35,7 +35,7 @@ const state = reactive({
     { title: '问卷特殊页配置', name: 'page' },
     { title: '问卷底部按钮配置', name: 'bottom' },
   ],
-  formConfigs: [] as GeneralProperty[]
+  formConfigs: [] as GeneralProperty<any>[]
 });
 
 const beforeChange = (value, prop, propertys, model) => {

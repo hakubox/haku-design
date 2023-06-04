@@ -36,9 +36,8 @@
 import { computed, PropType, reactive, ref, toRaw } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as eventState, service as eventService, AppEvent } from '@/modules/event-module';
-import { Component } from '@/@types/component';
+import { Component } from '@haku-design/core';
 import { createModelId } from '@/tools/common';
-import EventFormatPreview from './EventFormatPreview.vue';
 import EventEditor from './EventEditor.vue';
 import EventItem from './EventItem.vue';
 import { Button, Empty } from 'ant-design-vue';

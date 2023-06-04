@@ -18,6 +18,7 @@ import '@/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
 import { state as configState } from '@/modules/config-module';
+import { Select, SelectOption } from 'ant-design-vue';
 import ChartModule from '@/plugin/chart-plugin';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -59,6 +60,9 @@ configState.ConfigDialog = ConfigDialog;
 
 const app = createApp(App);
 init(app);
+
+app.component('ASelect', Select);
+app.component('ASelectOption', SelectOption);
 
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);

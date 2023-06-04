@@ -1,8 +1,9 @@
 import { Component } from './component';
-import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup, AppType } from './enum';
+import { ComponentPropertyEditor, PropertyLayout, ComponentPropertyGroup, AppType } from '../enum';
+import { ComponentPropertyMap } from './general-property';
 
 /** 可拖拽组件属性 */
-export declare class ComponentProperty {
+export declare class ComponentProperty<T extends ComponentPropertyEditor> {
   /** 属性名 */
   name: string | string[];
   /** 是否禁用 */
@@ -14,7 +15,7 @@ export declare class ComponentProperty {
   /** 备注 */
   remark?: string;
   /** 默认值 */
-  default?: any;
+  default?: ComponentPropertyMap[T]['returnValue'];
   /** 是否必填 */
   require?: boolean;
   /** 是否显示 */
@@ -28,32 +29,32 @@ export declare class ComponentProperty {
   /** 属性描述 */
   description?: string;
   /** 编辑器 */
-  editor: ComponentPropertyEditor | string;
+  editor: T;
   /** 修改属性 */
-  change?(
-    prop: ComponentProperty,
-    propMap: Record<string, ComponentProperty>,
+  change?(value: {
+    prop: ComponentProperty<T>,
+    propMap: Record<string, ComponentProperty<any>>,
     component: Component,
-    value: any,
+    value: ComponentPropertyMap[T]['returnValue'],
     refs: Record<string, Element>,
-  ): void;
+  }): void;
   /** 显示条件 */
-  showCondition?(
-    prop: ComponentProperty,
-    propMap: Record<string, ComponentProperty>,
+  showCondition?(value: {
+    prop: ComponentProperty<T>,
+    propMap: Record<string, ComponentProperty<any>>,
     component: Component,
-    value: any,
+    value: ComponentPropertyMap[T]['returnValue'],
     refs: Record<string, Element>,
-  ): boolean;
+  }): boolean;
 
   /** 当前属性 */
-  attrs?: Record<string, any>;
+  attrs?: ComponentPropertyMap[T]['attrs'] | {};
   /** 属性附加选项 */
   attach?: Array<ComponentPropertyEditor>;
   /** 布局方式，默认为行内布局 */
   layout?: PropertyLayout;
   /** 值格式化函数 */
-  format?: (val: any) => any;
+  format?: (val: ComponentPropertyMap[T]['returnValue']) => any;
 
 
   /** 属性当前的编辑器 */
@@ -62,7 +63,7 @@ export declare class ComponentProperty {
   /** 绑定多个属性，会自动忽略name属性 */
   names?: string[];
   /** 子属性 */
-  children?: ComponentProperty[];
+  children?: ComponentProperty<any>[];
   /** 排序索引 */
   sort?: number;
   /** 应用类型筛选 */

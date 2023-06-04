@@ -1,4 +1,3 @@
-import { VarType } from '@/@types/enum';
 
 declare module '@haku-design/command' {
 

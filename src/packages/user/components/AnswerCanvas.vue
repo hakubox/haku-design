@@ -3,9 +3,9 @@
     <slot name="header"></slot>
     <!-- 问卷标题 -->
     <div class="questionnaire-title form-header" v-if="props.showTitle">
-      <span class="form-title">{{editorState.appConfig.appTitle}}</span>
+      <span class="form-title">{{ editorState.appConfig.appTitle }}</span>
       <div class="form-header-tags" v-if="editorState.appConfig.headerTags">
-        <span v-for="(tag, index) in editorState.appConfig.headerTags" :key="tag">{{tag}}</span>
+        <span v-for="(tag, index) in editorState.appConfig.headerTags" :key="tag">{{ tag }}</span>
       </div>
       <p v-if="appConfig.headerContent" class="form-header-content">{{ appConfig.headerContent }}</p>
       <!-- 问卷内容 -->
@@ -17,12 +17,11 @@
       </slot>
 
       <div class="form-canvas-body">
-
         <!-- 进度条 -->
         <div
-          style="padding: 12px 8px;"
+          style="padding: 12px 8px"
           v-if="
-            editorState.appConfig.questionnaireConfig.showPageProgress && 
+            editorState.appConfig.questionnaireConfig.showPageProgress &&
             editorState.currentPage.pageType === 'normal-page' &&
             editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' &&
             editorState.maxFormPageCount > 1 &&
@@ -36,12 +35,15 @@
           />
         </div>
 
-        <div class="form-canvas-mainpanel" :class="{
-          'type-flex': editorState.appConfig.appType === AppType.questionnaire,
-          'type-canvas': editorState.appConfig.appType === AppType.canvas,
-        }">
+        <div
+          class="form-canvas-mainpanel"
+          :class="{
+            'type-flex': editorState.appConfig.appType === AppType.questionnaire,
+            'type-canvas': editorState.appConfig.appType === AppType.canvas,
+          }"
+        >
           <FormComponent
-            v-for="(component, index) in editorState.currentPage.children.filter(i => i.attrs.visible !== false)"
+            v-for="(component, index) in editorState.currentPage.children.filter((i) => i.attrs.visible !== false)"
             v-show="editorService.showComponentInFormPage(component.id)"
             :component-id="component.id"
             :class="{
@@ -65,11 +67,42 @@
         </div>
 
         <!-- 提交问卷按钮 -->
-        <div v-if="editorState.currentPage.pageType === 'normal-page' && editorState.appConfig.questionnaireConfig.showPageButton !== false && !isEmptyForm" class="fixed-bottom">
+        <div
+          v-if="
+            editorState.currentPage.pageType === 'normal-page' &&
+            editorState.appConfig.questionnaireConfig.showPageButton !== false &&
+            !isEmptyForm
+          "
+          class="fixed-bottom"
+        >
           <div class="fixed-bottom-content" v-if="editorState.maxFormPageCount > 1">
-            <Button v-if="editorState.currentFormPageIndex > 0" round block type="default" size="large" @click="editorService.prevPage()">上一页</Button>
-            <Button v-if="editorState.currentFormPageIndex < editorState.maxFormPageCount - 1" round block type="primary" size="large" @click="editorService.nextPage()">下一页</Button>
-            <Button v-if="editorState.currentFormPageIndex == editorState.maxFormPageCount - 1" round block type="primary" size="large" @click="submitForm(true)">{{ editorState.appConfig.questionnaireConfig.footer?.submitButtonText || '提交' }}</Button>
+            <Button
+              v-if="editorState.currentFormPageIndex > 0"
+              round
+              block
+              type="default"
+              size="large"
+              @click="editorService.prevPage()"
+              >上一页</Button
+            >
+            <Button
+              v-if="editorState.currentFormPageIndex < editorState.maxFormPageCount - 1"
+              round
+              block
+              type="primary"
+              size="large"
+              @click="editorService.nextPage()"
+              >下一页</Button
+            >
+            <Button
+              v-if="editorState.currentFormPageIndex == editorState.maxFormPageCount - 1"
+              round
+              block
+              type="primary"
+              size="large"
+              @click="submitForm(true)"
+              >{{ editorState.appConfig.questionnaireConfig.footer?.submitButtonText || '提交' }}</Button
+            >
           </div>
           <div class="fixed-bottom-content" v-else>
             <Button
@@ -117,7 +150,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AppType } from '@/@types/enum';
+import { type AppPage, type AppConfig, AppType } from '@haku-design/core';
 import { reactive, PropType, onMounted, onUnmounted, watch, computed } from 'vue';
 import { Button, Dialog, Empty, Progress, Toast } from 'vant';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
@@ -126,12 +159,10 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { state as authState } from '@/common/auth-module';
 import { service as eventService, EventTriggerType, type AppEvent } from '@/modules/event-module';
 import { getQuestionary, getQuestionaryAnswer } from '@/api/questionnaire';
-import type { AppPage, AppConfig } from '@/@types';
 import FormComponent from './FormComponent.vue';
 import QRCode from '@/components/common/QRCode.vue';
 import '../assets/sweetalert.css';
 import { toast } from '@/common/message';
-
 
 const emits = defineEmits<{
   /** 答卷提交事件，返回false则阻止 */
@@ -175,7 +206,7 @@ const props = defineProps({
   userId: {
     type: String,
     required: false,
-    default: ''
+    default: '',
   },
   /** 时候开启debug模式 */
   isDebug: {
@@ -185,7 +216,7 @@ const props = defineProps({
   /** 为空时的提示文本 */
   empty: {
     type: String,
-    default: ''
+    default: '',
   },
   /** 全屏/顶级组件挂载的节点 */
   topLevelTeleport: {
@@ -235,22 +266,22 @@ const props = defineProps({
   /** 是否提交数据（false则需要手动处理提交数据等功能） */
   useRequest: {
     type: Boolean,
-    default: false
+    default: false,
   },
   /** 是否显示答案 */
   showAnswer: {
     type: Boolean,
-    default: false
+    default: false,
   },
   /** 答案id */
   answerId: {
     type: String,
-    default: ''
+    default: '',
   },
   /** 是否评分 */
   isScoring: {
     type: Boolean,
-    default: false
+    default: false,
   },
 });
 
@@ -300,20 +331,23 @@ onMounted(() => {
   }
 });
 
-onUnmounted(() => { 
+onUnmounted(() => {
   // editorService.$reset();
   // formFillService.$reset();
   // eventService.$reset();
-})
-
-watch(() => props.autoSave, (val, oldVal) => {
-  if (val && !oldVal) {
-    autoSave();
-  }
-  // else if () {
-
-  // }
 });
+
+watch(
+  () => props.autoSave,
+  (val, oldVal) => {
+    if (val && !oldVal) {
+      autoSave();
+    }
+    // else if () {
+
+    // }
+  },
+);
 
 /** 触发常规事件 */
 eventService.setupOnEventHook((eventName: string, targetId: string, attrs: any) => {
@@ -350,34 +384,39 @@ const resetForm = () => {
     title: '提示',
     message: '是否确认重置表单？',
     closeOnClickOverlay: true,
-  }).then((d) => {
-    eventService.emit(EventTriggerType.resetForm);
-    formFillService.startFormFill();
-    emits('onReset');
-    toast('表单已重置');
-  }).catch((err) => {});
+  })
+    .then((d) => {
+      eventService.emit(EventTriggerType.resetForm);
+      formFillService.startFormFill();
+      emits('onReset');
+      toast('表单已重置');
+    })
+    .catch((err) => {});
 };
 
-/** 
+/**
  * 提交表单
  * @param validate 是否需要校验
  */
 const submitForm = (validate?: boolean) => {
   return new Promise((resolve, reject) => {
     if (scoringState.isScoring) {
-      scoringService.submitScore().then(scores => {
+      scoringService.submitScore().then((scores) => {
         resolve({ scores });
         emits('onComplete', { scores });
-      })
+      });
     } else {
-      formFillService.submitForm(!!validate).then(({ isComplete, data }) => {
-        resolve({ isComplete, data });
-        emits('onComplete', { isComplete, data });
-        if (isComplete) {
-          // Toast.success('问卷填写完成');
-          editorService.nextAppPage();
-        } 
-      }).catch(reject);
+      formFillService
+        .submitForm(!!validate)
+        .then(({ isComplete, data }) => {
+          resolve({ isComplete, data });
+          emits('onComplete', { isComplete, data });
+          if (isComplete) {
+            // Toast.success('问卷填写完成');
+            editorService.nextAppPage();
+          }
+        })
+        .catch(reject);
     }
   });
 };
@@ -386,7 +425,7 @@ const submitForm = (validate?: boolean) => {
 const init = async () => {
   state.isInit = false;
   state.appConfig.id = props.targetId;
-  
+
   if (props.platform !== 'auto') {
     authState.isMobile = props.platform === 'mobile';
   }
@@ -410,7 +449,7 @@ const init = async () => {
     await editorService.loadAppBody(questionary.content.appConfig.id, questionary.content);
     if (props.showAnswer || props.isScoring) {
       const questionAnswerList = res['questionAnswerList'] || [];
-      questionAnswerList.map(x => {
+      questionAnswerList.map((x) => {
         formFillService.setQuestionAnswer(x.questionId, x.answerJson, x.type);
         props.isScoring && scoringService.setComponentScore(x.questionId, x.score);
       });
@@ -426,39 +465,44 @@ const init = async () => {
 /** 获取问卷信息 */
 const getQuestionaryInfo = async () => {
   if (props.showAnswer || props.isScoring) {
-    return getQuestionaryAnswer(props.targetId, props.userId||'', props.answerId||'').then();
+    return getQuestionaryAnswer(props.targetId, props.userId || '', props.answerId || '').then();
   } else {
     return getQuestionary(props.targetId).then();
   }
 };
 
-watch(() => props.targetId, (val, oldVal) => {
-  if (!val) {
-    state.isInit = false;
-  } else if (val !== oldVal) {
-    init();
-  }
-});
+watch(
+  () => props.targetId,
+  (val, oldVal) => {
+    if (!val) {
+      state.isInit = false;
+    } else if (val !== oldVal) {
+      init();
+    }
+  },
+);
 
 /** 重新渲染 */
 const reRender = () => {
   init();
-}
+};
 
 /** 合并答案信息并提交 */
 const mergeAnswer = () => {
   return new Promise((resolve, reject) => {
-    getQuestionary(props.targetId).then(res => {
-      const questionary = res.questionary;
-      const components = questionary.content.pages[0].children;
-      const formInfo = editorService.mergeFormData(components, formFillState.formInfo);
-      return formInfo;
-    }).then(res =>{
-      formFillState.formInfo = res;
-      reRender();
-    })
-  })
-}
+    getQuestionary(props.targetId)
+      .then((res) => {
+        const questionary = res.questionary;
+        const components = questionary.content.pages[0].children;
+        const formInfo = editorService.mergeFormData(components, formFillState.formInfo);
+        return formInfo;
+      })
+      .then((res) => {
+        formFillState.formInfo = res;
+        reRender();
+      });
+  });
+};
 
 /** 获取填表相关信息 */
 const formInfo = computed(() => formFillState.formInfo);
@@ -483,7 +527,7 @@ const getQuestionList = () => editorService.getAllFormItem();
 /** 答卷完成并提交，isIgnore为true则忽略其他因素强制提交 */
 const complete = (isIgnore: boolean) => {};
 /** 取消答题，isIgnore为false则弹出提示框确认，否则直接取消；isSubmit为true则取消并提交填写内容，否则不提交。 */
-const cancel = (isIgnore: boolean, isSubmit: boolean) => {}; 
+const cancel = (isIgnore: boolean, isSubmit: boolean) => {};
 
 defineExpose({
   getUrl,
@@ -603,12 +647,12 @@ defineExpose({
         padding: 2px 10px;
         margin-right: 8px;
         background: #fff;
-        box-shadow: 0px 4px 12px 0px #F0F1FA;
+        box-shadow: 0px 4px 12px 0px #f0f1fa;
         border-radius: 12px;
         font-size: 12px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: #929CE3;
+        color: #929ce3;
       }
     }
 

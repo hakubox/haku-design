@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Component, ComponentGroup } from '@/@types';
+import { Component, ComponentGroup } from '@haku-design/core';
 import { computed, onMounted, onUnmounted, PropType, reactive } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import DesignCanvas from "@/components/module/DesignCanvas.vue";

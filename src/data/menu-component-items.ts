@@ -1,5 +1,5 @@
-import { AppType, ComponentCategory, PageType } from '@/@types/enum';
-import { ToolComponentItem } from '@/@types/tool-component-item';
+import { AppType, ComponentCategory, PageType } from '@haku-design/core';
+import { ToolComponentItem } from '@haku-design/core/tool-component-item';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
 

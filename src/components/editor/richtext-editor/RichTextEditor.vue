@@ -58,7 +58,9 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['change']);
+const emit = defineEmits<{
+  (event: 'change', val: string): void;
+}>();
 
 const state = reactive({
   /** 内容HTML */
@@ -81,8 +83,8 @@ const state = reactive({
           'italic',
           'through',
           'code',
-          'sub',
-          'sup',
+          // 'sub',
+          // 'sup',
           'clearStyle',
           'color',
           'bgColor',
@@ -117,14 +119,11 @@ const state = reactive({
 
 // ['bold', 'underline', 'italic', 'through', 'code', 'sub', 'sup', 'clearStyle', 'color', 'bgColor', 'fontSize', 'fontFamily', 'indent', 'delIndent', 'justifyLeft', 'justifyRight', 'justifyCenter', 'justifyJustify', 'lineHeight', 'insertImage', 'deleteImage', 'editImage', 'viewImageLink', 'imageWidth30', 'imageWidth50', 'imageWidth100', 'divider', 'emotion', 'insertLink', 'editLink', 'unLink', 'viewLink', 'codeBlock', 'blockquote', 'headerSelect', 'header1', 'header2', 'header3', 'header4', 'header5', 'todo', 'redo', 'undo', 'fullScreen', 'enter', 'bulletedList', 'numberedList', 'insertTable', 'deleteTable', 'insertTableRow', 'deleteTableRow', 'insertTableCol', 'deleteTableCol', 'tableHeader', 'tableFullWidth', 'insertVideo', 'uploadVideo', 'editVideoSize', 'uploadImage', 'codeSelectLang']
 
-watch(
-  () => props.value,
-  (val, oldVal) => {
-    if (val !== oldVal) {
-      state.valueHtml = val;
-    }
-  },
-);
+watch(() => props.value, (val, oldVal) => {
+  if (val !== oldVal) {
+    state.valueHtml = val;
+  }
+});
 
 /** 改变值 */
 const change = throttle(() => {
@@ -174,7 +173,6 @@ onMounted(() => {
   }, 10);
 });
 
-// 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
   if (!editorRef.value) return;
   editorRef.value.destroy();
@@ -186,6 +184,27 @@ onBeforeUnmount(() => {
 
 .richtext-editor {
   height: auto !important;
+
+  :deep(.w-e-toolbar) {
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    > .w-e-bar-item {
+      height: 30px;
+      padding-left: 0px;
+      padding-right: 0px;
+
+      > button {
+        padding-left: 8px;
+        padding-right: 8px;
+        border-radius: 4px;
+      }
+
+      > .select-button {
+        font-size: 13px;
+      }
+    }
+  }
 }
 
 :deep(.w-e-toolbar) {

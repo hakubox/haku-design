@@ -25,14 +25,9 @@
 <script lang="ts" setup>
 import { PropType, reactive } from "vue";
 import { state as editorState } from "@/modules/editor-module";
-import { Component } from "@/@types/component";
-import { ComponentPropertyEditor } from "@/@types/enum";
-import GeneralEditorItem from './GeneralEditorItem.vue';
+import { ComponentPropertyEditor } from "@haku-design/core";
 import { initPropertyEditors } from '@/data/property-editor';
-import { ComponentGroup, GeneralProperty } from "@/@types";
-import { Modal } from "ant-design-vue";
-
-type EditorGeneralProperty = GeneralProperty & { isChild?: boolean };
+import { GeneralProperty } from "@haku-design/core";
 
 /** 属性编辑器Map */
 const propertyEditors = initPropertyEditors();
@@ -55,7 +50,7 @@ const props = defineProps({
   },
   /** 属性列表 */
   propertys: {
-    type: Array as PropType<GeneralProperty[]>,
+    type: Array as PropType<GeneralProperty<any>[]>,
     default: () => []
   },
   /** 标签宽度 */
@@ -83,11 +78,11 @@ const propertyList = (propGroup: { title: string, name: string, icon?: string })
 const emit = defineEmits<{
   (event: 'change', val: string): void;
   (event: 'update:model', val: Record<string, any>): void;
-  (event: 'beforeChange', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
-  (event: 'change', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
+  (event: 'beforeChange', val: Record<string, any>, prop: GeneralProperty<any>, propMap, model?: Record<string, any>): void;
+  (event: 'change', val: Record<string, any>, prop: GeneralProperty<any>, propMap, model?: Record<string, any>): void;
 }>();
 
-const parentExpand = (prop: GeneralProperty) => {
+const parentExpand = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>) => {
   const _val = getValue(prop);
   if (prop.children?.length) {
     setValue(prop, props.model, !_val);
@@ -100,7 +95,7 @@ const getTools = (editor: ComponentPropertyEditor) => {
 };
 
 /** 判断属性是否显示 */
-const checkVisible = (i: GeneralProperty) => {
+const checkVisible = <T extends ComponentPropertyEditor>(i: GeneralProperty<T>) => {
   if (i.visible === undefined) return true;
   if (typeof i.visible === 'function') {
     return i.visible(props.model ?? {});
@@ -110,7 +105,7 @@ const checkVisible = (i: GeneralProperty) => {
 };
 
 /** 获取值 */
-const getValue = (prop: GeneralProperty) => {
+const getValue = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>) => {
   if (typeof prop.name === 'string') {
     return props.model[prop.name];
   } else {
@@ -123,7 +118,7 @@ const getValue = (prop: GeneralProperty) => {
 };
 
 /** 设置值 */
-const setValue = (prop: GeneralProperty, model: Record<string, any>, value) => {
+const setValue = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>, model: Record<string, any>, value) => {
   if (prop.names) {
     prop.names.forEach((name, index) => {
       let _obj = model;
@@ -145,7 +140,7 @@ const setValue = (prop: GeneralProperty, model: Record<string, any>, value) => {
     });
   } else {
     if (typeof prop.name === 'string') {
-      if (model[prop.name].type) {
+      if (model[prop.name]?.type) {
         model[prop.name].value = value;
       } else {
         model[prop.name] = value;
@@ -163,7 +158,7 @@ const setValue = (prop: GeneralProperty, model: Record<string, any>, value) => {
 };
 
 /** 属性修改触发的事件 */
-const propChangeListener = (value, prop: GeneralProperty, propMap, model?: Record<string, any>) => {
+const propChangeListener = <T extends ComponentPropertyEditor>(value, prop: GeneralProperty<T>, propMap, model?: Record<string, any>) => {
   if (prop && model) {
     if (value?.target) {
       console.warn('属性值包含val.target', value);
@@ -184,14 +179,16 @@ const propChangeListener = (value, prop: GeneralProperty, propMap, model?: Recor
       emit('change', _value, prop, propMap, model);
 
       if (prop?.change) {
-        return prop.change.call(this, _value, prop, propMap, model);
+        return prop.change.call(this, {
+          value: _value, prop, propMap, model
+        });
       }
     }
   }
 };
 
 /** 切换附加属性类型 */
-const changePropAttach = (prop: GeneralProperty, editor: ComponentPropertyEditor) => {
+const changePropAttach = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>, editor: ComponentPropertyEditor) => {
   // if (this.editorState.currentSelectedComponents.length) {
   //   this.historyService.redo();
   //   this.editorService.setComponentAttrType(this.editorState.currentSelectedComponents as Component[], prop, editor);

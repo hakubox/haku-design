@@ -1,9 +1,7 @@
-import { AppConfig } from '@/@types';
 import { type AppEvent } from '@/modules/event-module';
-import { AppPage } from '@/@types/app-page';
-import { StorageFileInfo } from "@/modules/storage-module/@types";
-import type { ThemeConfig } from './@types';
-import { AppType } from './enum';
+import { AppPage, AppConfig } from '@haku-design/core';
+import type { ThemeConfig } from '@/modules/theme-module';
+import { AppType } from '../enum';
 
 /** 用于导出的应用主体 */
 export interface ExportAppBody {

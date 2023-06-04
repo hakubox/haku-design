@@ -1,4 +1,4 @@
-import { ComponentAnswerType } from '@/@types/component';
+import { ComponentAnswerType } from '@haku-design/core';
 
 /** 表单填写信息的有效时间段 */
 export interface TimerInfoItem {

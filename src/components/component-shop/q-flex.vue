@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
 import { PropType, computed, useAttrs } from 'vue';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
 
 const props = defineProps({
   /** flex方向 */

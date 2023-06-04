@@ -57,7 +57,7 @@ const props = defineProps({
   /** 当前值 */
   value: {
     type: Array as PropType<AppBackground[]>,
-    required: true,
+    default: () => [],
   },
 });
 

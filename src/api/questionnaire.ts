@@ -1,4 +1,4 @@
-import type { ExportAppBody } from '@/@types';
+import type { ExportAppBody } from '@haku-design/core';
 import { get, post, type PageList } from '@/lib/api';
 
 export interface QuestionaryBasicInfoDto {

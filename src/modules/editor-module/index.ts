@@ -1,7 +1,7 @@
 import { reactive, computed, nextTick } from 'vue';
 import { cloneLoop } from '@/lib/clone';
-import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect, FormDimensionItem } from '@/@types';
-import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@/@types/enum';
+import { LayoutConfig, PropertyGroup, Component, ComponentProperty, AppConfig, RemoteDevice, PropertyEditor, CreateNewConfig, ExportAppBody, FormTimerConfig, ComponentGroup, ComponentRect, FormDimensionItem } from '@haku-design/core';
+import { CrossAxisAlignment, DeviceType, LayoutType, MainAxisAlignment, ComponentPropertyEditor, ComponentPropertyGroup, AppType, ComponentCategory, PageType, PropertyLayout } from '@haku-design/core';
 import bus, { GlobalBusType } from '@/tools/bus';
 import { getComponents } from '@/data/form-components';
 import { initRemoteDevices } from '@/data/form-devices';
@@ -17,11 +17,12 @@ import { state as draggableState, service as draggableService } from '@/modules/
 import { service as pluginModule } from '@/modules/plugin-module';
 import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/common';
 import { addQuestionary, saveQuestionary } from "@/api/questionnaire";
-import { AppPage } from '@/@types/app-page';
+import { AppPage } from '@haku-design/core/app-page';
 import { state as globalState } from '@/common/global';
 import { useAppHandle } from '@/common/app-handle';
 
 const {
+  getExportData,
   setDefaultProp
 } = useAppHandle();
 
@@ -311,7 +312,7 @@ export const service = {
     themeService.changeTheme();
     if (!createConfig.id) {
       addQuestionary({
-        ...service.getExportData(),
+        ...service.exportData(),
         title: createConfig.title,
         description: state.appConfig.description,
       }).then(d => {
@@ -520,61 +521,20 @@ export const service = {
     service.init();
   },
   /** 获取导出数据 */
-  getExportData(): ExportAppBody {
-    const _pages = cloneLoop(state.pages);
-
-    // 递归组件树，移除propertys属性
-    const _cb = (component) => {
-      if (component.children) {
-        component.children.forEach(i => {
-          delete i.propertys;
-          _cb(i);
-        });
-      }
-    };
-
-    // 移除根组件列表propertys属性
-    _pages.forEach(page => {
-      page.children.forEach(component => {
-        delete component.propertys;
-        _cb(component);
-      });
-    });
-
-    const _appConfig = state.appConfig;
-
-    /**
-     * 1. theme 改为 appTheme
-     * 2. isPublished 移除
-     * 3. deviceType 移除
-     * 4. hasScore 移除
-     * 5. isAutoToGrade 怎么理解？
-     * 6. footer 怎么理解？
-     */
-
-    /** 返回结果 */
-    const _re = {
-      id: _appConfig.id,
-      appType: _appConfig.appType,
-      title: _appConfig.appTitle,
-      description: _appConfig.description,
-      headerTags: _appConfig.headerTags,
-      headerContent: _appConfig.headerContent,
-      remark: _appConfig.remark,
-
-      appConfig: _appConfig,
-      pages: _pages,
+  exportData() {
+    return getExportData({
+      pages: state.pages,
       events: eventState.allEvents,
-      files: storageState.fileList.map(i => i.id),
       theme: {
         id: themeState.themeConfig.id,
         code: themeState.currentThemeCode,
         config: themeState.themeConfig,
         title: themeState.themeConfig.title,
       },
+      files: storageState.fileList.map(i => i.id),
       previewUrl: '',
-    };
-    return _re;
+      appConfig: state.appConfig
+    });
   },
   /** 加载应用主体 */
   async loadAppBody(questionaryId: string, body: ExportAppBody, isPreview: boolean = false) {
@@ -803,7 +763,7 @@ export const service = {
     if (!state.appConfig.id) {
       state.appConfig.id = createModelId();
     }
-    const _exportData = cloneLoop(service.getExportData());
+    const _exportData = cloneLoop(service.exportData());
     /** 是否需要升级 */
     let _canUpgrade = false;
     if (historyState.saveHistoryIndex <= historyState.historyIndex) {
@@ -1254,13 +1214,13 @@ export const state = reactive({
   /** 【题目页】上一次分页索引 */
   prevFormPageIndex: 0,
   /** 画板（HTMLElement） */
-  canvasEl: {} as any,
+  canvasEl: {} as HTMLElement,
   /** 画板主面板元素（HTMLElement） */
-  canvasPanelEl: {} as any,
+  canvasPanelEl: {} as HTMLElement,
   /** 组件放置游标（HTMLElement） */
-  componentCursorEl: document.createElement('div') as any,
+  componentCursorEl: document.createElement('div') as HTMLElement,
   /** Footer Dom（HTMLElement） */
-  footerDom: undefined as any | undefined,
+  footerDom: undefined as HTMLElement | undefined,
   /** 页面列表 */
   pages: [
     { pageTitle: '主页', pageType: PageType.normalPage, children: [] },

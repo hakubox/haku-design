@@ -26,7 +26,7 @@ import { PropType } from 'vue';
 import { getBoxModel } from '@/tools/common';
 import { state as editerState } from '@/modules/editor-module';
 import { service as serialNumberService } from '@/modules/serial-number-module';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
 
 const props = defineProps({
   /** 组件Id */

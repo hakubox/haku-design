@@ -104,7 +104,7 @@ import { state as formFillState, service as formFillService } from '@/modules/fo
 import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { service as variableService } from "@/modules/variable-module";
 import { Rate, Stepper } from 'vant';
-import type { Component, ComponentGroup } from "@/@types";
+import type { Component, ComponentGroup } from "@haku-design/core";
 
 const props = defineProps({
   /** 控件Id */

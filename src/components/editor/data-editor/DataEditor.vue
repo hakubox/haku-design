@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { type DataEditorValue } from '@/@types/data-editor-value';
+import { type DataEditorValue } from '@haku-design/core/data-editor-value';
 import { DownOutlined } from '@ant-design/icons-vue';
 import { Dropdown, Menu, MenuItem, message, SubMenu } from 'ant-design-vue';
 import type { MenuInfo } from 'ant-design-vue/lib/menu/src/interface';

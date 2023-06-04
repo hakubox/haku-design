@@ -1,4 +1,4 @@
-import { AppType } from '@/@types/enum';
+import { AppType } from '../enum';
 
 /** 创建参数 */
 export interface CreateNewConfig {

@@ -26,6 +26,48 @@ html.theme-dark {
           }
         }
       }
+
+      > .canvas-quick-tools {
+
+        > .canvas-quick-tool {
+          background-color: #3c3c3c;
+
+          &.disabled {
+            background-color: #323233;
+
+            > .iconfont {
+              color: #666 !important;
+            }
+          }
+
+          > .iconfont {
+            color: #DDD !important;
+          }
+
+          > .canvas-quick-tool-group {
+
+            &:after {
+              border-top-color: #323233;
+              border-left-color: #323233;
+            }
+
+            > .canvas-quick-tool-group-content {
+              background-color: #323233;
+
+              > .canvas-quick-tool {
+
+                &:before {
+                  border-top-color: #444444;
+                }
+                
+                &:hover {
+                  background-color: #141414;
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     > .design-form-body {
@@ -241,12 +283,15 @@ html.theme-dark {
         }
 
         .ant-select {
+          background-color: transparent;
+
           &.ant-select-sm {
             line-height: 2;
 
             > .ant-select-selector {
               background-color: #3c3c3c;
               color: #cccccc;
+              height: 28px;
             }
           }
         }
@@ -295,7 +340,14 @@ html.theme-dark {
 
         // 盒子模型编辑器
         .box-editor {
-          > div {
+          > .box-item {
+            &:before {
+              border-color: #3c3c3c;
+            }
+            &:after {
+              border-color: #3c3c3c;
+            }
+
             > .box-editor-label {
               color: #8d8e8f;
             }
@@ -317,6 +369,29 @@ html.theme-dark {
                 background-color: #141414;
                 color: rgba(255, 255, 255, 0.45);
               }
+            }
+          }
+        }
+
+        > .file-picker {
+          background-color: #3c3c3c;
+          border-color: #3c3c3c;
+        }
+
+        > .background-editor {
+
+          > .background-editor-empty {
+            background-color: #3c3c3c;
+          }
+        }
+
+        > .data-editor {
+          background-color: #3c3c3c;
+
+          > .data-editor-type {
+
+            &:after {
+              border-left-color: #141414;
             }
           }
         }

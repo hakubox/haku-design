@@ -1,7 +1,5 @@
-import { icons } from '@/data/icon-editor';
-import { PropertyEditor, SetPartial } from '@/@types';
-import { ComponentPropertyEditor } from '@/@types/enum';
-import { watch, computed } from 'vue';
+import { type PropertyEditor, type SetPartial, ComponentPropertyEditor } from '@haku-design/core';
+import { computed } from 'vue';
 import { state as backgroundEditorState, service as backgroundEditorService } from '@/modules/background-editor-module';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import bus, { GlobalBusType } from '@/tools/bus';
@@ -9,7 +7,7 @@ import bus, { GlobalBusType } from '@/tools/bus';
 export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
 
 /** 属性编辑器 */
-export const propertyEditors: Array<InitPropertyEditor> = [
+export const propertyEditors: InitPropertyEditor[] = [
   {
     name: 'any',
     description: '任意',
@@ -182,40 +180,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
       size: 'small',
     },
     editor: ComponentPropertyEditor.radioGroup,
-  },
-  {
-    name: 'icon',
-    description: '图标',
-    component: 'a-select',
-    attrs: {
-      showSearch: true,
-      style: {
-        width: '100%',
-        fontFamily: 'vant-icon',
-        color: 'rgba(0, 0, 0, 0.65)',
-        fontSize: '20px',
-        lineHeight: '12px',
-        // fontWeight: '700',
-        verticalAlign: 'middle',
-      },
-      dropdownClassName: 'icon-editor-select',
-      placeholder: '',
-      allowClear: true,
-      size: 'small',
-    },
-    slot: {
-      default: icons.map((i) => ({
-        component: 'a-select-option',
-        html: i.label,
-        slot: {
-          default: icons,
-        },
-        attrs: {
-          value: i.value,
-        },
-      })),
-    },
-    editor: ComponentPropertyEditor.icon,
   },
   {
     name: 'json',

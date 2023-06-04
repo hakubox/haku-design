@@ -1,6 +1,6 @@
-import { Component, ComponentGroup } from "@/@types";
+import { Component, ComponentGroup } from "@haku-design/core";
 import { HandleType } from "@/common/component-handle";
-import { computed, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 
 export const enum GlobalBusType {
   /** 屏幕大小改变 */

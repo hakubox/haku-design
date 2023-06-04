@@ -1,12 +1,25 @@
 import { reactive, computed } from 'vue';
-import { LayoutConfig, PropertyGroup, ComponentProperty, AppConfig, ExportAppBody, FormTimerConfig, Component, ComponentGroup } from '@/@types';
-import { CrossAxisAlignment, LayoutType, MainAxisAlignment, ComponentPropertyEditor, PageType } from '@/@types/enum';
+import {
+  type AppPage,
+  type LayoutConfig,
+  type PropertyGroup,
+  type ComponentProperty,
+  type AppConfig,
+  type ExportAppBody,
+  type FormTimerConfig,
+  type Component,
+  type ComponentGroup,
+  PageType,
+  CrossAxisAlignment,
+  LayoutType,
+  MainAxisAlignment,
+  ComponentPropertyEditor,
+} from '@haku-design/core';
 import bus from '@/tools/bus';
 import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';
-import { state as themeState, service as themeService } from "@/modules/theme-module";
-import { state as storageState } from "@/modules/storage-module";
+import { service as themeService } from '@/modules/theme-module';
+import { state as storageState } from '@/modules/storage-module';
 import { service as formFillService } from '@/modules/form-fill-module';
-import { AppPage } from '@/@types/app-page';
 
 import { timeout } from '@/tools/common';
 import { getFileListByIds } from '@/modules/storage-module/api';
@@ -28,13 +41,11 @@ export const state = reactive({
   /** 【题目页】上一次分页索引 */
   prevFormPageIndex: 0,
   /** 画板 */
-  canvasEl: {} as any,
+  canvasEl: {} as HTMLElement,
   /** 画板主面板元素 */
-  canvasPanelEl: {} as any,
+  canvasPanelEl: {} as HTMLElement,
   /** 页面列表 */
-  pages: [
-    { pageTitle: '主页', pageType: PageType.normalPage, children: [] },
-  ] as AppPage[],
+  pages: [{ pageTitle: '主页', pageType: PageType.normalPage, children: [] }] as AppPage[],
   /** 当前焦点属性 */
   currentProp: {} as any,
   /** 当前焦点事件 */
@@ -46,16 +57,16 @@ export const state = reactive({
   /** 当前选择控件所带来的控件属性组 */
   currentSelectedComponentPropertyGroups: [] as PropertyGroup[],
   /** 当前选择控件所带来的控件属性哈希表 */
-  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty>,
+  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty<any>>,
   /** 画板滚动坐标 */
   canvasLocation: {
     x: 0,
-    y: 0
+    y: 0,
   },
   /** 事件总线 */
   bus,
   /** 控件画布 */
-  componentCanvas : {} as any,
+  componentCanvas: {} as any,
   /** 游标父元素 */
   componentCursorParentEl: undefined as any,
   /** 游标父元素前后位置 */
@@ -63,7 +74,7 @@ export const state = reactive({
   /** 组件放置游标 */
   componentCursorEl: document.createElement('div') as any,
   /** 画布主panel */
-  rootPanelEl: null as any,
+  rootPanelEl: undefined as HTMLElement | undefined,
   /** Footer Dom */
   footerDom: undefined as HTMLElement | undefined,
 
@@ -105,7 +116,7 @@ export const state = reactive({
   maxFormPageCount: computed((): number => {
     if (state.appConfig.questionnaireConfig.turnPageMode === 'no-page') return 1;
     else if (state.appConfig.questionnaireConfig.turnPageMode === 'page') return state.currentPage.children.length;
-    else return state.currentPage.children.filter(i => i.name === 'q-page-split').length + 1;
+    else return state.currentPage.children.filter((i) => i.name === 'q-page-split').length + 1;
   }),
 });
 
@@ -135,12 +146,14 @@ export const service = {
           } else if (state.appConfig.questionnaireConfig.turnPageMode === 'default') {
             // 默认的情况，默认则根据分页器决定如何分页
             const _splitIndexList = (state.pages[state.currentPageIndex].children as Component[])
-              .map((i, index) => i.name === 'q-page-split' ? index : undefined)
-              .filter(i => i) as number[];
+              .map((i, index) => (i.name === 'q-page-split' ? index : undefined))
+              .filter((i) => i) as number[];
             if (_splitIndexList.length === 0) return true;
-            else if (state.currentFormPageIndex < 0 || state.currentFormPageIndex > _splitIndexList.length) return false;
+            else if (state.currentFormPageIndex < 0 || state.currentFormPageIndex > _splitIndexList.length)
+              return false;
             else if (state.currentFormPageIndex === 0) return componentIndex < _splitIndexList[0];
-            else if (state.currentFormPageIndex === _splitIndexList.length) return componentIndex > _splitIndexList[state.currentFormPageIndex - 1];
+            else if (state.currentFormPageIndex === _splitIndexList.length)
+              return componentIndex > _splitIndexList[state.currentFormPageIndex - 1];
             else {
               return (
                 componentIndex > _splitIndexList[state.currentFormPageIndex - 1] &&
@@ -182,7 +195,7 @@ export const service = {
       eventState.allEvents = body.events;
       if (body.theme?.code) themeService.changeTheme(body.theme.code);
       await timeout(100);
-    } catch(err) {
+    } catch (err) {
       toast('加载数据出错', 'error');
       console.error(err);
     }
@@ -194,23 +207,23 @@ export const service = {
       _config = {
         direction: 'row',
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start
+        crossAxisAlignment: CrossAxisAlignment.start,
       };
     } else if (type === LayoutType.absolute) {
       _config = {
-        height: 100
+        height: 100,
       };
     } else if (type === LayoutType.table) {
       _config = {
         rowCount: 1,
-        colCount: 1
+        colCount: 1,
       };
     }
     return {
       layout: type,
       layoutDetailConfig: {},
-      ..._config
-    }
+      ..._config,
+    };
   },
   /**
    * 合并表单数据（需要根据题目合并）
@@ -239,7 +252,10 @@ export const service = {
   },
   /** 根据Id获取表单控件（默认获取编辑模式主画板下组件） */
   getComponentElementById(componentId?: string, canvasEl?: HTMLElement): HTMLElement | undefined {
-    return componentId ? (canvasEl ?? state.canvasPanelEl).querySelector(`[component-id="${componentId}"]`) : undefined;
+    if (componentId) {
+      return (canvasEl ?? state.canvasPanelEl).querySelector(`[component-id="${componentId}"]`) as HTMLElement | undefined;
+    }
+    return undefined;
   },
   /** 跳转到上一页（问卷分页） */
   prevPage() {
@@ -331,19 +347,24 @@ export const service = {
     }
   },
   /** 根据组件列表（树）查询所有表单项，返回列表，如果不传则默认查询普通页面下所有组件 */
-  getAllFormItem(rootComponents?: Component[], filter?: (component: Component | ComponentGroup) => boolean): Component[] {
-    const _rootComponents: (Component | ComponentGroup)[] = rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
+  getAllFormItem(
+    rootComponents?: Component[],
+    filter?: (component: Component | ComponentGroup) => boolean,
+  ): Component[] {
+    const _rootComponents: (Component | ComponentGroup)[] =
+      rootComponents ?? (state.pages.find((i) => i.pageType === PageType.normalPage)?.children || []);
     const _components: Component[] = [];
     const _cb = (parentComponent: Component | ComponentGroup) => {
       if (filter && !parentComponent.isGroup) {
-        if (filter(parentComponent)) _components.push({
-          ...parentComponent,
-          children: []
-        });
+        if (filter(parentComponent))
+          _components.push({
+            ...parentComponent,
+            children: [],
+          });
       } else if (parentComponent.isFormItem) {
         _components.push({
           ...parentComponent,
-          children: []
+          children: [],
         });
       }
       if (parentComponent.children?.length) {
@@ -353,7 +374,7 @@ export const service = {
         }
       }
     };
-    _rootComponents.forEach(item => _cb(item));
+    _rootComponents.forEach((item) => _cb(item));
     return _components;
   },
   /** 查询组件 */
@@ -366,12 +387,11 @@ export const service = {
         return;
       }
       if (parentComponent.children) {
-        parentComponent.children.forEach(item => {
+        parentComponent.children.forEach((item) => {
           if (item.id === componentId) {
             _component = item;
             return;
-          }
-          else _cb(item);
+          } else _cb(item);
         });
         if (_component) return;
       }
@@ -392,8 +412,7 @@ export const service = {
           if (item.id === componentId) {
             _index = index;
             return;
-          }
-          else _cb(item, index);
+          } else _cb(item, index);
         });
         if (_index !== undefined) return;
       }
@@ -402,12 +421,20 @@ export const service = {
     return _index;
   },
   /** 查询父组件及索引 */
-  findParentComponent(componentId: string, { ignoreHidden, ignoreNotForm } = { ignoreHidden: false, ignoreNotForm: false }): { component: Component, originComponent: Component, index: number, level: number } | undefined {
+  findParentComponent(
+    componentId: string,
+    { ignoreHidden, ignoreNotForm } = { ignoreHidden: false, ignoreNotForm: false },
+  ): { component: Component; originComponent: Component; index: number; level: number } | undefined {
     let _component: Component | ComponentGroup | undefined;
     let _originComponent: Component | ComponentGroup | undefined;
     let _index: number | undefined = undefined;
     let _level: number = 0;
-    const _cb = (component: Component | ComponentGroup, index: number, parentComponent: Component | ComponentGroup, level: number) => {
+    const _cb = (
+      component: Component | ComponentGroup,
+      index: number,
+      parentComponent: Component | ComponentGroup,
+      level: number,
+    ) => {
       if (_index !== undefined) return;
       if (component.id === componentId) {
         _index = index;
@@ -419,17 +446,16 @@ export const service = {
       if (component.children) {
         const _children = component.children.sort((a, b) => (a.slotIndex || 0) - (b.slotIndex || 0));
         let index = 0;
-        _children.forEach(item => {
+        _children.forEach((item) => {
           if (item.id === componentId) {
             _index = index;
             _component = component;
             _originComponent = item;
             _level = level + 1;
             return;
-          }
-          else _cb(item, index, component, level + 1);
-          if (!ignoreHidden || ignoreHidden && item.attrs.visible) {
-            if (!ignoreNotForm || ignoreNotForm && item.isFormItem) {
+          } else _cb(item, index, component, level + 1);
+          if (!ignoreHidden || (ignoreHidden && item.attrs.visible)) {
+            if (!ignoreNotForm || (ignoreNotForm && item.isFormItem)) {
               index++;
             }
           }
@@ -438,28 +464,28 @@ export const service = {
       }
     };
     let index = 0;
-    state.currentPage.children.forEach(item => {
+    state.currentPage.children.forEach((item) => {
       _cb(item, index, state.currentPage as unknown as Component, 0);
-      if (!ignoreHidden || ignoreHidden && item.attrs.visible) {
-        if (!ignoreNotForm || ignoreNotForm && item.isFormItem) {
+      if (!ignoreHidden || (ignoreHidden && item.attrs.visible)) {
+        if (!ignoreNotForm || (ignoreNotForm && item.isFormItem)) {
           index++;
         }
       }
     });
     if (_component !== undefined && _index !== undefined) {
-      return  {
+      return {
         component: _component as Component,
         originComponent: _originComponent as Component,
         index: _index as number,
-        level: _level as number
+        level: _level as number,
       };
     } else {
       return undefined;
     }
   },
   /** 设置组件的属性值类型 */
-  setComponentAttrType(component: Component, property: ComponentProperty, propertyType: any) {
-    const _index = state.currentPage.children.findIndex(i => i.id == component.id);
+  setComponentAttrType(component: Component, property: ComponentProperty<any>, propertyType: any) {
+    const _index = state.currentPage.children.findIndex((i) => i.id == component.id);
     if (_index >= 0) {
       const _name = Array.isArray(property.name) ? property.name.join('_') : property.name;
       state.currentPropertyEditors[_name] = propertyType;
@@ -469,4 +495,4 @@ export const service = {
       component.attrs['__' + _name] = '';
     }
   },
-}
+};

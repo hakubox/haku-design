@@ -97,7 +97,7 @@ export enum ComponentPropertyEditor {
   /** Json类型 */
   json = 'json',
   /** 图标类型(vant) */
-  icon = 'icon',
+  // icon = 'icon',
   /** 下拉列表 */
   dropdownList = 'dropdown-list',
   /** 单选组 */

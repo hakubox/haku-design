@@ -34,19 +34,19 @@
 
 <script lang="ts" setup>
 import { PropType, computed } from "vue";
-import { state as editorState, service as editorService } from "@/modules/editor-module";
-import type { GeneralProperty } from "@/@types";
+import { state as editorState } from "@/modules/editor-module";
+import type { GeneralProperty } from "@haku-design/core";
 
 const props = defineProps({
   /** 属性 */
   prop: {
-    type: Object as PropType<GeneralProperty>,
+    type: Object as PropType<GeneralProperty<any>>,
     required: true,
     default: () => ({})
   },
   /** 属性列表 */
   propertys: {
-    type: Array as PropType<GeneralProperty[]>,
+    type: Array as PropType<GeneralProperty<any>[]>,
     default: () => []
   },
   /** 绑定主数据 */
@@ -57,7 +57,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (event: 'change', value: any, prop: GeneralProperty, propMap, model: Record<string, any>): void;
+  (event: 'change', value: any, prop: GeneralProperty<any>, propMap, model: Record<string, any>): void;
 }>();
 
 const onFocus = (prop) => {
@@ -69,7 +69,7 @@ const getEditor = computed(() => {
 });
 
 /** 值改变 */
-const onChange = (value, prop: GeneralProperty, model: Record<string, any>) => {
+const onChange = (value, prop: GeneralProperty<any>, model: Record<string, any>) => {
   if (value?.target) return;
   emit('change', value, prop, editorState.currentSelectedComponentPropertyMap, model);
 };

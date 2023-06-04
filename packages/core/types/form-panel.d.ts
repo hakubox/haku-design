@@ -1,5 +1,5 @@
 import { Component } from './component';
-import { LayoutType } from './enum';
+import { LayoutType } from '../../packages/core/enum';
 import { ComponentLayout } from './layout-config';
 
 export type AllLayoutConfig = LayoutConfig<LayoutType.flex> | LayoutConfig<LayoutType.absolute> | LayoutConfig<LayoutType.table>;

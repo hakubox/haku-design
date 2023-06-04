@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 import { reactive, PropType, onMounted, nextTick, ref, provide, computed } from 'vue';
 import { Button, Progress } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';

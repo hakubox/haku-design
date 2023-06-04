@@ -332,8 +332,7 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { state as configState, service as configService } from '@/modules/config-module';
-import { state as themeState, service as themeService } from "@/modules/theme-module";
-import { state as versionHistoryState } from '@/modules/version-history-module';
+import { service as themeService } from "@/modules/theme-module";
 import { service as globalSearchService } from '@/modules/global-search-module';
 import { useComponentHandle } from '@/common/component-handle';
 import { useAppHandle } from '@/common/app-handle';
@@ -345,21 +344,21 @@ import ThemeConfig from '@/modules/theme-module/component/ThemeConfig.vue';
 import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
 import BackgroundEditorDialog from '@/modules/background-editor-module/component/BackgroundEditorDialog.vue';
 import BackgroundEditorPanel from '@/modules/background-editor-module/component/BackgroundEditorPanel.vue';
-import { AppType } from '@/@types/enum';
+import { AppType, type Component } from '@haku-design/core';
   
 import { initCommands } from '@/data/form-commands';
 import { getQuestionary } from '@/api/questionnaire';
 import { useRoute } from 'vue-router';
-import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
 import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
 import Thumbnail from '@/components/common/Thumbnail.vue';
 import domtoimage from 'dom-to-image-more';
-import { ApiMethodType, download } from '@/lib/api';
 import bus, { GlobalBusType } from '@/tools/bus';
+import { AppInfoDto } from '@/api/app';
 
 const {
+  getExportData,
   showPrivateQuestionnaireLibraryDialog,
   showPublicQuestionnaireLibraryDialog,
 } = useAppHandle();
@@ -393,6 +392,7 @@ const onResize = (e) => {
   }
 };
 
+/** 获取横向边距 */
 const getWidthPadding = computed<number>(() => {
   switch (editorState.appConfig.appType) {
     case AppType.questionnaire: return 40;
@@ -400,7 +400,7 @@ const getWidthPadding = computed<number>(() => {
     default: return 0;
   }
 });
-
+/** 获取纵向边距 */
 const getHeightPadding = computed<number>(() => {
   switch (editorState.appConfig.appType) {
     case AppType.questionnaire: return 105;
@@ -451,7 +451,7 @@ const toThumbnailDrag = (x: number, y: number) => {
 }
 /** 设置JSON */
 const setEditorJson = () => {
-  const _layout = JSON.stringify(editorService.getExportData(), undefined, '  ');
+  const _layout = JSON.stringify(editorService.exportData(), undefined, '  ');
   state.editorJson = _layout;
   toast('已生成JSON', 'success');
 };
@@ -568,7 +568,6 @@ onMounted(() => {
     componentHandle(eventName, params, component);
   });
   document.body.addEventListener('mousemove', globalMouseMove, { passive: true });
-  // bus.$on(GlobalBusType.onBodyMouseMove, globalMouseMove);
   bus.$on(GlobalBusType.onBodyMouseUp, globalMouseUp);
   if (route.query.qid) {
     getDataById(route.query.qid);
@@ -577,7 +576,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.body.removeEventListener('mousemove', globalMouseMove);
-  // bus.$off(GlobalBusType.onBodyMouseMove, globalMouseMove);
   bus.$off(GlobalBusType.onBodyMouseUp, globalMouseUp);
 });
 
@@ -610,6 +608,8 @@ const state = reactive({
     { code: 'dark', title: '深色主题' },
     { code: 'translucent', title: '半透明主题' }
   ] as { code: "default" | "dark" | "translucent", title: string }[],
+  /** 应用列表 */
+  appList: [] as AppInfoDto[]
 });
 
 editorState.componentCanvas = ref(DesignCanvas);

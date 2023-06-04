@@ -1,4 +1,4 @@
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { cloneLoop } from '@/lib/clone';
 import { createModelId } from '@/tools/common';

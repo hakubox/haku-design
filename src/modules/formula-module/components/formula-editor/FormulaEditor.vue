@@ -332,6 +332,8 @@ onUnmounted(() => {
 
     :deep(.monaco-editor-background) {
       background-color: transparent;
+      // width: 100% !important;
+      // height: 100% !important;
     }
   }
 

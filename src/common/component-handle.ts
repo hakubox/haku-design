@@ -1,5 +1,5 @@
 import { reactive, UnwrapRef, toRefs, onMounted, onUnmounted, StyleValue } from 'vue';
-import { Component, ComponentGroup, ComponentRect } from '@/@types';
+import { Component, ComponentGroup, ComponentRect } from '@haku-design/core';
 import { state as editorState, service as editorService } from '../modules/editor-module';
 import { arrChange, createModelId } from '@/tools/common';
 import { service as historyService } from '../modules/history-module';

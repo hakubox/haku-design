@@ -50,7 +50,7 @@
 import { computed, nextTick, PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as serialNumberService } from '@/modules/serial-number-module';
-import { Component, ComponentGroup } from '@/@types';
+import { Component, ComponentGroup } from '@haku-design/core';
 
 const props = defineProps({
   /** 组件 */

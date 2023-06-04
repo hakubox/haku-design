@@ -1,5 +1,5 @@
 import LogoComponent from './LogoComponent.vue';
-import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup } from '@/@types/enum';
+import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup } from '@haku-design/core';
 import { PluginType, type PluginInfo, registerComponent } from '@/modules/plugin-module';
 import { App } from 'vue';
 

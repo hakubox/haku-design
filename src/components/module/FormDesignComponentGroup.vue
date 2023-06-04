@@ -223,7 +223,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Component, ComponentGroup } from '@/@types';
+import type { Component, ComponentGroup } from '@haku-design/core';
 import { computed, nextTick, ref, type PropType, onMounted, onUnmounted, StyleValue } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as draggableState, service as draggableService, type DragConfig } from '@/modules/draggable-module';
@@ -237,7 +237,7 @@ import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import { DragGesture } from '@use-gesture/vanilla';
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 import bus, { GlobalBusType } from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
 

@@ -1,4 +1,4 @@
-import type { ToolComponentItem } from '@/@types/tool-component-item';
+import type { ToolComponentItem } from '@haku-design/core';
 import { type InitComponent, formComponents } from '@/data/form-components';
 import { menuComponentItems } from '@/data/menu-component-items';
 import { registerPlugin } from "./register-plugin";

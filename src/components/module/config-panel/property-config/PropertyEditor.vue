@@ -27,7 +27,7 @@
 import { reactive } from "vue";
 import { state as editorState, service as editorService } from "@/modules/editor-module";
 import { initPropertyEditors } from '@/data/property-editor';
-import type { Component, ComponentGroup } from "@/@types";
+import type { Component, ComponentGroup } from "@haku-design/core";
 import { Modal } from "ant-design-vue";
 import PropertyEditorDetail from './PropertyEditorDetail.vue';
 

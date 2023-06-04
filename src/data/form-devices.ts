@@ -1,5 +1,5 @@
-import { RemoteDevice } from '@/@types';
-import { DeviceType } from '@/@types/enum';
+import { RemoteDevice } from '@haku-design/core';
+import { DeviceType } from '@haku-design/core';
 
 /** 设备型号列表 */
 export const remoteDevices: Array<RemoteDevice> = [

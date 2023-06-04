@@ -3,8 +3,15 @@ import { service as eventService, EventTriggerType } from '@/modules/event-modul
 import { service as scoringService } from '@/modules/scoring-module';
 import { service as validateService } from '@/modules/validate-module';
 import { state as authState } from '@/common/auth-module';
-import { OriginDataTransformComponentAnswerType, PageType } from '@/@types/enum';
-import type { Component, ComponentAnswerType, ComponentGroup, AppPage, DataEditorValue } from '@/@types';
+import {
+  type Component,
+  type ComponentAnswerType,
+  type ComponentGroup,
+  type AppPage,
+  type DataEditorValue,
+  OriginDataTransformComponentAnswerType,
+  PageType
+} from '@haku-design/core';
 import type { ErrorInfo, FormInfoItem, TempStorage, TimerInfo, TimingInfo } from './index.d';
 import { answerCommit } from '@/api/form-fill';
 import { isBlank } from '@/tools/common';

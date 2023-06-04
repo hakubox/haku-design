@@ -1,4 +1,4 @@
-import { MainAxisAlignment, CrossAxisAlignment } from '@/@types/enum';
+import { MainAxisAlignment, CrossAxisAlignment } from '@haku-design/core';
 
 /** 组件布局 */
 interface ComponentLayout {

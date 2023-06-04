@@ -14,7 +14,7 @@ import { init as echartInit, type ECharts } from 'echarts';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { throttle } from '@/tools/common';
 import { Empty } from 'vant';
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 
 defineOptions({
   inheritAttrs: false

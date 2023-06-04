@@ -1,8 +1,9 @@
 import { PluginInfo, PluginType, registerComponent } from "@/modules/plugin-module";
-import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
+import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@haku-design/core";
 import { mergeBasicProps } from './basic-chart-propertys';
 import ChartBar from '../component/ChartBar.vue';
 import { App } from "vue";
+import { getPropType } from "@/common/app-handle";
 
 /** 柱状图组件 */
 export function componentBarChart(app: App) {
@@ -40,7 +41,7 @@ export function componentBarChart(app: App) {
       // }
     },
     propertys: mergeBasicProps('bar', [
-      {
+      getPropType({
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "测试数据",
@@ -55,7 +56,7 @@ export function componentBarChart(app: App) {
   }
 ]`,
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.code, layout: PropertyLayout.block
-      }
+      }),
     ])
   }, {
     title: _pluginInfo.title,

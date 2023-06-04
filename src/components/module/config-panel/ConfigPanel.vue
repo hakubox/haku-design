@@ -52,7 +52,7 @@ import { state as editorState } from '@/modules/editor-module';
 import PropertyEditor from '@/components/module/config-panel/property-config/PropertyEditor.vue';
 import EventConfig from '@/modules/event-module/component/EventConfig.vue';
 import { Drawer, TabPane, Tabs, Button } from 'ant-design-vue';
-import { GeneralProperty } from '@/@types';
+import { GeneralProperty } from '@haku-design/core';
 import { getAppConfigPropertys } from "@/data/app-config";
 import bus, { GlobalBusType } from '@/tools/bus';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
@@ -65,7 +65,7 @@ const state = reactive({
   /** 页面分组 */
   pageGroups: [] as { title: string, name: string }[],
   /** 页面配置属性列表 */
-  pageConfigProps: [] as GeneralProperty[]
+  pageConfigProps: [] as GeneralProperty<any>[]
 });
 
 const eventConfig = ref<typeof EventConfig>();
@@ -84,7 +84,7 @@ const setPageConfigProps = () => {
   ].filter(i => state.pageConfigProps.some(o => o.group === i.name));
 };
 
-const changePageProps = (val: Record<string, any>, prop: GeneralProperty, propMap: any, model?: Record<string, any> | undefined) => {
+const changePageProps = (val: Record<string, any>, prop: GeneralProperty<any>, propMap: any, model?: Record<string, any> | undefined) => {
   if (prop.names && Array.isArray(prop.names[0]) && prop.names[0]?.includes('width')) {
     bus.$emit(GlobalBusType.onRefresh);
   }

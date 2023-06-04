@@ -86,19 +86,16 @@ const destory = () => {
   editor.dispose();
 };
 /** 监听值 */
-watch(
-  () => props.value,
-  (count, prevCount) => {
-    const editor = editorRef.value;
-    if (editor) {
-      if (!editor.getValue()) {
-        editor.setValue('');
-      } else if (JSON.stringify(count, undefined, '  ') !== editor.getValue()) {
-        editor.setValue(JSON.stringify(count, undefined, '  '));
-      }
+watch(() => props.value, (count, prevCount) => {
+  const editor = editorRef.value;
+  if (editor) {
+    if (!editor.getValue()) {
+      editor.setValue('');
+    } else if (JSON.stringify(count, undefined, '  ') !== editor.getValue()) {
+      editor.setValue(JSON.stringify(count, undefined, '  '));
     }
-  },
-);
+  }
+});
 
 onMounted(() => {
   const _options = {
@@ -136,17 +133,8 @@ onBeforeMount(() => {
     rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
     colors: {}
   });
-});
-
-onBeforeUnmount(() => {
+  
   if (props.isExpression) {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {},
-    });
-
     // validation settings
     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: true,
@@ -157,13 +145,6 @@ onBeforeUnmount(() => {
     monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ESNext,
       allowNonTsExtensions: true,
-    });
-  } else {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {},
     });
   }
 });

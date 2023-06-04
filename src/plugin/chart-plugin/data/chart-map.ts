@@ -1,8 +1,9 @@
 import { PluginInfo, PluginType, registerComponent } from "@/modules/plugin-module";
-import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
+import { ComponentCategory, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@haku-design/core";
 import { mergeBasicProps } from './basic-chart-propertys';
 import ChartMap from '../component/ChartMap.vue';
 import { App } from "vue";
+import { getPropType } from "@/common/app-handle";
 
 /** 地图组件 */
 export function componentMapChart(app: App) {
@@ -33,7 +34,7 @@ export function componentMapChart(app: App) {
       chartType: 'map',
     },
     propertys: mergeBasicProps('map', [
-      {
+      getPropType({
         name: 'dataSource', title: '数据', default: `[
   {
     "name": "香港18区人口密度",
@@ -140,10 +141,11 @@ export function componentMapChart(app: App) {
 ]`,
 
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.code, layout: PropertyLayout.block
-      }, {
+      }),
+      getPropType({
         name: 'geo', title: '地图结构数据', default: `https://www.hakuq.com/json/HK.json`,
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine, layout: PropertyLayout.block
-      }
+      })
     ])
   }, {
     title: _pluginInfo.title,

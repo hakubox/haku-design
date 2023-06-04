@@ -1,14 +1,10 @@
 import { ComponentProperty } from './component-property';
 import { ComponentOption } from './component-option';
 import {
-  PropertyLayout,
   ComponentCategory,
   ComponentPropertyEditor,
-  ComponentPropertyGroup,
-  PageType,
-  LayoutType,
-} from '@/@types/enum';
-import { LayoutConfig, ComponentQuickTool, ComponentGroup } from '.';
+} from '@haku-design/core';
+import { ComponentQuickTool, ComponentGroup } from '..';
 import { AllLayoutConfig } from './form-panel';
 
 
@@ -87,9 +83,9 @@ export interface Component {
   /** 额外组件属性编辑器 */
   extraEditors?: Record<string, ComponentPropertyEditor>;
   /** 属性 */
-  propertys: ComponentProperty[];
+  propertys: ComponentProperty<any>[];
   /** [NEW]子组件属性 */
-  childPropertys?: ComponentProperty[];
+  childPropertys?: ComponentProperty<any>[];
   /** 子组件 */
   children?: (Component | ComponentGroup)[];
   /** 子组件区域选择器（与插槽无关） */

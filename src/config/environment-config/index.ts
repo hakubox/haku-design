@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { reactive } from 'vue';
-import type { ServerConfig, ServerEnvironment } from '@/@types';
+import type { ServerConfig, ServerEnvironment } from '@haku-design/core';
 
 let _config: ServerConfig;
 /** 是否初始化 */

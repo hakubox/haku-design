@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import { reactive, type PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import type { CanvasQuickTool } from '@/@types/canvas-quick-tool';
+import type { CanvasQuickTool } from '@haku-design/core/canvas-quick-tool';
 
 const props = defineProps({
   config: {

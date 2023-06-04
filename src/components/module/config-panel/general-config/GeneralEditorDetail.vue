@@ -37,7 +37,7 @@
             @click="tool.click($event, editorState.currentSelectedComponents, prop)"
           ><i :class="tool.icon"></i></div>
 
-          <Tooltip
+          <!-- <Tooltip
             placement="topRight"
             class="prop-tool-btn"
             arrow-point-at-center
@@ -47,7 +47,7 @@
             <Button size="small">
               <FullscreenOutlined :style="{ fontSize: '12px' }" />
             </Button>
-          </Tooltip>
+          </Tooltip> -->
         </template>
         <!-- <div style="float: right;" v-show="prop.attach">
           <ButtonGroup size="small">
@@ -97,14 +97,14 @@
           </template>
         </component> -->
       </div>
-      <template v-if="!(prop.layout === 'block' && prop.attach?.length)">
-        <Tooltip placement="topLeft" class="prop-tool-btn" v-if="prop?.canFullScreen">
+      <!-- <template v-if="!(prop.layout === 'block' && prop.attach?.length)">
+        <Tooltip placement="topLeft" class="prop-tool-btn">
           <template #title>最大化</template>
           <Button size="small" @click="fullScreen(prop, prop)">
             <FullscreenOutlined :style="{ fontSize: '12px' }" />
           </Button>
         </Tooltip>
-      </template>
+      </template> -->
     </div>
 
     <!-- 子属性列表 -->
@@ -123,22 +123,18 @@
 <script lang="ts" setup>
 import { onMounted, PropType, reactive } from "vue";
 import { state as editorState } from "@/modules/editor-module";
-import { Component } from "@/@types/component";
-import { ComponentPropertyEditor } from "@/@types/enum";
+import type { Component, ComponentPropertyEditor, ComponentGroup, GeneralProperty } from "@haku-design/core";
 import GeneralEditorItem from './GeneralEditorItem.vue';
 import { initPropertyEditors } from '@/data/property-editor';
-import { ComponentGroup, GeneralProperty } from "@/@types";
 import { isBlank, isNotBlank } from "@/tools/common";
-import { Button, Switch, Popover, Tooltip } from "ant-design-vue";
-import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
+import { Switch, Popover } from "ant-design-vue";
+import { QuestionCircleOutlined } from "@ant-design/icons-vue";
 import { useAppHandle } from '@/common/app-handle';
 
 const {
   setVal,
   getVal
 } = useAppHandle();
-
-type EditorGeneralProperty = GeneralProperty & { isChild?: boolean };
 
 /** 属性编辑器Map */
 const propertyEditors = initPropertyEditors();
@@ -156,12 +152,12 @@ const props = defineProps({
   },
   /** 属性列表 */
   prop: {
-    type: Object as PropType<GeneralProperty>,
+    type: Object as PropType<GeneralProperty<any>>,
     required: true,
   },
   /** 属性列表 */
   propertys: {
-    type: Array as PropType<GeneralProperty[]>,
+    type: Array as PropType<GeneralProperty<any>[]>,
     default: () => []
   },
   /** 标签宽度 */
@@ -177,11 +173,11 @@ const state = reactive({
 
 const emit = defineEmits<{
   (event: 'update:model', val: Record<string, any>): void;
-  (event: 'beforeChange', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
-  (event: 'change', val: Record<string, any>, prop: GeneralProperty, propMap, model?: Record<string, any>): void;
+  (event: 'beforeChange', val: Record<string, any>, prop: GeneralProperty<any>, propMap, model?: Record<string, any>): void;
+  (event: 'change', val: Record<string, any>, prop: GeneralProperty<any>, propMap, model?: Record<string, any>): void;
 }>();
 
-const parentExpand = (prop: GeneralProperty) => {
+const parentExpand = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>) => {
   const _val = getVal(props.model, prop);
   if (prop.children?.length) {
     setVal(props.model, prop, !_val);
@@ -194,7 +190,7 @@ const getTools = (editor: ComponentPropertyEditor) => {
 };
 
 /** 判断属性是否显示 */
-const checkVisible = (i: GeneralProperty) => {
+const checkVisible = <T extends ComponentPropertyEditor>(i: GeneralProperty<T>) => {
   if (i.visible === undefined) return true;
   if (typeof i.visible === 'function') {
     return i.visible(props.model ?? {});
@@ -235,19 +231,22 @@ onMounted(() => {
 
 const propShowListener = (prop, propMap, model?: Record<string, any>) => {
   if (prop?.showCondition && model) {
-    return prop.showCondition.call(this, prop, propMap, model, model[prop.name]);
+    return prop.showCondition.call(this, {
+      prop, propMap, model, 
+      value: model[prop.name]
+    });
   } else {
     return true;
   }
 };
 
 /** 属性修改触发的事件 */
-const propChangeListener = (value, prop: GeneralProperty, propMap, model?: Record<string, any>) => {
+const propChangeListener = <T extends ComponentPropertyEditor>(value, prop: GeneralProperty<T>, propMap, model?: Record<string, any>) => {
   emit('change', value, prop, propMap, model);
 };
 
 /** 切换附加属性类型 */
-const changePropAttach = (prop: GeneralProperty, editor: ComponentPropertyEditor) => {
+const changePropAttach = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>, editor: T) => {
   // if (this.editorState.currentSelectedComponents.length) {
   //   this.historyService.redo();
   //   this.editorService.setComponentAttrType(this.editorState.currentSelectedComponents as Component[], prop, editor);

@@ -1,4 +1,4 @@
-import { Component, ComponentProperty } from "../../src/@types"
+import { Component, ComponentProperty } from "@haku-design/core"
 
 /** 基础命令类型 */
 export interface BasicCommand {

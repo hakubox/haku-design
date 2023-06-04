@@ -38,8 +38,8 @@
 <script lang="ts" setup>
 import { PropType, computed, watch } from "vue";
 import { state as editorState } from "@/modules/editor-module";
-import { ComponentProperty } from "@/@types/component-property";
-import { type Component } from "@/@types";
+import { ComponentProperty } from "@haku-design/core";
+import { type Component } from "@haku-design/core";
 import { useAppHandle } from '@/common/app-handle';
 
 const {
@@ -50,7 +50,7 @@ const {
 const props = defineProps({
   /** 属性 */
   prop: {
-    type: Object as PropType<ComponentProperty>,
+    type: Object as PropType<ComponentProperty<any>>,
     required: true,
     default: () => ({})
   },

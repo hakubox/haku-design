@@ -2,7 +2,8 @@
   "compilerOptions": {
     "types": [
       "howler",
-      "@haku-design/command"
+      "@haku-design/command",
+      "@haku-design/core"
     ],
     "declaration": true,
     "target": "ES2021",
@@ -36,13 +37,12 @@
     },
   },
   "include": [
-    "docs/.vuepress/**/*.ts",
-    "docs/.vuepress/**/*.vue",
     "src/**/*.ts", 
     "src/**/*.d.ts", 
     "src/**/*.tsx", 
     "src/**/*.vue",
     "packages/command/index.ts",
+    "packages/core/index.ts", "packages/core/types/app-config.d.ts",
   ],
   "exclude": [
     "node_modules",

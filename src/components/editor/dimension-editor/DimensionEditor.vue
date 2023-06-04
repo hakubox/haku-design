@@ -40,8 +40,12 @@
           >
             <template #maxTagPlaceholder></template>
             <template #option="option">
-              <div class="component-option" @mouseenter="componentMouseEnter(option.value)" @mouseout="componentMouseOut()">
-                <i :class="option.icon" style="color: #888; font-size: 13px;"></i>
+              <div
+                class="component-option"
+                @mouseenter="componentMouseEnter(option.value)"
+                @mouseout="componentMouseOut()"
+              >
+                <i :class="option.icon" style="color: #888; font-size: 13px"></i>
                 &nbsp;{{ option.label }}
               </div>
             </template>
@@ -65,7 +69,9 @@
             <template #overlay>
               <Menu>
                 <MenuItem :disabled="index == 0" key="1" @click="moveUp(index)"><ArrowUpOutlined />上移</MenuItem>
-                <MenuItem :disabled="index == value.length - 1" key="2" @click="moveDown(index)"><ArrowDownOutlined />下移</MenuItem>
+                <MenuItem :disabled="index == value.length - 1" key="2" @click="moveDown(index)"
+                  ><ArrowDownOutlined />下移</MenuItem
+                >
                 <MenuDivider />
                 <MenuItem key="2" @click="copyRow(index)"><CopyOutlined />复制</MenuItem>
               </Menu>
@@ -80,7 +86,18 @@
 <script lang="ts" setup>
 import { computed, onUnmounted, PropType, reactive, useAttrs } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { Button, Dropdown, Empty, Input, InputNumber, Menu, MenuDivider, MenuItem, Select, Table } from 'ant-design-vue';
+import {
+  Button,
+  Dropdown,
+  Empty,
+  Input,
+  InputNumber,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  Select,
+  Table,
+} from 'ant-design-vue';
 import { createModelId } from '@/tools/common';
 import { ArrowDownOutlined } from '@ant-design/icons-vue';
 
@@ -120,8 +137,8 @@ const componentList = computed(() => {
       })
       .map((i) => ({
         value: i.attrs.id,
-        label: i.isGroup ? i.name : (i.attrs.name || i.title),
-        icon: editorState.menuComponents.find(o => o.name === i.name)?.icon ?? '---',
+        label: i.isGroup ? i.name : i.attrs.name || i.title,
+        icon: editorState.menuComponents.find((o) => o.name === i.name)?.icon ?? '---',
       })),
   }));
 });
@@ -143,11 +160,14 @@ const componentMouseEnter = (componentId: string) => {
   }
 };
 const componentMouseOut = () => {
-  const _domList = Array.from(editorState.canvasEl.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
+  const _domList: HTMLElement[] = Array.from(
+    editorState.canvasEl.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`),
+  );
   domCache = {};
-  if (_domList?.length) _domList.forEach(i => {
-    i.classList.remove('highlight');
-  });
+  if (_domList?.length)
+    _domList.forEach((i) => {
+      i.classList.remove('highlight');
+    });
 };
 /** 获取题目显示的标签文本 */
 const getQuestionsLabel = (index: number) => {
@@ -251,7 +271,6 @@ const tableColumns = () => {
 onUnmounted(() => {
   domCache = {};
 });
-
 </script>
 
 <style lang="less" scoped>

@@ -1,5 +1,5 @@
 {
-  "name": "@haku-design/command",
+  "name": "@haku-design/core",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/haku-design/command"
+    "url": "https://gitee.com/haku-design/core"
   },
   "author": "",
   "license": "ISC"

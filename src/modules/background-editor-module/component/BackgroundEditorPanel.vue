@@ -144,7 +144,7 @@ import { toast } from '@/common/message';
 import { toDecimal, distance, getPerpendicularPoint } from '@/tools/common';
 import { useDragHook } from '@/tools/drag';
 import bus, { GlobalBusType } from '@/tools/bus';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
 
 const state = reactive({
   /** 内部层样式 */

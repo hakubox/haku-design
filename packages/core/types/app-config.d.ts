@@ -4,9 +4,9 @@ import { FormTimerConfig } from './form-timer-config';
 import { FormStartPageConfig } from './form-start-page-config';
 import { FormEndPageConfig } from './form-end-page-config';
 import { RatingConfig } from './rating-config';
-import { DeviceType, AppType, LayoutType } from './enum';
+import { DeviceType, AppType, LayoutType } from '../enum';
 import { LayoutConfig } from './form-panel';
-import { AppBackground } from '@/modules/background-editor-module';
+// import { AppBackground } from '@/modules/background-editor-module';
 
 /** 应用类型独有配置项 */
 // type AppTypeDetailConfig<T = any> = {
@@ -106,7 +106,7 @@ export interface AppConfig {
   /** 描述 */
   description: string;
   /** 背景 */
-  background: AppBackground[];
+  background: any[];
   /** 备注 */
   remark: string;
   /** 客户端主题 */

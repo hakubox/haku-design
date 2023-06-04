@@ -1,7 +1,7 @@
 import { formComponents, initComponents } from '@/data/form-components';
 import { cloneForce } from '@/lib/clone';
 import { createModelId } from './common';
-import { FormScript, Component } from '@/@types';
+import type { FormScript, Component } from '@haku-design/core';
 
 /** 获取数据源 */
 export function getDataSource(

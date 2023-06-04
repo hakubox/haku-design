@@ -1,12 +1,13 @@
-import { GeneralProperty } from '@/@types';
-import { AppType, ComponentPropertyEditor, PageType, PropertyLayout } from '@/@types/enum';
+import { GeneralProperty } from '@haku-design/core';
+import { AppType, ComponentPropertyEditor, PageType, PropertyLayout } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as globalState } from '@/common/global';
 import { createModelId } from '@/tools/common';
 import { toast } from '@/common/message';
+import { getPropType } from '@/common/app-handle';
 
 /** 获取应用配置属性列表 */
-export const getAppConfigPropertys = (appType: AppType): GeneralProperty[] => {
+export const getAppConfigPropertys = (appType: AppType): GeneralProperty<any>[] => {
   switch (appType) {
     case AppType.questionnaire:
       return [
@@ -24,56 +25,55 @@ export const getAppConfigPropertys = (appType: AppType): GeneralProperty[] => {
 };
 
 /** 应用配置列表 */
-export const formConfigs: GeneralProperty[] = [
-  {
+export const formConfigs = [
+  getPropType({
     name: 'appTitle',
     title: '应用标题',
     placeholder: '应用标题',
     group: 'basic',
     editor: ComponentPropertyEditor.singerLine,
-  },
-  {
+  }),
+  getPropType({
     name: 'appVersion',
     title: '版本号',
     placeholder: '版本号',
     group: 'basic',
     editor: ComponentPropertyEditor.label,
-  },
-  {
+  }),
+  getPropType({
     name: 'headerTags',
     title: '头部标签',
     placeholder: '头部标签',
     group: 'basic',
     editor: ComponentPropertyEditor.textList,
-  },
-  {
+  }),
+  getPropType({
     name: 'headerContent',
     title: '头部说明',
     group: 'basic',
     editor: ComponentPropertyEditor.multiLine,
-  },
-  {
+  }),
+  getPropType({
     name: 'description',
     title: '应用描述',
     placeholder: '请填写应用描述',
     group: 'basic',
     editor: ComponentPropertyEditor.multiLine,
-  },
-  {
+  }),
+  getPropType({
     name: 'remark',
     title: '应用备注',
     group: 'basic',
     editor: ComponentPropertyEditor.multiLine,
-  },
-  {
+  }),
+  getPropType({
     name: 'background',
     title: '背景',
     group: 'basic',
     layout: PropertyLayout.block,
     editor: ComponentPropertyEditor.background,
-    attrs: {},
-  },
-  {
+  }),
+  getPropType({
     name: ['designConfig', 'deviceType'],
     title: '设备类型',
     group: 'basic',
@@ -85,20 +85,20 @@ export const formConfigs: GeneralProperty[] = [
         { label: 'PC端', value: 'pc' },
       ],
     },
-    change(val) {
-      if (val === 'pc') {
+    change({ value }) {
+      if (value === 'pc') {
         globalState.isMobile = false;
-      } else if (val === 'mobile') {
+      } else if (value === 'mobile') {
         globalState.isMobile = true;
       }
       editorService.onPageSize();
     },
-  },
+  }),
 ];
 
 /** 画布应用相关配置 */
-export const canvasConfig: GeneralProperty[] = [
-  {
+export const canvasConfig = [
+  getPropType({
     name: ['designConfig', 'gridSize'],
     title: '网格大小',
     group: 'basic',
@@ -109,8 +109,8 @@ export const canvasConfig: GeneralProperty[] = [
       step: 5,
       suffix: 'px'
     },
-  },
-  {
+  }),
+  getPropType({
     name: 'size',
     names: [['canvasConfig', 'width'], ['canvasConfig', 'height']],
     title: '尺寸',
@@ -121,7 +121,8 @@ export const canvasConfig: GeneralProperty[] = [
     attrs: {
       options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
     }
-  }, {
+  }),
+  getPropType({
     name: 'size',
     names: [['canvasConfig', 'width'], ['canvasConfig', 'height']],
     title: '尺寸',
@@ -132,7 +133,8 @@ export const canvasConfig: GeneralProperty[] = [
     attrs: {
       options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
     }
-  }, {
+  }),
+  getPropType({
     name: ['canvasConfig', 'scale'],
     title: '缩放比',
     group: 'canvas',
@@ -143,21 +145,22 @@ export const canvasConfig: GeneralProperty[] = [
       step: 0.1,
       suffix: '倍'
     }
-  },
+  }),
 ];
 
 /** 问卷应用相关配置 */
-export const questionnaireConfig: GeneralProperty[] = [
-  {
+export const questionnaireConfig = [
+  getPropType({
     name: ['questionnaireConfig', 'hasScore'],
     title: '开启评分',
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
+    default: false,
     change() {
       editorService.changeSelectedFormComponent(editorState.currentSelectedComponents, true);
     },
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'ratingList'],
     title: '评价列表',
     default: [{ startScore: 0, title: '正常评分' }],
@@ -214,9 +217,9 @@ export const questionnaireConfig: GeneralProperty[] = [
         },
       ],
     },
-    showCondition: (prop, propMap, target) => target.hasScore,
-  },
-  {
+    showCondition: ({ model }) => model.hasScore,
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'turnPageMode'],
     title: '分页类型',
     group: 'questionnaire',
@@ -228,169 +231,167 @@ export const questionnaireConfig: GeneralProperty[] = [
         { label: '不分页', value: 'no-page' },
       ],
     },
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'showPageProgress'],
     title: '答题进度',
     default: true,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
-    attrs: {},
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'showNo'],
     title: '题目序号',
     description: '无标题的题目无法显示序号',
     default: true,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'useAutoCache'],
     title: '自动记录',
     remark: '开启后自动记录所有提交信息',
     default: true,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'autoCacheDuration'],
     title: '缓存超时时长',
     default: 3600000,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.duration,
     attrs: { unit: 'hour' },
-    showCondition: (prop, propMap, target) => target.useAutoCache,
-  },
+    showCondition: ({ model }) => model.useAutoCache,
+  }),
 
-  {
+  getPropType({
     name: ['questionnaireConfig', 'timerConfig', 'isOpen'],
     title: '记时配置',
     default: false,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
     children: [
-      {
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'isAutoTiming'],
         title: '自动记时',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'minDuration'],
         title: '最小经过时长',
         default: 0,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.duration,
         attrs: { unit: 'minute' },
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'isEnforceMinDuration'],
         title: '强制最小时长',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig?.minDuration > 0,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen && model.questionnaireConfig.timerConfig?.minDuration > 0,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'minDurationTooltip'],
         title: '时长不足提示',
         default: '',
         group: 'questionnaire',
         editor: ComponentPropertyEditor.multiLine,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig?.minDuration > 0,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen && model.questionnaireConfig.timerConfig?.minDuration > 0,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'timeOutDuration'],
         title: '超时时长',
         default: 2000,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.duration,
         attrs: { unit: 'minute' },
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'showTooltip'],
         title: '界面提示',
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'timeOutRemind'],
         title: '超时提醒',
         group: 'questionnaire',
         editor: ComponentPropertyEditor.multiLine,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'timeOutAutoSubmit'],
         title: '超时提交',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'remindAdvanceDuration'],
         title: '超时提前时长',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'isOpenSingleQuestion'],
         title: '开启单题记时',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'singleQuestionTimeOutDuration'],
         title: '单题超时时长',
         default: 100,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.duration,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig.isOpenSingleQuestion,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen && model.questionnaireConfig.timerConfig.isOpenSingleQuestion,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'timerConfig', 'singleQuestionTimeOutAutoSkip'],
         title: '单题超时跳过',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.timerConfig?.isOpen && target.questionnaireConfig.timerConfig.isOpenSingleQuestion,
-      },
+        showCondition: ({ model }) => model.questionnaireConfig.timerConfig?.isOpen && model.questionnaireConfig.timerConfig.isOpenSingleQuestion,
+      }),
     ]
-  },
+  }),
   
 
-  {
+  getPropType({
     name: ['questionnaireConfig', 'dimensionConfig', 'isOpen'],
     title: '维度配置',
     default: false,
     group: 'questionnaire',
     editor: ComponentPropertyEditor.boolean,
     children: [
-      {
+      getPropType({
         name: ['questionnaireConfig', 'dimensionConfig', 'dimensionList'],
         title: '维度列表配置',
         default: [],
         layout: PropertyLayout.block,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.dimension,
-        attrs: {},
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.dimensionConfig?.isOpen,
-      },
+        showCondition: ({ model }) => model.questionnaireConfig.dimensionConfig?.isOpen,
+      }),
     ]
-  },
+  }),
 
-  {
+  getPropType({
     name: ['questionnaireConfig', 'startPageConfig', 'isOpen'],
     title: '起始页',
     default: false,
@@ -399,7 +400,7 @@ export const questionnaireConfig: GeneralProperty[] = [
     attrs: {
       confirm: (value) => `是否${value ? '关闭' : '开启'}起始页？`,
     },
-    change(value) {
+    change({ value }) {
       const _index = editorState.pages.findIndex((i) => i.pageType === PageType.startPage);
       if (value) {
         if (_index < 0) {
@@ -413,8 +414,8 @@ export const questionnaireConfig: GeneralProperty[] = [
         }
       }
     },
-  },
-  {
+  }),
+  getPropType({
     name: ['questionnaireConfig', 'endPageConfig', 'isOpen'],
     title: '完成页',
     default: false,
@@ -423,7 +424,7 @@ export const questionnaireConfig: GeneralProperty[] = [
     attrs: {
       confirm: (value) => `是否${value ? '关闭' : '开启'}完成页？`,
     },
-    change(value) {
+    change({ value }) {
       const _index = editorState.pages.findIndex((i) => i.pageType === PageType.endPage);
       if (value) {
         if (_index < 0) {
@@ -438,9 +439,9 @@ export const questionnaireConfig: GeneralProperty[] = [
         }
       }
     },
-  },
+  }),
 
-  {
+  getPropType({
     name: ['questionnaireConfig', 'showPageButton'],
     title: '底部按钮',
     default: true,
@@ -448,31 +449,31 @@ export const questionnaireConfig: GeneralProperty[] = [
     editor: ComponentPropertyEditor.boolean,
     attrs: {},
     children: [
-      {
+      getPropType({
         name: ['questionnaireConfig', 'footer', 'submitButtonText'],
         title: '提交按钮文本',
         default: '提交',
         group: 'questionnaire',
         editor: ComponentPropertyEditor.singerLine,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.showPageButton,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'footer', 'resetButton'],
         title: '重置按钮',
         default: false,
         group: 'questionnaire',
         editor: ComponentPropertyEditor.boolean,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton,
-      },
-      {
+        showCondition: ({ model }) => model.questionnaireConfig.showPageButton,
+      }),
+      getPropType({
         name: ['questionnaireConfig', 'footer', 'resetButtonText'],
         title: '重置按钮文本',
         default: '重置',
         group: 'questionnaire',
         editor: ComponentPropertyEditor.singerLine,
-        showCondition: (prop, propMap, target) => target.questionnaireConfig.showPageButton && target.questionnaireConfig.footer.resetButton,
-      },
+        showCondition: ({ model }) => model.questionnaireConfig.showPageButton && model.questionnaireConfig.footer.resetButton,
+      }),
     ]
-  },
+  }),
   
 ]

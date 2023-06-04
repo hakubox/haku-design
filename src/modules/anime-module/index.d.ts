@@ -1,4 +1,4 @@
-import type { GeneralProperty } from "../../@types";
+import type { GeneralProperty } from "@haku-design/core";
 export * from './@types/timeline.d';
 
 /** 简单动画-方向 */
@@ -25,7 +25,7 @@ export interface SimpleAnime {
   /** 仅针对文字 */
   onText: boolean;
   /** 属性列表 */
-  propertys?: GeneralProperty[];
+  propertys?: GeneralProperty<any>[];
 }
 
 /** 简单动画配置项 */

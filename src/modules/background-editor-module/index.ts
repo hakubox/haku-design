@@ -12,7 +12,7 @@ import type {
   AppImageBackground
 } from './index.d';
 import { distance } from '@/tools/common';
-import { AppType } from '@/@types/enum';
+import { AppType } from '@haku-design/core';
 
 export * from './index.d';
 

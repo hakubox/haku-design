@@ -35,8 +35,8 @@
 <script lang="ts" setup>
 import { computed, PropType } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import type { AppEventActionInstance, AppEventTriggerInstance } from '../@types';
-import { PropertyEditor } from '@/@types/property-editor';
+import type { AppEventActionInstance, AppEventTriggerInstance } from '../index.d';
+import { PropertyEditor } from '@haku-design/core';
 
 const props = defineProps({
   /** 属性名称 */

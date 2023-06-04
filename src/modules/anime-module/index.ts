@@ -1,4 +1,4 @@
-import { SetPartial } from '@/@types';
+import { SetPartial } from '@haku-design/core';
 import { getAudioFile, getAudioImg } from '@/lib/audio';
 import { createModelId } from '@/tools/common';
 import { Howl } from 'howler';

@@ -225,7 +225,7 @@ onMounted(() => {
       background-color: transparent;
       border: 1px solid transparent;
       outline: none;
-      border-radius: 4px;
+      border-radius: 0px;
       height: 100%;
       width: 100%;
       text-align: center;

@@ -99,9 +99,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
-import { ComponentCategory } from '@/@types/enum';
-import { ToolComponentItem } from '@/@types/tool-component-item';
+import { Component } from '@haku-design/core';
+import { ComponentCategory } from '@haku-design/core';
+import { ToolComponentItem } from '@haku-design/core/tool-component-item';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as draggableService } from '@/modules/draggable-module';
 import { reactive } from 'vue';

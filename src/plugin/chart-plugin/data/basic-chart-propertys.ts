@@ -1,5 +1,6 @@
-import { ComponentProperty } from "@/@types";
-import { AppType, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@/@types/enum";
+import { ComponentProperty } from "@haku-design/core";
+import { AppType, ComponentPropertyEditor, ComponentPropertyGroup, PropertyLayout } from "@haku-design/core";
+import { getPropType } from "@/common/app-handle";
 
 /** 获取工具提示属性列表 */
 export function getTooltipProps({
@@ -7,7 +8,7 @@ export function getTooltipProps({
 }: {
   name: string[],
   title: string
-}): ComponentProperty {
+}): ComponentProperty<ComponentPropertyEditor.json> {
   const _textProps = [
     { name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color },
   ];
@@ -23,27 +24,25 @@ export function getTextStyleProps({
 }: {
   name: string[],
   title: string
-}): ComponentProperty {
+}): ComponentProperty<ComponentPropertyEditor.json> {
   const _textProps = [
-    { name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color },
-    { name: [...name, 'fontSize'], title: '字体大小', default: 12, editor: ComponentPropertyEditor.int },
-    { name: [...name, 'fontStyle'], title: '字体风格', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+    getPropType({ name: [...name, 'color'], title: '文本颜色', editor: ComponentPropertyEditor.color }),
+    getPropType({ name: [...name, 'fontSize'], title: '字体大小', default: 12, editor: ComponentPropertyEditor.int }),
+    getPropType({ name: [...name, 'fontStyle'], title: '字体风格', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
       { label: 'normal', value: 'normal' }, { label: 'italic', value: 'italic' }, { label: 'oblique', value: 'oblique' }
-    ] } },
-    { name: [...name, 'fontWeight'], title: '字体粗细', default: 'normal', editor: ComponentPropertyEditor.int, attrs: { options: [
-      { label: 'normal', value: 'normal' }, { label: 'bold', value: 'bold' }, { label: 'bolder', value: 'bolder' }, { label: 'lighter', value: 'lighter' },
-    ] }  },
-    { name: [...name, 'align'], title: '水平对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+    ] } }),
+    getPropType({ name: [...name, 'fontWeight'], title: '字体粗细', default: 'normal', editor: ComponentPropertyEditor.int }),
+    getPropType({ name: [...name, 'align'], title: '水平对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
       { label: 'auto', value: 'auto' }, { label: 'left', value: 'left' }, { label: 'center', value: 'center' }, { label: 'right', value: 'right' },
-    ] } },
-    { name: [...name, 'verticalAlign'], title: '垂直对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
+    ] } }),
+    getPropType({ name: [...name, 'verticalAlign'], title: '垂直对齐', editor: ComponentPropertyEditor.dropdownList, attrs: { options: [
       { label: 'auto', value: 'auto' }, { label: 'top', value: 'top' }, { label: 'middle', value: 'middle' }, { label: 'bottom', value: 'bottom' },
-    ] } },
-    { name: [...name, 'lineHeight'], title: '行高', editor: ComponentPropertyEditor.int },
-    { name: [...name, 'padding'], title: '文字边距', editor: ComponentPropertyEditor.box, attrs: { single: true } },
-    { name: [...name, 'backgroundColor'], title: '文字背景色', editor: ComponentPropertyEditor.color },
+    ] } }),
+    getPropType({ name: [...name, 'lineHeight'], title: '行高', editor: ComponentPropertyEditor.int }),
+    getPropType({ name: [...name, 'padding'], title: '文字边距', editor: ComponentPropertyEditor.box, attrs: { single: true } }),
+    getPropType({ name: [...name, 'backgroundColor'], title: '文字背景色', editor: ComponentPropertyEditor.color }),
     
-  ];
+  ] as ComponentProperty<ComponentPropertyEditor>[];
   return {
     name: name, title: title, group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.json,
     children: _textProps
@@ -53,33 +52,37 @@ export function getTextStyleProps({
 /**
  * 基础图表属性
  */
-export const basicChartPropertys: ComponentProperty[] = [
-  {
+export const basicChartPropertys = [
+  getPropType({
     name: '', names: ['x', 'y'], title: '位置', appType: [AppType.canvas],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
     attrs: {
       options: [ { label: 'x', prop: 'x' }, { label: 'y', prop: 'y' } ]
     },
-  }, {
+  }),
+  getPropType({
     name: '', names: ['width', 'height'], title: '尺寸', appType: [AppType.canvas],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.numbers,
     attrs: {
       options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
     },
-  }, {
+  }),
+  getPropType({
     name: 'height', title: '高度', appType: [AppType.questionnaire],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
-  }, {
-    names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+  }),
+  getPropType({
+    name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
-  }, {
+  }),
+  getPropType({
     name: 'visible', title: '是否显示', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     remark: '是否在界面上显示。'
-  },
-  { name: 'colorTest', title: '测试颜色', group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color, attrs: { } }, 
+  }),
+  getPropType({ name: 'colorTest', title: '测试颜色', group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color, attrs: { } }), 
   
-  {
+  getPropType({
     name: 'color', title: '颜色表', default: [
       { color: 'rgba(93, 114, 194, 1)' },
       { color: 'rgba(165, 200, 125, 1)' },
@@ -97,7 +100,8 @@ export const basicChartPropertys: ComponentProperty[] = [
         { name: 'color', title: '颜色', editor: ComponentPropertyEditor.color, attrs: { } },
       ]
     }
-  }, {
+  }),
+  getPropType({
     name: ['title', 'show'], title: '标题', default: false,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
@@ -149,11 +153,13 @@ export const basicChartPropertys: ComponentProperty[] = [
         ]
       }
     ]
-  }, {
+  }),
+  getPropType({
     name: 'background', title: '背景', layout: PropertyLayout.block,
     default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
-  }, {
+  }),
+  getPropType({
     name: ['legend', 'show'], title: '图例', default: true,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
@@ -164,7 +170,8 @@ export const basicChartPropertys: ComponentProperty[] = [
       { name: ['legend', 'top'], title: '顶部距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, },
       { name: ['legend', 'bottom'], title: '底部距离', default: 'auto', editor: ComponentPropertyEditor.singerLine, }, 
     ]
-  }, {
+  }),
+  getPropType({
     name: ['label', 'show'], title: '标签', default: false,
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     children: [
@@ -176,17 +183,19 @@ export const basicChartPropertys: ComponentProperty[] = [
       { name: ['label', 'formatter'], title: '格式化', editor: ComponentPropertyEditor.singerLine, },
       // getTextStyle({ name: ['label'], title: '文本' })
     ]
-  }, {
+  }),
+  getPropType({
     name: 'name', title: '组件名称', default: '',
     group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
-  }, {
+  }),
+  getPropType({
     name: 'remark', title: '备注', default: '',
     group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-  }
-] as ComponentProperty[];
+  })
+];
 
 /** 合并基础属性 */
-export function mergeBasicProps(chartType: string, propertys: ComponentProperty[]): ComponentProperty[] {
+export function mergeBasicProps(chartType: string, propertys: ComponentProperty<any>[]): ComponentProperty<any>[] {
   const _props = propertys;
 
     switch (chartType) {
@@ -250,10 +259,10 @@ export function mergeBasicProps(chartType: string, propertys: ComponentProperty[
               { name: ['xAxis', 'min'], title: '最小值', editor: ComponentPropertyEditor.float, },
               { name: ['xAxis', 'max'], title: '最大值', editor: ComponentPropertyEditor.float, },
               { name: ['xAxis', 'minInterval'], title: '最小间隔', editor: ComponentPropertyEditor.float,
-                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
+                showCondition({ component }) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
               },
               { name: ['xAxis', 'maxInterval'], title: '最大间隔', editor: ComponentPropertyEditor.float,
-                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
+                showCondition({ component }) { return ['value', 'time'].includes(component.attrs.xAxis.type) }
               },
               { name: ['xAxis', 'silent'], title: '阻止交互', editor: ComponentPropertyEditor.boolean, },
             ]
@@ -293,10 +302,10 @@ export function mergeBasicProps(chartType: string, propertys: ComponentProperty[
               { name: ['yAxis', 'min'], title: '最小值', editor: ComponentPropertyEditor.float, },
               { name: ['yAxis', 'max'], title: '最大值', editor: ComponentPropertyEditor.float, },
               { name: ['yAxis', 'minInterval'], title: '最小间隔', editor: ComponentPropertyEditor.float,
-                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
+                showCondition({ component }) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
               },
               { name: ['yAxis', 'maxInterval'], title: '最大间隔', editor: ComponentPropertyEditor.float,
-                showCondition(prop, propMap, component) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
+                showCondition({ component }) { return ['value', 'time'].includes(component.attrs.yAxis.type) }
               },
               { name: ['yAxis', 'silent'], title: '阻止交互', editor: ComponentPropertyEditor.boolean, },
             ]
@@ -308,5 +317,5 @@ export function mergeBasicProps(chartType: string, propertys: ComponentProperty[
   return [
     ...basicChartPropertys,
     ..._props
-  ];
+  ] as ComponentProperty<any>[];
 }

@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { PropType } from 'vue';
 import { dateFormat } from '@/tools/common';
-import { ComponentAnswerType } from '@/@types';
+import { ComponentAnswerType } from '@haku-design/core';
 
 const props = defineProps({
   type: {

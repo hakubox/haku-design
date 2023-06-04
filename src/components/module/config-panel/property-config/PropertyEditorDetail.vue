@@ -133,8 +133,8 @@ import { state as editorState, service as editorService } from "@/modules/editor
 import { service as historyService } from "@/modules/history-module";
 import { Button, Switch, ButtonGroup, Popover, Tooltip } from "ant-design-vue";
 import { FullscreenOutlined, QuestionCircleOutlined } from "@ant-design/icons-vue";
-import { ComponentPropertyEditor } from "@/@types/enum";
-import type { Component, ComponentGroup, ComponentProperty, PropertyEditor } from "@/@types";
+import { ComponentPropertyEditor } from "@haku-design/core";
+import type { Component, ComponentGroup, ComponentProperty, PropertyEditor } from "@haku-design/core";
 import { PropType } from 'vue';
 import { useAppHandle } from '@/common/app-handle';
 
@@ -156,7 +156,7 @@ const getValue = computed(() => {
 const props = defineProps({
   /** 属性 */
   prop: {
-    type: Object as PropType<ComponentProperty>,
+    type: Object as PropType<ComponentProperty<any>>,
     required: true,
   },
   /** 属性编辑器Map */
@@ -167,11 +167,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (event: 'change', editor: PropertyEditor, prop: ComponentProperty, propMap: Record<string, ComponentProperty>, components: (Component | ComponentGroup)[]): void;
-  (event: 'fullscreen', editor: PropertyEditor, prop: ComponentProperty): void;
+  (event: 'change', editor: PropertyEditor, prop: ComponentProperty<any>, propMap: Record<string, ComponentProperty<any>>, components: (Component | ComponentGroup)[]): void;
+  (event: 'fullscreen', editor: PropertyEditor, prop: ComponentProperty<any>): void;
 }>();
 
-const parentExpand = (prop: ComponentProperty) => {
+const parentExpand = <T extends ComponentPropertyEditor>(prop: ComponentProperty<T>) => {
   const _val = getValue.value;
   if (prop.children?.length && editorState.currentSelectedComponents.length && !editorState.currentSelectedComponents[0].isGroup) {
     historyService.exec('set-property', {
@@ -189,7 +189,7 @@ const change = (e) => {
   emit('change', e, props.prop, editorState.currentSelectedComponentPropertyMap, editorState.currentSelectedComponents);
 };
 
-const fullscreen = (editor: PropertyEditor, prop: ComponentProperty) => {
+const fullscreen = <T extends ComponentPropertyEditor>(editor: PropertyEditor, prop: ComponentProperty<T>) => {
   emit('fullscreen', editor, prop)
 }
 
@@ -202,9 +202,19 @@ const propShowListener = (prop, propMap, components: (Component | ComponentGroup
   if (prop?.showCondition && components.length) {
     // TODO: 待处理，第五个参数需要确认怎样处理
     if (components.length === 1) {
-      return prop.showCondition.call(this, prop, propMap, components[0], components[0].attrs[prop.name], (editorState.componentCanvas as any).$refs);
+      return prop.showCondition.call(this, {
+        prop, propMap, 
+        component: components[0],
+        value: components[0].attrs[prop.name],
+        ref: (editorState.componentCanvas as any).$refs
+      });
     } else {
-      return prop.showCondition.call(this, prop, propMap, components[0], undefined, (editorState.componentCanvas as any).$refs);
+      return prop.showCondition.call(this, {
+        prop, propMap, 
+        component: components[0],
+        value: undefined,
+        ref: (editorState.componentCanvas as any).$refs
+      });
     }
   } else {
     return true;
@@ -212,7 +222,7 @@ const propShowListener = (prop, propMap, components: (Component | ComponentGroup
 };
 
 /** 切换附加属性类型 */
-const changePropAttach = (prop: ComponentProperty, editor: ComponentPropertyEditor) => {
+const changePropAttach = <T extends ComponentPropertyEditor>(prop: ComponentProperty<T>, editor: T) => {
   if (editorState.currentSelectedComponents.length) {
     historyService.redo();
     editorState.currentSelectedComponents.forEach(component => {

@@ -4,7 +4,7 @@ import { Command, CommandType, GlobalCommand, CommandHistory } from '@haku-desig
 import { formCommands } from '@/data/form-commands';
 import { createModelId } from '@/tools/common';
 import { reactive } from 'vue';
-import { SetPartials } from '@/@types';
+import { SetPartials } from '@haku-design/core';
 
 /** 历史记录模块状态 */
 export const state = reactive({

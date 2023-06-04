@@ -1,5 +1,4 @@
-import { ComponentCategory } from '@/@types/enum';
-import { PageType, AppType } from '@/@types/enum';
+import { ComponentCategory, PageType, AppType } from '@haku-design/core';
 import { ComponentAnswerType } from './component';
 
 /** 工具箱组件项 */

@@ -1,6 +1,23 @@
 import { reactive, h, toRefs, ConcreteComponent, ref } from 'vue';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';
-import { Component, ComponentProperty, GeneralProperty, PropertyEditor } from '@/@types';
+import { AppConfig, AppPage, ComponentProperty, ExportAppBody, GeneralProperty, PropertyEditor } from '@haku-design/core';
+import { cloneLoop } from '@/lib/clone';
+import { AppEvent } from '@/modules/event-module';
+import { ComponentPropertyEditor } from '@haku-design/core';
+
+
+/** 映射通用属性类型 */
+export function getComponentPropType<T extends ComponentPropertyEditor>(item: ComponentProperty<T>): ComponentProperty<T> {
+  return item;
+}
+
+/** 映射通用属性类型 */
+export function getPropType<
+  T extends ComponentPropertyEditor,
+  U extends GeneralProperty<T> | ComponentProperty<T>
+>(item: U): U extends ComponentProperty<T> ? ComponentProperty<T> : GeneralProperty<T> {
+  return item as any;
+}
 
 /** 应用操作模块 */
 export function useAppHandle() {
@@ -8,9 +25,68 @@ export function useAppHandle() {
   /** 状态 */
   const state = reactive({
   });
+  
+  /** 获取导出数据 */
+  function getExportData(appInfo: {
+    /** 应用页面列表 */
+    pages: AppPage[],
+    /** 事件列表 */
+    events: AppEvent[],
+    /** 主题配置 */
+    theme: {
+      id?: string,
+      code: string,
+      config: Record<string, any>,
+      title: string,
+    },
+    /** 文件列表 */
+    files: string[],
+    /** 预览图Url */
+    previewUrl: string,
+    /** 应用配置 */
+    appConfig: AppConfig
+  }): ExportAppBody {
+    const _pages = cloneLoop(appInfo.pages);
+
+    // 递归组件树，移除propertys属性
+    const _cb = (component) => {
+      if (component.children) {
+        component.children.forEach(i => {
+          delete i.propertys;
+          _cb(i);
+        });
+      }
+    };
+
+    // 移除根组件列表propertys属性
+    _pages.forEach(page => {
+      page.children.forEach(component => {
+        delete component.propertys;
+        _cb(component);
+      });
+    });
+
+    const _appConfig = appInfo.appConfig;
+    return {
+      id: _appConfig.id,
+      appType: _appConfig.appType,
+      title: _appConfig.appTitle,
+      description: _appConfig.description,
+      headerTags: _appConfig.headerTags,
+      headerContent: _appConfig.headerContent,
+      remark: _appConfig.remark,
+
+      appConfig: _appConfig,
+      pages: _pages,
+      events: appInfo.events,
+      files: appInfo.files,
+      theme: appInfo.theme,
+      previewUrl: appInfo.previewUrl,
+    };
+  }
 
   /** 获取默认属性 */
-  function getDefaultProp(props: ComponentProperty[], attrs?: Record<string, any>) {
+  function getDefaultProp<T extends ComponentPropertyEditor>(props: ComponentProperty<T>[], attrs?: Record<string, any>) {
     const model = attrs ?? {};
     for (let i = 0; i < props.length; i++) {
       const prop = props[i];
@@ -32,8 +108,9 @@ export function useAppHandle() {
               }
             }
           }
-          prop.names.forEach((name, nameIndex) => {
-            const _default = typeof prop.default[nameIndex] === 'function' ? prop.default[nameIndex]() : prop.default[nameIndex];
+          for (let nameIndex = 0; nameIndex < prop.names.length; nameIndex++) {
+            const name = prop.names[nameIndex];
+            const _default = typeof prop.default[nameIndex] === 'function' ? (prop.default as any)[nameIndex]() : prop.default[nameIndex];
             if (Array.isArray(name)) {
               let _obj = _objf;
               const _names = name as string[];
@@ -44,7 +121,7 @@ export function useAppHandle() {
             } else {
               _objf[name] = _default;
             }
-          });
+          }
 
           if (prop.names.includes('dd')) {
             console.log('dd', model);
@@ -62,10 +139,10 @@ export function useAppHandle() {
               if (!_obj[_name]) _obj[_name] = {};
               objArr[i + 1] = _obj[_name];
             }
-            objArr.at(-1)![prop.name.at(-1)!] = typeof prop.default === 'function' ? prop.default() : prop.default;
+            objArr.at(-1)![prop.name.at(-1)!] = typeof prop.default === 'function' ? (prop.default as any)() : prop.default;
           } else if (!model[prop.name]) {
             _name = prop.name;
-            if (_name) model[_name] = typeof prop.default === 'function' ? prop.default() : prop.default;
+            if (_name) model[_name] = typeof prop.default === 'function' ? (prop.default as any)() : prop.default;
           }
         }
       }
@@ -75,13 +152,14 @@ export function useAppHandle() {
   }
 
   /** 设置默认属性 */
-  function setDefaultProp(model: Record<string, any>, props: ComponentProperty[]) {
+  function setDefaultProp<T extends ComponentPropertyEditor>(model: Record<string, any>, props: ComponentProperty<T>[]) {
     for (let i = 0; i < props.length; i++) {
       const prop = props[i];
-      if (prop.default !== undefined && prop.default !== null) {
+      if (prop.default !== undefined && prop.default !== null && prop.names?.length) {
         if (prop.names) {
-          prop.names.forEach((name, nameIndex) => {
-            const _default = typeof prop.default[nameIndex] === 'function' ? prop.default[nameIndex]() : prop.default[nameIndex];
+          for (let nameIndex = 0; nameIndex < prop.names.length; nameIndex++) {
+            const name = prop.names[nameIndex];
+            const _default = typeof prop.default[nameIndex] === 'function' ? (prop.default as any)[nameIndex]() : prop.default[nameIndex];
             let _obj = model;
             if (Array.isArray(name)) {
               const _names = name as string[];
@@ -92,7 +170,7 @@ export function useAppHandle() {
             } else {
               _obj[name] = _default;
             }
-          });
+          }
         } else {
           let _name = '';
           if (Array.isArray(prop.name)) {
@@ -104,14 +182,14 @@ export function useAppHandle() {
           } else if (!model[prop.name]) {
             _name = prop.name;
           }
-          if (_name) model[_name] = typeof prop.default === 'function' ? prop.default() : prop.default;
+          if (_name) model[_name] = typeof prop.default === 'function' ? (prop.default as any)() : prop.default;
         }
       }
     }
   }
 
   /** 获取值 */
-  function getVal(model: Record<string, any>, prop: ComponentProperty | GeneralProperty) {
+  function getVal<T extends ComponentPropertyEditor>(model: Record<string, any>, prop: ComponentProperty<T> | GeneralProperty<T>) {
     let _returnValue;
     if (prop.names) {
       /** 如果也同时包含name的情况 */
@@ -134,7 +212,7 @@ export function useAppHandle() {
           for (let i = 0; i < _names.length; i++) {
             _obj = _obj[_names[i]];
           }
-          if (prop.format && _obj?.value === undefined) _obj = prop.format(_obj);
+          if (prop.format && _obj?.value === undefined) _obj = prop.format(_obj as any);
           return _obj;
         } else {
           return _objf[name]
@@ -153,7 +231,7 @@ export function useAppHandle() {
           const name = prop.name[i];
           if (_value) _value = _value[name];
         }
-        if (prop.format && _returnValue?.value === undefined) _value = prop.format(_value);
+        if (prop.format && _returnValue?.value === undefined) _value = prop.format(_value as any);
         _returnValue = _value;
       }
     }
@@ -170,7 +248,7 @@ export function useAppHandle() {
    * - 传入component则为组件赋值属性
    * - 传入editor与prop.editor不相同时则为附加属性类型，不赋值 __prop 属性
    */
-  function setVal(model: Record<string, any>, prop: ComponentProperty | GeneralProperty, value: any, editor?: PropertyEditor): void {
+  function setVal<T extends ComponentPropertyEditor>(model: Record<string, any>, prop: ComponentProperty<T> | GeneralProperty<T>, value: any, editor?: PropertyEditor): void {
     if (prop.names) {
       for (let i = 0; i < prop.names.length; i++) {
         const name = prop.names[i];
@@ -273,5 +351,6 @@ export function useAppHandle() {
     setVal,
     getDefaultProp,
     setDefaultProp,
+    getExportData,
   };
 }

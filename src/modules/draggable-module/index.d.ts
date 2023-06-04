@@ -1,4 +1,4 @@
-import { Component } from "@/@types";
+import { Component } from "@haku-design/core";
 
 /** 对齐线 */
 export interface AlignLine {

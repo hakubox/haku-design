@@ -26,7 +26,6 @@ const props = defineProps({
   valueType: {
     type: String as PropType<'string' | 'select' | 'number' | 'else'>,
     default: 'string',
-    required: true,
   },
   /** 参考选择项 */
   selectOptions: {

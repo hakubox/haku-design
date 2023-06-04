@@ -1,10 +1,10 @@
-import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@/@types';
+import { Component, ComponentGroup, ComponentRect, LayoutConfig } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import { cloneForce } from '@/lib/clone';
 import { createModelId, intersectsRect, moveNodeOfTree, toDecimal } from '@/tools/common';
 import type { DragConfig, DragLayoutParams, DragLayoutReturn, RangeSelectConfig } from './index.d';
-import { AppType, ComponentCategory, LayoutType } from '@/@types/enum';
+import { AppType, ComponentCategory, LayoutType } from '@haku-design/core';
 import { reactive } from 'vue';
 import { getComponentsRect, getHeight, getWidth } from '@/common/component-handle';
 import bus, { GlobalBusType } from '@/tools/bus';

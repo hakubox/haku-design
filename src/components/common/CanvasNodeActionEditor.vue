@@ -55,7 +55,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { Component, ComponentGroup } from '@/@types';
+import type { Component, ComponentGroup } from '@haku-design/core';
 import { PropType, onMounted, reactive, computed, ref, watch } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';

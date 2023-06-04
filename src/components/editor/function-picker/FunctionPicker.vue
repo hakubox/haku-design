@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, PropType, reactive, ref } from 'vue';
-import { FormScript } from '@/@types';
+import { FormScript } from '@haku-design/core';
 import { Select } from 'ant-design-vue';
 
 const props = defineProps({
