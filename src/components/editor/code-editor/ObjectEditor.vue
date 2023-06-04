@@ -5,7 +5,6 @@
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
 import { onBeforeMount, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, watch } from 'vue';
-import * as monaco from 'monaco-editor';
 
 const props = defineProps({
   value: {
@@ -113,7 +112,7 @@ onMounted(() => {
   editorRef.value = monaco.editor.create(containerRef.value!, {
     value: JSON.stringify(props.value, undefined, '  '),
     ..._options,
-  } as monaco.editor.IStandaloneEditorConstructionOptions);
+  });
   const editor = editorRef.value;
 
   editor.onDidFocusEditorText(() => {

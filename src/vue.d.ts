@@ -6,15 +6,6 @@ declare module '*.vue' {
   export default component;
 }
 
-declare module '*.png';
-
-declare global {
-  /** Monaco编辑器 */
-  const monaco: any;
-  /** 图像处理库 */
-  const AlloyImage: any;
-}
-
 // Vue实例类型添加
 declare module 'vue/types/vue' {
   interface VueConstructor {
@@ -27,4 +18,13 @@ declare module 'vue/types/vue' {
     /** 系统标题 */
     TITLE: string;
   }
+}
+
+declare module '*.png';
+
+declare global {
+  /** Monaco编辑器 */
+  const monaco: any;
+  /** 图像处理库 */
+  const AlloyImage: any;
 }

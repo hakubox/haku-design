@@ -168,6 +168,8 @@ import { service as introService } from '@/modules/intro-module';
 import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/questionnaire';
 import { dateFormat } from '@/tools/common';
 import { Input, List, ListItem, ListItemMeta, Select, SelectOption, Tag, Tooltip, message } from 'ant-design-vue';
+import { AppInfoDto, getAppList } from '@/api/app';
+
 
 const state = reactive({
   /** 预览类型 */
@@ -185,7 +187,7 @@ const state = reactive({
     total: 0,
   },
   /** 最近列表 */
-  recentList: [] as QuestionaryBasicInfoDto[],
+  recentList: [] as AppInfoDto[],
 });
 
 const emit = defineEmits<{
@@ -203,35 +205,50 @@ const getTypeName = (type) => {
     default: return '未定义';
   }
 };
-const search = () => {
-  editorService.getOperationRecord({
-    pageNum: 1,
-    pageSize: 10,
-  }).then((d: any) => {
-    state.recentList = d.rows;
-    state.pagination.total = d.total;
 
-    if (document.querySelector('.welcome-panel-operate')) {
-      introService.start('welcome_page', [{
-        element: document.querySelectorAll('.welcome-panel-operate')[0],
-        title: '新建问卷',
-        intro: '用于新建调查问卷或者其他类型的表单'
-      }, {
-        element: document.querySelectorAll('.welcome-panel-operate')[1],
-        title: '打开问卷',
-        intro: '用于打开现有问卷或其他类型的表单'
-      }, {
-        element: document.querySelector('.recent-panel'),
-        title: '最近使用项',
-        intro: '用于打开最近访问的问卷或其他类型的表单'
-      }])?.catch(() => {
-        introService.complete('welcome_page');
-      });
-    }
+const startShowIntro = () => {
+  if (document.querySelector('.welcome-panel-operate')) {
+    introService.start('welcome_page', [{
+      element: document.querySelectorAll('.welcome-panel-operate')[0],
+      title: '新建问卷',
+      intro: '用于新建调查问卷或者其他类型的表单'
+    }, {
+      element: document.querySelectorAll('.welcome-panel-operate')[1],
+      title: '打开问卷',
+      intro: '用于打开现有问卷或其他类型的表单'
+    }, {
+      element: document.querySelector('.recent-panel'),
+      title: '最近使用项',
+      intro: '用于打开最近访问的问卷或其他类型的表单'
+    }])?.catch(() => {
+      introService.complete('welcome_page');
+    });
+  }
+}
+
+const search = () => {
+
+  // 获取应用相关信息
+  getAppList().then(d => {
+    console.log('应用列表', d);
+    state.recentList = d;
+    state.pagination.total = d.length;
+
+    startShowIntro();
+  }).catch(err => {
+    console.error(err);
   });
+
+  // editorService.getOperationRecord({
+  //   pageNum: 1,
+  //   pageSize: 10,
+  // }).then((d: any) => {
+  //   state.recentList = d.rows;
+  //   state.pagination.total = d.total;
+  // });
 };
 
-const selectData = (app: QuestionaryBasicInfoDto) => {
+const selectData = (app: AppInfoDto) => {
   const id = app.id || '';
   getQuestionary(id.toString()).then(({ questionary, tagList }) => {
     if (questionary) {

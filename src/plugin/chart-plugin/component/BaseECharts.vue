@@ -45,7 +45,7 @@ const state = reactive({
 const init = () => {
   if (!chart) {
     if (echartEl.value) {
-      chart = echartInit(echartEl.value);
+      chart = echartInit(echartEl.value as HTMLCanvasElement);
     }
   }
 };

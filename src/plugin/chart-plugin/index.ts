@@ -7,7 +7,6 @@ import {
   componentRadarChart,
   componentMapChart,
 } from './data';
-import { registerMap } from 'echarts';
 import { get } from '@/lib/api';
 
 export * from './index.d';

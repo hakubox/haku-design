@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import globalStore from '@/common/global';
-import { setLocaleData } from 'monaco-editor-nls';
 import { changeConfig, serverConfig } from './config';
 import Menus from 'vue3-menus';
 import Vant from 'vant';
@@ -16,7 +15,7 @@ import '@vant/touch-emulator';
 import 'vant/lib/index.css';
 import '@/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
-import type { ServerEnvironment } from './@types';
+import type { ServerEnvironment } from '@haku-design/core';
 import { state as configState } from '@/modules/config-module';
 import { Select, SelectOption } from 'ant-design-vue';
 import ChartModule from '@/plugin/chart-plugin';
@@ -24,8 +23,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 import '@/common/theme';
-
-// import zhHans from 'monaco-editor-nls/locale/zh-hans.json';
 
 import FilePicker from '@/modules/storage-module/component/file-picker/FilePicker.vue';
 import FormulaEditor from '@/modules/formula-module/components/formula-editor/FormulaEditor.vue';
@@ -36,25 +33,6 @@ import { init } from '@/lib/monitor';
 import pluginModule from '@/modules/plugin-module';
 import { init as messageInit } from '@/common/message';
 import BackgroundEditor from '@/modules/background-editor-module/component/BackgroundEditor.vue';
-// import TestPlugin from '@/plugin/test-plugin';
-// import LogoComponent from '@/plugin/logo-component-plugin';
-// import ImageEditor from '@/plugin/image-editor-plugin';
-// import ImageLoadedEventTrigger from '@/plugin/image-loaded-event-trigger';
-
-import 'monaco-editor/esm/vs/basic-languages/css/css.contribution';
-import 'monaco-editor/esm/vs/basic-languages/less/less.contribution';
-import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution';
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
-// @ts-ignore
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-// @ts-ignore
-import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-// @ts-ignore
-import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-// @ts-ignore
-import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-// @ts-ignore
-import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 
 configState.ConfigDialog = ConfigDialog;
 
@@ -70,21 +48,6 @@ dayjs.extend(relativeTime);
 globalStore.state.antdConfigProvider.locale = AntdZHCN;
 
 messageInit({ toastModule: message, confirmModule: Modal });
-
-window['MonacoEnvironment'] = {
-  getWorker(_: string, label: string) {
-    // console.log('getWorker', label);
-    if (label === 'typescript' || label === 'javascript') return new TsWorker();
-    if (label === 'json') return new JsonWorker();
-    if (label === 'css' || label === 'less') return new CssWorker();
-    if (label === 'html') return new HtmlWorker();
-    return new EditorWorker();
-  },
-};
-
-// setLocaleData(zhHans);
-// window['monaco'] = editorApi;
-// window['monacoEditor'] = monaco;
 
 window.addEventListener('load', () => {
   if (window.opener) {

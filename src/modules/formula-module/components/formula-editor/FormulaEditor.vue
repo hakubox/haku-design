@@ -21,12 +21,8 @@ import { createModelId, throttle, timeout } from '@/tools/common';
 import { onBeforeUnmount, onMounted, onUnmounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
 import { state as formulaState } from '../../';
 import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
-import { state as editorState } from '@/modules/editor-module';
 import { Tooltip } from 'ant-design-vue';
 import bus, { GlobalBusType } from '@/tools/bus';
-import { onBeforeMount } from 'vue';
-import * as monaco from 'monaco-editor';
-// import monaco from 'monaco-editor';
 
 /** LibModel */
 let libModel = undefined as any;
