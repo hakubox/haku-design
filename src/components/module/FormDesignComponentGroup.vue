@@ -229,10 +229,8 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as draggableState, service as draggableService, type DragConfig } from '@/modules/draggable-module';
 import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { service as variableService } from '@/modules/variable-module';
-import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
-import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
+import { useComponentHandle } from "@/common/component-handle";
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
@@ -240,6 +238,7 @@ import { DragGesture } from '@use-gesture/vanilla';
 import { AppType } from '@haku-design/core';
 import bus, { GlobalBusType } from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
+import { getAttr } from '@/common/app-handle';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -348,27 +347,6 @@ bus.$on(GlobalBusType.autoSizeChange, (component: Component) => {
     }
   }
 });
-
-/** 获取单个属性 */
-const getAttr = (value: any) => {
-  if (!value) return value;
-  if (value?.value?.dataOrigin === 'data-editor') {
-    return formFillService.getOriginDataValue(value.value);
-  } else if (value.type) {
-    switch (value.type) {
-      case 'data-variable':
-        return variableService.getVar(value.value);
-      case 'variable':
-        return variableService.getVar(value);
-      case 'formula':
-        return formulaService.getValue(value.value);
-      default:
-        return value.value;
-    }
-  } else {
-    return value;
-  }
-};
 
 /** 最大分数 */
 const maxScore = computed(() => {

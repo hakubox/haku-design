@@ -3,7 +3,7 @@
     <div class="text-list-editor-item" v-for="(item, index) in options">
       <span class="text-list-editor-label">{{ item.label ?? item.prop }}</span>
       <input :disabled="props.disabled" v-model="state.vals[index]" @input="change" type="string" />
-      <span v-if="item.unit !== ''" class="text-list-editor-unit">{{ item.unit ?? 'px' }}</span>
+      <span v-if="item.unit" class="text-list-editor-unit">{{ item.unit }}</span>
     </div>
   </div>
 </template>
@@ -21,8 +21,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /** 每行文本框数量 */
+  rowCount: {
+    type: Number,
+    default: 2,
+  },
   options: {
-    type: Array as PropType<{ label?: string, prop?: string, min?: string, unit?: string }[]>,
+    type: Array as PropType<{ label?: string, prop?: string, unit?: string }[]>,
     default: () => []
   }
 });

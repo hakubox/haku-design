@@ -1,5 +1,4 @@
 <template>
-  <!-- <span v-if="!$attrs.isPreview" class="image-tooltip">当前为背景图片模式</span> -->
   <ComponentBasic
     class="component-image"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"

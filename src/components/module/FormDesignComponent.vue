@@ -252,12 +252,9 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as draggableState, service as draggableService, type DragConfig } from '@/modules/draggable-module';
 import { service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { service as variableService } from '@/modules/variable-module';
-import { service as formulaService } from "@/modules/formula-module";
 import { state as scoringState, service as scoringService } from "@/modules/scoring-module";
 import { AppBackground } from '@/modules/background-editor-module';
-import { getComponentsRectStyle, useComponentHandle } from "@/common/component-handle";
-import { any } from 'vue-types';
+import { useComponentHandle } from "@/common/component-handle";
 import { Tooltip } from 'ant-design-vue';
 import { Rate, Stepper } from 'vant';
 import { ArrowDownOutlined, ArrowUpOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue';
@@ -266,6 +263,7 @@ import { AppType } from '@haku-design/core';
 import { getBoxModel } from '@/tools/common';
 import bus, { GlobalBusType } from '@/tools/bus';
 import CanvasNodeActionEditor from '../common/CanvasNodeActionEditor.vue';
+import { getAttr } from '@/common/app-handle';
 
 const props = defineProps({
   /** 拖拽状态 */
@@ -375,27 +373,6 @@ bus.$on(GlobalBusType.autoSizeChange, (component: Component) => {
   }
 });
 
-/** 获取单个属性 */
-const getAttr = (value: any) => {
-  if (!value) return value;
-  if (value?.value?.dataOrigin === 'data-editor') {
-    return formFillService.getOriginDataValue(value.value);
-  } else if (value.type && value.value !== undefined) {
-    switch (value.type) {
-      case 'data-variable':
-        return variableService.getVar(value.value);
-      case 'variable':
-        return variableService.getVar(value);
-      case 'formula':
-        return formulaService.getValue(value.value);
-      default:
-        return value.value;
-    }
-  } else {
-    return value;
-  }
-};
-
 /** 最大分数 */
 const maxScore = computed(() => {
   return props.component?.attrs?.score || 100;
@@ -408,12 +385,13 @@ const componentQuickTools = computed(() => {
 
 /** 获取属性 */
 const getAttrs = (attrs: Record<string, any>) => {
-  return Object.assign(
-    {},
-    ...Object.entries(attrs).map(([key, value]) => ({
-      [key.startsWith('__') ? key.slice(2) : key]: getAttr(value),
-    })),
-  );
+  const _obj = {};
+  const _attrs = Object.entries(attrs);
+  for (let i = 0; i < _attrs.length; i++) {
+    const [key, value] = _attrs[i];
+    _obj[key.startsWith('__') ? key.substring(2) : key] = getAttr(value);
+  }
+  return _obj;
 };
 
 const clickLoc = { x: 0, y: 0 };

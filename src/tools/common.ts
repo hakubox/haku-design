@@ -6,7 +6,14 @@ const QBasicPropNameList: string[] = [ 'id', 'label', 'component', 'description'
 
 /** 获取基础题库组件的属性 */
 export const getQBasicProps = (props: Record<string, any>) => {
-  const _props = Object.assign({}, ...Object.entries(props).filter(([key, value]) => QBasicPropNameList.includes(key)).map(([key, value]) => ({ [key]: value })) );
+  const _props = {} as Record<string, any>;
+  const _cloneProps = Object.entries(props);
+  for (let i = 0; i < _cloneProps.length; i++) {
+    if (QBasicPropNameList.includes(_cloneProps[i][0])) {
+      const [key, value] = _cloneProps[i];
+      _props[key] = value;
+    }
+  }
   return _props;
 };
 
@@ -688,9 +695,9 @@ export function recursive(
 }
 
 /** 获取盒模型CSS值 */
-export function getBoxModel(arr?: number[]) {
-  if (!arr?.length) return '0px 0px 0px 0px';
-  return [arr[0] + 'px', arr[1] + 'px', arr[2] + 'px', arr[3] + 'px'].join(' ');
+export function getBoxModel(arr?: number[], unit = 'px') {
+  if (!arr?.length) return `0${unit} 0${unit} 0${unit} 0${unit}`;
+  return `${arr[0]}${unit} ${arr[1]}${unit} ${arr[2]}${unit} ${arr[3]}${unit}`;
 }
 
 /** UTF16转UTF8 */

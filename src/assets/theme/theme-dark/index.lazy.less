@@ -5,6 +5,12 @@ html.theme-dark {
   @import 'component.lazy.less';
   @import 'ant-design-vue/dist/antd.dark.less';
 
+  --primary-color: #177ddc;       // 全局主色
+  --editor-bg-color: #323233;     // 编辑器组件背景色
+  --editor-sub-bg-color: #141414; // 二级编辑器背景色
+  --primary-hover-border-color: rgba(23, 125, 220, 0.8);     // 鼠标移上编辑器的边框颜色
+  --primary-hover-background-color: rgba(23, 125, 220, 0.3); // 鼠标移上编辑器的边框颜色
+
   @primary-color: #177ddc;
 
   .design-form {
@@ -192,14 +198,6 @@ html.theme-dark {
               }
             }
           }
-
-          .ant-input.ant-input-sm,
-          .ant-input-number.ant-input-number-sm,
-          .ant-input-affix-wrapper {
-            background-color: #3c3c3c;
-            color: #cccccc;
-            line-height: 2;
-          }
         }
 
         .ant-tabs-nav-wrap {
@@ -262,25 +260,6 @@ html.theme-dark {
     
     > .attr-editor-item-panel {
       > .attr-editor-item-value {
-        .ant-input-sm,
-        .ant-input-number-sm,
-        .ant-input-affix-wrapper {
-          border-color: #3c3c3c;
-          color: #cccccc;
-        }
-        .ant-input.ant-input-sm,
-        .ant-input-number.ant-input-number-sm,
-        .ant-input-affix-wrapper {
-          background-color: #3c3c3c;
-          color: #cccccc;
-          line-height: 2;
-        }
-        .ant-input-affix-wrapper {
-          > .ant-input {
-            background-color: #3c3c3c;
-            color: #cccccc;
-          }
-        }
 
         .ant-select {
           background-color: transparent;
@@ -306,8 +285,6 @@ html.theme-dark {
 
         // 文本框
         .text-editor {
-          background-color: #3c3c3c !important;
-          border-color: #3c3c3c;
 
           > input {
             color: #cccccc;

@@ -165,7 +165,7 @@
             <div
               class="design-form-canvas-page app-canvas"
               :style="[getCanvasRect(), { '--grid-size': editorState.appConfig.designConfig?.gridSize } ]"
-              :class="[editorState.currentPage.pageType, { grid: (editorState.appConfig.designConfig?.gridSize ?? 0) > 0 }]"
+              :class="[editorState.currentPage.pageType, { grid: editorState.appConfig.designConfig?.gridSize > 0 }]"
             >
               <!-- 背景 -->
               <template v-if="editorState.appConfig.background?.length">

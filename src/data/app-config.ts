@@ -45,7 +45,7 @@ export const formConfigs = [
     title: '头部标签',
     placeholder: '头部标签',
     group: 'basic',
-    editor: ComponentPropertyEditor.textList,
+    editor: ComponentPropertyEditor.tags,
   }),
   getPropType({
     name: 'headerContent',

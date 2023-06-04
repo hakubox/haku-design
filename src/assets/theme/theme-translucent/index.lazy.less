@@ -2,10 +2,11 @@
 
 html.theme-translucent {
   @import '/src/assets/less/variable.less';
-  @import 'ant-design-vue/dist/antd.less';
   @import 'component.lazy.less';
-  
+
   @primary-color: #0d0f10;
+  
+  --primary-color: #0d0f10;       // 全局主色
 
   .design-form {
     background-image: url('img/bg.webp');
@@ -22,10 +23,6 @@ html.theme-translucent {
       > .design-form-header-menu {
         .ant-menu {
           background: transparent;
-
-          .ant-menu-item,
-          .ant-menu-submenu {
-          }
         }
       }
     }
@@ -37,22 +34,6 @@ html.theme-translucent {
         > .design-form-canvas {
           > .design-form-canvas-page {
             background-color: rgba(255, 255, 255, 0.6);
-
-            > .questionnaire-content {
-              > .form-canvas {
-                > .form-canvas-body {
-                  > .form-canvas-mainpanel {
-                    > .form-component {
-                      &:after {
-                      }
-                    }
-                  }
-                }
-              }
-            }
-
-            > .questionnaire-title {
-            }
           }
         }
       }
@@ -82,12 +63,10 @@ html.theme-translucent {
                 background-color: @primary-color;
                 background: linear-gradient(to bottom, #312e2e, #211e1e, #1a1818);
               }
-            }
 
-            > .iconfont {
-            }
-
-            > span {
+              > .iconfont {
+                color: #ffffff;
+              }
             }
           }
         }
@@ -97,8 +76,6 @@ html.theme-translucent {
 
           > .design-form-aside-toolbox {
             > .design-form-aside-toolbox-group {
-              > .design-form-aside-toolbox-group-title {
-              }
 
               > .design-form-aside-components {
                 > .component-item {
@@ -107,62 +84,11 @@ html.theme-translucent {
               }
             }
           }
-
-          > .design-form-aside-added-components {
-            > li {
-              &.active {
-              }
-            }
-          }
         }
       }
 
       > .design-form-property {
         background-color: rgba(255, 255, 255, 0.5);
-
-        .event-item {
-          > .event-item-header {
-            > .event-item-header-tools {
-              > .event-item-remove {
-              }
-            }
-          }
-
-          > .event-item-trigger {
-            > .event-item-trigger-item {
-              > .event-item-trigger-item-remove {
-              }
-
-              > .event-format {
-                > .event-format-item {
-                }
-              }
-            }
-          }
-
-          > .event-item-action {
-            > .event-item-action-item {
-              > .event-item-action-item-remove {
-              }
-
-              > .event-format {
-                > .event-format-item {
-                }
-              }
-            }
-          }
-
-          .ant-input.ant-input-sm,
-          .ant-input-number.ant-input-number-sm,
-          .ant-input-affix-wrapper {
-          }
-        }
-
-        .ant-tabs-nav-wrap {
-        }
-
-        .property-collapse-item-title {
-        }
 
         .ant-tabs-nav-wrap {
           .ant-tabs-tab {
@@ -174,72 +100,6 @@ html.theme-translucent {
             }
           }
         }
-
-        .attr-editor-item {
-          > .attr-editor-item-panel {
-            > .attr-editor-item-label {
-            }
-          }
-        }
-      }
-    }
-
-    // 底部栏
-    > .design-form-footer {
-    }
-  }
-
-  .attr-editor-item {
-    > .attr-editor-item-panel {
-      > .attr-editor-item-value {
-        .ant-input-sm,
-        .ant-input-number-sm,
-        .ant-input-affix-wrapper {
-        }
-        .ant-input.ant-input-sm,
-        .ant-input-number.ant-input-number-sm,
-        .ant-input-affix-wrapper {
-        }
-        .ant-input-affix-wrapper {
-          > .ant-input {
-          }
-        }
-        .ant-select {
-          &.ant-select-sm {
-            > .ant-select-selector {
-            }
-          }
-        }
-
-        .ant-table {
-          .ant-table-thead > tr > th {
-          }
-        }
-      }
-    }
-
-    .richtext-editor {
-      .w-e-toolbar {
-      }
-
-      .w-e-text-container {
-      }
-    }
-
-    .box-editor {
-      > div {
-        > .box-editor-label {
-        }
-
-        > input {
-        }
-      }
-    }
-  }
-
-  .property-collapse {
-    > .property-collapse-item {
-      &:after {
       }
     }
   }

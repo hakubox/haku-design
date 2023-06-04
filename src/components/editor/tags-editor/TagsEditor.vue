@@ -111,8 +111,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-@import '/src/assets/less/variable.less';
 
-.textarea-editor {
+.tags-editor {
 }
 </style>

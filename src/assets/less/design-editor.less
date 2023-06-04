@@ -754,23 +754,6 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
         font-size: 12px;
       }
 
-      .ant-input-sm,
-      .ant-input-number-sm,
-      .ant-input-number,
-      .ant-input-affix-wrapper {
-        background-color: #f7f9fc;
-      }
-      .ant-input.ant-input-sm,
-      .ant-input-number.ant-input-number-sm,
-      .ant-input-affix-wrapper {
-        background-color: #f7f9fc;
-        line-height: 2;
-      }
-      .ant-input-affix-wrapper {
-        > .ant-input {
-          background-color: transparent;
-        }
-      }
       .ant-input-number-input-wrap {
 
         > .ant-input-number-input {
@@ -877,6 +860,10 @@ div:not(.form-canvas-mainpanel):has(> .form-canvas-cursor) {
 
     > .attr-editor-item {
       .property-item();
+
+      .attr-editor-item-value {
+        filter: brightness(0.98);
+      }
     }
   }
 }

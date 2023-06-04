@@ -30,8 +30,10 @@ export interface ExportAppBody {
   events: AppEvent[];
   /** 相关文件 */
   files: any[];
+  /** 主题Id */
+  themeId?: string;
   /** 主题 */
-  theme?: {
+  themeConfig?: {
     /** 主题Id */
     id?: string;
     /** 主题code */

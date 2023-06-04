@@ -135,7 +135,15 @@ export const service = {
     if (editorState.canvasRect) {
       const _points = this.getComponentPoints(component, config);
       const _parent = editorService.findParentComponent(component.id);
-      const _childrenPoints = _parent?.component.children?.filter(i => i.id !== component.id && !editorState.currentSelectedIds.includes(i.id))?.map(i => this.getComponentPoints(i)) || [];
+      const _childrenPoints = [] as any[];
+      if (_parent?.component.children?.length) {
+        for (let i = 0;i < _parent.component.children.length; i++) {
+          const _item = _parent.component.children[i];
+          if (_item.id !== component.id && !editorState.currentSelectedIds.includes(_item.id)) {
+            _childrenPoints.push(this.getComponentPoints(_item));
+          }
+        }
+      }
       const _xIndexDirection = {
         0: 'front',
         1: 'front',

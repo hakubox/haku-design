@@ -4,7 +4,30 @@ import { AppConfig, AppPage, ComponentProperty, ExportAppBody, GeneralProperty, 
 import { cloneLoop } from '@/lib/clone';
 import { AppEvent } from '@/modules/event-module';
 import { ComponentPropertyEditor } from '@haku-design/core';
+import { service as variableService } from '@/modules/variable-module';
+import { service as formulaService } from "@/modules/formula-module";
+import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 
+/** 获取单个属性 */
+export function getAttr(value: any) {
+  if (!value) return value;
+  if (value?.value?.dataOrigin === 'data-editor') {
+    return formFillService.getOriginDataValue(value.value);
+  } else if (value.type && value.value !== undefined) {
+    switch (value.type) {
+      case 'data-variable':
+        return variableService.getVar(value.value);
+      case 'variable':
+        return variableService.getVar(value);
+      case 'formula':
+        return formulaService.getValue(value.value);
+      default:
+        return value.value;
+    }
+  } else {
+    return value;
+  }
+}
 
 /** 映射通用属性类型 */
 export function getComponentPropType<T extends ComponentPropertyEditor>(item: ComponentProperty<T>): ComponentProperty<T> {
@@ -80,7 +103,8 @@ export function useAppHandle() {
       pages: _pages,
       events: appInfo.events,
       files: appInfo.files,
-      theme: appInfo.theme,
+      themeId: appInfo.theme.id,
+      themeConfig: appInfo.theme as ExportAppBody['themeConfig'],
       previewUrl: appInfo.previewUrl,
     };
   }

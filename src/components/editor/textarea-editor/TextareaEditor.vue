@@ -56,17 +56,20 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-@import '/src/assets/less/variable.less';
 
-:deep(.textarea-editor) {
-  background-color: #f7f9fc;
-  border: 1px solid #f7f9fc;
+:deep(textarea.textarea-editor) {
+  background-color: var(--editor-bg-color) !important;
+  border-color: var(--editor-bg-color) !important;
+  padding: 3px 7px;
 
   &:hover {
     &:not(.disabled) {
-      border-color: fadeout(@primary-color, 20%) !important;
-      border-width: 1px !important;
+      border-color: var(--primary-hover-border-color) !important;
     }
+  }
+
+  &:focus-within {
+    box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
   }
 }
 </style>

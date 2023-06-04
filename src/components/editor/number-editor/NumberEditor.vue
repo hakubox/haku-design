@@ -124,24 +124,22 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-@import '/src/assets/less/variable.less';
-
 .number-editor {
   width: 100%;
 
   &.ant-input-number {
-    background-color: #f7f9fc;
-    border: 1px solid #f7f9fc;
+    background-color: var(--editor-bg-color) !important;
+    border: 1px solid var(--editor-bg-color) !important;
   
     &:hover {
       &:not(.disabled) {
-        border-color: fadeout(@primary-color, 20%) !important;
+        border-color: var(--primary-hover-border-color) !important;
         border-width: 1px !important;
       }
     }
 
     &:focus-within {
-      box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
+      box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
     }
   }
 
@@ -151,8 +149,8 @@ onMounted(() => {
     flex-direction: row;
     justify-content: space-between;
 
-    background-color: #f7f9fc;
-    border: 1px solid #f7f9fc;
+    background-color: var(--editor-bg-color);
+    border: 1px solid var(--editor-bg-color);
     border-radius: 3px;
     height: 30px;
     width: calc(100%);
@@ -168,13 +166,13 @@ onMounted(() => {
   
     &:hover {
       &:not(.disabled) {
-        border-color: fadeout(@primary-color, 20%) !important;
+        border-color: var(--primary-hover-border-color) !important;
         border-width: 1px !important;
       }
     }
 
     &:focus-within {
-      box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
+      box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
     }
   }
 }
