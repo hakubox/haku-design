@@ -1,10 +1,6 @@
 import { deletes, get, post } from '@/lib/api';
 import { serverConfig } from '@/config';
 
-const _baseUrl = () => {
-  return serverConfig.serverConfig.environment === 'development' ? '/userapi/api' : 'https://bpmtest-userapi.gejinet.com/api';
-};
-
 /** 文件夹 */
 export interface DirectoryDto {
   /** 父文件夹Id */
@@ -24,7 +20,7 @@ const businessName = '';
 
 /** 单文件上传 */
 export function uploadFile(fileName: string, sign: string, groupId: string) {
-  return post(`${_baseUrl()}/File/UploadFile`, {
+  return post(`${process.env.userApi}/File/UploadFile`, {
     file: fileName,
     businessName: businessName,
     businessId: businessId,
@@ -35,7 +31,7 @@ export function uploadFile(fileName: string, sign: string, groupId: string) {
 
 /** 获取文件列表数据 */
 export function getFiles(sign: string, groupId: string, sort: number) {
-  return post(`${_baseUrl()}/File/GetFilesList`, {
+  return post(`${process.env.userApi}/File/GetFilesList`, {
     businessName: businessName,
     businessId: businessId,
     sign: sign,
@@ -46,38 +42,38 @@ export function getFiles(sign: string, groupId: string, sort: number) {
 
 /** 获取文件地址 */
 export function getFilePath(fileId: string): Promise<string> {
-  return get(`${_baseUrl()}/File/GetFilePath`, {
+  return get(`${process.env.userApi}/File/GetFilePath`, {
     fileid: fileId,
   });
 }
 
 /** 批量获取文件地址列表 */
 export function getFilePaths(fileIds: string[]): Promise<string[]> {
-  return post(`${_baseUrl()}/File/GetBatchFilePath`, fileIds);
+  return post(`${process.env.userApi}/File/GetBatchFilePath`, fileIds);
 }
 
 /** 删除文件 */
 export function removeFile(fileId: string): Promise<boolean> {
-  return post(`${_baseUrl()}/File/DeleteFile`, {
+  return post(`${process.env.userApi}/File/DeleteFile`, {
     id: fileId
   });
 }
 
 /** 批量删除文件 */
 export function removeFiles(fileIds: string[]): Promise<boolean> {
-  return post(`${_baseUrl()}/File/BatchDeleteFile`, fileIds);
+  return post(`${process.env.userApi}/File/BatchDeleteFile`, fileIds);
 }
 
 /** 批量修改文件排序 */
 export function setFileSorts(fileIds: string[]): Promise<boolean> {
-  return post(`${_baseUrl()}/File/SetFileSort`, {
+  return post(`${process.env.userApi}/File/SetFileSort`, {
     ids: fileIds
   });
 }
 
 /** 修改文件排序 */
 export function setFileSort(key: string, value: string): Promise<boolean> {
-  return post(`${_baseUrl()}/File/SetFileSort`, {
+  return post(`${process.env.userApi}/File/SetFileSort`, {
     key, value
   });
 }
@@ -89,14 +85,14 @@ export function setFileRemarks(
   /** 备注 */
   remark: string
 ): Promise<boolean> {
-  return post(`${_baseUrl()}/File/SetFileRemarks`, {
+  return post(`${process.env.userApi}/File/SetFileRemarks`, {
     key: fileId, value: remark
   });
 }
 
 /** 新增文件夹 */
 export function addDirectory(directory: DirectoryDto) {
-  return post(`${_baseUrl()}/AppResource/AddDirectory`, {
+  return post(`${process.env.userApi}/AppResource/AddDirectory`, {
     parentId: directory.parentId,
     directoryName: directory.directoryName,
   });
@@ -104,10 +100,10 @@ export function addDirectory(directory: DirectoryDto) {
 
 /** 编辑文件夹 */
 export function editDirectory(directory: DirectoryDto) {
-  return post(`${_baseUrl()}/AppResource/EditDirectory`);
+  return post(`${process.env.userApi}/AppResource/EditDirectory`);
 }
 
 /** 删除文件夹（最好改成传入数组） */
 export function deleteDirectory(directoryId: string) {
-  return deletes(`${_baseUrl()}/AppResource/DeleteDirectory?id=${directoryId}`);
+  return deletes(`${process.env.userApi}/AppResource/DeleteDirectory?id=${directoryId}`);
 }

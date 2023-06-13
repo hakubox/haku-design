@@ -1,13 +1,8 @@
 import { deletes, get, post } from '@/lib/api';
-import { serverConfig } from '@/config';
-
-const _baseUrl = () => {
-  return serverConfig.serverConfig.environment === 'development' ? '/userapi/api' : process.env.userApi;
-};
 
 /** 获取Token */
 export function getToken(username: string, password: string) {
-  return post(`${_baseUrl()}/Authorization/GetToken`, {
+  return post(`${process.env.userApi}/Authorization/GetToken`, {
     name: username,
     password: password,
   });
@@ -15,7 +10,7 @@ export function getToken(username: string, password: string) {
 
 /** 用户登出 */
 export function logout() {
-  return deletes('/auth/logout');
+  return deletes(`${process.env.userApi}/auth/logout`);
 }
 
 /** 获取当前用户信息 */

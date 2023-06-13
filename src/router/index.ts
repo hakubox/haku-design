@@ -19,6 +19,9 @@ const routes: Array<RouteRecordRaw> = [
       { path: 'background', component: () => import('../views/example/Background_example.vue') },
       { path: 'timeaxis', component: () => import('../views/example/TimeAxis_example.vue') },
       { path: 'themechange', component: () => import('../views/example/ThemeChange_example.vue') },
+      { path: 'drag-basic', component: () => import('../views/example/Customdrag_example.vue') },
+      { path: 'drag-list', component: () => import('../views/example/Customdrag2_example.vue') },
+      { path: 'drag-editor', component: () => import('../views/example/editor-drag-example/Customdrag3_example.vue') },
     ],
   },
 ];

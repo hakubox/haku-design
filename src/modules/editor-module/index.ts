@@ -558,7 +558,7 @@ export const service = {
       state.appConfig.id = questionaryId;
       state.previewUrl = body.previewUrl || '';
       eventState.allEvents = body.events;
-      themeService.changeTheme(body?.theme?.config);
+      themeService.changeTheme(body?.themeConfig);
       hide.clear();
       await timeout(100);
       eventService.emit(EventTriggerType.appLoadingComplete, 'global');
@@ -604,7 +604,7 @@ export const service = {
 
       if (!formComponent.isGroup) {
         // 获取当前选择组件的属性表
-        const _propertys = cloneLoop(formComponent.propertys) as ComponentProperty[];
+        const _propertys = cloneLoop(formComponent.propertys) as ComponentProperty<any>[];
 
         // 判断题型组件是否需要评分，是的话添加评分属性，并给子项添加子项评分
         if ([ComponentCategory.normal, ComponentCategory.complex].includes(formComponent.type) && state.appConfig.questionnaireConfig.hasScore) {
@@ -645,7 +645,7 @@ export const service = {
         }));
         state.currentSelectedComponentPropertyGroups = Object.entries(ComponentPropertyGroup).map(([key, value]) => ({
           title: value,
-          propertys: _propertys.filter(i => i.group === value) as ComponentProperty[]
+          propertys: _propertys.filter(i => i.group === value) as ComponentProperty<any>[]
         })).filter(i => i.propertys.length);
       } else {
         state.currentSelectedComponentPropertyMap = {};
@@ -1160,7 +1160,7 @@ export const service = {
     }
   },
   /** 设置组件的属性值类型 */
-  setComponentAttrType(component: Component, property: ComponentProperty, propertyType: any) {
+  setComponentAttrType<T extends ComponentPropertyEditor>(component: Component, property: ComponentProperty<T>, propertyType: any) {
     const _index = state.currentPage.children.findIndex(i => i.id == component.id);
     if (_index >= 0) {
       const _name = Array.isArray(property.name) ? property.name.join('_') : property.name;
@@ -1240,7 +1240,7 @@ export const state = reactive({
   /** 当前选择控件所带来的控件属性组 */
   currentSelectedComponentPropertyGroups: [] as PropertyGroup[],
   /** 当前选择控件所带来的控件属性哈希表 */
-  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty>,
+  currentSelectedComponentPropertyMap: {} as Record<string, ComponentProperty<any>>,
   /** 画板滚动坐标 */
   canvasLocation: {
     x: 0,

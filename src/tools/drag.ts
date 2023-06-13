@@ -28,11 +28,6 @@ export interface DragEvent {
   screenY: number;
 }
 
-/** 转换鼠标事件参数 */
-function transformMouseEvent(e: MouseEvent): DragEvent {
-  return e as unknown as DragEvent;
-}
-
 /** 合并配置项 */
 function mergeConfig<T>(stateConfig: UnwrapNestedRefs<T>, config: T) {
   if (config !== undefined) {
@@ -41,6 +36,11 @@ function mergeConfig<T>(stateConfig: UnwrapNestedRefs<T>, config: T) {
       stateConfig![key] = value;
     });
   }
+}
+
+/** 转换鼠标事件参数 */
+function transformMouseEvent(e: MouseEvent): DragEvent {
+  return e as unknown as DragEvent;
 }
 
 /** 切换样式 */
@@ -125,12 +125,23 @@ export const useDragHook = <T extends undefined | object = undefined, UseShadow 
     isInnerRange: true,
     /** 上一次的拖拽点 */
     prevLoc: undefined as DragEvent | undefined,
-
     prevX: 0,
     prevY: 0,
     x: 0,
     y: 0,
-  });
+  }) as {
+    /** 初始化完毕 */
+    isInit: boolean,
+    /** 是否拖拽到指定范围 */
+    isInnerRange: boolean,
+    /** 上一次的拖拽点 */
+    prevLoc: DragEvent | undefined,
+
+    prevX: number,
+    prevY: number,
+    x: number,
+    y: number,
+  };
   /** 其他状态或配置项 */
   const stateConfig = reactive({
     ...config

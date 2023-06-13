@@ -29,6 +29,9 @@ const state = reactive({
     { title: '时间轴', url: '/example/timeaxis' },
     { title: '拖拽方向识别', url: '/example/dragbox' },
     { title: '主题切换', url: '/example/themechange' },
+    { title: '基础拖拽', url: '/example/drag-basic' },
+    { title: '列表拖拽', url: '/example/drag-list' },
+    { title: '编辑器拖拽', url: '/example/drag-editor' },
   ]
 });
 

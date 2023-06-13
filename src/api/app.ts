@@ -1,8 +1,9 @@
+import { ExportAppBody } from '@haku-design/core';
 import { deletes, get, post } from '@/lib/api';
 
 /** 表单信息 */
-export interface FormInfoDto {
-  /** id */
+export interface AppInfoDto {
+  /** 应用id */
   id: string;
   /** 应用类型 */
   appType: string;
@@ -27,9 +28,9 @@ export interface FormInfoDto {
   hasScore?: boolean;
   /** 是否自动分级 */
   isAutoToGrade?: boolean;
-  /** ??? */
+  /** 主要内容 */
   formJson: string;
-  /** ??? */
+  /** 底部配置项 */
   footer: {
     tenantId: string,
     id: string,
@@ -47,12 +48,23 @@ export interface FormInfoDto {
   }
 }
 
-/** 查询问卷详细 */
-export function getFormList(id: string): Promise<any> {
-  return get(`/api/FdForm/GetFormList`, { id });
+/** 查询问卷列表 */
+export function getAppList(): Promise<AppInfoDto[]> {
+  return new Promise((resolve, reject) => {
+    get(`${process.env.serverApi}/FdForm/GetFormList`).then(data => {
+      resolve(data);
+    }).catch(err => {
+      reject(err);
+    });
+  });
+}
+
+/** 获取应用信息详情 */
+export function getAppInfo(id: string): Promise<any> {
+  return get(`${process.env.serverApi}/FdForm/GetForm`, { id });
 }
 
 /** 新增问卷详细 ExportAppBody */
-export function editForm(formInfo: FormInfoDto): Promise<any> {
-  return get(`/api/FdForm/EditForm`, formInfo);
+export function editForm(formInfo: AppInfoDto): Promise<any> {
+  return get(`${process.env.serverApi}/FdForm/EditForm`, formInfo);
 }
