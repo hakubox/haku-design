@@ -36,7 +36,6 @@ export declare class ComponentProperty<T extends ComponentPropertyEditor> {
     propMap: Record<string, ComponentProperty<any>>,
     component: Component,
     value: ComponentPropertyMap[T]['returnValue'],
-    refs: Record<string, Element>,
   }): void;
   /** 显示条件 */
   showCondition?(value: {
@@ -44,7 +43,6 @@ export declare class ComponentProperty<T extends ComponentPropertyEditor> {
     propMap: Record<string, ComponentProperty<any>>,
     component: Component,
     value: ComponentPropertyMap[T]['returnValue'],
-    refs: Record<string, Element>,
   }): boolean;
 
   /** 当前属性 */

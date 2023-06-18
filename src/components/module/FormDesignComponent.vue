@@ -322,7 +322,7 @@ const getComponentWidth = computed(() => {
   } else if (props.component.attrs._width) {
     width = props.component.attrs._width;
   } else {
-    const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
+    const _el = formComponent.value?.querySelector('.component-item .component-content') as HTMLElement;
     width = _el?.offsetWidth;
     if (width) {
       props.component.attrs._width = width;
@@ -346,7 +346,7 @@ const getComponentHeight = computed(() => {
   } else if (props.component.attrs._height) {
     height = props.component.attrs._height;
   } else {
-    const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
+    const _el = formComponent.value?.querySelector('.component-item .component-content') as HTMLElement;
     height = _el?.offsetHeight ?? 0;
     if (height) {
       // props.component.attrs._height = height;
@@ -362,12 +362,12 @@ const getComponentHeight = computed(() => {
 });
 
 bus.$on(GlobalBusType.autoSizeChange, (component: Component) => {
-  if (props.componentId === component.id) {
+  if (props.componentId === component.id && !props.isPreview) {
     if (component.attrs.autowidth || component.attrs.autoheight) {
       nextTick(() => {
-        const _el = formComponent.value?.querySelector('.component-item') as HTMLElement;
-        if (component.attrs.autowidth) props.component.attrs._width = _el?.offsetWidth + 4;
-        if (component.attrs.autoheight) props.component.attrs._height = _el?.offsetHeight;
+        const _el = formComponent.value?.querySelector('.component-item .component-content') as HTMLElement;
+        if (component.attrs.autowidth) props.component.attrs.width = _el?.offsetWidth + 4;
+        if (component.attrs.autoheight) props.component.attrs.height = _el?.offsetHeight;
       });
     }
   }

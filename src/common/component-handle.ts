@@ -9,12 +9,12 @@ export type HandleType = 'componentMovePrev' | 'componentMoveNext' | 'componentC
 
 /** 获取组件宽度 */
 export function getWidth(component: Component | ComponentGroup) {
-  return component.attrs.width || component.attrs._width || component.attrs.minWidth || 0;
+  return component.attrs.width || component.attrs.minWidth || 0;
 }
 
 /** 获取组件高度 */
 export function getHeight(component: Component | ComponentGroup) {
-  return component.attrs.height || component.attrs._width || component.attrs.minHeight || 0;
+  return component.attrs.height || component.attrs.minHeight || 0;
 }
 
 /** 获取组件分组的坐标尺寸样式 */

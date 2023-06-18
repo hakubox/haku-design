@@ -38,7 +38,7 @@
         :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.designConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
         <CanvasNodeActionEditor :global="true" :disabledRotate="true"
-          v-if="editorState.appConfig.appType === AppType.canvas && !isPreview"
+          v-if="editorState.appConfig.appType === AppType.canvas && !isPreview && editorState.currentSelectedComponents.length > 1"
           :components="editorState.currentSelectedComponents"
           :show="editorState.currentSelectedComponents.length > 1"
         />

@@ -9,14 +9,10 @@
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建调查问卷...</span>
           </div>
-          <div class="operate-item welcome-link" @click="emit('create', 'courseware')">
-            <i class="iconfont icon-add"></i>
-            <span class="operate-item-label">新建课件...</span>
-          </div>
-          <div class="operate-item welcome-link" @click="emit('create', 'complex-component')">
+          <!-- <div class="operate-item welcome-link" @click="emit('create', 'complex-component')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建复合组件...</span>
-          </div>
+          </div> -->
           <div class="operate-item welcome-link" @click="emit('create', 'canvas')">
             <i class="iconfont icon-add"></i>
             <span class="operate-item-label">新建画布...</span>
@@ -140,18 +136,6 @@
                   </div>
                 </Tooltip>
               </template>
-              <ListItemMeta>
-                <template #description>
-                  <Tag color="#FF4D4F">医疗问卷</Tag>
-                  <Tag color="#108EE9">官方</Tag>
-                  <Tag color="#531DBD">焦虑症</Tag>
-                </template>
-                <template #title>
-                  <span style="font-size: 14px; color: #396AAD"> [{{ item.id }}] </span>
-                  <a>{{ item.appTitle }}-v{{item.appVersion}}</a>
-                </template>
-                <!-- <template #avatar><Avatar :src="item.avatar" /></template> -->
-              </ListItemMeta>
               {{ item.description ?? '暂无描述' }}
             </ListItem>
           </template>
@@ -199,7 +183,6 @@ const emit = defineEmits<{
 const getTypeName = (type) => {
   switch (type) {
     case 'questionnaire': return '调查问卷';
-    case 'courseware': return '课件';
     case 'complex-component': return '复合组件';
     case 'canvas': return '画布';
     default: return '未定义';

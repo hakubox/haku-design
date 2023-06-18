@@ -1739,13 +1739,11 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '文本',
     attrs: {
-      width: 58,
-      height: 50,
       disabledWidth: true,
       disabledHeight: true,
-      _width: 58,
-      _height: 50,
-      minHeight: 50,
+      _width: 56,
+      _height: 20,
+      minHeight: 20,
       lock: false,
       visible: true,
     },
@@ -1801,7 +1799,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'text', title: '内容', default: '文本',
+        name: 'text', title: '内容', default: '文本标签',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.multiLine,
         change({ component }) {
           bus.$emit(GlobalBusType.autoSizeChange, component);

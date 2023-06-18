@@ -78,6 +78,13 @@ const propChangeListener = (value) => {
   }
   for (let i = 0; i < _components.length; i++) {
     setVal(_components[i].attrs, props.prop, value, getEditor.value);
+    props.prop?.change?.({
+      prop: props.prop,
+      propMap: _propMap,
+      component: _components[i],
+      value,
+      refs: {}
+    });
   }
 }
 
