@@ -178,8 +178,8 @@ const emit = defineEmits<{
 }>();
 
 const parentExpand = <T extends ComponentPropertyEditor>(prop: GeneralProperty<T>) => {
-  const _val = getVal(props.model, prop);
   if (prop.children?.length) {
+    const _val = getVal(props.model, prop);
     setVal(props.model, prop, !_val);
   }
 }

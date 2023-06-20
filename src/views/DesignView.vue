@@ -326,7 +326,7 @@
 <script lang="ts" setup>
 import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed, onErrorCaptured } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
-import { downLoadFile, dateFormat, throttle } from '@/tools/common';
+import { downLoadFile, dateFormat, throttle, toDecimal } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as historyState, service as historyService } from '@/modules/history-module';
@@ -377,12 +377,12 @@ const onScroll = throttle((e) => {
 const onResize = (e) => {
   if (editorState.appConfig.appType !== AppType.questionnaire && e.ctrlKey) {
     if (e.deltaY > 0 || e.deltaX > 0) {
-      if (editorState.appConfig.canvasConfig.scale >= 0.6) {
-        editorState.appConfig.canvasConfig.scale -= 0.1;
+      if (editorState.appConfig.canvasConfig.scale > 0.5) {
+        editorState.appConfig.canvasConfig.scale = toDecimal(editorState.appConfig.canvasConfig.scale - 0.1, 1);
       }
     } else {
-      if (editorState.appConfig.canvasConfig.scale <= 2) {
-        editorState.appConfig.canvasConfig.scale += 0.1;
+      if (editorState.appConfig.canvasConfig.scale < 2) {
+        editorState.appConfig.canvasConfig.scale = toDecimal(editorState.appConfig.canvasConfig.scale + 0.1, 1);
       }
     }
     e.preventDefault();

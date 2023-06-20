@@ -9,7 +9,7 @@
       height: `${props.contentHeight * props.canvasScale * scale}px`
     }" class="thumbnail-body">
       <div class="thumbnail-content" :style="{
-        zoom: scale,
+        zoom: scale * props.canvasScale,
       }">
         <DesignCanvas
           :style="{

@@ -8,7 +8,7 @@
     :layout="layout"
   >
     <label class="component-item-label" v-if="props.show && (componentLabel ?? label)">
-      {{ editerState.appConfig.questionnaireConfig.showNo && component.isFormItem ? serialNumberService.getQuestionNo(id) : '' }}
+      {{ editerState.appConfig.questionnaireConfig.showNo && component!.isFormItem ? serialNumberService.getQuestionNo(id!) : '' }}
       <span v-html="componentLabel ?? label"></span>
     </label>
     <label
@@ -17,7 +17,7 @@
       :style="{ marginTop: componentLabel ?? label ? '10px' : '0px' }"
       v-html="componentDescription ?? description"
     ></label>
-    <slot><q-blank v-if="['complex', 'layout'].includes(component.type)" /></slot>
+    <slot><q-blank v-if="['complex', 'layout'].includes(component!.type)" /></slot>
   </div>
 </template>
 
@@ -32,7 +32,6 @@ const props = defineProps({
   /** 组件Id */
   id: {
     type: String,
-    required: true,
   },
   /** 是否显示 */
   show: {
@@ -74,7 +73,6 @@ const props = defineProps({
   },
   component: {
     type: Object as PropType<Component>,
-    required: true,
   },
   layout: {
     type: String,

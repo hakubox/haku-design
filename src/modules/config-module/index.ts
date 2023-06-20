@@ -1,5 +1,5 @@
 import { watch, reactive, computed, ConcreteComponent } from 'vue';
-import { GlobalConfig } from '@haku-design/core/config';
+import { GlobalConfig } from '@haku-design/core';
 import { service as historyService } from '@/modules/history-module';
 import { state as editorState } from '@/modules/editor-module';
 import { destoryComponent, loadComponent } from '@/lib/component-loader';

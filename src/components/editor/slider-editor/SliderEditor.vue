@@ -32,8 +32,9 @@
 </template>
 
 <script lang="ts" setup>
-import { isNotBlank, throttle } from '@/tools/common';
+import { isNotBlank, throttle, toDecimal } from '@/tools/common';
 import { InputNumber, Slider } from 'ant-design-vue';
+import { computed } from 'vue';
 import { onMounted, PropType, reactive, toRefs, watch } from 'vue';
 
 const props = defineProps({
@@ -80,13 +81,19 @@ const emit = defineEmits<{
   (event: 'input', val: number | undefined): void;
 }>();
 
+const getPrecision = computed(() => {
+  return String(props.step).length - (String(props.step).indexOf('.') + 1);
+});
+
 const state = reactive({
   inputValue: undefined as number | undefined,
 });
 
 const _change = () => {
   if (state.inputValue != props.value) {
-    emit('change', state.inputValue);
+    if (state.inputValue !== undefined) {
+      emit('change', toDecimal(state.inputValue, getPrecision.value));
+    }
   }
 };
 

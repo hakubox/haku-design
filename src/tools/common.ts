@@ -180,20 +180,34 @@ export function throttle(
   wait = 600, 
   /** 附加参数 */
   options: {
-    /** 是否头部立刻执行 */
-    leading: boolean,
-    /** 是否尾部附加执行 */
-    trailing: boolean
-} = { leading: false, trailing: true }) {
+    /** 是否头部立刻执行 default: false */
+    leading?: boolean,
+    /** 是否尾部附加执行 default: true */
+    trailing?: boolean,
+    /** 是否持续执行，false则如果持续则一直不执行 default: true */
+    continued?: boolean
+} = {
+  leading: false,
+  trailing: true,
+  continued: true
+}) {
   let timer, result;
   let previous = 0;
   const _leading = options?.leading ?? false;
   const _trailing = options?.trailing ?? true;
+  const _continued = options?.continued ?? true;
 
   const throttled = async function (this: any, ...args) {
     const now = Date.now(); // 当前时间
     // 下次触发 func 剩余时间
-    if (!previous && _leading === false) previous = now;
+    if (!previous && !_leading) previous = now;
+    if (!_continued) {
+      previous = now;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
     const remaining = wait - (now - previous);
 
     // 如果没有剩余时间或者改了系统时间,这时候不需要等待，直接立即执行，这样就会第一次就执行
@@ -204,11 +218,11 @@ export function throttle(
       }
       previous = now;
       return await func.apply(this, args);
-    } else if (!timer && _trailing !== false) {
+    } else if (!timer && _trailing) {
       // 剩余的情况就是remaining<=wait的情况，这里使用setTimeout就可以最后也会执行一次
       timer = setTimeout(async () => {
         timer = null;
-        previous = _leading === false ? 0 : Date.now(); // 这里是将previous重新赋值当前时间
+        previous = !_leading ? 0 : Date.now(); // 这里是将previous重新赋值当前时间
         return await func.apply(this, args);
       }, remaining);
     }
@@ -396,7 +410,7 @@ export function moveNodeOfTree<T = string>(
   prop: string = 'id',
 ): Record<string, any>[] {
   const _tree = cloneLoop(tree);
-  let _node = null;
+  let _node = undefined as Record<string, any> | undefined;
   let _oldIndex = -1;
   let _orderIndex: number | undefined;
 
@@ -455,7 +469,7 @@ export function moveNodeOfTree<T = string>(
   });
 
   if (!pid) {
-    _tree.push(_node);
+    if (_node) _tree.push(_node);
     return _tree;
   } else {
     _isOver = false;

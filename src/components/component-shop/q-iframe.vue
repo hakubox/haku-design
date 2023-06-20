@@ -12,7 +12,6 @@
       sandbox="allow-same-origin allow-forms allow-scripts allow-top-navigation allow-orientation-lock allow-top-navigation-by-user-activation"
       :src="state.isLoading ? '' : props.src"
       :style="{
-        height: props.height,
         'border-radius': props.borderRadius + 'px',
         opacity: $attrs.opacity as number / 100
       }"
@@ -61,11 +60,6 @@ const props = defineProps({
   src: {
     type: String,
     default: '',
-  },
-  /** 高度 */
-  height: {
-    type: String,
-    default: '280px'
   }
 });
 

@@ -1840,12 +1840,23 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '图片',
     attrs: {
-      width: 300,
-      height: 200,
       lock: false,
       visible: true,
     },
     propertys: [
+      getComponentPropType({
+        name: '',
+        names: ['width', 'height'],
+        title: '尺寸',
+        require: false,
+        visible: true,
+        group: ComponentPropertyGroup.style,
+        editor: ComponentPropertyEditor.numbers,
+        default: [300, 200],
+        attrs: {
+          options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+        }
+      }),
       getComponentPropType({
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -1977,10 +1988,21 @@ export let formComponents: InitComponent[] = [
     attrs: {
       lock: false,
       visible: true,
-      width: 350,
-      height: 190,
     },
     propertys: [
+      getComponentPropType({
+        name: '',
+        names: ['width', 'height'],
+        title: '尺寸',
+        require: false,
+        visible: true,
+        group: ComponentPropertyGroup.style,
+        editor: ComponentPropertyEditor.numbers,
+        default: [350, 190],
+        attrs: {
+          options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+        }
+      }),
       getComponentPropType({
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
@@ -2054,43 +2076,6 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
-   * 完成得分
-   */
-   {
-    name: 'q-complete-score',
-    isHidden: false,
-    isFormItem: false,
-    isTopLevel: false,
-    type: ComponentCategory.attachment,
-    title: '完成得分',
-    propertys: [
-      getComponentPropType({
-        name: 'visible', title: '是否显示', default: true, visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
-        remark: '是否在界面上显示。'
-      }),
-      getComponentPropType({
-        name: 'text', title: '内容', default: '得分：{{score}}分', layout: PropertyLayout.block,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
-      }),
-      getComponentPropType({
-        name: 'margin', title: '外边距', default: [[0,0,0,0]],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box, attrs: {
-          single: true
-        }
-      }),
-      getComponentPropType({
-        name: 'name', title: '组件名称', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine
-      }),
-      getComponentPropType({
-        name: 'remark', title: '备注', default: '',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.multiLine
-      })
-    ]
-  },
-
-  /** 
    * 网页
    */
    {
@@ -2101,20 +2086,27 @@ export let formComponents: InitComponent[] = [
     type: ComponentCategory.attachment,
     title: '网页',
     attrs: {
-      width: 300,
-      height: 200,
       lock: false,
       visible: true,
     },
     propertys: [
       getComponentPropType({
+        name: '',
+        names: ['width', 'height'],
+        title: '尺寸',
+        require: false,
+        visible: true,
+        group: ComponentPropertyGroup.style,
+        editor: ComponentPropertyEditor.numbers,
+        default: [300, 280],
+        attrs: {
+          options: [ { label: '宽', prop: 'width' }, { label: '高', prop: 'height' } ]
+        }
+      }),
+      getComponentPropType({
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
-      }),
-      getComponentPropType({
-        name: 'height', title: '高度', default: '280px', appType: [AppType.questionnaire], 
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.width
       }),
       getComponentPropType({
         name: 'borderRadius', title: '圆角', default: 0,

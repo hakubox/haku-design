@@ -123,18 +123,6 @@ export const canvasConfig = [
     }
   }),
   getPropType({
-    name: 'size',
-    names: [['canvasConfig', 'width'], ['canvasConfig', 'height']],
-    title: '尺寸',
-    require: false,
-    visible: true,
-    group: 'canvas',
-    editor: ComponentPropertyEditor.numbers,
-    attrs: {
-      options: [ { label: '宽', prop: 'width', min: 1000 }, { label: '高', prop: 'height', min: 700 } ]
-    }
-  }),
-  getPropType({
     name: ['canvasConfig', 'scale'],
     title: '缩放比',
     group: 'canvas',

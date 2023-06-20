@@ -25,6 +25,11 @@ const props = defineProps({
     type: Array as PropType<{ label?: string, prop?: string, min?: number, unit?: string }[]>,
     default: () => []
   },
+  /** 是否使用input事件，false则使用change事件 */
+  useInput: {
+    type: Boolean,
+    default: true
+  },
   /** 格式化函数 */
   formatter: {
     type: Function,
@@ -66,6 +71,9 @@ const change = throttle(() => {
       state.vals = props.value;
     }
   }
+}, 500, {
+  leading: false,
+  continued: false
 });
 
 watch(() => props.value, () => {
