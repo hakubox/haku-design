@@ -51,6 +51,8 @@ export function useAppHandle() {
   
   /** 获取导出数据 */
   function getExportData(appInfo: {
+    /** 是否已发布 */
+    isPublished: boolean,
     /** 应用页面列表 */
     pages: AppPage[],
     /** 事件列表 */
@@ -92,6 +94,7 @@ export function useAppHandle() {
     const _appConfig = appInfo.appConfig;
     return {
       id: _appConfig.id,
+      isPublished: appInfo.isPublished,
       appType: _appConfig.appType,
       title: _appConfig.appTitle,
       description: _appConfig.description,

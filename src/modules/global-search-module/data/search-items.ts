@@ -4,7 +4,6 @@ import { service as globalSearchService } from '@/modules/global-search-module';
 import type { GlobalSearchItem } from "../index.d";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as pluginState, service as pluginService } from '@/modules/plugin-module';
-import { state as themeState, service as themeService } from "@/modules/theme-module";
 import { toast } from '@/common/message';
 import { computed, ref, watch } from "vue";
 import Fuse from 'fuse.js';
@@ -212,11 +211,11 @@ export const fixedSearchItems = ref<GlobalSearchItem[]>([
       quickCrumbs.menu_file,
       { label: '主题', },
     ],
-    goto: () => themeService.selectTheme('default', '浅色主题'),
+    goto: () => editorService.selectDesignTheme('default', '浅色主题'),
     description: '切换当前主题至浅色主题。',
     related: [
-      { label: '切换至深色主题', goto: () => themeService.selectTheme('dark', '深色主题') },
-      { label: '切换至半透明主题', goto: () => themeService.selectTheme('translucent', '半透明主题') },
+      { label: '切换至深色主题', goto: () => editorService.selectDesignTheme('dark', '深色主题') },
+      { label: '切换至半透明主题', goto: () => editorService.selectDesignTheme('translucent', '半透明主题') },
     ]
   }, {
     title: '切换至深色主题',
@@ -225,11 +224,11 @@ export const fixedSearchItems = ref<GlobalSearchItem[]>([
       quickCrumbs.menu_file,
       { label: '主题', },
     ],
-    goto: () => themeService.selectTheme('dark', '深色主题'),
+    goto: () => editorService.selectDesignTheme('dark', '深色主题'),
     description: '切换当前主题至深色主题。',
     related: [
-      { label: '切换至浅色主题', goto: () => themeService.selectTheme('default', '浅色主题') },
-      { label: '切换至半透明主题', goto: () => themeService.selectTheme('translucent', '半透明主题') },
+      { label: '切换至浅色主题', goto: () => editorService.selectDesignTheme('default', '浅色主题') },
+      { label: '切换至半透明主题', goto: () => editorService.selectDesignTheme('translucent', '半透明主题') },
     ]
   }, {
     title: '切换至半透明主题',
@@ -238,11 +237,11 @@ export const fixedSearchItems = ref<GlobalSearchItem[]>([
       quickCrumbs.menu_file,
       { label: '主题', },
     ],
-    goto: () => themeService.selectTheme('translucent', '半透明主题'),
+    goto: () => editorService.selectDesignTheme('translucent', '半透明主题'),
     description: '切换当前主题至半透明主题。',
     related: [
-      { label: '切换至浅色主题', goto: () => themeService.selectTheme('default', '浅色主题') },
-      { label: '切换至深色主题', goto: () => themeService.selectTheme('dark', '深色主题') },
+      { label: '切换至浅色主题', goto: () => editorService.selectDesignTheme('default', '浅色主题') },
+      { label: '切换至深色主题', goto: () => editorService.selectDesignTheme('dark', '深色主题') },
     ]
   }, 
 ]);

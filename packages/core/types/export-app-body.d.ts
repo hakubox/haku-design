@@ -7,6 +7,8 @@ import { AppType } from '../enum';
 export interface ExportAppBody {
   /** 应用Id */
   id: string;
+  /** 是否已发布 */
+  isPublished: boolean;
   /** 预览图 */
   previewUrl?: string;
   /** 应用类型 */

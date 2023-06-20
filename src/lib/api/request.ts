@@ -124,7 +124,7 @@ function getRequestParams<ReturnResponse extends boolean, TReturnPageList extend
 /**
  * 基础请求提交
  */
-export function request<ReturnResponse extends boolean, ReturnPageList extends boolean>({
+export function request<T, ReturnResponse extends boolean, ReturnPageList extends boolean>({
   method,
   url,
   params = {},
@@ -134,7 +134,7 @@ export function request<ReturnResponse extends boolean, ReturnPageList extends b
   url: string;
   params?: Record<string, any>;
   config?: ApiConfig<ReturnResponse, ReturnPageList>;
-}): Promise<ReturnPageList extends true ? ApiPageList<any> : ReturnResponse extends true ? ApiReturn<any> : any> {
+}): Promise<ReturnPageList extends true ? ApiPageList<T> : ReturnResponse extends true ? ApiReturn<T> : T> {
   return new Promise((resolve, reject) => {
     /** 是否需要获取 token */
     const isGetToken = config?.getToken !== false;

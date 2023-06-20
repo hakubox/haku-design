@@ -14,7 +14,7 @@ export * from './token';
  * @param {object} params 参数
  * @param {ApiConfig} config
  */
-const requestCreator = <T = void>(type: ApiMethodType): RequestType<T> => (url, params = {}, config = {}) => request({
+const requestCreator = (type: ApiMethodType): RequestType => (url, params = {}, config = {}) => request({
   method: type,
   url,
   params,

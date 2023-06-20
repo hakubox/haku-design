@@ -94,28 +94,6 @@ export const service = {
   loadThemeList() {
 
   },
-  /** 设置主题 */
-  selectTheme(themeCode: 'default' | 'dark' | 'translucent', themeTitle: string, loc?: {
-    x: number;
-    y: number;
-  } | undefined) {
-    historyService.exec('change-theme', {
-      objectId: 'global',
-      value: themeCode,
-      attrs: {
-        themeTitle: themeTitle,
-        loc: loc,
-      }
-    });
-  },
-  /** 根据当前主题重设（重新从远程加载当前主题） */
-  resetTheme() {
-
-  },
-  /** 清除当前主题 */
-  clearTheme() {
-
-  }
 };
 
 export default {

@@ -79,83 +79,108 @@
           </div>
         </div>
         <!-- 最近列表（卡片） -->
-        <div v-show="state.reviewType === 'card'" class="recent-card">
-          <div
-            class="recent-item"
-            v-for="item in state.recentList"
-            :key="item.id"
-            @click="selectData(item)"
-          >
-            <img
-              class="recent-item-img"
-              :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
-              alt=""
-            />
-            <div class="recent-item-title">
-              <div class="recent-item-id"> [{{ item.id }}] </div>
-              {{ item.appTitle }}
-              <div class="recent-item-version"><span style="padding-right: 1px;">v</span>{{item.appVersion}}</div>
-            </div>
-            <div class="recent-item-infos">
-              <div class="recent-item-date">{{ dateFormat(new Date(item.createTime), 'yyyy-MM-dd HH:mm') }}</div>
-              <div class="recent-item-type">{{ getTypeName(item.appType) }}</div>
+        <Spin :spinning="state.isLoading" tip="加载中...">
+          <div v-show="state.reviewType === 'card'" class="recent-card">
+            <div
+              class="recent-item"
+              v-for="item in state.recentList"
+              :key="item.id"
+            >
+              <img
+                class="recent-item-img"
+                :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
+                alt=""
+                @click="selectApp(item)"
+              />
+              <div class="recent-item-version" v-if="item.version"><span style="padding-right: 1px;">v</span>{{item.version}}</div>
+              <div class="recent-item-title" @click="selectApp(item)">
+                <div class="recent-item-id"> [{{ item.id.slice(-5) }}] </div>
+                {{ item.title }}
+              </div>
+              <div class="recent-item-infos">
+                <div class="recent-item-type">{{ getTypeName(item.appType) }}</div>
+                <div class="recent-item-date">{{ dateFormat(new Date(item.createdTime), 'yyyy-MM-dd HH:mm') }}</div>
+                <div class="recent-item-tool">
+                  <Dropdown @click.stop>
+                    <i class="iconfont iconfont-menu icon-gengduo"></i>
+                    <template #overlay>
+                      <Menu>
+                        <MenuItem key="1" @click="item['collect'] = !item['collect']">
+                          <i class="iconfont iconfont-menu icon-star-solid" style="color: #EDBC6B;" v-if="item['collect']"></i>
+                          <i class="iconfont iconfont-menu icon-star" v-else></i>
+                          星标
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem danger key="2" @click="removeItem(item)">
+                          <i class="iconfont iconfont-menu icon-shanchu"></i>
+                          移除
+                        </MenuItem>
+                      </Menu>
+                    </template>
+                  </Dropdown>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- 最近列表（列表） -->
-        <List
-          class="recent-list"
-          v-show="state.reviewType === 'list'"
-          item-layout="vertical"
-          size="large"
-          :pagination="state.pagination"
-          :data-source="state.recentList"
-        >
-          <template #footer></template>
-          <template #renderItem="{ item }">
-            <ListItem key="item.title">
-              <template #actions>
-                <div class="questionnaire-library-item-body-tools">
-                  <div class="questionnaire-library-item-body-tool tool-primary" @click="selectData(item)">
-                    <i class="iconfont icon-zidingyi"></i>
-                    设计
+          <!-- 最近列表（列表） -->
+          <List
+            class="recent-list"
+            v-show="state.reviewType === 'list'"
+            item-layout="vertical"
+            size="large"
+            :pagination="state.pagination"
+            :data-source="state.recentList"
+          >
+            <template #footer></template>
+            <template #renderItem="{ item }">
+              <ListItem key="item.title">
+                <template #actions>
+                  <div class="questionnaire-library-item-body-tools">
+                    <div class="questionnaire-library-item-body-tool tool-primary" @click="selectApp(item)">
+                      <i class="iconfont icon-zidingyi"></i>
+                      设计
+                    </div>
+                    <div class="questionnaire-library-item-body-tool tool-red" @click="deleteOperationRecord(item.id)">
+                      <i class="iconfont icon-shanchu"></i>
+                      删除
+                    </div>
                   </div>
-                  <div class="questionnaire-library-item-body-tool tool-red" @click="deleteOperationRecord(item.id)">
-                    <i class="iconfont icon-shanchu"></i>
-                    删除
-                  </div>
-                </div>
-              </template>
-              <template #extra>
-                <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
-                  <template #title>
-                    <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="" />
-                  </template>
-                  <div class="recent-item-img">
-                    <img :alt="item.appTitle" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />
-                  </div>
-                </Tooltip>
-              </template>
-              {{ item.description ?? '暂无描述' }}
-            </ListItem>
-          </template>
-        </List>
+                </template>
+                <template #extra>
+                  <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
+                    <template #title>
+                      <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="" />
+                    </template>
+                    <div class="recent-item-img">
+                      <img :alt="item.appTitle" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />
+                    </div>
+                  </Tooltip>
+                </template>
+                {{ item.description ?? '暂无描述' }}
+              </ListItem>
+            </template>
+          </List>
+        </Spin>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { reactive, onMounted, onUnmounted } from 'vue';
+import { reactive, onMounted, onUnmounted, createVNode } from 'vue';
 import { service as editorService } from '@/modules/editor-module';
 import { service as introService } from '@/modules/intro-module';
-import { getQuestionary, QuestionaryBasicInfoDto } from '@/api/questionnaire';
 import { dateFormat } from '@/tools/common';
-import { Input, List, ListItem, ListItemMeta, Select, SelectOption, Tag, Tooltip, message } from 'ant-design-vue';
-import { AppInfoDto, getAppList } from '@/api/app';
+import { Input, List, ListItem, Dropdown, Select, SelectOption, Tooltip, message, Menu, MenuItem, MenuDivider, Modal, Spin } from 'ant-design-vue';
+import { getApp, getApps } from '@/api/app';
+import { AppInfoDto, appInfoDto2AppBody } from '@/model/app-info-dto';
+import { removeApp } from '@/api/app';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 
 const state = reactive({
+  /** 是否加载中 */
+  isLoading: false,
   /** 预览类型 */
   reviewType: 'card' as 'card' | 'list',
   /** 排序类型 */
@@ -182,9 +207,9 @@ const emit = defineEmits<{
 /** 获取类型名称 */
 const getTypeName = (type) => {
   switch (type) {
-    case 'questionnaire': return '调查问卷';
-    case 'complex-component': return '复合组件';
+    case 'questionnaire': return '问卷';
     case 'canvas': return '画布';
+    case 'complex-component': return '复合组件';
     default: return '未定义';
   }
 };
@@ -209,38 +234,49 @@ const startShowIntro = () => {
   }
 }
 
+/** 搜索应用 */
 const search = () => {
-
-  // 获取应用相关信息
-  getAppList().then(d => {
+  state.isLoading = true;
+  getApps().then(d => {
     console.log('应用列表', d);
     state.recentList = d;
     state.pagination.total = d.length;
-
     startShowIntro();
   }).catch(err => {
     console.error(err);
+  }).finally(() => {
+    state.isLoading = false;
   });
-
-  // editorService.getOperationRecord({
-  //   pageNum: 1,
-  //   pageSize: 10,
-  // }).then((d: any) => {
-  //   state.recentList = d.rows;
-  //   state.pagination.total = d.total;
-  // });
 };
 
-const selectData = (app: AppInfoDto) => {
+/** 选择应用 */
+const selectApp = (app: AppInfoDto) => {
   const id = app.id || '';
-  getQuestionary(id.toString()).then(({ questionary, tagList }) => {
-    if (questionary) {
-      editorService.loadAppBody(id + '', questionary.content);
-    }
+  getApp(id).then(appInfo => {
+    const _appInfo = appInfoDto2AppBody(appInfo);
+    console.log('appInfo', _appInfo);
+    editorService.loadAppBody(id, _appInfo);
   }).catch(err => {
     console.error(err);
     message.error(`应用加载失败，错误原因：${err.message}`);
   })
+};
+
+/** 移除项 */
+const removeItem = (item: AppInfoDto) => {
+  console.log(item.id);
+  Modal.confirm({
+    title: `删除确认`,
+    icon: createVNode(ExclamationCircleOutlined),
+    content: createVNode('div', { style: 'color:red;' }, `是否确认删除《${item.title}》？删除之后将无法恢复`),
+    onOk() {
+      removeApp(item.id).then(d => {
+        search();
+      });
+    },
+    onCancel() {
+    },
+  });
 };
 
 /** 删除问卷操作记录 */
@@ -332,6 +368,7 @@ onUnmounted(() => {
     > .recent-panel {
       display: flex;
       flex-direction: column;
+      height: 100%;
 
       > .recent-header {
         display: flex;
@@ -411,8 +448,13 @@ onUnmounted(() => {
         }
       }
 
+      .ant-spin-nested-loading {
+        flex-shrink: 1;
+        flex-grow: 1;
+      }
+
       // 最近的文件列表
-      > .recent-card {
+      .recent-card {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -427,12 +469,6 @@ onUnmounted(() => {
           margin-bottom: 20px;
           width: 200px;
 
-          &:hover {
-            > .recent-item-img {
-              background-color: #e1efff;
-            }
-          }
-
           > .recent-item-img {
             position: relative;
             width: 200px;
@@ -444,6 +480,26 @@ onUnmounted(() => {
             border-radius: 3px;
             margin-bottom: 15px;
             transition: 0.1s;
+
+            &:hover {
+              background-color: #e1efff;
+            }
+          }
+
+          > .recent-item-version {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(0, 0, 0, 0.851);
+            font-feature-settings: "tnum";
+            display: inline-block;
+            padding: 0 4px;
+            font-size: 12px;
+            line-height: 16px;
+            border: 1px solid #91d5ff;
+            border-radius: 4px;
+            color: #1890ff;
+            background: #e6f7ff;
           }
 
           > .recent-item-title {
@@ -460,20 +516,6 @@ onUnmounted(() => {
               text-overflow: ellipsis;
               vertical-align: bottom;
             }
-
-            > .recent-item-version {
-              margin: 0 4px 0 4px;
-              color: #000000d9;
-              font-feature-settings: "tnum";
-              display: inline-block;
-              padding: 0 4px;
-              font-size: 12px;
-              line-height: 16px;
-              border: 1px solid #91d5ff;
-              border-radius: 4px;
-              color: #1890ff;
-              background: #e6f7ff;
-            }
           }
 
           > .recent-item-infos {
@@ -483,12 +525,25 @@ onUnmounted(() => {
             color: #999;
             font-size: 12px;
             padding-top: 4px;
+
+            > .recent-item-tool {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              padding: 2px;
+              height: 18px;
+
+              > .iconfont {
+                font-size: 16px;
+              }
+            }
           }
         }
       }
 
       // 最近的文件列表
-      > .recent-list {
+      .recent-list {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;

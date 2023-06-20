@@ -75,7 +75,7 @@ export const service = {
   /** 自动保存功能 */
   autoSave() {
     state.autoSaveTimer = window.setTimeout(() => {
-      historyService.exec('save', { value: 'save' });
+      historyService.exec('save', {});
       if (state.config.autoSave) {
         service.autoSave();
       } else {

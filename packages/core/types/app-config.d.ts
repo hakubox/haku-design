@@ -121,4 +121,9 @@ export interface AppConfig {
   canvasConfig: CanvasConfig;
   /** 应用类型独有配置项 */
   // appTypeConfig: AppTypeDetailConfig[T];
+
+  /** 创建时间（时间戳） */
+  createdTime: number;
+  /** 更新时间（时间戳） */
+  updatedTime: number;
 }

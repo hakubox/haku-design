@@ -11,13 +11,12 @@ import { state as configState, service as configService } from '@/modules/config
 import { state as eventState, service as eventService, EventTriggerType } from '@/modules/event-module';
 import { state as storageState } from "@/modules/storage-module";
 import { service as formFillService, type FormInfoItem } from '@/modules/form-fill-module';
-import { state as themeState, service as themeService } from "@/modules/theme-module";
+import { state as themeState, service as themeService, ThemeConfig } from "@/modules/theme-module";
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { service as pluginModule } from '@/modules/plugin-module';
-import { createModelId, isBlank, isNotBlank, recursive, timeout } from '@/tools/common';
-import { addQuestionary, saveQuestionary } from "@/api/questionnaire";
-import { AppPage } from '@haku-design/core/app-page';
+import { createModelId, timeout } from '@/tools/common';
+import { AppPage } from '@haku-design/core';
 import { state as globalState } from '@/common/global';
 import { useAppHandle } from '@/common/app-handle';
 
@@ -35,6 +34,8 @@ const OperationRecord = '__hakuform__operation__';
 import { getFileListByIds } from '@/modules/storage-module/api';
 import { formCommands } from '@/data/form-commands';
 import { toast } from '@/common/message';
+import { editApp } from '@/api/app';
+import { appBody2AppInfoDto } from '@/model/app-info-dto';
 
 /** 问卷编辑模块逻辑 */
 export const service = {
@@ -131,7 +132,10 @@ export const service = {
         width: width || 0,
         height: height || 0,
         scale: 1,
-      }
+      },
+
+      createdTime: Date.now(),
+      updatedTime: Date.now(),
     };
   },
   /** 展开/收起左侧侧边栏 */
@@ -311,11 +315,12 @@ export const service = {
 
     themeService.changeTheme();
     if (!createConfig.id) {
-      addQuestionary({
+      const _body = {
         ...service.exportData(),
         title: createConfig.title,
         description: state.appConfig.description,
-      }).then(d => {
+      } as ExportAppBody;
+      editApp(appBody2AppInfoDto(_body)).then(d => {
         state.appConfig.id = d.id + '';
         service.setOperationRecord();
       });
@@ -523,6 +528,7 @@ export const service = {
   /** 获取导出数据 */
   exportData() {
     return getExportData({
+      isPublished: false,
       pages: state.pages,
       events: eventState.allEvents,
       theme: {
@@ -558,7 +564,10 @@ export const service = {
       state.appConfig.id = questionaryId;
       state.previewUrl = body.previewUrl || '';
       eventState.allEvents = body.events;
-      themeService.changeTheme(body?.themeConfig);
+      themeService.changeTheme({
+        ...body?.themeConfig,
+        ...body?.themeConfig?.config,
+      } as unknown as ThemeConfig);
       hide.clear();
       await timeout(100);
       eventService.emit(EventTriggerType.appLoadingComplete, 'global');
@@ -662,6 +671,7 @@ export const service = {
   refresh() {
     if (!state.canvasPanelEl) return;
     service.getBasicDom();
+    if (!state.canvasPanelEl) return;
     const { y, x } = state.canvasPanelEl.getBoundingClientRect();
     state.canvasLocation.y = state.canvasPanelEl.scrollTop - y;
     state.canvasLocation.x = state.canvasPanelEl.scrollLeft - x;
@@ -777,7 +787,7 @@ export const service = {
       _canUpgrade = true;
     }
     const hide = toast(_canUpgrade ? '问卷更新中...' : '问卷保存中...', 'loading', 0);
-    saveQuestionary(_exportData, _canUpgrade ? 'UPDATE' : 'UPGRADE').then(d => {
+    editApp(appBody2AppInfoDto(_exportData)).then(d => {
       historyState.saveHistoryIndex = historyState.historyIndex;
       configService.setSaveHistory(state.appConfig.id);
       configState.saveHistory;
@@ -1171,10 +1181,26 @@ export const service = {
       component.attrs['__' + _name] = '';
     }
   },
+  /** 设置设计器主题 */
+  selectDesignTheme(themeCode: 'default' | 'dark' | 'translucent', themeTitle: string, loc?: {
+    x: number;
+    y: number;
+  } | undefined) {
+    historyService.exec('change-theme', {
+      objectId: 'global',
+      value: themeCode,
+      attrs: {
+        themeTitle: themeTitle,
+        loc: loc,
+      }
+    });
+  },
 };
 
 /** 问卷编辑模块状态 */
 export const state = reactive({
+  /** 是否已发布 */
+  isPublished: false,
   /** 应用配置 */
   appConfig: service.createAppConfig({
     appType: AppType.questionnaire,

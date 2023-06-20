@@ -61,7 +61,7 @@
                   :class="{ 'ant-menu-item-active': editorState.appConfig.designConfig.themeCode == theme.code }"
                   v-for="(theme, index) in state.formThemes"
                   :key="'sub1-2-' + index"
-                  @click="$event => themeService.selectTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
+                  @click="$event => editorService.selectDesignTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
                 >
                   <CheckOutlined v-show="editorState.appConfig.designConfig.themeCode == theme.code" />
                   {{theme.title}}
@@ -106,7 +106,7 @@
         <div class="design-form-center">
 
           <!-- 全局搜索按钮 -->
-          <div class="design-form-center-question">
+          <div v-if="editorState.isInit" class="design-form-center-question">
             <Tooltip placement="top">
               <template #title>
                 <span>全局搜索</span>
@@ -332,7 +332,6 @@ import { state as editorState, service as editorService } from '@/modules/editor
 import { state as historyState, service as historyService } from '@/modules/history-module';
 import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
 import { state as configState, service as configService } from '@/modules/config-module';
-import { service as themeService } from "@/modules/theme-module";
 import { service as globalSearchService } from '@/modules/global-search-module';
 import { useComponentHandle } from '@/common/component-handle';
 import { useAppHandle } from '@/common/app-handle';
@@ -355,7 +354,6 @@ import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue
 import Thumbnail from '@/components/common/Thumbnail.vue';
 import domtoimage from 'dom-to-image-more';
 import bus, { GlobalBusType } from '@/tools/bus';
-import { AppInfoDto } from '@/api/app';
 
 const {
   getExportData,
@@ -608,8 +606,6 @@ const state = reactive({
     { code: 'dark', title: '深色主题' },
     { code: 'translucent', title: '半透明主题' }
   ] as { code: "default" | "dark" | "translucent", title: string }[],
-  /** 应用列表 */
-  appList: [] as AppInfoDto[]
 });
 
 editorState.componentCanvas = ref(DesignCanvas);

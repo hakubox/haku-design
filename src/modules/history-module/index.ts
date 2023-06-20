@@ -82,7 +82,7 @@ export const service = {
   ) {
     const _config: Record<string, any> = config ?? {};
     if (!_config.objectId) {
-      throw new Error('没有传入objectId');
+      _config.objectId = 'global';
     }
     const _commandType = formCommands[commandType] as CommandType<T>;
     if (_commandType) {
