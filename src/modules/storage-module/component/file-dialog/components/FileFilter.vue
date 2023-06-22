@@ -41,11 +41,11 @@
 /**
  * 文件搜索及筛选栏
  */
- import { state as storageState, service as storageService } from '@/modules/storage-module';
-import { SortType } from '@/modules/storage-module/enum';
-import { DownOutlined } from '@ant-design/icons-vue';
-import { Dropdown, InputSearch, Menu, MenuItem } from 'ant-design-vue';
 import { PropType, ref } from 'vue';
+import { Dropdown, InputSearch, Menu, MenuItem } from 'ant-design-vue';
+import { DownOutlined } from '@ant-design/icons-vue';
+import { state as storageState, service as storageService } from '../../../';
+import { SortType } from '../../../enum';
 import { ROOT_ID } from '../hooks/useDir';
 import { SortOrder } from '../hooks/useFileSort';
 

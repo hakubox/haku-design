@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 /** 可输入的标签 */
-
 import { nextTick, ref, watch, watchEffect } from 'vue';
 import { Input } from 'ant-design-vue';
 
@@ -41,12 +40,9 @@ const handleSubmit = () => {
   emits('submit', inputValue.value);
 };
 
-watch(
-  () => props.defaultValue,
-  () => {
-    inputValue.value = props.defaultValue;
-  },
-);
+watch(() => props.defaultValue, () => {
+  inputValue.value = props.defaultValue;
+});
 
 watchEffect(() => {
   if (props.showInput) {

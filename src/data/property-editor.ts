@@ -1,12 +1,13 @@
-import { icons } from '@/data/icon-editor';
-import { PropertyEditor, SetPartial } from '@/@types';
-import { ComponentPropertyEditor } from '@/@types/enum';
-import { watch, computed } from 'vue';
+import { type PropertyEditor, type SetPartial, ComponentPropertyEditor } from '@haku-design/core';
+import { computed } from 'vue';
+import { state as backgroundEditorState, service as backgroundEditorService } from '@/modules/background-editor-module';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 export type InitPropertyEditor = SetPartial<PropertyEditor, 'slot' | 'propAttrs' | 'events'>;
 
 /** 属性编辑器 */
-export const propertyEditors: Array<InitPropertyEditor> = [
+export const propertyEditors: InitPropertyEditor[] = [
   {
     name: 'any',
     description: '任意',
@@ -80,9 +81,7 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     name: 'width',
     description: '长度',
     component: 'width-editor',
-    attrs: {
-      addonAfter: '像素',
-    },
+    attrs: {},
     editor: ComponentPropertyEditor.width,
     format: (val) => val + 'px',
   },
@@ -96,7 +95,7 @@ export const propertyEditors: Array<InitPropertyEditor> = [
       addonAfter: '颜色',
       size: 'small',
       showAlpha: false,
-      colorType: 'hex',
+      colorType: 'rgb',
       canChangeColorType: false,
       canClear: false,
     },
@@ -142,7 +141,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     component: 'number-editor',
     attrs: {
       precision: 0,
-      min: 0,
       style: { width: '100%' },
       allowClear: true,
       size: 'small',
@@ -155,7 +153,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     component: 'number-editor',
     attrs: {
       step: 0.1,
-      min: 0,
       style: { width: '100%' },
       allowClear: true,
       size: 'small',
@@ -185,40 +182,6 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     editor: ComponentPropertyEditor.radioGroup,
   },
   {
-    name: 'icon',
-    description: '图标',
-    component: 'a-select',
-    attrs: {
-      showSearch: true,
-      style: {
-        width: '100%',
-        fontFamily: 'vant-icon',
-        color: 'rgba(0, 0, 0, 0.65)',
-        fontSize: '20px',
-        lineHeight: '12px',
-        // fontWeight: '700',
-        verticalAlign: 'middle',
-      },
-      dropdownClassName: 'icon-editor-select',
-      placeholder: '',
-      allowClear: true,
-      size: 'small',
-    },
-    slot: {
-      default: icons.map((i) => ({
-        component: 'a-select-option',
-        html: i.label,
-        slot: {
-          default: icons,
-        },
-        attrs: {
-          value: i.value,
-        },
-      })),
-    },
-    editor: ComponentPropertyEditor.icon,
-  },
-  {
     name: 'json',
     description: 'JSON',
     component: 'object-editor',
@@ -233,6 +196,14 @@ export const propertyEditors: Array<InitPropertyEditor> = [
       style: { width: '100%', height: '300px' },
     },
     editor: ComponentPropertyEditor.json,
+  },
+  {
+    name: 'tags',
+    description: '标签列表',
+    component: 'tags-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.tags,
   },
   {
     name: 'text-list',
@@ -367,10 +338,67 @@ export const propertyEditors: Array<InitPropertyEditor> = [
     },
     editor: ComponentPropertyEditor.dimension,
   },
+  {
+    name: 'numbers',
+    description: '位置',
+    component: 'numbers-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.numbers,
+  },
+  {
+    name: 'slider',
+    description: '滑动输入框',
+    component: 'slider-editor',
+    canFullScreen: false,
+    attrs: {},
+    editor: ComponentPropertyEditor.slider,
+  },
+  {
+    name: 'background',
+    description: '背景',
+    component: 'background-editor',
+    attrs: {},
+    editor: ComponentPropertyEditor.background,
+    tools: [
+      {
+        icon: 'iconfont icon-add',
+        tooltip: '新增',
+        click(e, components, property) {
+          // 显示弹出框
+          let _top = e.pageY - 100;
+          if (_top < 50) _top = 50;
+          else if (_top > window.innerHeight - 600) _top = window.innerHeight - 600;
+          backgroundEditorState.dialogCss = {
+            top: `${_top}px`,
+            right: `520px`,
+          };
+          let _bgs = [] as any[];
+          if (!components?.length) {
+            _bgs = editorState.appConfig.background;
+          } else if (components && !components[0].isGroup) {
+            // TODO: property.name不能强转为string类型
+            if (components[0].attrs[property.name as string]) {
+              _bgs = components[0].attrs[property.name as string] ?? [];
+            } else {
+              components[0].attrs[property.name as string] = [];
+              _bgs = components[0].attrs[property.name as string];
+            }
+          }
+          _bgs.push({
+            type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 }
+          });
+          backgroundEditorState.isShow = true;
+          backgroundEditorState.currentBackground = _bgs[_bgs.length - 1];
+          bus.$emit(GlobalBusType.backgroundEditorChange);
+        }
+      }
+    ],
+  },
 ];
 
 /** 获取所有编辑器 */
-export let getEditors = computed<Record<string, PropertyEditor>>(() => {
+export const getEditors = computed<Record<string, PropertyEditor>>(() => {
   return initPropertyEditors();
 });
 

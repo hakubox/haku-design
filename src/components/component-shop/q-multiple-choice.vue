@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-item-multiple-choice"
     :layout="layout"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
@@ -50,20 +50,19 @@
         </div>
       </Checkbox>
     </CheckboxGroup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
 import { onMounted, PropType, reactive, watch } from 'vue';
 import { service as storageService } from '@/modules/storage-module';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Checkbox, CheckboxGroup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -110,8 +109,8 @@ const state = reactive({
 const isElse = computed(() => !props.value?.every((i) => props.options.findIndex((o) => o.value == i) >= 0));
 
 watch(() => props.value, (val, oldVal) => {
-  let _val = typeof val === 'string' ? (val as string).split(',') : val;
-  let _else = _val?.filter(i => props.options.findIndex(o => o.value == i) < 0);
+  const _val = typeof val === 'string' ? (val as string).split(',') : val;
+  const _else = _val?.filter(i => props.options.findIndex(o => o.value == i) < 0);
   if (_else.length) {
     state.elseTxt = _else[0];
   }
@@ -120,7 +119,7 @@ watch(() => props.value, (val, oldVal) => {
 const init = () => {
   state.inputValue = props.value;
 
-  let _else = props.value?.filter((i) => props.options.findIndex((o) => o.value == i) < 0);
+  const _else = props.value?.filter((i) => props.options.findIndex((o) => o.value == i) < 0);
   if (_else.length) {
     state.elseTxt = _else[0];
   }
@@ -130,7 +129,7 @@ const changeValue = (val) => {
 };
 /** 改变其他的选中状态 */
 const changeElseChecked = () => {
-  if (isElse) {
+  if (isElse.value) {
     emit(
       'update:value',
       props.options?.filter((i) => props.value.includes(i.value)).map((i) => i.value),
@@ -142,13 +141,13 @@ const changeElseChecked = () => {
 };
 /** 改变其他的值 */
 const changeElseValue = (txt) => {
-  let _options = props.options?.filter((i) => props.value.includes(i.value));
+  const _options = props.options?.filter((i) => props.value.includes(i.value));
   emit('update:value', [..._options.map((i) => i.value), txt]);
 }
 const changeValueByUser = (val, index) => {
   if (val.disabled) return;
-  let vals = [...props.value];
-  let _index = vals.indexOf(val.value);
+  const vals = [...props.value];
+  const _index = vals.indexOf(val.value);
   if (_index >= 0) {
     vals.splice(_index, 1);
   } else if (vals.length < props.max || props.max == 0) {

@@ -1,9 +1,10 @@
-import type { ToolComponentItem } from '@/@types/tool-component-item';
+import type { ToolComponentItem } from '@haku-design/core';
 import { type InitComponent, formComponents } from '@/data/form-components';
 import { menuComponentItems } from '@/data/menu-component-items';
 import { registerPlugin } from "./register-plugin";
-import { PluginInfo } from './@types';
+import type { PluginInfo } from './index.d';
 import { PluginLoadType, PluginType } from './enum';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 /** 注册组件 */
 export function registerComponent(plugin: PluginInfo, component: InitComponent, menu?: ToolComponentItem) {
@@ -15,6 +16,7 @@ export function registerComponent(plugin: PluginInfo, component: InitComponent, 
     pluginType: PluginType.component,
   });
   formComponents.push(component);
+  bus.$emit(GlobalBusType.refreshShopComponent);
   if (menu) {
     registerPlugin({
       ...plugin,
@@ -27,6 +29,7 @@ export function registerComponent(plugin: PluginInfo, component: InitComponent, 
       title: `${menu.title}`,
       icon: menu.icon,
       pluginType: PluginType.menuComponentItem,
+      onloadApp: undefined
     });
     menuComponentItems.push(menu);
   }

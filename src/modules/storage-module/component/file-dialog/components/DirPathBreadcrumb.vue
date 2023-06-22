@@ -23,7 +23,7 @@
 /**
  * 顶部显示文件夹路径的面包屑导航
  */
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Breadcrumb, BreadcrumbItem, Menu, MenuItem } from 'ant-design-vue';
 import { dirIdItemMap, DirTreeDataItem } from '../hooks/useDir';
 

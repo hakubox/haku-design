@@ -1,10 +1,11 @@
-import { ComponentCategory, PageType } from '@/@types/enum';
-import { ToolComponentItem } from '@/@types/tool-component-item';
+import { AppType, ComponentCategory, PageType } from '@haku-design/core';
+import { ToolComponentItem } from '@haku-design/core/tool-component-item';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
 
 /** 工具箱配置菜单 */
 export const getMenuComponentItems = computed(() => {
-  return menuComponentItems;
+  return menuComponentItems.filter(i => !i.appType || i.appType?.includes(editorState.appConfig.appType));
 });
 
 export let menuComponentItems: ToolComponentItem[] = [
@@ -13,6 +14,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-single-line',
     icon: 'iconfont icon-textbox',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -20,6 +22,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-number',
     icon: 'iconfont icon-textbox',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -27,6 +30,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-single-line-group',
     icon: 'iconfont icon-shebeiguanli',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -34,6 +38,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-multiple-line',
     icon: 'iconfont icon-textarea',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -41,6 +46,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-single-choice',
     icon: 'iconfont icon-check-circle',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -48,6 +54,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-multiple-choice',
     icon: 'iconfont icon-checkbox',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -55,6 +62,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-dropdown',
     icon: 'iconfont icon-dropdownlist',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -63,6 +71,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     icon: 'iconfont icon-dropdownlist',
     isNew: true,
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -72,6 +81,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     answerType: 'datetime-range',
     isNew: true,
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
     attrs: {
       isRange: true,
@@ -84,6 +94,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-score',
     icon: 'iconfont icon-star',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage, PageType.endPage],
   },
   {
@@ -91,6 +102,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-score-group',
     icon: 'iconfont icon-star',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage, PageType.endPage],
   },
   {
@@ -98,6 +110,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-file-upload',
     icon: 'iconfont icon-cloud-upload',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -105,6 +118,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-drawing-board',
     icon: 'iconfont icon-drawing-board',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -112,6 +126,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-table',
     icon: 'iconfont icon-table',
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -120,6 +135,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     icon: 'iconfont icon-miwen',
     isNew: true,
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -128,6 +144,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     icon: 'iconfont icon-daibanshixiang',
     isNew: true,
     category: ComponentCategory.normal,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
 
@@ -139,7 +156,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     icon: 'iconfont icon-wuxupailie',
     category: ComponentCategory.layout,
     isNew: true,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
+    appType: [AppType.questionnaire],
   },
   // {
   //   title: '中心布局',
@@ -155,7 +172,15 @@ export let menuComponentItems: ToolComponentItem[] = [
     icon: 'iconfont icon-wuxupailie',
     category: ComponentCategory.layout,
     isNew: true,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
+    appType: [AppType.questionnaire],
+  },
+  {
+    title: '画布',
+    name: 'q-canvas',
+    icon: 'iconfont icon-edit',
+    category: ComponentCategory.layout,
+    isNew: true,
+    appType: [AppType.questionnaire],
   },
 
   // 附加内容
@@ -165,6 +190,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-page-split',
     icon: 'iconfont icon-timeline2',
     category: ComponentCategory.attachment,
+    appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
   {
@@ -172,56 +198,30 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-text',
     icon: 'iconfont icon-font',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '图片',
     name: 'q-image',
     icon: 'iconfont icon-picture',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '音频',
     name: 'q-audio',
     icon: 'iconfont icon-guize1',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
     title: '视频',
     name: 'q-video',
     icon: 'iconfont icon-video',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage, PageType.startPage, PageType.endPage],
   },
   {
-    title: '柱状图',
-    name: 'q-chart-bar',
-    icon: 'iconfont icon-chart-bar',
+    title: '网页',
+    name: 'q-iframe',
+    icon: 'iconfont icon-picture',
     category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
-  {
-    title: '折线图',
-    name: 'q-chart-line',
-    icon: 'iconfont icon-chart-line',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
-  {
-    title: '饼图',
-    name: 'q-chart-pie',
-    icon: 'iconfont icon-chart-pie',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.normalPage],
-  },
-  {
-    title: '完成得分',
-    name: 'q-complete-score',
-    icon: 'iconfont icon-stars',
-    category: ComponentCategory.attachment,
-    pageType: [PageType.endPage],
   },
 
   {
@@ -237,36 +237,6 @@ export let menuComponentItems: ToolComponentItem[] = [
       ],
     },
     pageType: [PageType.normalPage],
-  },
-  {
-    title: '步骤条',
-    name: 'q-anx-stepper',
-    icon: 'iconfont icon-lianjieliu',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '仪表盘',
-    name: 'q-anx-practise-score',
-    icon: 'iconfont icon-dashboard',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '翻页按钮',
-    name: 'q-anx-compelete-button',
-    icon: 'iconfont icon-change',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '视频播放器',
-    name: 'q-anx-video',
-    icon: 'iconfont icon-video',
-    category: ComponentCategory.special,
-  },
-  {
-    title: '音频播放器',
-    name: 'q-anx-audio',
-    icon: 'iconfont icon-rentijiance',
-    category: ComponentCategory.special,
   },
 ];
 

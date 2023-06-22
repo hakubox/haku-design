@@ -7,7 +7,7 @@
         minHeight: minHeight,
       }"
     >
-      <span class="q-blank-description" v-if="description">{{ description }}</span>
+      <span v-if="description" class="q-blank-description">{{ description }}</span>
     </span>
   </Tooltip>
 </template>

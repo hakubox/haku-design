@@ -18,12 +18,11 @@
 
 <script lang="ts" setup>
 import { createModelId, throttle, timeout } from '@/tools/common';
-import { onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
+import { onBeforeUnmount, onMounted, onUnmounted, PropType, reactive, ref, shallowRef, toRefs, watch } from 'vue';
 import { state as formulaState } from '../../';
 import { getDefaultVariables, getVariableDataSource } from '@/modules/variable-module';
-import { state as editorState } from '@/modules/editor-module';
 import { Tooltip } from 'ant-design-vue';
-// import monaco from 'monaco-editor';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 /** LibModel */
 let libModel = undefined as any;
@@ -64,7 +63,7 @@ const emit = defineEmits<{
   (eventName: 'focus'): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   defaultOptions: {
     wordWrap: 'off', //控制如何换行
     automaticLayout: true,
@@ -85,26 +84,26 @@ const containerRef = ref(null);
 let _subscription: any;
 
 onMounted(() => {
-  let _options = {
+  const _options = {
     ...state.defaultOptions,
     ...props.options,
     theme: props.theme,
     language: 'typescript',
     fontFamily: 'Courier New',
-    wordWrap: 'off',
-    lineNumbers: 'off',
-    selectOnLineNumbers: 'off',
     lineNumbersMinChars: 1,
     minimap: {
       enabled: false // 是否启用预览图
     },
-    renderLineHighlight: 'none',
     contextmenu: false,
   };
 
   const editor = editorRef.value = monaco.editor.create(containerRef.value!, {
-    value: props.value.value,
+    value: props.value?.value,
     ..._options,
+    wordWrap: 'off',
+    lineNumbers: 'off',
+    selectOnLineNumbers: false,
+    renderLineHighlight: 'none',
     scrollbar: {
       useShadows: false,
       vertical: 'hidden',
@@ -193,16 +192,13 @@ declare const ${i.name} = (${i.params.map(p => `${p.isExtend ? '...' : ''}${p.na
     libModel = monaco.editor.createModel(libSource, 'typescript', monaco.Uri.parse(libUri));
   }, 100);
 }
-  
-editorState.bus.$on('update-variable', () => {
-  refreshLibSource();
-});
 
 /** 初始化 */
 const init = () => {
   refreshLibSource();
 
   monaco.languages.registerHoverProvider('typescript', {
+    // @ts-ignore
     provideHover(model, position) {
       return timeout(0).then(() => {
         let hoverStr = ``;
@@ -235,28 +231,33 @@ const init = () => {
   formulaState.initFormulaComponent = true;
 };
 
-monaco.editor.defineTheme('gj-dark', {
-  base: 'vs',
-  inherit: true,
-  rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-  colors: {
-  }
+onMounted(() => {
+  
+  bus.$on(GlobalBusType.updateVariable, refreshLibSource);
+  
+  monaco.editor.defineTheme('gj-dark', {
+    base: 'vs',
+    inherit: true,
+    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+    colors: {
+    }
+  });
+
+  // validation settings
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: true,
+    noSyntaxValidation: false,
+  });
+
+  // compiler options
+  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+    target: monaco.languages.typescript.ScriptTarget.ESNext,
+    allowNonTsExtensions: true,
+  });
 });
 
-// validation settings
-monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-  noSemanticValidation: true,
-  noSyntaxValidation: false,
-});
-
-// compiler options
-monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-  target: monaco.languages.typescript.ScriptTarget.ESNext,
-  allowNonTsExtensions: true,
-});
-
-
-onBeforeUnmount(() => {
+onUnmounted(() => {
+  bus.$off(GlobalBusType.updateVariable, refreshLibSource);
   destory();
 });
 </script>
@@ -327,6 +328,8 @@ onBeforeUnmount(() => {
 
     :deep(.monaco-editor-background) {
       background-color: transparent;
+      // width: 100% !important;
+      // height: 100% !important;
     }
   }
 

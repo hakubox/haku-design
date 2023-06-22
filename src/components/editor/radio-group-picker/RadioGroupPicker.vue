@@ -1,7 +1,13 @@
 <template>
-  <div class="radio-group-picker">
-    <RadioGroup v-model:value="state.inputValue" :size="($attrs.size as any)" :buttonStyle="($attrs.buttonStyle as any)" @change="onChange">
-      <RadioButton v-for="item in ($attrs.options as any[])" :key="item.value" :value="item.value">{{
+  <div>
+    <RadioGroup
+      class="radio-group-picker"
+      v-model:value="state.inputValue"
+      :size="props.size"
+      :buttonStyle="props.buttonStyle"
+      @change="onChange"
+    >
+      <RadioButton v-for="item in props.options" :key="item.value" :value="item.value">{{
         item.label
       }}</RadioButton>
     </RadioGroup>
@@ -10,7 +16,7 @@
 
 <script lang="ts" setup>
 import { RadioButton, RadioGroup } from 'ant-design-vue';
-import { onMounted, reactive, watch } from 'vue';
+import { PropType, onMounted, reactive, watch } from 'vue';
 
 const props = defineProps({
   value: {
@@ -21,6 +27,18 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  size: {
+    type: String,
+    default: 'small'
+  },
+  buttonStyle: {
+    type: String,
+    default: 'solid'
+  },
+  options: {
+    type: Array as PropType<{ label: string, value: string }[]>,
+    default: () => []
+  }
 });
 
 const emit = defineEmits<{
@@ -28,7 +46,7 @@ const emit = defineEmits<{
   (event: 'change', val: string): void;
 }>();
 
-let state = reactive({
+const state = reactive({
   inputValue: '',
 });
 
@@ -50,8 +68,15 @@ watch(() => props.value, (val, oldVal) => {
 </script>
 
 <style lang="less" scoped>
-@import '/src/assets/less/variable.less';
-
 .radio-group-picker {
+  vertical-align: middle;
+  margin-top: -3px;
+
+  > .ant-radio-group-solid {
+    > .ant-radio-button-wrapper-checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+  }
 }
 </style>

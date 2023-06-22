@@ -1,19 +1,24 @@
 <template>
-  <div>
+  <Switch
+    v-if="!attrs.confirm"
+    class="switch-editor"
+    :checked="value"
+    :checkedChildren="checkedChildren"
+    :unCheckedChildren="unCheckedChildren"
+    @change="change"
+  />
+  <Popconfirm v-else placement="topRight" @confirm="change(!value)">
+    <template #title>
+      <p>{{ typeof attrs.confirm === 'function' ? (attrs.confirm as Function)(value) : attrs.confirm }}</p>
+    </template>
     <Switch
-      v-if="!attrs.confirm"
+      class="switch-editor"
       :checked="value"
       :checkedChildren="checkedChildren"
       :unCheckedChildren="unCheckedChildren"
       @change="change"
     />
-    <Popconfirm v-else placement="topRight" @confirm="change(!value)">
-      <template #title>
-        <p>{{ typeof attrs.confirm === 'function' ? (attrs.confirm as Function)(value) : attrs.confirm }}</p>
-      </template>
-      <Switch checkedChildren="开" unCheckedChildren="关" :checked="value" />
-    </Popconfirm>
-  </div>
+  </Popconfirm>
 </template>
 
 <script lang="ts" setup>
@@ -52,4 +57,11 @@ const change = (val) => {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.switch-editor {
+
+  &.ant-switch-checked {
+    background-color: var(--primary-color);
+  }
+}
+</style>

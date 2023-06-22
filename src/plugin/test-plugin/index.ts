@@ -1,5 +1,5 @@
 import { state as editorState } from '@/modules/editor-module';
-import { VNode, h, render } from 'vue';
+import { App, VNode, h, render } from 'vue';
 import { PluginType, registerPlugin } from '@/modules/plugin-module';
 import TestPlugin from './TestPlugin.vue';
 
@@ -14,9 +14,15 @@ export function registerTestPlugin() {
     pluginType: PluginType.basicPlugin,
     async onloadApp() {
       const _container: HTMLDivElement = document.createElement('div');
-      let _component: VNode = h(TestPlugin, {});
+      const _component: VNode = h(TestPlugin, {});
       render(_component, _container);
       editorState.canvasPanelEl.appendChild(_container);
     },
   });
+}
+
+export default {
+  install(app: App) {
+    registerTestPlugin();
+  }
 }

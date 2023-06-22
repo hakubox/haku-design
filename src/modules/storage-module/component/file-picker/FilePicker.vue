@@ -20,76 +20,71 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { reactive } from 'vue';
 import { state as storageState, service as storageService } from '../../index';
-import { defineComponent, reactive } from 'vue';
 import fileDialog from '../file-dialog';
 import { Tag, Tooltip } from 'ant-design-vue';
 
-export default defineComponent({
-  props: {
-    /** 文件Id（多个时用逗号隔开） */
-    value: {
-      type: String,
-      default: "",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-    /** 是否允许选择多个文件 */
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
+const props = defineProps({
+  /** 文件Id（多个时用逗号隔开） */
+  value: {
+    type: String,
+    default: "",
   },
-  methods: {
-    /** 改变值 */
-    change() {
-        this.$emit("change", this.value);
-    },
-    /** 打开文件选择器 */
-    openFileDialog() {
-      const prevFiles = !this.value ? [] : (("" + this.value).split(",") as string[]);
-      fileDialog.open({
-        canSelectFile: true,
-        allowMultiSelect: true,
-        onConfirm: (files) => {
-          files.forEach((file) => {
-            const _file = {
-              ...file,
-              id: "" + file.id,
-            };
-            const _index = this.storageState.fileList.findIndex((i) => i.id === _file.id);
-            if (_index >= 0 && prevFiles.includes(_file.id)) {
-              this.storageState.fileList.splice(_index, 1);
-            }
-            else if (_index < 0 && !prevFiles.includes(_file.id)) {
-              this.storageState.fileList.push(_file);
-            }
-          });
-          if (this.multiple) {
-            this.$emit("change", files.map((i) => "" + i.id).join(","));
-          }
-          else {
-            this.$emit("change", "" + files[0].id);
-          }
-        },
-      });
-    },
+  placeholder: {
+    type: String,
+    default: "",
   },
-  setup() {
-    const state = reactive({
-      files: [] as string[],
-    });
-    return {
-      state,
-      storageState,
-      storageService,
-    };
+  /** 是否允许选择多个文件 */
+  multiple: {
+    type: Boolean,
+    default: false,
   },
-  components: { Tooltip, Tag }
 });
+
+const state = reactive({
+  files: [] as string[],
+});
+
+const emit = defineEmits<{
+  (event: 'change', value: string): void;
+}>();
+
+/** 改变值 */
+const change = () => {
+  emit("change", props.value);
+};
+
+/** 打开文件选择器 */
+const openFileDialog = () => {
+  const prevFiles = !props.value ? [] : (("" + props.value).split(",") as string[]);
+  fileDialog.open({
+    canSelectFile: true,
+    allowMultiSelect: true,
+    onConfirm: (files) => {
+      files.forEach((file) => {
+        const _file = {
+          ...file,
+          id: "" + file.id,
+        };
+        const _index = storageState.fileList.findIndex((i) => i.id === _file.id);
+        if (_index >= 0 && prevFiles.includes(_file.id)) {
+          storageState.fileList.splice(_index, 1);
+        }
+        else if (_index < 0 && !prevFiles.includes(_file.id)) {
+          storageState.fileList.push(_file);
+        }
+      });
+      if (props.multiple) {
+        emit("change", files.map((i) => "" + i.id).join(","));
+      }
+      else {
+        emit("change", "" + files[0].id);
+      }
+    },
+  });
+};
 </script>
 
 <style lang="less" scoped>

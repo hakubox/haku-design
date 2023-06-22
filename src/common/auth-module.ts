@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/common/auth';
+import { logout, getInfo, getToken } from '@/api/auth';
 import { reactive } from 'vue';
 import { removeToken, setToken } from '@/lib/api';
 import { toast } from './message';
@@ -68,14 +68,12 @@ export const service = {
     const username = userInfo.username.trim();
     const { password, code } = userInfo;
     return new Promise((resolve, reject) => {
-      login(username, password, code)
-        .then((data) => {
-          setToken(data.token);
-          resolve();
-        })
-        .catch((error) => {
-          reject(error);
-        });
+      getToken(username, password).then((data) => {
+        setToken(data.token);
+        resolve();
+      }).catch((error) => {
+        reject(error);
+      });
     });
   },
   /** 获取当前用户信息 */

@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-number"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
@@ -14,18 +14,17 @@
       :change="props.value"
       @change="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
+import { PropType, reactive } from 'vue';
 import { Stepper } from 'vant';
 import { getQBasicProps } from '@/tools/common';
-import { PropType, reactive, ref, toRefs } from 'vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

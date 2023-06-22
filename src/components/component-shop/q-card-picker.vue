@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-card-picker"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
@@ -53,21 +53,19 @@
         <span class="add-text">添加</span>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    inheritAttrs: false,
-    components: { Icon }
-};
-</script>
 <script lang="ts" setup>
-import { nextTick, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { onMounted, PropType, reactive, watch } from 'vue';
 import SimpleEditor from '@/components/editor/simple-editor/SimpleEditor.vue';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';
 import { Icon } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

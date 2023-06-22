@@ -1,4 +1,4 @@
-import type { FileListResponse, StorageFileInfo } from './@types';
+import type { FileListResponse, StorageFileInfo } from './index.d';
 import { FileType, getFileType } from './tools/fileTypeHandler';
 import dayjs from 'dayjs';
 

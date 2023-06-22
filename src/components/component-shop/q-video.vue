@@ -1,18 +1,15 @@
 <template>
-  <span v-if="!$attrs.isPreview && props.isBackground" class="video-tooltip">当前为背景视频模式</span>
-  <q-basic
+  <ComponentBasic
     class="component-video"
-    :class="{ 'full-screen-video': props.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="!$attrs.showLabel || props.isBackground ? '' : $attrs.label"
-    v-else
+    :component-label="!$attrs.showLabel ? '' : $attrs.label"
   >
     <div
-      v-if="props.isBackground"
       class="full-screen-video-mask"
       :style="{ backgroundColor: $attrs.maskColor as string }"
     ></div>
     <video
+      ref="video"
       :src="($attrs.src as string)"
       :autoplay="($attrs.isPreview as boolean && $attrs.autoplay as boolean)"
       :poster="($attrs.poster as string)"
@@ -22,68 +19,77 @@
       :controls="($attrs.controls as boolean)"
       style="width: 100%"
       :style="{
-        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
+        objectFit: props.fillType,
+        borderRadius: props.borderRadius + 'px',
+        filter: `blur(${props.blur}px)`,
+        opacity: props.opacity / 100
       }"
-      ref="video"
     >
       您的浏览器不支持视频元素
     </video>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 
+defineOptions({
+  inheritAttrs: false
+});
+
 const props = defineProps({
-  /** 是否为背景视频 */
-  isBackground: {
-    type: Boolean,
-    required: true,
-  },
   /** 记住播放位置 */
   rememberPosition: {
     type: Boolean,
     default: true,
   },
+  /** 内边距 */
+  padding: {
+    type: Array as PropType<number[]>,
+    default: () => [15, 15, 15, 15],
+  },
+  /** 填充方式 */
+  fillType: {
+    type: String as PropType<'contain' | 'cover' | 'fill' | 'none' | 'scale-down'>,
+    default: 'contain'
+  },
+  /** 圆角 */
+  borderRadius: {
+    type: Number,
+    default: 0,
+  },
+  /** 透明度 */
+  opacity: {
+    type: Number,
+    default: 100
+  },
+  /** 模糊 */
+  blur: {
+    type: Number,
+    default: 0,
+  },
+  /** 高度 */
+  height: {
+    type: Number,
+    default: 200,
+  },
 });
 
-const state = reactive({
-});
+const state = reactive({});
 </script>
 
 <style lang="less" scoped>
 .component-video {
   padding: 5px;
-
-  &.full-screen-video {
-    position: relative;
-
-    > .full-screen-video-mask {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    > video {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-    }
-  }
+  width: 100%;
+  height: 100%;
 
   video {
     object-fit: cover;
+    width: 100%;
+    height: 100%;
+    
     &.hidden {
       height: 2px;
     }

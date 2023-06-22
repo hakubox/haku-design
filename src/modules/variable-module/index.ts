@@ -1,12 +1,14 @@
 import { state as formFillState } from '@/modules/form-fill-module';
 import { state as editorState } from '@/modules/editor-module';
-import { state as dataSourceState } from '@/modules/data-source-module';
+import { state as dataSourceState, DataSourceType } from '@/modules/data-source-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { createModelId, timeFormat } from '@/tools/common';
-import type { VariableTreeNode, VariableType } from './@types';
+import type { VariableTreeNode, VariableType } from './index.d';
 import { cloneForce } from '@/lib/clone';
-import { DataSourceType } from '../data-source-module/enum';
-import { computed, reactive, toRefs } from 'vue';
+import { computed, reactive } from 'vue';
+import bus, { GlobalBusType } from '@/tools/bus';
+
+export * from './index.d';
 
 /** 获取变量数据源下拉项 */
 export const getVariableDataSource = (): VariableTreeNode[] => {
@@ -31,7 +33,7 @@ export const getValueType = (type: VariableType) => {
 
 /** 默认变量 */
 export const getDefaultVariables = () => [
-  editorState.appConfig.hasScore ? {
+  editorState.appConfig.questionnaireConfig.hasScore ? {
     title: '评价',
     name: 'getRating',
     type: 'object',
@@ -41,17 +43,17 @@ export const getDefaultVariables = () => [
       { title: '评价详情', name: 'description', type: 'string' },
     ],
   } : undefined,
-  editorState.appConfig.hasScore ? {
+  editorState.appConfig.questionnaireConfig.hasScore ? {
     title: '总分',
     name: 'totalScore',
     type: 'number'
   } : undefined,
-  editorState.appConfig.turnPageMode !== 'no-page' ? {
+  editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' ? {
     title: '当前表单页数',
     name: 'formPageIndex',
     type: 'number',
   } : undefined,
-  editorState.appConfig.timerConfig?.isOpen ? {
+  editorState.appConfig.questionnaireConfig.timerConfig?.isOpen ? {
     title: '记时信息',
     name: 'timerInfo',
     type: 'object',
@@ -101,7 +103,7 @@ export const state = reactive({
 export const service = {
   /** 更新变量 */
   updateVariable() {
-    editorState.bus.$emit('update-variable');
+    bus.$emit(GlobalBusType.updateVariable);
   },
   /** 获取系统变量Map */
   getSystemVariableMap() {

@@ -1,7 +1,9 @@
-import type { Formula, AddFormula, FormulaParam } from './@types';
+import type { Formula, AddFormula, FormulaParam } from './index.d';
 import { formulas } from './data/formula';
 import { service as variableService } from '@/modules/variable-module';
 import { reactive } from 'vue';
+
+export * from './index.d';
 
 /** 公式模块状态 */
 export const state = reactive({
@@ -10,12 +12,6 @@ export const state = reactive({
   /** 公式列表 */
   formulaList: formulas as Formula[],
 });
-
-/** 新增公式 */
-export const addFormula: AddFormula = (formula) => {
-  state.formulaList.push(formula);
-  return formula;
-};
 
 /** 公式模块逻辑 */
 export const service = {
@@ -49,5 +45,8 @@ export const service = {
 
 export default {
   state,
-  service
+  service,
+  install() {
+    
+  }
 }

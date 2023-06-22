@@ -5,7 +5,6 @@
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
 import { onBeforeMount, onBeforeUnmount, onMounted, PropType, reactive, ref, shallowRef, useAttrs, watch } from 'vue';
-import * as monaco from 'monaco-editor';
 
 const props = defineProps({
   value: {
@@ -74,33 +73,6 @@ const editorRef = shallowRef();
 const containerRef = ref<HTMLElement>();
 let _subscription: any;
 
-onMounted(()=>{
-  let _options = {
-    ...state.defaultOptions,
-    ...props.options,
-    theme: props.theme,
-    language: props.language,
-    fontFamily: 'Courier New',
-    wordWrap: 'on',
-    minimap: {
-      enabled: false // 是否启用预览图
-    },
-  };
-
-  const editor = editorRef.value = monaco.editor.create(containerRef.value!, {
-    value: props.value,
-    ..._options,
-  } as monaco.editor.IStandaloneEditorConstructionOptions);
-  editor.onDidFocusEditorText(() => {
-    emit('focus');
-  });
-  _subscription = editor.onDidChangeModelContent(throttle((event) => {
-    if (!state.preventTriggerChangeEvent) {
-      emit('change', editor.getValue(), event);
-    }
-  }));
-})
-
 /** 获取值 */
 const getValue = () => {
   const editor = editorRef.value;
@@ -124,15 +96,42 @@ watch(() => props.value, (count, prevCount) => {
   }
 });
 
-onBeforeMount(() => {
-  if (props.isExpression) {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {}
-    });
+onMounted(()=>{
+  const _options = {
+    ...state.defaultOptions,
+    ...props.options,
+    theme: props.theme,
+    language: props.language,
+    fontFamily: 'Courier New',
+    wordWrap: 'on',
+    minimap: {
+      enabled: false // 是否启用预览图
+    },
+  };
 
+  const editor = editorRef.value = monaco.editor.create(containerRef.value!, {
+    value: props.value,
+    ..._options,
+  });
+  editor.onDidFocusEditorText(() => {
+    emit('focus');
+  });
+  _subscription = editor.onDidChangeModelContent(throttle((event) => {
+    if (!state.preventTriggerChangeEvent) {
+      emit('change', editor.getValue(), event);
+    }
+  }));
+});
+
+onBeforeMount(() => {
+  monaco.editor.defineTheme(props.theme, {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
+    colors: {}
+  });
+
+  if (props.isExpression) {
     // validation settings
     monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: true,
@@ -145,13 +144,6 @@ onBeforeMount(() => {
       allowNonTsExtensions: true,
     });
   } else {
-    monaco.editor.defineTheme('gj-dark', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [{ token: 'custom-variable', foreground: 'ffa500', fontStyle: 'underline' }],
-      colors: {}
-    });
-
     const _languages = monaco.languages.getLanguages().map((i) => i.id);
     if (!_languages.includes(props.language)) {
       switch (props.language) {

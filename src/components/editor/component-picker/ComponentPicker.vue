@@ -72,7 +72,7 @@ const componentList = computed(() => {
       })
       .map((i) => ({
         value: i.attrs.id,
-        label: i.attrs.name || i.title,
+        label: i.attrs.name || (i.isGroup ? i.label : i.title),
         icon: editorState.menuComponents.find(o => o.name === i.name)?.icon ?? '',
       })),
   })) ?? [];
@@ -100,7 +100,7 @@ const componentMouseEnter = (componentId: string) => {
   if (domCache[componentId]) {
     _dom = domCache[componentId];
   } else {
-    _dom = document.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
+    _dom = editorState.canvasEl.querySelector(`.design-form-canvas-page.app-canvas [component-id="${componentId}"]`);
     domCache[componentId] = _dom;
   }
   if (_dom) {
@@ -109,7 +109,7 @@ const componentMouseEnter = (componentId: string) => {
 };
 
 const componentMouseOut = () => {
-  const _domList = Array.from(document.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
+  const _domList = Array.from(editorState.canvasEl.querySelectorAll(`.design-form-canvas-page.app-canvas [component-id].highlight`));
   domCache = {};
   if (_domList?.length) _domList.forEach(i => {
     i.classList.remove('highlight');

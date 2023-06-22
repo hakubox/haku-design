@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, watch, onUnmounted } from "vue";
-import bus from '@/tools/bus';
+import bus, { GlobalBusType } from '@/tools/bus';
 import { Modal } from 'ant-design-vue';
 import VariablePicker from '@/components/editor/variable-picker/VariablePicker.vue';
 
@@ -45,12 +45,12 @@ const onClose = () => {
 };
 
 const onSubmit = () => {
-  bus.$emit('variable-picker-select', state.value);
+  bus.$emit(GlobalBusType.variablePickerSelect, state.value);
   state.visible = false;
   variableModal.value?.unmounted?.();
 }
 
-bus.$on('variable-picker-show', (val) => {
+bus.$on(GlobalBusType.variablePickerShow, (val) => {
   state.visible = val ?? true;
 });
 

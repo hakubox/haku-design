@@ -20,12 +20,12 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
-import { getQuestionary } from '@/api/common/questionnaire';
+import { getQuestionary } from '@/api/questionnaire';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as scoringState } from '@/modules/scoring-module';
 import DesignCanvas from "../components/module/DesignCanvas.vue";
 import { useRoute } from 'vue-router';
-import { Dialog, Empty, Loading, Toast } from 'vant';
+import { Empty, Loading, Toast, showDialog } from 'vant';
 
 const _designCanvas = ref<typeof DesignCanvas>(DesignCanvas);
 
@@ -57,7 +57,7 @@ onMounted(() => {
         editorService.loadAppBody(questionary.id + '', questionary.content, true);
       }
     }).catch(err => {
-      Dialog({
+      showDialog({
         title: '查询问卷失败',
         message: err.message
       });

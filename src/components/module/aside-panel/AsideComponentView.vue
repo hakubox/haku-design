@@ -25,7 +25,7 @@
       <ul>
         <AsideComponentChildView
           v-for="(item, index) in page.children"
-          :key="index"
+          :key="item.id"
           :component="item"
           :pageIndex="pageIndex"
           :labelType="state.labelType"

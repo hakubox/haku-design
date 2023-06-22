@@ -35,11 +35,9 @@
 <script lang="ts" setup>
 import { computed, PropType, reactive, ref, toRaw } from 'vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { Component } from '@/@types/component';
-import { AppEvent, AppEventAction, AppEventTrigger } from '@/modules/event-module/@types';
+import { state as eventState, service as eventService, AppEvent } from '@/modules/event-module';
+import { Component } from '@haku-design/core';
 import { createModelId } from '@/tools/common';
-import EventFormatPreview from './EventFormatPreview.vue';
 import EventEditor from './EventEditor.vue';
 import EventItem from './EventItem.vue';
 import { Button, Empty } from 'ant-design-vue';
@@ -90,7 +88,7 @@ const eventShowListener = (event, eventMap, component?: Component) => {
 /** 属性修改触发的事件 */
 const eventChangeListener = (e, event, eventMap, component?: Component) => {
   if (event) {
-    let a = {} as any;
+    const a = {} as any;
     // let _value = e.target ? e.target.value : e;
     // component.eventAttrs[event.name] = _value;
     // if (event?.change) {
@@ -116,7 +114,7 @@ const editEvent = (event: AppEvent) => {
 };
 /** 移除事件 */
 const removeEvent = (event: AppEvent) => {
-  let _index = eventState.allEvents.findIndex((i) => i.id == event.id);
+  const _index = eventState.allEvents.findIndex((i) => i.id == event.id);
   eventState.allEvents.splice(_index, 1);
 };
 /** 移除事件触发 */

@@ -3,39 +3,35 @@
     class="form-canvas"
     :class="{
       preview: props.isPreview,
-      pc: editorState.appConfig.deviceType == 'pc',
-      mobile: editorState.appConfig.deviceType == 'mobile',
+      pc: editorState.appConfig.designConfig.deviceType == 'pc',
+      mobile: editorState.appConfig.designConfig.deviceType == 'mobile',
     }"
     ref="formCanvas"
   >
-    <!-- 全屏区域 -->
-    <div class="form-canvas-full-screen-panel" v-if="props.isPreview">
-      <FormDesignComponent
-        v-for="(component, index) in editorState.currentPage.children.filter(
-          (i) => i.attrs.isFullScreen && i.attrs.visible !== false,
-        )"
-        v-show="!isPreview"
-        :component-id="component.id"
-        :isPreview="props.isPreview"
-        :dragConfig="dragConfig"
-        :children="component.children"
-        :component="component"
-        :key="index"
-        :index="index"
-        :isFullScreen="props.isPreview ? true : false"
+    <!-- 背景 -->
+    <template v-if="editorState.appConfig.background?.length">
+      <div
+        class="app-canvas-bg-panel"
+        :style="[item.parentStyle, {
+          opacity: item.opacity,
+          mixBlendMode: item.blendType
+        }]"
+        v-for="item in editorState.appConfig.background.filter(i => i.show)"
       >
-        {{ component }}
-      </FormDesignComponent>
-    </div>
-
+        <div
+          class="app-canvas-bg-panel-layer"
+          :style="item.innerStyle"
+        ></div>
+      </div>
+    </template>
     <div class="form-canvas-body">
       <div
         style="padding-top: 7px"
         v-if="
-          editorState.appConfig.showPageProgress &&
-          editorState.currentPage.pageType === 'normal-page' &&
+          editorState.appConfig.questionnaireConfig.showPageProgress &&
+          currentPage.pageType === 'normal-page' &&
           props.isPreview &&
-          editorState.appConfig.turnPageMode !== 'no-page' &&
+          editorState.appConfig.questionnaireConfig.turnPageMode !== 'no-page' &&
           editorState.maxFormPageCount > 1
         "
       >
@@ -46,111 +42,90 @@
         />
       </div>
 
-      <!-- 置顶区域 -->
-      <div class="form-canvas-is-top-panel" v-if="props.isPreview">
-        <FormDesignComponent
-          v-for="(component, index) in editorState.currentPage.children.filter(
-            (i) => i.attrs.isTop && i.attrs.visible !== false,
-          )"
-          :component-id="component.id"
-          :isPreview="props.isPreview"
-          :dragConfig="dragConfig"
-          :children="component.children"
-          :component="component"
-          :key="index"
-          :index="index"
-          :isFullScreen="false"
-        >
-          {{ component }}
-        </FormDesignComponent>
-      </div>
-
       <div
         ref="form-canvas-mainpanel"
         class="form-canvas-mainpanel"
-        :class="{ readonly: props.isReadonly, printmode: props.isPrint }"
-        :style="{ minHeight: props.isPreview ? 'initial' : editorState.appConfig.deviceType == 'pc' ? '700px' : '687px' }"
+        :class="{
+          'type-flex': editorState.appConfig.appType === AppType.questionnaire,
+          'type-canvas': editorState.appConfig.appType === AppType.canvas,
+          readonly: props.isReadonly,
+          printmode: props.isPrint
+        }"
+        :style="{ height: '100%', minHeight: props.isPreview ? 'initial' : editorState.appConfig.designConfig.deviceType == 'pc' ? '700px' : '687px' }"
       >
+        <CanvasNodeActionEditor :global="true" :disabledRotate="true"
+          v-if="editorState.appConfig.appType === AppType.canvas && !isPreview && editorState.currentSelectedComponents.length > 1"
+          :components="editorState.currentSelectedComponents"
+          :show="editorState.currentSelectedComponents.length > 1"
+        />
+
         <FormDesignComponent
-          v-for="(component, index) in editorState.currentPage.children.filter(
-            (i) => !props.isPreview || (props.isPreview && !i.attrs.isTop && i.attrs.visible !== false),
+          v-for="(component, index) in currentPage.children.filter(
+            (i) => !props.isPreview || (props.isPreview && i.attrs.visible !== false),
           )"
-          v-show="!props.isPreview || editorService.showComponentInFormPage(component.id)"
+          v-show="!props.isPreview || editorService.showComponentInFormPage(component.id, props.pageIndex)"
           :component-id="component.id"
           :isPreview="props.isPreview"
           :class="{
-            'form-component-layout': ['complex', 'layout'].includes(component.type),
+            'form-component-layout': ['complex', 'layout'].includes(!component.isGroup ? component.type : '-'),
             active:
               !props.isPreview &&
-              editorState.currentSelectedComponent &&
-              editorState.currentSelectedComponent.id == component.id,
-            'is-drag': dragConfig && dragConfig.targetFormComponentId == component.id,
+              editorState.currentSelectedComponents.find(i => i.id === component.id),
+              'is-drag': dragConfig && dragConfig.targetFormComponentId == component.id,
           }"
           :dragConfig="dragConfig"
           :children="component.children"
           :component="component"
           :key="index"
           :index="index"
-          :isFullScreen="false"
         >
           {{ component }}
         </FormDesignComponent>
-        <!-- <template v-if="isPreview">
-          <component
-            :is="component.component"
-            v-for="(component, index) in editorState.children"
-            :component-id="component.id"
-            :key="'hidden_' + index"
-          />
-        </template> -->
       </div>
 
       <div
         v-if="
           props.isPreview &&
           showButton &&
-          editorState.appConfig?.showPageButton !== false &&
-          editorState.currentPage.pageType === 'normal-page'
+          editorState.appConfig.appType === AppType.questionnaire &&
+          editorState.appConfig.questionnaireConfig.showPageButton !== false &&
+          currentPage.pageType === 'normal-page'
         "
         class="fixed-bottom"
       >
-        <div class="fixed-bottom-content" v-if="editorState.appConfig.turnPageMode">
+        <div class="fixed-bottom-content" v-if="editorState.appConfig.questionnaireConfig.turnPageMode">
           <Button
             v-if="editorState.currentFormPageIndex > 0"
             block
             type="default"
             size="large"
             @click="editorService.prevPage()"
-            >上一页</Button
-          >
+          >上一页</Button>
           <Button
             v-if="editorState.currentFormPageIndex < editorState.maxFormPageCount - 1"
             block
             type="primary"
             size="large"
             @click="editorService.nextPage()"
-            >下一页</Button
-          >
+          >下一页</Button>
           <Button
             v-if="editorState.currentFormPageIndex == editorState.maxFormPageCount - 1"
             block
             type="primary"
             size="large"
             @click="submitForm()"
-            >{{ editorState.appConfig.footer.submitButtonText }}</Button
-          >
+          >{{ editorState.appConfig.questionnaireConfig.footer.submitButtonText }}</Button>
         </div>
         <div class="fixed-bottom-content" v-else>
           <Button
             block
-            v-if="editorState.appConfig.footer.resetButton"
+            v-if="editorState.appConfig.questionnaireConfig.footer.resetButton"
             type="default"
             size="large"
             @click="resetForm()"
-            >{{ editorState.appConfig.footer.resetButtonText }}</Button
-          >
+          >{{ editorState.appConfig.questionnaireConfig.footer.resetButtonText }}</Button>
           <Button v-if="props.isPreview" block type="primary" size="large" @click="submitForm()">{{
-            editorState.appConfig.footer.submitButtonText
+            editorState.appConfig.questionnaireConfig.footer.submitButtonText
           }}</Button>
         </div>
       </div>
@@ -159,14 +134,15 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, PropType, onMounted, nextTick, ref, provide } from 'vue';
+import { AppType } from '@haku-design/core';
+import { reactive, PropType, onMounted, nextTick, ref, provide, computed } from 'vue';
 import { Button, Progress } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { DragConfig } from '@/modules/draggable-module/@types';
-import { EventTriggerType } from '@/modules/event-module/enum';
+import { service as eventService, EventTriggerType } from '@/modules/event-module';
+import { service as formFillService } from '@/modules/form-fill-module';
+import { type DragConfig } from '@/modules/draggable-module/index.d';
 import FormDesignComponent from './FormDesignComponent.vue';
+import CanvasNodeActionEditor from '@/components/common/CanvasNodeActionEditor.vue';
 import { toast } from '@/common/message';
 
 const props = defineProps({
@@ -198,12 +174,26 @@ const props = defineProps({
   isPrint: {
     type: Boolean,
     default: false,
+  },
+  /** 默认页面索引 */
+  pageIndex: {
+    type: Number,
   }
 });
 
 const emit = defineEmits<{
   (event: 'refresh'): void;
 }>();
+
+/** 获取当前页面索引 */
+const currentPageIndex = computed(() => {
+  return props.pageIndex ?? editorState.currentPageIndex;
+});
+
+/** 获取当前页面 */
+const currentPage = computed(() => {
+  return editorState.pages[currentPageIndex.value];
+});
 
 const state = reactive({});
 
@@ -248,7 +238,7 @@ onMounted(() => {
   if (editorState.getTimerConfig.isOpen) {
     if (editorState.getTimerConfig.isAutoTiming) formFillService.startTime();
   }
-  if (editorState.appConfig.isInit && editorState.appConfig.id) {
+  if (editorState.appConfig.designConfig.isInit && editorState.appConfig.id) {
     editorService.setOperationRecord();
   }
 });

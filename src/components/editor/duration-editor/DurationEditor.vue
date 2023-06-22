@@ -2,7 +2,14 @@
   <div v-if="props.readonly" class="number-editor-preview editor-preview">
     {{ state.inputValue ?? '——' }}
   </div>
-  <InputNumber v-else class="duration-editor" :size="props.size" v-model:value="state.inputValue" :precision="getPrecision" @change="change">
+  <InputNumber
+    v-else
+    class="duration-editor"
+    :size="props.size"
+    v-model:value="state.inputValue"
+    :precision="getPrecision"
+    @change="change"
+  >
     <template #addonAfter>
       <span v-if="!props?.useUnits?.length">{{ getUnitText(state.unit) }}</span>
       <Dropdown v-else>
@@ -22,7 +29,7 @@
 
 <script lang="ts" setup>
 import { throttle } from '@/tools/common';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Dropdown, InputNumber, Menu, MenuItem } from 'ant-design-vue';
 import { onMounted, PropType, reactive, watch } from 'vue';
 
@@ -41,10 +48,10 @@ const props = defineProps({
     type: String as PropType<'hour' | 'minute' | 'second' | 'millisecond'>,
     default: 'second',
   },
-  /** 毫秒数 */
+  /** 值 */
   value: {
     type: Number as PropType<number | undefined>,
-    required: true,
+    default: 0
   },
   /** 可使用单位列表 */
   useUnits: {
@@ -94,6 +101,8 @@ const getPrecision = computed(() => {
       return 1;
     case 'hour':
       return 2;
+    default:
+      return 0;
   }
 });
 
@@ -157,4 +166,23 @@ onMounted(() => {
 
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+:deep(.duration-editor) {
+
+  &:hover {
+    &:not(.disabled) {
+      border-color: var(--primary-hover-border-color) !important;
+      border-right-width: 1px;
+    }
+  }
+  
+  &.ant-input-number {
+    background-color: var(--editor-bg-color) !important;
+    border: 1px solid var(--editor-bg-color) !important;
+  }
+
+  &:focus-within {
+    box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
+  }
+}
+</style>

@@ -1,22 +1,20 @@
 <template>
-  <q-basic class="component-complete-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })" :componentLabel="''"
+  <ComponentBasic class="component-complete-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })" :componentLabel="''"
     :componentDescription="''">
     <label class="component-complete-score-content" v-html="parseHTML"></label>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch } from 'vue';
+import { useAttrs, reactive } from 'vue';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as scoringService } from '@/modules/scoring-module';
 import { getQBasicProps } from '@/tools/common';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const attrs = useAttrs();
 
@@ -42,11 +40,11 @@ const state = reactive({
 
 const parseHTML = computed(() => {
   const _txt = attrs.text as string;
-  let reg = /\{\{.*?\}\}/g;
+  const reg = /\{\{.*?\}\}/g;
   let match: RegExpExecArray | null = reg.exec(_txt);
   let _index = 0;
-  let _re: string[] = [];
-  let _indexes: number[] = [];
+  const _re: string[] = [];
+  const _indexes: number[] = [];
   while (match) {
     if (!_indexes.includes(match.index)) _indexes.push(match.index);
     _indexes.push(match.index + match.toString().length);

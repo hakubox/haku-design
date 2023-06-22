@@ -1,13 +1,13 @@
 import { createApp } from 'vue';
 import globalStore from '@/common/global';
 import { changeConfig, serverConfig } from './config';
-import App from './App.answer.vue';
-import router from './packages/answer/router';
-import components from '@/packages/answer/common/register-global-components';
+import App from './App.user.vue';
+import router from './packages/user/router';
+import components from '@/packages/user/common/register-global-components';
 
 import '@vant/touch-emulator';
-import 'vant/lib/index.less';
-import '@/packages/answer/assets/less/main.less';
+import 'vant/lib/index.css';
+import '@/packages/user/assets/less/main.less';
 import 'accessible-nprogress/dist/accessible-nprogress.min.css';
 import type { ServerEnvironment } from './@types';
 import dayjs from 'dayjs';
@@ -15,20 +15,24 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 
 import scoringStore from '@/modules/scoring-module';
-import { service as answerScoringService } from './modules/scoring-module';
+import { service as userScoringService } from './modules/scoring-module';
 import authStore from '@/common/auth-module';
-import { service as answerAuthService } from '@/packages/answer/modules/auth-module';
+import { service as userAuthService } from '@/packages/user/modules/auth-module';
 
 import { init as messageInit } from '@/common/message';
 
-import { Toast, Dialog } from 'vant';
+import { showToast, Dialog } from 'vant';
 
-messageInit({ toastModule: Toast, confirmModule: Dialog });
+messageInit({ toastModule: showToast, confirmModule: Dialog });
 
-/** @ts-ignore */
-scoringStore.service = answerScoringService;
-/** @ts-ignore */
-authStore.service = answerAuthService;
+scoringStore.service = {
+  ...scoringStore.service,
+  ...userScoringService
+};
+authStore.service = {
+  ...authStore.service,
+  ...userAuthService
+};
 
 dayjs.locale(zhCN);
 dayjs.extend(relativeTime);
@@ -36,7 +40,7 @@ dayjs.extend(relativeTime);
 window.addEventListener('load', () => {
   if (window.opener) {
     serverConfig.whiteList.forEach(path => {
-      window.opener.postMessage({ msg: '加载完毕' }, path);
+      window.opener.postMessage({ event: 'onload', msg: '加载完毕' }, path);
     });
   }
 });

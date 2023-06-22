@@ -1,18 +1,20 @@
 import { reactive, computed } from 'vue';
-import { PluginInstance, PluginDependency } from './@types';
+import type { PluginInstance, PluginDependency } from './index.d';
 import message from '@/common/message';
 import { PluginType, PluginStatus } from './enum';
 import { compareVersion } from '@/tools/common';
 
-export type { PluginInfo, PluginDependency } from './@types';
-export { PluginType, PluginStatus, PluginLoadType } from './enum';
-export { registerPlugin } from './register-plugin';
-export { registerComponent, registerMenu } from './register-component';
-export { registerEditor } from './register-editor';
-export { registerEventTrigger, registerEventAction } from './register-event';
+export * from './index.d';
+export * from './enum';
+export * from './register-plugin';
+export * from './register-component';
+export * from './register-editor';
+export * from './register-event';
 
 /** 插件模块状态 */
 export const state = reactive({
+  /** 是否初始化 */
+  isInit: false,
   /** 获取插件分类信息 */
   typeCategorys: {
     /** 工具栏组件 */
@@ -179,9 +181,12 @@ export const service = {
   },
   /** APP加载事件 */
   onAppLoad() {
-    state.plugins.forEach(async plugin => {
-      if (plugin.onloadApp) await plugin.onloadApp();
-    });
+    if (!state.isInit) {
+      state.isInit = true;
+      state.plugins.forEach(plugin => {
+        if (plugin.onloadApp) plugin.onloadApp();
+      });
+    }
   },
 };
 
@@ -190,4 +195,8 @@ export default {
   state,
   /** 插件模块逻辑 */
   service,
+
+  install() {
+    service.onInit();
+  }
 };

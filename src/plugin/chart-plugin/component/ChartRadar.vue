@@ -1,0 +1,97 @@
+<template>
+  <ComponentBasic class="component-chart-body component-chart-radar" :show="false" v-bind.prop="getQBasicProps({ ...props, ...$attrs, label: '' })">
+    <BaseECharts :empty="!props.dataSource?.length" ref="chartRef" :height="props.height" :width="props.width"></BaseECharts>
+  </ComponentBasic>
+</template>
+
+<script lang="ts" setup>
+import { onMounted, watch, ref, PropType } from 'vue';
+import { getQBasicProps } from '@/tools/common';
+import type { ECharts } from 'echarts';
+import BaseECharts from './BaseECharts.vue';
+
+defineOptions({
+  inheritAttrs: false
+});
+
+const props = defineProps({
+  dataSource: {
+    type: String,
+    default: () => '',
+  },
+  width: {
+    type: Number,
+    default: 0
+  },
+  height: {
+    type: Number,
+    default: 0
+  },
+  title: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  legend: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  label: {
+    type: Object,
+    default: () => ({ show: false })
+  },
+  radar: {
+    type: Object,
+    default: () => ({})
+  },
+  color: {
+    type: Array as PropType<{ color: string }[]>,
+    default: () => []
+  }
+});
+
+const chartRef = ref<ECharts>();
+
+const getOption = () => {
+  const option = {
+    title: props.title,
+    legend: props.legend,
+    tooltip: {},
+    label: props.label,
+    radar: props.radar,
+    color: props.color.map(i => i.color),
+    series: JSON.parse(props.dataSource ?? []).map(i => ({
+      type: i.type ?? 'radar',
+      name: i.name,
+      data: i.data ?? [],
+      colorBy: i.colorBy
+    }))
+  };
+  return option;
+};
+
+const init = () => {
+  chartRef.value?.setOption(getOption());
+}
+
+const setOption = () => {
+  chartRef.value?.setOption(getOption());
+};
+
+watch([
+  props.title, props.legend, props.label, props.radar, props.color,
+], (val, oldVal) => setOption(), { deep: true });
+watch(() => props.dataSource, (val, oldVal) => {
+  try {
+    JSON.parse(props.dataSource ?? []);
+    setOption();
+  } catch (error) {}
+});
+
+onMounted(() => {
+  init();
+});
+</script>
+
+<style lang="less" scoped>
+@import '../assets/less/index.less';
+</style>

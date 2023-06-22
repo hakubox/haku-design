@@ -1,16 +1,98 @@
-// import { Component } from '@/@types';
 import { cloneLoop } from '@/lib/clone';
-// import * as rasterizeHTML from 'rasterizehtml';
 import { toRaw } from 'vue';
 
 /** QBasic属性名称列表 */
-const QBasicPropNameList: string[] = [ 'id', 'label', 'component', 'description', 'componentLabel', 'componentDescription', 'disabled', 'visible', 'margin', 'required', 'error-txt' ];
+const QBasicPropNameList: string[] = [ 'id', 'label', 'component', 'description', 'componentLabel', 'componentDescription', 'disabled', 'visible', 'padding', 'margin', 'required', 'error-txt' ];
 
-/** 获取QBasic组件的属性 */
+/** 获取基础题库组件的属性 */
 export const getQBasicProps = (props: Record<string, any>) => {
-  const _props = Object.assign({}, ...Object.entries(props).filter(([key, value]) => QBasicPropNameList.includes(key)).map(([key, value]) => ({ [key]: value })) );
+  const _props = {} as Record<string, any>;
+  const _cloneProps = Object.entries(props);
+  for (let i = 0; i < _cloneProps.length; i++) {
+    if (QBasicPropNameList.includes(_cloneProps[i][0])) {
+      const [key, value] = _cloneProps[i];
+      _props[key] = value;
+    }
+  }
   return _props;
 };
+
+/** 根据两个坐标点获取夹角度数 参考：https://blog.csdn.net/qq_34887145/article/details/124584773 */
+export function getAngle({ x: x1, y: y1 }, { x: x2, y: y2 }) {
+  const dot = x1 * x2 + y1 * y2
+  const det = x1 * y2 - y1 * x2
+  const angle = Math.atan2(det, dot) / Math.PI * 180
+  return (angle + 360) % 360
+}
+
+/** 判断两个矩形是否相交 */
+export function intersectsRect(x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) {
+  const maxX = x1+w1 >= x2+w2 ? x1+w1 : x2+w2;
+  const maxY = y1+h1 >= y2+h2 ? y1+h1 : y2+h2;
+  const minX = x1 <= x2 ? x1 : x2;
+  const minY = y1 <= y2 ? y1 : y2;
+ 
+  return maxX - minX <= w1 + w2 && maxY - minY <= h1 + h2;
+}
+
+/** 保留小数位 */
+export function toDecimal(num: number | string, pos: number = 0): number {
+  let re: number;
+  if (typeof num === 'string') {
+    if (num === '') {
+      return 0;
+    } else if (num.includes('.')) {
+      re = parseFloat(num);
+    } else {
+      return parseInt(num);
+    }
+  } else {
+    if (pos === 0) {
+      return Math.round(num);
+    } else if (num.toString().includes('.')) {
+      re = num;
+    } else {
+      return num;
+    }
+  }
+  if (isNaN(re)) {
+    return 0;
+  } else if (pos === 0) {
+    return Math.round(re);
+  } else {
+    return Math.round(re * Math.pow(10, pos)) / Math.pow(10, pos);
+  }
+}
+
+/** 计算两点之间的距离 */
+export function distance(a: { x: number, y: number }, b: { x: number, y: number }) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+/** 获取垂点代码 */
+export function getPerpendicularPoint(a: [number, number], b: [number, number], c: [number, number]): { ratio: number, x: number, y: number } {
+  // 已知A, B, P三点坐标
+  const [x1, y1] = a;
+  const [x2, y2] = b;
+  const [x3, y3] = c;
+
+  // 向量
+  // AP = (x0-x1, y0-y1)
+  // AB = (x2-x1, y2-y1)
+  // 计算AP在AB方向上的投影长度
+  // 投影*|AB|
+  const dist1 = (x3-x1) * (x2-x1) + (y3-y1) * (y2-y1);
+  // |AB| * |AB|
+  const dist2 = (x2-x1) ** 2 + (y2 - y1) ** 2;
+
+  // AD = 投影 / |AB| * AB
+  const ratio = dist1 / dist2;
+  const x4 = x1 + ratio * (x2 - x1);
+  const y4 = y1 + ratio * (y2 - y1);
+  return { x: x4, y: y4, ratio };
+}
 
 /**
  * NPM版本号对比，前版本号是否大于后版本号
@@ -98,20 +180,34 @@ export function throttle(
   wait = 600, 
   /** 附加参数 */
   options: {
-    /** 是否头部立刻执行 */
-    leading: boolean,
-    /** 是否尾部附加执行 */
-    trailing: boolean
-} = { leading: false, trailing: true }) {
+    /** 是否头部立刻执行 default: false */
+    leading?: boolean,
+    /** 是否尾部附加执行 default: true */
+    trailing?: boolean,
+    /** 是否持续执行，false则如果持续则一直不执行 default: true */
+    continued?: boolean
+} = {
+  leading: false,
+  trailing: true,
+  continued: true
+}) {
   let timer, result;
   let previous = 0;
   const _leading = options?.leading ?? false;
   const _trailing = options?.trailing ?? true;
+  const _continued = options?.continued ?? true;
 
   const throttled = async function (this: any, ...args) {
     const now = Date.now(); // 当前时间
     // 下次触发 func 剩余时间
-    if (!previous && _leading === false) previous = now;
+    if (!previous && !_leading) previous = now;
+    if (!_continued) {
+      previous = now;
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
     const remaining = wait - (now - previous);
 
     // 如果没有剩余时间或者改了系统时间,这时候不需要等待，直接立即执行，这样就会第一次就执行
@@ -122,11 +218,11 @@ export function throttle(
       }
       previous = now;
       return await func.apply(this, args);
-    } else if (!timer && _trailing !== false) {
+    } else if (!timer && _trailing) {
       // 剩余的情况就是remaining<=wait的情况，这里使用setTimeout就可以最后也会执行一次
       timer = setTimeout(async () => {
         timer = null;
-        previous = _leading === false ? 0 : Date.now(); // 这里是将previous重新赋值当前时间
+        previous = !_leading ? 0 : Date.now(); // 这里是将previous重新赋值当前时间
         return await func.apply(this, args);
       }, remaining);
     }
@@ -173,22 +269,6 @@ export const toggleFullScreen = (el: HTMLElement, exitCallback?: () => void) => 
   }
   return !isFullscreen;
 };
-
-/** 页面截图 */
-// export function screenshot(dom: HTMLElement) {
-//   const canvas = document.createElement('canvas') as HTMLCanvasElement;
-//   document.body.appendChild(canvas);
-
-//   canvas.width = dom.offsetWidth;
-//   canvas.height = dom.offsetHeight;
-//   canvas.style.width = dom.offsetWidth + 'px';
-//   canvas.style.height = dom.offsetHeight + 'px';
-
-//   rasterizeHTML.drawHTML(dom.innerHTML, canvas, {
-//     width: dom.offsetWidth,
-//     height: dom.offsetHeight,
-//   });
-// }
 
 /** 延时函数 */
 export function timeout(time = 10) {
@@ -330,7 +410,7 @@ export function moveNodeOfTree<T = string>(
   prop: string = 'id',
 ): Record<string, any>[] {
   const _tree = cloneLoop(tree);
-  let _node = null;
+  let _node = undefined as Record<string, any> | undefined;
   let _oldIndex = -1;
   let _orderIndex: number | undefined;
 
@@ -389,7 +469,7 @@ export function moveNodeOfTree<T = string>(
   });
 
   if (!pid) {
-    _tree.push(_node);
+    if (_node) _tree.push(_node);
     return _tree;
   } else {
     _isOver = false;
@@ -494,8 +574,21 @@ function fakeClick(obj) {
   obj.dispatchEvent(ev);
 }
 
+/** dataURL转Blob */
+export function dataURL2Blob(dataurl: string) {
+  const arr = dataurl.split(",");
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
 /** File转Blob */
-export function toBlob(file: File): Promise<Blob> {
+export function file2Blob(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     try {
       const reader = new FileReader();
@@ -510,33 +603,51 @@ export function toBlob(file: File): Promise<Blob> {
   });
 }
 
+let _prevFileDialog: HTMLElement;
 /** 打开文件选择框 */
-export function openFileDialog(): Promise<File[]> {
+export function openFileDialog<Multiple extends boolean = false>(config: {
+  /** 限制接受文件的类型 */
+  accept?: string,
+  /** 如果 accept是图片或者视频类型，则指定使用哪个摄像头去获取这些数据。 */
+  capture?: 'user' | 'environment',
+  /** 是否多选 */
+  multiple?: Multiple,
+  /** 仅选择文件夹 */
+  webkitdirectory?: boolean,
+} | undefined): Promise<Multiple extends true ? File[] : (File | undefined)> {
   return new Promise((resolve, reject) => {
+    _prevFileDialog?.remove();
     const inputObj = document.createElement('input');
     inputObj.setAttribute('type', 'file');
-    inputObj.setAttribute('style', 'visibility:hidden');
+    inputObj.setAttribute('style', 'visibility:hidden;position: fixed; left: -100px; top: -100px;');
+    if (config?.accept) inputObj.setAttribute('accept', config.accept);
+    if (config?.capture) inputObj.setAttribute('capture', config.capture);
+    if (config?.multiple === true) inputObj.setAttribute('multiple', 'true');
+    if (config?.webkitdirectory === true) inputObj.setAttribute('webkitdirectory', 'true');
     document.body.appendChild(inputObj);
     inputObj.addEventListener('change', (e: any) => {
-      console.warn('选择文件', e);
       if (e.target.files && e.target.files.length) {
         const _fileCount = e.target.files.length;
         const _fileList: File[] = [];
         for (let i = 0; i < _fileCount; i++) {
           _fileList.push(e.target.files[i]);
         }
-        resolve(_fileList);
+        resolve((config?.multiple === true ? _fileList : _fileList?.[0]) as Multiple extends true ? File[] : File | undefined);
       }
       inputObj.remove();
     });
+    inputObj.addEventListener('close', (e) => {
+      console.log('e:close', e);
+    });
     inputObj.click();
+    _prevFileDialog = inputObj;
   });
 }
 
 /** 下载文件 */
-export function downLoadFile(name: string, data: string) {
+export function downLoadFile(name: string, data: string | Blob) {
   const urlObject = window.URL || window.webkitURL || window;
-  const export_blob = new Blob([data]);
+  const export_blob = typeof data === 'string' ? new Blob([data]) : data;
   const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
   save_link.setAttribute('href', urlObject.createObjectURL(export_blob));
   save_link.setAttribute('download', name);
@@ -598,8 +709,9 @@ export function recursive(
 }
 
 /** 获取盒模型CSS值 */
-export function getBoxModel(arr: [number, number, number, number]) {
-  return [arr[0] + 'px', arr[1] + 'px', arr[2] + 'px', arr[3] + 'px'].join(' ');
+export function getBoxModel(arr?: number[], unit = 'px') {
+  if (!arr?.length) return `0${unit} 0${unit} 0${unit} 0${unit}`;
+  return `${arr[0]}${unit} ${arr[1]}${unit} ${arr[2]}${unit} ${arr[3]}${unit}`;
 }
 
 /** UTF16转UTF8 */

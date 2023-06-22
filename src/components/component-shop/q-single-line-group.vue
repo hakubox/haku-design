@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-single-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-single-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-single-group-item" v-for="(item, index) in options" :key="index">
       <label>{{ item.label }}</label>
       <input
@@ -11,17 +11,16 @@
         @input="changeValue($event, index)"
       />
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
 import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -63,7 +62,7 @@ const state = reactive({
 });
 
 const changeValue = (val, index: number) => {
-  let vals = new Array(props.options.length).fill('');
+  const vals = new Array(props.options.length).fill('');
   for (let i = 0; i < props.value.length; i++) {
     vals[i] = props.value[i];
   }

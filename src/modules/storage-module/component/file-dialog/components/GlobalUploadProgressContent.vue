@@ -22,32 +22,32 @@
 /**
  * 全局文件下载进度
  */
+import { computed } from 'vue';
 import { Modal, Progress } from 'ant-design-vue';
 import { getFileType, getFileIconByFileType } from '@/modules/storage-module/tools/fileTypeHandler';
 import { parseByte } from '../tools/transFileSize';
-import { ProgressState } from '../hooks/useFile';
 import { CaretRightOutlined, PauseOutlined, CloseOutlined } from '@ant-design/icons-vue';
-import { computed } from '@vue/reactivity';
+import type { ProgressStateItem } from '../../../index.d';
 
-const props = defineProps<{ globalUploadProgressState: ProgressState }>();
-const emit = defineEmits<{ (e: 'update:globalUploadProgressState', value: ProgressState): void }>();
+const props = defineProps<{ globalUploadProgressState: ProgressStateItem[] }>();
+const emit = defineEmits<{ (e: 'update:globalUploadProgressState', value: ProgressStateItem[]): void }>();
 
 const progressState = computed({
   get: () => props.globalUploadProgressState,
   set: (value) => emit('update:globalUploadProgressState', value),
 });
 
-const onPause = (state: ProgressState[0]) => {
+const onPause = (state: ProgressStateItem) => {
   state.isPaused = true;
   state.pause();
 };
 
-const onResume = (state: ProgressState[0]) => {
+const onResume = (state: ProgressStateItem) => {
   state.isPaused = false;
   state.resume();
 };
 
-const onCancel = (state: ProgressState[0]) => {
+const onCancel = (state: ProgressStateItem) => {
   Modal.confirm({
     title: '取消上传',
     content: '是否取消文件：' + state.filename + ' 的上传?',
@@ -55,6 +55,7 @@ const onCancel = (state: ProgressState[0]) => {
   });
 };
 </script>
+
 <style lang="less" scoped>
 .upload-progress-container {
   .upload-progress-item {

@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-datetime-picker" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-datetime-picker" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div v-if="isPrint" class="component-datetime-picker-printmode">{{ value }}</div>
     <template v-else-if="globalState.isMobile">
       <div class="component-datetime-picker-input" :disabled="props.disabled" @click="showDialogPicker()">
@@ -12,7 +12,7 @@
         <span class="placeholder" v-else>{{ props.placeholder }}</span>
       </div>
       <Popup v-model:show="state.showPicker" round position="bottom" teleport=".form-canvas.preview">
-        <DatetimePicker
+        <DatePicker
           :value="state.inputValue"
           type="date"
           title="选择年月日"
@@ -33,20 +33,19 @@
       :disabled-date="props.disabledDate"
       :is-range="props.isRange"
     ></VueDatepickerLocal>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
-import { inject, onMounted, PropType, reactive, toRefs, watch } from 'vue';
+import { inject, onMounted, PropType, reactive, watch } from 'vue';
 import { state as globalState } from '@/common/global';
 import { dateFormat, getQBasicProps } from '@/tools/common';
 import VueDatepickerLocal from '../common/data-picker/VueDatepickerLocal.vue';
-import { DatetimePicker, Popup } from 'vant';
+import { DatePicker, Popup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -139,12 +138,6 @@ const showDialogPicker = () => {
     state.showPicker = true;
   }
 };
-
-/** 禁用日期 */
-const disabledDate = (time) => {
-  const day = time.getDay();
-  return day === 0 || day === 6;
-}
 
 watch(() => props.value, (val, oldVal) => {
   if (val !== oldVal) {

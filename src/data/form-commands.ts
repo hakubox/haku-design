@@ -1,10 +1,15 @@
-import { Component } from '@/@types';
-import { CommandType, Props } from '@/@types/command';
-import { VarType } from '@/@types/enum';
+import { Component } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { cloneLoop } from '@/lib/clone';
 import { createModelId } from '@/tools/common';
+import { useAppHandle } from '@/common/app-handle';
+import { getEditors } from '@/data/property-editor';
+import { BasicCommand, CommandType, GlobalCommand } from '@haku-design/command';
 
+const {
+  setVal,
+  getVal
+} = useAppHandle();
 
 /** 设置通用属性值 */
 export function setGeneralPropertyValue(propName: string | string[], model, value) {
@@ -22,79 +27,68 @@ export function setGeneralPropertyValue(propName: string | string[], model, valu
 }
 
 /** 定义命令 */
-export function defineCommand<T extends { [key: string]: Props }>(commandType: CommandType<T>): void {
-  if (formCommands[commandType.name]) {
+export function defineCommand<CommandName extends keyof GlobalCommand>(commandName: CommandName, commandType: GlobalCommand[CommandName] extends BasicCommand ? CommandType<CommandName> : CommandType<any>): void {
+  // @ts-ignore
+  if (!formCommands) formCommands = {};
+  if (formCommands[commandName]) {
     console.error('已有相同的命令定义');
     // throw new Error('已有相同的命令定义');
   } else {
-    formCommands[commandType.name] = commandType;
+    formCommands[commandName] = commandType;
   }
 }
 
 /** 命令类型键值对 */
-export const formCommands: Record<string, CommandType<any>> = {};
+export let formCommands: Record<keyof GlobalCommand, CommandType<any>>;
 
 /** 初始化命令 */
 export function initCommands() {
-  defineCommand({
-    name: 'init',
+  defineCommand('init', {
     description: '开始编辑',
     icon: 'iconfont icon_shiyongwendang',
     format: '开始编辑',
     updatable: false,
     objectType: 'global',
-    propertys: {},
     exec(command) {},
     undo(command) {},
   });
 
-  defineCommand({
-    name: 'move-component',
+  defineCommand('move-component', {
     description: '移动组件',
     icon: 'iconfont icon-move',
     format: '移动了组件{{component}}',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      /** 来源索引 */
-      fromIndex: { type: VarType.number, required: true },
-      /** 目标索引 */
-      toIndex: { type: VarType.number, required: true },
-      /** 来源父组件Id */
-      fromParentComponentId: { type: VarType.string, required: false },
-      /** 目标父组件Id */
-      toParentComponentId: { type: VarType.string, required: false },
-      /** 目标父节点插槽索引 */
-      toParentComponentSlotIndex: { type: VarType.number, required: false }
-    },
     exec(command) {
-      editorService.moveComponent(command.newVal, command.attrs.toIndex, command.attrs.toParentComponentId, command.attrs.toParentComponentSlotIndex);
+      editorService.moveComponent(command.newVal, {
+        toIndex: command.attrs.toIndex, 
+        toParentComponentId: command.attrs.toParentComponentId,
+        toParentComponentSlotIndex: command.attrs.toParentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
+      });
     },
     undo(command) {
-      editorService.moveComponent(command.newVal, command.attrs.fromIndex, command.attrs.fromParentComponentId, command.attrs.toParentComponentSlotIndex);
+      editorService.moveComponent(command.newVal, {
+        toIndex: command.attrs.fromIndex,
+        toParentComponentId: command.attrs.fromParentComponentId,
+        toParentComponentSlotIndex: command.attrs.toParentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
+      });
     },
   });
 
-  defineCommand({
-    name: 'add-component',
+  defineCommand('add-component', {
     description: '添加组件',
     icon: 'iconfont icon-add',
     format: '添加了{{component}}',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      /** 位置索引 */
-      index: { type: VarType.number, required: true },
-      /** 父组件Id */
-      parentComponentId: { type: VarType.string, required: false },
-      /** 父组件组索引 */
-      parentComponentSlotIndex: { type: VarType.number, required: false },
-    },
     exec(command) {
       editorService.addComponent(command.newVal, {
         index: command.attrs.index,
         parentComponentId: command.attrs.parentComponentId,
         parentComponentSlotIndex: command.attrs.parentComponentSlotIndex,
+        x: command.attrs.x, y: command.attrs.y
       });
     },
     undo(command) {
@@ -102,21 +96,12 @@ export function initCommands() {
     },
   });
 
-  defineCommand({
-    name: 'copy-component',
+  defineCommand('copy-component', {
     description: '复制组件',
     icon: 'iconfont icon-add',
     format: '复制了{{component}}',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      /** 位置索引 */
-      index: { type: VarType.number, required: true },
-      /** 父组件Id */
-      parentComponentId: { type: VarType.string, required: false },
-      /** 父组件组索引 */
-      parentComponentSlotIndex: { type: VarType.number, required: false },
-    },
     exec(command) {
       const component = cloneLoop(command.newVal) as Component;
       component.id = createModelId(10);
@@ -129,82 +114,70 @@ export function initCommands() {
         parentComponentId: command.attrs.parentComponentId,
         parentComponentSlotIndex: command.attrs.parentComponentSlotIndex,
       });
-      editorService.changeSelectedFormComponent(component);
+      editorService.changeSelectedFormComponent([component]);
     },
     undo(command) {
       editorService.removeComponent(command.newVal);
-      editorService.changeSelectedFormComponent();
+      editorService.changeSelectedFormComponent([]);
     },
   });
 
-  defineCommand({
-    name: 'remove-component',
+  defineCommand('remove-component', {
     description: '删除组件',
     icon: 'iconfont icon-minus',
     format: '删除了{{component}}',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      componentId: { type: VarType.string, required: true },
-      parentComponentId: { type: VarType.string, required: false },
-      index: { type: VarType.number, required: true },
-    },
     exec(command) {
       editorService.removeComponent(command.newVal);
-      editorService.changeSelectedFormComponent();
+      editorService.changeSelectedFormComponent([]);
     },
     undo(command) {
       editorService.addComponent(command.newVal, { index: command.attrs.index });
     },
   });
 
-  defineCommand({
-    name: 'set-property',
-    description: '设置值',
+  defineCommand('set-property', {
+    description: '设置属性值',
     icon: 'iconfont icon-config',
     format: '设置{{propertyTitle}}属性',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      /** 组件标题 */
-      componentTitle: { type: VarType.string, required: true },
-      /** 属性 */
-      property: { type: VarType.object, required: true },
-      /** 属性标题 */
-      propertyTitle: { type: VarType.string, required: true },
-      /** 属性名（Code） */
-      propertyName: { type: VarType.string, required: true },
-    },
     exec(command) {
+      // if (!getEditors.value[command.attrs.editor]) {
+      //   toast('未找到对应的编辑器', 'error');
+      //   throw new Error('未找到对应的编辑器');
+      // }
+      const prop = command.attrs.property;
       const component = editorService.findComponent(command.objectId);
-      if (component) {
-        command.oldVal = component.attrs[command.attrs.propertyName];
-        editorService.setComponentAttr(component, command.attrs.propertyName, command.newVal);
+      if (component && !component.isGroup) {
+        command.oldVal = getVal(component.attrs, prop);
+        setVal(component.attrs, prop, command.newVal, command.attrs.editor ? getEditors.value[command.attrs.editor] : undefined);
         // console.log('property', command.attrs.property.change);
       }
     },
     undo(command) {
+      // if (!getEditors.value[command.attrs.editor]) {
+      //   toast('未找到对应的编辑器', 'error');
+      //   throw new Error('未找到对应的编辑器');
+      // }
+      const prop = command.attrs.property;
       const component = editorService.findComponent(command.objectId);
-      if (component) {
-        editorService.setComponentAttr(component, command.attrs.propertyName, command.oldVal);
+      if (component && !component.isGroup) {
+        setVal(component.attrs, prop, command.oldVal, command.attrs.editor ? getEditors.value[command.attrs.editor] : undefined);
       }
     },
   });
 
-  defineCommand({
-    name: 'set-property-type',
+  defineCommand('set-property-type', {
     description: '设置值类型',
     icon: 'iconfont icon-config',
     format: '设置了{{component}}的值的类型为{{type}}',
     updatable: true,
     objectType: 'component',
-    propertys: {
-      componentId: { type: VarType.string, required: true },
-      propertyName: { type: VarType.string, required: true },
-    },
     exec(command) {
       const component = editorService.findComponent(command.objectId);
-      if (component) {
+      if (component && !component.isGroup) {
         const _property = component.propertys.find((i) => i.name == command.attrs.propertyName);
         if (_property) {
           editorService.setComponentAttrType(component, _property, command.newVal);
@@ -213,7 +186,7 @@ export function initCommands() {
     },
     undo(command) {
       const component = editorService.findComponent(command.objectId);
-      if (component) {
+      if (component && !component.isGroup) {
         const _property = component.propertys.find((i) => i.name == command.attrs.propertyName);
         if (_property) {
           editorService.setComponentAttrType(component, _property, command.oldVal);
@@ -222,18 +195,12 @@ export function initCommands() {
     },
   });
 
-  defineCommand({
-    name: 'set-global-config',
-    description: '设置问卷配置',
+  defineCommand('set-global-config', {
+    description: '设置应用配置',
     icon: 'iconfont icon-config',
     format: '设置了{{propertyTitle}}',
     updatable: true,
     objectType: 'global',
-    propertys: {
-      model: { type: VarType.object, required: true },
-      propertyName: { type: VarType.array, required: true },
-      propertyTitle: { type: VarType.string, required: true },
-    },
     exec(command) {
       setGeneralPropertyValue(command.attrs.propertyName, command.attrs.model, command.newVal);
     },
@@ -242,26 +209,22 @@ export function initCommands() {
     },
   });
 
-  defineCommand({
-    name: 'change-page-size',
+  defineCommand('change-page-size', {
     description: '调整窗口大小',
     icon: 'iconfont icon-fullscreen',
     format: '调整了窗口大小',
     updatable: false,
     objectType: 'global',
-    propertys: {},
     exec(command) {},
     undo(command) {},
   });
 
-  defineCommand({
-    name: 'save',
+  defineCommand('save', {
     description: '保存',
     icon: 'iconfont icon-save',
     format: '保存数据',
     updatable: false,
     objectType: 'global',
-    propertys: {},
     exec(command) {
       editorService.saveQuestionnaire();
     },

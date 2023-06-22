@@ -15,13 +15,12 @@
 
 <script lang="ts" setup>
 /** 查看文件属性弹窗 */
-import { StorageFileInfo } from '@/modules/storage-module/@types';
-import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
-import { computed } from '@vue/reactivity';
+import { computed, type PropType } from 'vue';
 import { Descriptions, DescriptionsItem, Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
-import { PropType } from 'vue';
+import { FileType } from '../../../../../tools/fileTypeHandler';
 import { parseByte } from '../../../tools/transFileSize';
+import type { StorageFileInfo } from '../../../../../index.d';
 
 const props = defineProps({
   visible: {

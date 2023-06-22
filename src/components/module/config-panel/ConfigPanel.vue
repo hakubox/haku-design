@@ -7,11 +7,18 @@
       @change="changeMainPropertyPanel($event)"
     >
       <TabPane key="prop">
-        <template #tab><ProfileOutlined />组件属性</template>
-        <PropertyEditor></PropertyEditor>
+        <template #tab><ProfileOutlined />属性</template>
+        <GeneralEditor
+          :model="editorState.appConfig"
+          :propertys="state.pageConfigProps"
+          :groups="state.pageGroups"
+          @change="changePageProps"
+          v-if="!editorState.currentSelectedComponentPropertyGroups.length"
+        />
+        <PropertyEditor v-else />
       </TabPane>
       <TabPane key="event">
-        <template #tab><span><ThunderboltOutlined />组件逻辑</span></template>
+        <template #tab><span><ThunderboltOutlined />逻辑</span></template>
         <EventConfig :target="editorState.currentSelectedFirstComponentId"></EventConfig>
       </TabPane>
 
@@ -40,25 +47,61 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import PropertyEditor from '@/components/module/config-panel/property-config/PropertyEditor.vue';
 import EventConfig from '@/modules/event-module/component/EventConfig.vue';
 import { Drawer, TabPane, Tabs, Button } from 'ant-design-vue';
+import { GeneralProperty } from '@haku-design/core';
+import { getAppConfigPropertys } from "@/data/app-config";
+import bus, { GlobalBusType } from '@/tools/bus';
+import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 
 const state = reactive({
   /** 选择项 */
   activeKey: 'prop',
   /** 是否显示全局事件弹出框 */
   showGlobalEventDialog: false,
+  /** 页面分组 */
+  pageGroups: [] as { title: string, name: string }[],
+  /** 页面配置属性列表 */
+  pageConfigProps: [] as GeneralProperty<any>[]
 });
 
 const eventConfig = ref<typeof EventConfig>();
 
+/** 预览配置属性栏 */
+const setPageConfigProps = () => {
+  state.pageConfigProps = getAppConfigPropertys(editorState.appConfig.appType);
+  state.pageGroups = [
+    { title: '应用配置', name: 'basic' },
+    { title: '画布配置', name: 'canvas' },
+    { title: '问卷配置', name: 'questionnaire' },
+    { title: '问卷记时配置', name: 'time' },
+    { title: '问卷维度配置', name: 'dimension' },
+    { title: '问卷特殊页配置', name: 'page' },
+    { title: '问卷底部按钮配置', name: 'bottom' },
+  ].filter(i => state.pageConfigProps.some(o => o.group === i.name));
+};
+
+const changePageProps = (val: Record<string, any>, prop: GeneralProperty<any>, propMap: any, model?: Record<string, any> | undefined) => {
+  if (prop.names && Array.isArray(prop.names[0]) && prop.names[0]?.includes('width')) {
+    bus.$emit(GlobalBusType.onRefresh);
+  }
+}
+
 /** 切换右侧主Tabs */
 const changeMainPropertyPanel = (e) => {
-  editorState.bus.$emit('prop_change');
+  bus.$emit(GlobalBusType.propChange);
 };
+
+watch(() => editorState.appConfig.appType, () => {
+  setPageConfigProps();
+});
+
+onMounted(() => {
+  setPageConfigProps();
+});
 </script>
 <style lang="less">
 .global-event-btns {

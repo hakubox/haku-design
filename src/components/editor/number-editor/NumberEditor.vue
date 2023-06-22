@@ -6,7 +6,7 @@
     v-else
     class="number-editor"
     v-model:value="state.inputValue"
-    v-bind="Object.assign({}, $attrs)"
+    v-bind="Object.assign({}, $attrs, { precision: props.precision })"
     :max="props.max"
     :min="props.min"
     :controls="props.controls"
@@ -14,8 +14,8 @@
     :placeholder="placeholder"
     @change="change"
   >
-    <template v-if="$attrs.suffix" #addonAfter>
-      <span>{{ $attrs.suffix }}</span>
+    <template v-if="props.suffix" #addonAfter>
+      <span>{{ props.suffix }}</span>
     </template>
     <!-- <template v-else #addonAfter>
       <slot name="suffix"></slot>
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { isNotBlank, throttle } from '@/tools/common';
+import { isNotBlank, throttle, toDecimal } from '@/tools/common';
 import { InputNumber } from 'ant-design-vue';
 import { onMounted, PropType, reactive, toRefs, watch } from 'vue';
 
@@ -55,17 +55,28 @@ const props = defineProps({
     type: String,
     default: '100%'
   },
+  suffix: {
+    type: String,
+    default: ''
+  },
+  /** 数值精度 */
+  precision: {
+    type: Number,
+  },
   /** 是否开启节流事件 */
   openThrottle: {
     type: Boolean,
     default: true
+  },
+  /** 格式化函数 */
+  formatter: {
+    type: Function,
   }
 });
 
 const emit = defineEmits<{
   (event: 'update:value', val: number | undefined): void;
   (event: 'change', val: number | undefined): void;
-  (event: 'input', val: number | undefined): void;
 }>();
 
 const state = reactive({
@@ -74,32 +85,94 @@ const state = reactive({
 
 const _change = () => {
   if (state.inputValue != props.value) {
-    emit('change', state.inputValue);
+    const _val = props.formatter ? props.formatter(state.inputValue) : state.inputValue;
+    emit('update:value', _val);
+    emit('change', _val);
   }
 };
 
 /** 改变值 */
 const change = props.openThrottle ? throttle(_change) : _change;
 
+const init = (val: number | undefined) => {
+  if (val === undefined) {
+    state.inputValue = val;
+  } else if (typeof val === 'string') {
+    if (props.precision === 0) {
+      state.inputValue = parseInt(val);
+    } else {
+      state.inputValue = parseFloat(val);
+    }
+  } else {
+    if (props.precision !== undefined) {
+      state.inputValue = toDecimal(val, props.precision);
+    } else {
+      state.inputValue = val;
+    }
+  }
+}
+
 watch(() => props.value, (val, oldVal) => {
   if (val !== oldVal) {
-    state.inputValue = val;
+    init(val);
   }
 });
 
 onMounted(() => {
-  state.inputValue = isNotBlank(props.value) ? +props.value! : undefined;
+  init(props.value);
 });
 </script>
 
 <style lang="less" scoped>
-@import '/src/assets/less/variable.less';
+.number-editor {
+  width: 100%;
 
-:deep(.number-editor) {
-  &:hover {
-    &:not(.disabled) {
-      border-color: fadeout(@primary-color, 20%) !important;
-      border-width: 1px !important;
+  &.ant-input-number {
+    background-color: var(--editor-bg-color) !important;
+    border: 1px solid var(--editor-bg-color) !important;
+  
+    &:hover {
+      &:not(.disabled) {
+        border-color: var(--primary-hover-border-color) !important;
+        border-width: 1px !important;
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
+    }
+  }
+
+  :deep(.ant-input-number) {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    background-color: var(--editor-bg-color);
+    border: 1px solid var(--editor-bg-color);
+    border-radius: 3px;
+    height: 30px;
+    width: calc(100%);
+    transition: 0.3s;
+
+    .ant-input-number-input-wrap {
+      width: 100%;
+
+      > .ant-input-number-input {
+        width: 100%;
+      }
+    }
+  
+    &:hover {
+      &:not(.disabled) {
+        border-color: var(--primary-hover-border-color) !important;
+        border-width: 1px !important;
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0px 0px 0px 2px var(--primary-hover-background-color);
     }
   }
 }

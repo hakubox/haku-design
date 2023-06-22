@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-score" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <Rate
       :count="count"
       :disabled="disabled"
@@ -9,17 +9,17 @@
       :modelValue="value"
       @change="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
+import { defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Rate } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

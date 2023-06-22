@@ -1,9 +1,9 @@
-import global from '@/common/global';
 import ImageEditor from './ImageEditor.vue';
 import { PluginType, type PluginInfo, registerEditor } from '@/modules/plugin-module';
+import { App } from 'vue';
 
 /** 注册图片编辑器（插件测试） */
-export function registerImageEditor() {
+export function registerImageEditor(app: App) {
   const _pluginInfo: PluginInfo = {
     name: 'image-editor',
     title: '测试用图片编辑器',
@@ -12,7 +12,7 @@ export function registerImageEditor() {
     author: 'haku',
     pluginType: PluginType.component,
     async register() {
-      global.state.app.component('ImageEditor', ImageEditor);
+      app.component('ImageEditor', ImageEditor);
     },
   };
 
@@ -23,4 +23,10 @@ export function registerImageEditor() {
     attrs: {},
     editor: 'image',
   });
+}
+
+export default {
+  install(app: App) {
+    registerImageEditor(app);
+  }
 }

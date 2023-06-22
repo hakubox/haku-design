@@ -1,5 +1,5 @@
 <template>
-  <template
+  <div
     class="component-item component-center layout-component"
     :class="{ required: $attrs.required, 'has-children': components?.length }"
     :style="{
@@ -10,7 +10,6 @@
     }"
     tip="center"
   >
-    ++{{ $attrs.minHeight }}++
     <template v-if="!components?.length">
       <q-blank />
     </template>
@@ -19,12 +18,12 @@
         <slot name="child0"><q-blank /></slot>
       </div>
     </template>
-  </template>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { PropType, computed, useAttrs } from 'vue';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
 
 const props = defineProps({
   /** flex方向 */

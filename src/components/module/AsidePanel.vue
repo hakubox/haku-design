@@ -1,6 +1,6 @@
 <template>
-  <div class="design-form-aside" :class="{ fold: state.asideFold }" style="width: 340px">
-    <div class="expand-handle-left" :class="{ fold: state.asideFold }" @click="state.asideFold = !state.asideFold"></div>
+  <div class="design-form-aside" :class="{ fold: editorState.asideFold }" style="width: 340px">
+    <div class="expand-handle-left" :class="{ fold: editorState.asideFold }" @click="editorService.toggleAsidePanel()"></div>
     <div class="design-form-aside-group">
       <div
         class="design-form-aside-group-item"
@@ -15,7 +15,7 @@
     </div>
     <div class="design-form-aside-content">
       <!-- 控件列表菜单 -->
-      <div v-show="state.activeKey === 1 && state.groups.length" class="design-form-aside-toolbox">
+      <div v-if="state.activeKey === 'components' && state.groups.length" class="design-form-aside-toolbox">
         <div class="design-form-aside-toolbox-group" v-for="groupItem in state.groups" :key="groupItem.category">
           <template
             v-if="
@@ -51,7 +51,7 @@
       </div>
 
       <!-- 题库菜单 -->
-      <div v-show="state.activeKey === 2 && state.groups.length" class="design-form-aside-toolbox">
+      <div v-if="state.activeKey === 'component-shop' && state.groups.length" class="design-form-aside-toolbox">
         <div class="design-form-aside-toolbox-group">
           <ul class="design-form-aside-components">
             <li
@@ -71,35 +71,38 @@
         </div>
       </div>
 
-      <!-- 画布已有控件菜单（大纲） -->
-      <AsideComponentView v-show="state.activeKey === 3"></AsideComponentView>
+      <!-- 页面配置菜单 -->
+      <AsidePageConfig v-if="state.activeKey === 'page'"></AsidePageConfig>
+
+      <!-- 当前页面控件菜单 -->
+      <AsideComponentView v-if="state.activeKey === 'outline'"></AsideComponentView>
 
       <!-- 数据源配置菜单 -->
-      <DataSourceConfig v-show="state.activeKey === 4"></DataSourceConfig>
+      <DataSourceConfig v-if="state.activeKey === 'data'"></DataSourceConfig>
 
       <!-- 存储服务配置菜单 -->
-      <FileStorageConfig v-show="state.activeKey === 5"></FileStorageConfig>
+      <FileStorageConfig v-if="state.activeKey === 'storage'"></FileStorageConfig>
 
       <!-- 历史记录菜单 -->
-      <HistoryLog v-show="state.activeKey === 6"></HistoryLog>
+      <HistoryLog v-if="state.activeKey === 'log'"></HistoryLog>
 
-      <!-- 历史记录菜单 -->
-      <HistoryVersionConfig v-show="state.activeKey === 7"></HistoryVersionConfig>
+      <!-- 版本记录菜单 -->
+      <HistoryVersionConfig v-if="state.activeKey === 'version'"></HistoryVersionConfig>
 
       <!-- 主题模板菜单 -->
-      <ThemeTemplateConfig v-show="state.activeKey === 8"></ThemeTemplateConfig>
+      <ThemeTemplateConfig v-if="state.activeKey === 'theme'"></ThemeTemplateConfig>
 
       <!-- 插件菜单 -->
-      <PluginConfig v-show="state.activeKey === 9"></PluginConfig>
+      <PluginConfig v-if="state.activeKey === 'plugin'"></PluginConfig>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Component } from '@/@types';
-import { ComponentCategory } from '@/@types/enum';
-import { ToolComponentItem } from '@/@types/tool-component-item';
-import { state as editorState } from '@/modules/editor-module';
+import { Component } from '@haku-design/core';
+import { ComponentCategory } from '@haku-design/core';
+import { ToolComponentItem } from '@haku-design/core/tool-component-item';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { service as draggableService } from '@/modules/draggable-module';
 import { reactive } from 'vue';
 import DataSourceConfig from '@/modules/data-source-module/component/DataSourceConfig.vue';
@@ -109,11 +112,12 @@ import HistoryLog from '@/components/module/aside-panel/HistoryLog.vue';
 import HistoryVersionConfig from '@/components/module/aside-panel/HistoryVersionConfig.vue';
 import ThemeTemplateConfig from '@/modules/theme-module/component/ThemeTemplateConfig.vue';
 import PluginConfig from '@/modules/plugin-module/component/PluginConfig.vue';
+import AsidePageConfig from '@/components/module/aside-panel/AsidePageConfig.vue';
 import { Button } from 'ant-design-vue';
 
 const state = reactive({
   /** 左侧默认展开内容 */
-  activeKey: 1,
+  activeKey: 'components',
   /** 题型分组 */
   groups: [
     { title: '普通组件', category: ComponentCategory.normal },
@@ -126,18 +130,17 @@ const state = reactive({
   questionPoolTags: [{ title: '常规' }, { title: '恐高症' }, { title: '焦虑症' }],
   /** 左侧分类 */
   category: [
-    { key: 1, title: '设计', icon: 'iconfont icon-zidingyi' },
-    // { key: 2, title: '题库', icon: 'iconfont icon-flow-layout' },
-    { key: 3, title: '大纲', icon: 'iconfont icon-check-list' },
-    { key: 4, title: '数据', icon: 'iconfont icon-chucun' },
-    // { key: 5, title: '存储', icon: 'iconfont icon-box3' },
-    { key: 6, title: '记录', icon: 'iconfont icon-history-list' },
-    { key: 7, title: '版本', icon: 'iconfont icon-guizeyinqing' },
-    { key: 8, title: '主题', icon: 'iconfont icon-theme' },
-    { key: 9, title: '插件', icon: 'iconfont icon-plugin' },
+    { key: 'components', title: '设计', icon: 'iconfont icon-zidingyi' },
+    { key: 'page', title: '页面', icon: 'iconfont icon-file' },
+    // { key: 'component-shop', title: '题库', icon: 'iconfont icon-flow-layout' },
+    { key: 'outline', title: '大纲', icon: 'iconfont icon-check-list' },
+    { key: 'data', title: '数据', icon: 'iconfont icon-chucun' },
+    // { key: 'storage', title: '存储', icon: 'iconfont icon-box3' },
+    { key: 'log', title: '记录', icon: 'iconfont icon-history-list' },
+    { key: 'version', title: '版本', icon: 'iconfont icon-guizeyinqing' },
+    { key: 'theme', title: '主题', icon: 'iconfont icon-theme' },
+    { key: 'plugin', title: '插件', icon: 'iconfont icon-plugin' },
   ],
-  /** 左侧栏是否展开 */
-  asideFold: false,
 });
 
 /** 根据分类获取组件列表 */

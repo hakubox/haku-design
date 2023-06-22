@@ -11,7 +11,7 @@ import { reactive } from 'vue';
 import { service as editorService } from '@/modules/editor-module';
 
 const state = reactive({
-  text: '文本内容'
+  text: '文本内容',
 });
 </script>
 <style lang="less">
@@ -28,7 +28,6 @@ const state = reactive({
   }
 
   > .test-plugin-body {
-
   }
 }
 </style>

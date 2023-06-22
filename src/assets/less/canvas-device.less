@@ -1,7 +1,11 @@
 
 .device-info {
   --mobile-scale: 1;
+  --mobile-content-scale: 1;
   --tablet-scale: 1;
+  --tablet-content-scale: 1;
+  --pc-scale: 1;
+  --pc-content-scale: 1;
   // aspect-ratio
 
   // 手机样式
@@ -23,6 +27,20 @@
       left: calc(50% - 31px);
       background-color: #393939;
       clip-path: path("M2 0C0.895508 0 0 0.895386 0 2C0 3.10461 0.895508 4 2 4H52C53.1045 4 54 3.10461 54 2C54 0.895386 53.1045 0 52 0H2Z M60 4C61.1045 4 62 3.10461 62 2C62 0.895386 61.1045 0 60 0C58.8955 0 58 0.895386 58 2C58 3.10461 58.8955 4 60 4Z");
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      margin: auto;
+      top: 50px;
+      bottom: 50px;
+      left: 15px;
+      right: 15px;
+      background: white;
+      border-radius: 6px;
+      z-index: -1;
     }
   }
 
@@ -46,9 +64,23 @@
       background: #1f1f1f;
       clip-path: path("M4.5 9C6.98528 9 9 6.98528 9 4.5C9 2.01472 6.98528 0 4.5 0C2.01472 0 0 2.01472 0 4.5C0 6.98528 2.01472 9 4.5 9Z M29 4.5C29 2.01472 31.0147 0 33.5 0H145.5C147.985 0 150 2.01472 150 4.5C150 6.98528 147.985 9 145.5 9H33.5C31.0147 9 29 6.98528 29 4.5Z M168 4.5C168 6.98528 165.985 9 163.5 9C161.015 9 159 6.98528 159 4.5C159 2.01472 161.015 0 163.5 0C165.985 0 168 2.01472 168 4.5Z");
     }
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      margin: auto;
+      top: 30px;
+      bottom: 30px;
+      left: 26px;
+      right: 26px;
+      background: white;
+      border-radius: 6px;
+      z-index: -1;
+    }
   }
 
-  // 平板样式
+  // PC样式
   &.device-info-pc {
     width: calc(100vw - 500px);
     height: 1366px;
@@ -68,6 +100,55 @@
       height: 9px;
       background: #1f1f1f;
       clip-path: path("M4.5 9C6.98528 9 9 6.98528 9 4.5C9 2.01472 6.98528 0 4.5 0C2.01472 0 0 2.01472 0 4.5C0 6.98528 2.01472 9 4.5 9Z M29 4.5C29 2.01472 31.0147 0 33.5 0H145.5C147.985 0 150 2.01472 150 4.5C150 6.98528 147.985 9 145.5 9H33.5C31.0147 9 29 6.98528 29 4.5Z M168 4.5C168 6.98528 165.985 9 163.5 9C161.015 9 159 6.98528 159 4.5C159 2.01472 161.015 0 163.5 0C165.985 0 168 2.01472 168 4.5Z");
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      margin: auto;
+      top: 24px;
+      bottom: 24px;
+      left: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 6px;
+      z-index: -1;
+    }
+  }
+
+  &.app-type-canvas {
+      
+    > .form-canvas {
+      background-color: transparent;
+    }
+    
+    &.device-info-mobile {
+      max-height: initial;
+      transform: scale(var(--mobile-scale));
+      
+      > .form-canvas {
+        zoom: var(--mobile-content-scale);
+      }
+    }
+    
+    &.device-info-tablet {
+      max-height: initial;
+      transform: scale(var(--tablet-scale));
+      
+      > .form-canvas {
+        zoom: var(--tablet-content-scale);
+      }
+    }
+    
+    &.device-info-pc {
+      // max-height: initial;
+      // zoom: var(--pc-scale);
+      // transform: scale(1);
+      
+      > .form-canvas {
+        zoom: var(--pc-content-scale);
+      }
     }
   }
 

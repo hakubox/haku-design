@@ -1,18 +1,16 @@
 <template>
-  <q-basic class="component-item-single" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
-    <input type="text" :value="value" @input="changeValue" />
-  </q-basic>
+  <ComponentBasic class="component-item-single" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+    <input type="type" :value="value" />
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { useAttrs, onMounted, PropType, reactive, watch } from 'vue';
+import { reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -32,10 +30,6 @@ const state = reactive({
 const emit = defineEmits<{
   (event: 'update:value', val: string): void;
 }>();
-
-const changeValue = (e) => {
-  emit('update:value', e.target.value);
-}
 
 </script>
 

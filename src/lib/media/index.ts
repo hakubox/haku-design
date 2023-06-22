@@ -1,4 +1,4 @@
-import { SetPartial } from '@/@types';
+import { SetPartial } from '@haku-design/core';
 
 /** 媒体事件 */
 export interface MediaEvents {

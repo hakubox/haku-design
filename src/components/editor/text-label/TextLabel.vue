@@ -8,9 +8,11 @@
 </template>
 
 <script lang="ts" setup>
+import { PropType } from 'vue';
+
 const props = defineProps({
   value: {
-    type: String,
+    type: [String, Number] as PropType<string | number>,
     default: '',
   },
 });
@@ -29,7 +31,7 @@ const props = defineProps({
   height: 30px;
   width: calc(100%);
   transition: 0.3s;
-  padding-left: 8px;
+  padding-left: 0px;
 
   > .text-label-content {
     color: #666;

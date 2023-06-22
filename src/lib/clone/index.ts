@@ -72,15 +72,15 @@ export function cloneJSON(x, errOrDef = true) {
  * 通过循环方式实现的深拷贝，如果数据量很大或层级很深，递归的方式会栈溢出，循环的方式则不会
  * 支持对象和数组的深拷贝，其他类型数据会浅拷贝；支持父子元素循环引用
  */
-export function cloneLoop(x) {
+export function cloneLoop<T>(x: T): T {
   const t = type(x);
 
   let root = x;
 
   if (t === 'array') {
-    root = [];
+    root = [] as T;
   } else if (t === 'object') {
-    root = {};
+    root = {} as T;
   }
 
   // 循环数组

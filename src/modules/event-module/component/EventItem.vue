@@ -57,10 +57,10 @@
 
 <script lang="ts" setup>
 import { onMounted, PropType, reactive } from 'vue';
-import { AppEvent } from '@/modules/event-module/@types';
+import { type AppEvent } from '@/modules/event-module';
 import { state as eventState, service as eventService } from '@/modules/event-module';
 import EventFormatPreview from './EventFormatPreview.vue';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Button } from 'ant-design-vue';
 
 const props = defineProps({

@@ -6,75 +6,76 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, reactive, ref, toRefs } from 'vue';
+<script lang="ts" setup>
+import bus, { GlobalBusType } from '@/tools/bus';
+import { toDecimal } from '@/tools/common';
+import { computed, onMounted, onUnmounted, PropType, reactive, ref } from 'vue';
 
-export default defineComponent({
-  name: 'ColorPickerSlider',
-  props: {
-    value: {
-      type: Number,
-      default: 0,
-    },
-    sliderStyle: {
-      type: Object as PropType<Record<string, any>>,
-    },
-    max: {
-      type: Number,
-      default: 100,
-    },
+const props = defineProps({
+  value: {
+    type: Number,
+    default: 0,
   },
-  computed: {
-    /** 游标离左侧距离 */
-    cursorLeft(): number {
-      return ((this.slider.offsetWidth || 0) * this.value) / this.max - 8;
-    },
+  sliderStyle: {
+    type: Object as PropType<Record<string, any>>,
   },
-  unmounted() {
-    document.body.removeEventListener('mousemove', this.drag);
-    document.body.removeEventListener('mouseup', this.endDrag);
+  max: {
+    type: Number,
+    default: 100,
   },
-  mounted() {
-    this.init();
-  },
-  methods: {
-    startDrag(e) {
-      this.isStartDrag = true;
-      this.drag(e);
-    },
-    drag(e) {
-      if (this.isStartDrag) {
-        let rect = this.slider.getBoundingClientRect();
-        let _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left), rect.width);
-        let _value = Math.round((_cursorLeft / this.slider.offsetWidth) * this.max);
-        this.$emit('input', _value);
-        this.$emit('update:value', _value);
-      }
-    },
-    endDrag() {
-      this.isStartDrag = false;
-    },
-    /** 初始化 */
-    init() {
-      document.body.addEventListener('mousemove', this.drag);
-      document.body.addEventListener('mouseup', this.endDrag);
-    },
-  },
-  setup() {
-    /** 控件画布 */
-    const slider = ref({} as any);
+  /** 小数位数 */
+  decimal: {
+    type: Number,
+    default: 0,
+  }
+});
 
-    const state = reactive({
-      /** 是否开始拖拽 */
-      isStartDrag: false,
-    });
+/** 控件画布 */
+const slider = ref<HTMLElement>();
 
-    return {
-      ...toRefs(state),
-      /** 滑块元素 */
-      slider,
-    };
-  },
+const emit = defineEmits<{
+  (event: 'update:value', value: number): void;
+  (event: 'change', value: number): void;
+}>();
+
+const state = reactive({
+  /** 是否开始拖拽 */
+  isStartDrag: false,
+});
+
+const startDrag = (e) => {
+  state.isStartDrag = true;
+  drag(e);
+};
+
+const drag = (e) => {
+  if (state.isStartDrag && slider.value?.offsetWidth !== undefined) {
+    const rect = slider.value!.getBoundingClientRect();
+    const _cursorLeft = Math.min(Math.max(0, e.pageX - rect.left), rect.width);
+    const _value = toDecimal((_cursorLeft / slider.value.offsetWidth) * props.max, props.decimal);
+    emit('change', _value);
+    emit('update:value', _value);
+  }
+};
+
+const endDrag = () => {
+  state.isStartDrag = false;
+};
+
+/** 游标离左侧距离 */
+const cursorLeft = computed(() => {
+  return ((slider.value?.offsetWidth || 0) * props.value) / props.max - 8;
+});
+
+onMounted(() => {
+  bus.$on(GlobalBusType.onBodyMouseMove, drag);
+  bus.$on(GlobalBusType.onBodyMouseUp, endDrag);
+});
+
+onUnmounted(() => {
+  bus.$off(GlobalBusType.onBodyMouseMove, drag);
+  bus.$off(GlobalBusType.onBodyMouseUp, endDrag);
+  document.body.removeEventListener('mouseup', endDrag);
 });
 </script>
 

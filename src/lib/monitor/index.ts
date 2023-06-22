@@ -16,11 +16,11 @@ const hakuDebug = {
 /** 将异常发送给服务器 */
 export function send() {
   navigator.sendBeacon('/log', undefined);
-};
+}
 
 /** 通用XMLHttpRequest事件 */
 export function XMLTYPE(event) {
-  let target = event.target;
+  const target = event.target;
 
   if ('readystatechange' === event.type) {
     // console.debug('请求状态码改变')
@@ -52,7 +52,7 @@ export function XMLTYPE(event) {
       errType: hakuDebug.message.AJAXTIMEOUTERR,
     });
   }
-};
+}
 
 /** 计算加载时间 */
 export function getPerformanceTiming() {
@@ -66,7 +66,7 @@ export function getPerformanceTiming() {
 
     const _list = list.getEntries().map((entry) => {
 
-      let t = entry.toJSON();
+      const t = entry.toJSON();
       if (!t.duration) return undefined;
       return {
         t,
@@ -123,8 +123,6 @@ export function init(vue: App<Element>) {
     // console.debug('页面跳转', event);
   });
   
-  /******************************/
-  
   // 全局js错误
   window.addEventListener('error', (e: ErrorEvent) => {
     const _targetList = e.composedPath();
@@ -133,15 +131,11 @@ export function init(vue: App<Element>) {
   
   // 监听静态资源加载错误
   window.addEventListener('error', function (event) {
-    let errorTarget = event.target;
+    const errorTarget = event.target;
 
-    if (errorTarget) {
-      // @ts-ignore
-      if (errorTarget.baseURI) {
-        // @ts-ignore
-        let a = { errMsg: errorTarget.outerHTML, errUrl: errorTarget.baseURI, errType: '', error: event };
-        console.debug(a);
-      }
+    if (errorTarget && errorTarget['baseURI']) {
+      const a = { errMsg: errorTarget['outerHTML'], errUrl: errorTarget['baseURI'], errType: '', error: event };
+      console.debug(a);
     }
   }, true);
   
@@ -153,18 +147,11 @@ export function init(vue: App<Element>) {
   });
   
   /**
-   * Vue内部错误监控
-   */
-  vue.config.errorHandler = function (err, vm, info) {
-    console.debug('Vue内部错误', err, vm, info);
-  };
-  
-  /**
    * 监听页面所有AJAX请求
    */
   /** @ts-ignore */
   window.XMLHttpRequest = function() {
-    let _request = new hakuDebug.XMLHttpRequest();
+    const _request = new hakuDebug.XMLHttpRequest();
     _request.addEventListener('readystatechange', XMLTYPE);
     _request.addEventListener('error', XMLTYPE);
     _request.addEventListener('timeout', XMLTYPE);

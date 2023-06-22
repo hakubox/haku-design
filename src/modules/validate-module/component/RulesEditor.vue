@@ -86,7 +86,7 @@
 import { Checkbox, Input, InputGroup, InputNumber, Select } from 'ant-design-vue';
 import { PropType, reactive, onMounted, watch } from 'vue';
 import { state as validateState, service as validateService } from '../';
-import type { ValidateType } from '../@types';
+import type { ValidateType } from '../index.d';
 
 const props = defineProps({
   /** 当前变量 */
@@ -140,7 +140,7 @@ const changeType = () => {
 /** 改变值 */
 const change = () => {
   console.log('change', Object.entries(state.allRules).filter(([key, value]) => value.enable && !!value.value));
-  let re = Object.entries(state.allRules)
+  const re = Object.entries(state.allRules)
     .filter(([key, value]) => value.enable && !!value.value)
     .map(([key, value]) => {
       return { [key]: value.value };

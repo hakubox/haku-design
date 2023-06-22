@@ -1,5 +1,5 @@
-import { DeviceType, ComponentPropertyEditor, PageType } from '@/@types/enum';
-import { AppEventAction } from '@/modules/event-module/@types';
+import { DeviceType, ComponentPropertyEditor, PageType } from '@haku-design/core';
+import { type AppEventAction } from '../index.d';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { service as variableService } from '@/modules/variable-module';
@@ -22,7 +22,7 @@ export const eventActionGroups: { label: string; value: EventActionGroup }[] = [
 const mediaComponents = ['q-audio', 'q-video', 'q-anx-audio', 'q-anx-video'];
 
 /** 获取所有事件行为 */
-export let getEventActions = computed<AppEventAction[]>(() => {
+export const getEventActions = computed<AppEventAction[]>(() => {
   return eventActions;
 });
 

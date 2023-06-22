@@ -14,18 +14,15 @@ export * from './token';
  * @param {object} params 参数
  * @param {ApiConfig} config
  */
-const requestCreator =
-  <T = void>(type: ApiMethodType): RequestType<T> =>
-  (url, params = {}, config = {}) =>
-    request({
-      method: type,
-      url,
-      params,
-      config: {
-        responseType: 'json',
-        ...config,
-      },
-    });
+const requestCreator = (type: ApiMethodType): RequestType => (url, params = {}, config = {}) => request({
+  method: type,
+  url,
+  params,
+  config: {
+    responseType: 'json',
+    ...config,
+  },
+});
 
 export const get = requestCreator(ApiMethodType.get);
 export const post = requestCreator(ApiMethodType.post);
@@ -52,7 +49,7 @@ export function download(
     url,
     params,
     config: {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { 'Content-Type': 'application/raw' },
       responseType: 'blob',
     },
     ...config,

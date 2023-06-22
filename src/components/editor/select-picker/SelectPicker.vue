@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { Select } from 'ant-design-vue';
 import { onMounted, PropType, reactive, watch } from 'vue';
 

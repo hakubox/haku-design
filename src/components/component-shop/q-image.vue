@@ -1,65 +1,84 @@
 <template>
-  <span v-if="!$attrs.isPreview && $attrs.isBackground" class="image-tooltip">当前为背景图片模式</span>
-  <q-basic
+  <ComponentBasic
     class="component-image"
-    :class="{ 'full-screen-image': $attrs.isBackground }"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
-    :componentLabel="!$attrs.showLabel || $attrs.isBackground ? '' : $attrs.label"
-    v-else
+    :componentLabel="!props.showLabel ? '' : props.label"
   >
-    <div
-      v-if="$attrs.isBackground"
-      class="full-screen-image-mask"
-      :style="{ backgroundColor: $attrs.maskColor as string }"
-    ></div>
     <img
       class="component-image-content"
-      :src="src ? storageService.getFileInfo(src)?.src : defaultImg"
-      :padding="getBoxModel(padding as [number, number, number, number])"
+      :src="src ? storageService.getFileInfo(src)?.src : 'https://www.hakuq.com/cdn/assets/image/default-img.webp'"
+      :padding="getBoxModel(padding)"
       :style="{
-        'border-radius': $attrs.borderRadius + 'px',
-        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
-        'filter': `blur(${$attrs.blur}px)`
+        objectFit: props.fillType,
+        borderRadius: props.borderRadius + 'px',
+        filter: `blur(${props.blur}px)`,
+        opacity: props.opacity / 100
       }"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
-
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getBoxModel } from '@/tools/common';
 import { state as storageState, service as storageService } from '@/modules/storage-module';
 import { getQBasicProps } from '@/tools/common';
+import ComponentBasic from '@/components/common/ComponentBasic.vue';
 
-let defaultImg = new URL('@/assets/img/temp/default-img.png').href;
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
+  /** 是否显示标签 */
+  showLabel: {
+    type: Boolean,
+    default: false,
+  },
+  /** 标签 */
+  label: {
+    type: String,
+    default: ''
+  },
+  /** 填充方式 */
+  fillType: {
+    type: String as PropType<'contain' | 'cover' | 'fill' | 'none' | 'scale-down'>,
+    default: 'contain'
+  },
+  /** 圆角 */
+  borderRadius: {
+    type: Number,
+    default: 0,
+  },
+  /** 透明度 */
+  opacity: {
+    type: Number,
+    default: 100
+  },
+  /** 模糊 */
+  blur: {
+    type: Number,
+    default: 0,
+  },
   component: {
-      type: Object,
-      default: () => ({}),
-    },
-    placeholder: {
-      type: String,
-      default: '',
-    },
-    padding: {
-      type: Array,
-      default: () => [0, 0, 0, 0],
-    },
-    src: {
-      type: String,
-      default: '',
-    },
+    type: Object,
+    default: () => ({}),
+  },
+  placeholder: {
+    type: String,
+    default: '',
+  },
+  padding: {
+    type: Array as PropType<number[]>,
+    default: () => [0, 0, 0, 0],
+  },
+  src: {
+    type: String,
+    default: '',
+  },
 });
 
 const state = reactive({
-  chart: null as any,
 });
 
 </script>
@@ -72,34 +91,15 @@ const state = reactive({
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
   padding: 0px;
-
-  &.full-screen-image {
-    position: relative;
-
-    > .full-screen-image-mask {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    > .component-image-content {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      width: 100%;
-      height: 100%;
-    }
-  }
+  height: 100%;
 
   > .component-image-content {
     width: 100%;
-    min-height: 100px;
+    height: 100%;
   }
 }
 .image-tooltip {

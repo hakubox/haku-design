@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-dropdown" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-dropdown" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-dropdown-input" :disabled="props.disabled" @click="showDialogPicker()">
       <span v-if="props.value">{{ props.value }}</span>
       <span class="placeholder" v-else>{{ props.placeholder }}</span>
@@ -11,18 +11,17 @@
         @confirm="onConfirm"
       />
     </Popup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
-import { PropType, reactive, toRefs } from 'vue';
+import { PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Picker, Popup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -66,7 +65,7 @@ const showDialogPicker = () => {
   }
 };
 
-let state = reactive({
+const state = reactive({
   /** 是否显示弹出框 */
   showPicker: false,
 });

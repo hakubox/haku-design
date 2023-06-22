@@ -19,7 +19,7 @@
         <div class="event-editor-header-btns">
           <Button type="primary" @click="saveEvent">
             <template #icon>
-              <SaveOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/>
+              <SaveOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" />
             </template>
             保存逻辑
           </Button>
@@ -53,7 +53,7 @@
               <Tooltip class="event-editor-trigger-item-remove">
                 <template #title>删除当前条件</template>
                 <Button danger ghost @click="removeTrigger(state.event, triggerIndex)">
-                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
+                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" /></template>
                   删除
                 </Button>
               </Tooltip>
@@ -90,7 +90,7 @@
               <Tooltip class="event-editor-action-item-remove">
                 <template #title>删除当前行为</template>
                 <Button danger ghost @click="removeAction(state.event, actionIndex)">
-                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }"/></template>
+                  <template #icon><DeleteOutlined :style="{ fontSize: '16px', lineHeight: '18px', verticalAlign: 'middle' }" /></template>
                   删除
                 </Button>
               </Tooltip>
@@ -169,12 +169,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, PropType, reactive, toRaw, watch } from 'vue';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { AppEvent, AppEventAction, AppEventTrigger } from '@/modules/event-module/@types';
-import { eventTriggerGroups, getEventTriggers } from '@/modules/event-module/data/event-trigger';
+import { computed, nextTick, reactive, toRaw, watch } from 'vue';
+import { state as eventState, service as eventService } from '../';
+import { AppEvent, AppEventAction, AppEventTrigger } from '../index.d';
+import { eventTriggerGroups, getEventTriggers } from '../data/event-trigger';
 import { createModelId } from '@/tools/common';
-import { getEventActions, eventActionGroups } from '@/modules/event-module/data/event-action';
+import { getEventActions, eventActionGroups } from '../data/event-action';
 import EventFormatEditor from './EventFormatEditor.vue';
 import { Button, Dropdown, Input, Menu, MenuItem, message, Modal, Select, SelectOption, SubMenu, Tooltip } from 'ant-design-vue';
 import { DeleteOutlined, PlusCircleOutlined, SaveOutlined } from '@ant-design/icons-vue';

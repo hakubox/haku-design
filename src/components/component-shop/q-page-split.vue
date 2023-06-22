@@ -1,18 +1,18 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-page-split"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     label="分页器"
-  ></q-basic>
+  ></ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
+import { defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   component: {
@@ -26,7 +26,7 @@ const props = defineProps({
   margin: {
     type: Array,
     default: () => [0, 0, 0, 0],
-  }
+  },
 });
 </script>
 

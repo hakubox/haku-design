@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { StorageFileInfo, } from '@/modules/storage-module/@types';
+import type { StorageFileInfo } from '@/modules/storage-module/index.d';
 import { FileType } from '@/modules/storage-module/tools/fileTypeHandler';
 import { Image, Modal } from 'ant-design-vue';
 import { computed } from 'vue';

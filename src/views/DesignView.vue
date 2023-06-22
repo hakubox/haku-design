@@ -5,10 +5,13 @@
       <div class="design-form-header">
 
         <div class="design-form-header-logo">
-          <img src="@/assets/logo.svg" alt="">
+          <img src="@/assets/logo.png" alt="">
         </div>
+
+        <!-- 中间快捷操作栏 -->
+        <CanvasQuickTools />
         
-        <!-- 标题栏右侧菜单 -->
+        <!-- 右侧菜单 -->
         <div class="design-form-header-menu">
           <Menu mode="horizontal" :forceSubMenuRender="true" :selectable="false">
             <SubMenu>
@@ -21,9 +24,9 @@
                   <i class="iconfont icon-file menu-iconfont"></i>JSON文件
                 </MenuItem>
               </SubMenu> -->
-              <MenuItem key="create" @click="showCreateNewDialog">
+              <!-- <MenuItem key="create" @click="showCreateNewDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建
-              </MenuItem>
+              </MenuItem> -->
               <MenuItem key="createByLocal" @click="showCreateNewByLocalDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建本地
               </MenuItem>
@@ -41,12 +44,13 @@
                   <i class="iconfont icon-weizhigeshi menu-iconfont"></i>从公共模板库导入
                 </MenuItem>
               </SubMenu>
-              <SubMenu v-if="editorState.appConfig.isInit">
+              <SubMenu v-if="editorState.appConfig.designConfig.isInit">
                 <template #icon>
                   <ExportOutlined />
                 </template>
                 <template #title>导出</template>
                 <MenuItem key="export_json" @click="menu_exportJSON()">导出为JSON</MenuItem>
+                <MenuItem key="export_image" @click="menu_exportImage()">导出为图片</MenuItem>
               </SubMenu>
               <SubMenu>
                 <template #icon>
@@ -54,12 +58,12 @@
                 </template>
                 <template #title>主题</template>
                 <MenuItem
-                  :class="{ 'ant-menu-item-active': editorState.appConfig.formTheme == theme.code }"
+                  :class="{ 'ant-menu-item-active': editorState.appConfig.designConfig.themeCode == theme.code }"
                   v-for="(theme, index) in state.formThemes"
                   :key="'sub1-2-' + index"
-                  @click="editorService.selectTheme(theme.code, theme.title)"
+                  @click="$event => editorService.selectDesignTheme(theme.code, theme.title, { x: $event.clientX, y: $event.clientY })"
                 >
-                  <CheckOutlined v-show="editorState.appConfig.formTheme == theme.code" />
+                  <CheckOutlined v-show="editorState.appConfig.designConfig.themeCode == theme.code" />
                   {{theme.title}}
                 </MenuItem>
               </SubMenu>
@@ -67,7 +71,7 @@
                 <i class="iconfont icon-config menu-iconfont"></i>设置
               </MenuItem>
             </SubMenu>
-            <SubMenu  key="edit" v-if="editorState.appConfig.isInit">
+            <SubMenu key="edit" v-if="editorState.appConfig.designConfig.isInit">
               <template #icon><EditOutlined /></template>
               <template #title>编辑</template>
               <MenuItem key="undo" @click="historyService.undo" :disabled="!historyState.canUndo">
@@ -77,7 +81,7 @@
                 <i class="iconfont icon-redo menu-iconfont"></i>恢复
               </MenuItem>
             </SubMenu>
-            <SubMenu v-if="editorState.appConfig.isInit">
+            <SubMenu v-if="editorState.appConfig.designConfig.isInit">
               <template #icon><AppstoreOutlined /></template>
               <template #title>应用</template>
               <MenuItem key="redo" @click="editorState.showAppStyleDialog = true">
@@ -87,22 +91,22 @@
                 <i class="iconfont icon-config menu-iconfont"></i>应用配置
               </MenuItem>
             </SubMenu>
-            <MenuItem v-if="editorState.appConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="editorState.isPreview = true;"><template #icon><EyeOutlined /></template>预览</MenuItem>
             <!-- <MenuItem><template #icon><ScanOutlined /></template>二维码</MenuItem> -->
-            <MenuItem v-if="editorState.appConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
-            <!-- <MenuItem v-if="editorState.appConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem> -->
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="save()"><template #icon><SaveOutlined /></template>保存</MenuItem>
+            <MenuItem v-if="editorState.appConfig.designConfig.isInit" @click="showPublishDialog()"><template #icon><SendOutlined /></template>发布</MenuItem>
           </Menu>
         </div>
       </div>
 
       <!-- 主体部分 -->
-      <div class="design-form-body">
+      <div class="design-form-body" @wheel="onResize">
 
-        <!-- 主体中部 -->
+        <!-- 主体中部 @mousedown="blankMouseDown" @mouseup="blankMouseUp" -->
         <div class="design-form-center">
 
           <!-- 全局搜索按钮 -->
-          <div class="design-form-center-question">
+          <div v-if="editorState.isInit" class="design-form-center-question">
             <Tooltip placement="top">
               <template #title>
                 <span>全局搜索</span>
@@ -114,7 +118,7 @@
           </div>
 
           <!-- 切换页面单选组 -->
-          <div v-if="editorState.pages.length > 1" class="design-form-page-change">
+          <div v-if="editorState.appConfig.appType === AppType.questionnaire && editorState.pages.length > 1" class="design-form-page-change">
             <RadioGroup button-style="solid" v-model:value="editorState.currentPageIndex">
               <RadioButton v-for="(page, pageIndex) in editorState.pages" :key="pageIndex" :value="pageIndex">{{ page.pageTitle }}</RadioButton>
             </RadioGroup>
@@ -122,13 +126,47 @@
 
           <!-- 画布 -->
           <div class="design-form-canvas"
-            :class="editorState.appConfig.deviceType"
-            @mousedown="editorService.changeSelectedFormComponent()"
-            v-if="editorState.appConfig.isInit"
+            :class="editorState.appConfig.designConfig.deviceType"
+            @mousedown.stop="draggableService.startRangeSelect"
+            @scroll="onScroll"
+            v-if="editorState.appConfig.designConfig.isInit"
           >
+            <!-- 对齐线 -->
+            <div class="align-line-panel-vertical">
+              <div
+                class="align-line"
+                v-for="(line, index) in draggableState.alignLines.filter(i => i.x !== undefined)"
+                :key="index"
+                :style="{ left: `${line.x! + (editorState.canvasRect?.x ?? 0)}px` }"
+              ></div>
+            </div>
+            <div class="align-line-panel-horizontal">
+              <div
+                class="align-line"
+                v-for="(line, index) in draggableState.alignLines.filter(i => i.y !== undefined)"
+                :key="index"
+                :style="{ top: `${line.y! + (editorState.canvasRect?.y ?? 0)}px` }"
+              ></div>
+            </div>
+
+            <!-- 拖拽出来的定位线 -->
+
+            <!-- 导航图（暂时不启用） -->
+            <!-- <div class="svgPriview" style="position: absolute; top: 30px; left: 30px; width: 180px; height: 120px;">
+              <div class="app-canvas app-canvas-preview">
+                <DesignCanvas
+                  :isPreview="true"
+                  :isReadonly="true"
+                />
+              </div>
+            </div> -->
 
             <!-- 问卷画布 -->
-            <div class="design-form-canvas-page app-canvas" :class="editorState.currentPage.pageType">
+            <div
+              class="design-form-canvas-page app-canvas"
+              :style="[getCanvasRect(), { '--grid-size': editorState.appConfig.designConfig?.gridSize } ]"
+              :class="[editorState.currentPage.pageType, { grid: editorState.appConfig.designConfig?.gridSize > 0 }]"
+            >
               <!-- 画布页面名称 -->
               <div class="design-form-canvas-page-title">{{ editorState.currentPage.pageTitle }}</div>
               <!-- 问卷标题 -->
@@ -140,11 +178,14 @@
                 <DesignCanvas ref="componentCanvas" :isPreview="false" :isReadonly="false" />
               </div>
             </div>
+
+            <!-- 背景编辑器 -->
+            <BackgroundEditorPanel />
           </div>
 
           <!-- 欢迎界面 -->
           <WelComePanel
-            v-else-if="!editorState.appConfig.isInit"
+            v-else-if="!editorState.appConfig.designConfig.isInit"
             @create="welcomeCreate"
             @openQuestionnaireLibrary="showPublicQuestionnaireLibraryDialog()"
           ></WelComePanel>
@@ -156,14 +197,30 @@
             </template>
             <Button type="primary" @click="showCreateNewDialog">创建问卷</Button>
           </Empty>
+
+          <!-- 缩略图组件 -->
+          <Thumbnail
+            v-model:range-top="draggableState.scrollTop"
+            v-model:range-left="draggableState.scrollLeft"
+            :content-width="editorState.appConfig.canvasConfig.width + getWidthPadding"
+            :content-height="editorState.appConfig.canvasConfig.height + getHeightPadding"
+            :range-width="draggableState.canvasViewportWidth"
+            :range-height="draggableState.canvasViewportHeight"
+            :content-list="editorState.currentPage.children"
+            :canvas-scale="editorState.appConfig.canvasConfig.scale"
+            v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType === AppType.canvas"
+            @drag="toThumbnailDrag"
+          ></Thumbnail>
         </div>
 
         <!-- 主体左侧菜单栏 -->
-        <AsidePanel v-if="editorState.appConfig.isInit"></AsidePanel>
+        <AsidePanel v-if="editorState.appConfig.designConfig.isInit"></AsidePanel>
 
         <!-- 主体右侧菜单栏 -->
-        <ConfigPanel v-if="editorState.appConfig.isInit"></ConfigPanel>
+        <ConfigPanel v-if="editorState.appConfig.designConfig.isInit"></ConfigPanel>
 
+        <!-- 背景编辑器 -->
+        <BackgroundEditorDialog />
       </div>
       
       <!-- 底部状态部分 -->
@@ -175,10 +232,12 @@
                 <TimelineItem v-for="item in configState.saveHistory" :key="item.index">{{dayjs(item.time).fromNow()}}</TimelineItem>
               </Timeline>
             </template>
-            <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
+            <label v-if="editorState.appConfig.designConfig.isInit"><i class="iconfont icon-save"></i>{{configState.latestSaveHistory}}</label>
           </Popover>
           <!-- <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-save"></i>30分钟前</label> -->
-          <label v-if="editorState.appConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-fullscreen"></i>画布尺寸：{{editorState.appConfig.canvasConfig.width}}×{{editorState.appConfig.canvasConfig.height}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit && editorState.appConfig.appType !== AppType.questionnaire"><i class="iconfont icon-print-view"></i>放大倍数：x{{editorState.appConfig.canvasConfig.scale.toFixed(1)}}</label>
+          <label v-if="editorState.appConfig.designConfig.isInit"><i class="iconfont icon-layer"></i>组件数：{{editorService.getComponentCount()}}</label>
           <label><i class="iconfont icon-guide"></i>版本号 {{state.version}}</label>
           <label :class="configState.config.proMode ? 'pro-mode' : 'normal-mode'">
             <i class="iconfont" :class="configState.config.proMode === 'normal' ? 'icon-yunyingzhongxin' : 'icon-star'"></i>{{configState.getModeTxt }}
@@ -207,9 +266,9 @@
       :maskStyle="{ backgroundColor: 'rgba(0, 0, 0, 0.1)' }"
       v-model:visible="editorState.showAppConfigDialog"
     >
-      <QuestionnaireConfig labelWidth="130px"
-        v-if="['questionnaire', 'courseware'].includes(editorState.appConfig.appType)"
-      ></QuestionnaireConfig>
+      <AppTypeConfig labelWidth="130px"
+        v-if="['questionnaire', 'courseware', 'canvas'].includes(editorState.appConfig.appType)"
+      ></AppTypeConfig>
       <ComplexComponentConfig labelWidth="130px"
         v-else-if="editorState.appConfig.appType === 'complex-component'"
       ></ComplexComponentConfig>
@@ -248,15 +307,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch } from 'vue';
+import { ref, reactive, getCurrentInstance, onUnmounted, onMounted, watch, computed, onErrorCaptured } from 'vue';
 import DesignCanvas from '../components/module/DesignCanvas.vue';
-import { downLoadFile, dateFormat } from '@/tools/common';
+import { downLoadFile, dateFormat, throttle, toDecimal } from '@/tools/common';
 import { Button, Drawer, Empty, Menu, MenuItem, Popover, RadioButton, RadioGroup, SubMenu, Timeline, TimelineItem, Tooltip } from 'ant-design-vue';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as historyState, service as historyService } from '@/common/history-module';
-import { service as draggableService } from '@/modules/draggable-module';
-import { state as configState, service as configService } from '@/common/config-module';
-import { state as versionHistoryState } from '@/modules/version-history-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
+import { state as draggableState, service as draggableService } from '@/modules/draggable-module';
+import { state as configState, service as configService } from '@/modules/config-module';
 import { service as globalSearchService } from '@/modules/global-search-module';
 import { useComponentHandle } from '@/common/component-handle';
 import { useAppHandle } from '@/common/app-handle';
@@ -266,17 +324,22 @@ import WelComePanel from '@/components/module/WelcomePanel.vue';
 import AppPreviewDialog from '@/components/module/AppPreviewDialog.vue';
 import ThemeConfig from '@/modules/theme-module/component/ThemeConfig.vue';
 import ConfigPanel from '@/components/module/config-panel/ConfigPanel.vue';
-import { AppType } from '@/@types/enum';
+import BackgroundEditorDialog from '@/modules/background-editor-module/component/BackgroundEditorDialog.vue';
+import BackgroundEditorPanel from '@/modules/background-editor-module/component/BackgroundEditorPanel.vue';
+import { AppType, type Component } from '@haku-design/core';
   
 import { initCommands } from '@/data/form-commands';
-import { getQuestionary } from '@/api/common/questionnaire';
+import { getQuestionary } from '@/api/questionnaire';
 import { useRoute } from 'vue-router';
-import { Component } from '@/@types/component';
 import dayjs from 'dayjs';
 import { toast } from '@/common/message';
 import { ExportOutlined, EyeOutlined, FileOutlined } from '@ant-design/icons-vue';
+import Thumbnail from '@/components/common/Thumbnail.vue';
+import domtoimage from 'dom-to-image-more';
+import bus, { GlobalBusType } from '@/tools/bus';
 
 const {
+  getExportData,
   showPrivateQuestionnaireLibraryDialog,
   showPublicQuestionnaireLibraryDialog,
 } = useAppHandle();
@@ -284,6 +347,62 @@ const {
 /** 保存记录pop弹窗 */
 const saveHistoryVisible = ref<boolean>(false);
 
+/** 画布滚动条滚动事件 */
+const onScroll = throttle((e) => {
+  draggableState.scrollTop = e.target.scrollTop;
+  draggableState.scrollLeft = e.target.scrollLeft;
+  const { y, x } = editorState.canvasPanelEl.getBoundingClientRect();
+  editorState.canvasLocation.y = editorState.canvasPanelEl.scrollTop - y;
+  editorState.canvasLocation.x = editorState.canvasPanelEl.scrollLeft - x;
+}, 50);
+
+/** 画布缩放事件 */
+const onResize = (e) => {
+  if (editorState.appConfig.appType !== AppType.questionnaire && e.ctrlKey) {
+    if (e.deltaY > 0 || e.deltaX > 0) {
+      if (editorState.appConfig.canvasConfig.scale > 0.5) {
+        editorState.appConfig.canvasConfig.scale = toDecimal(editorState.appConfig.canvasConfig.scale - 0.1, 1);
+      }
+    } else {
+      if (editorState.appConfig.canvasConfig.scale < 2) {
+        editorState.appConfig.canvasConfig.scale = toDecimal(editorState.appConfig.canvasConfig.scale + 0.1, 1);
+      }
+    }
+    e.preventDefault();
+    e.stopPropagation()
+  }
+};
+
+/** 获取横向边距 */
+const getWidthPadding = computed<number>(() => {
+  switch (editorState.appConfig.appType) {
+    case AppType.questionnaire: return 40;
+    case AppType.canvas: return 40;
+    default: return 0;
+  }
+});
+/** 获取纵向边距 */
+const getHeightPadding = computed<number>(() => {
+  switch (editorState.appConfig.appType) {
+    case AppType.questionnaire: return 105;
+    case AppType.canvas: return 40;
+    default: return 0;
+  }
+});
+
+/** 获取画布样式 */
+const getCanvasRect = () => {
+  const _style = {
+    width: `${editorState.appConfig.canvasConfig.width}px`,
+    minHeight: 'initial',
+    zoom: editorState.appConfig.canvasConfig.scale,
+  } as Record<string, any>;
+
+  if (!editorState.isPreview) {
+    _style.minHeight = `${editorState.appConfig.canvasConfig.height}px`;
+  }
+  return _style;
+}
 /** 从欢迎界面创建 */
 const welcomeCreate = (type) => {
   state.visibleCreateNewDialog = true;
@@ -307,9 +426,13 @@ const showPublishDialog = () => {
 const saveConfig = () => {
 
 };
+/** 拖拽缩略图位置 */
+const toThumbnailDrag = (x: number, y: number) => {
+  editorState.canvasEl.scrollTo(x, y);
+}
 /** 设置JSON */
 const setEditorJson = () => {
-  const _layout = JSON.stringify(editorService.getExportData(), undefined, '  ');
+  const _layout = JSON.stringify(editorService.exportData(), undefined, '  ');
   state.editorJson = _layout;
   toast('已生成JSON', 'success');
 };
@@ -326,16 +449,30 @@ const menu_exportJSON = () => {
     exportJSONFile();
   }
 };
+/** 导出图片 */
+const menu_exportImage = () => {
+  if((/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent))) {
+    toast('暂不支持Safari导出图片');
+    // download('', {
+    //   url: `${location.origin}/#/preview`,
+    //   width: 500,
+    //   height: 500
+    // }, { method: ApiMethodType.get }).then(blob => {
+    //  downLoadFile(`小白快搭_${editorState.appConfig.appTitle}_${dateFormat(new Date(), 'yyyy_MM_dd')}.png`, blob);
+    // });
+  } else {
+    const _dom = document.querySelector('.design-form-canvas-page');
+    domtoimage.toBlob(_dom).then((blob) => {
+      downLoadFile(`小白快搭_${editorState.appConfig.appTitle}_${dateFormat(new Date(), 'yyyy_MM_dd')}.png`, blob);
+    }).catch((error) => {
+      toast(`导出图片失败，${error}`, 'error');
+    });
+  }
+};
 /** 保存功能 */
 const save = () => {
-  historyService.exec('save', { value: 'save' });
+  historyService.exec('save', {});
 };
-
-onMounted(() => {
-  editorState.bus.$on('component_handle', (eventName, params, component: Component) => {
-    componentHandle(eventName, params, component);
-  });
-});
     
 const instance = getCurrentInstance();
 const { componentHandle } = useComponentHandle();
@@ -366,29 +503,61 @@ const getDataById = id => {
     console.error(err);
     toast(`应用加载失败，错误原因：${err.message}`, 'error');
   }).finally(() => {
-    hide();
+    hide.clear();
   });
 }
 
-/** 监听问卷版本切换 */
-versionHistoryState.bus.$on('version_change', () => {
-  getDataById(route.query.qid);
-});
+const globalMouseMove = (e: MouseEvent) => {
+  draggableService.dragMove(e);
+  draggableService.moveRangeSelect(e);
+}
+const globalMouseUp = (e: MouseEvent) => {
+  bus.$enable(GlobalBusType.onBodyMouseMove);
+  draggableService.endDrag(e);
+  draggableService.endRangeSelect(e);
+}
+
+const onKeyDownStopPress = (e) => {
+  if (e.code.toLowerCase() === 'space') {
+    if (!draggableState.pressSpaceKey) {
+      draggableState.pressSpaceKey = true;
+    }
+    e.preventDefault();
+  }
+};
+const onKeyUpStopPress = (e) => {
+  if (e.code.toLowerCase() === 'space') {
+    if (draggableState.pressSpaceKey) {
+      draggableState.pressSpaceKey = false;
+    }
+    e.preventDefault();
+  }
+};
 
 onMounted(() => {
+  window.addEventListener('keydown', onKeyDownStopPress);
+  window.addEventListener('keyup', onKeyUpStopPress);
+  window.onkeydown = onKeyDownStopPress;
   window.onresize = () => {
     editorService.onPageSize();
   };
-  document.body.addEventListener('mousemove', draggableService.dragMove);
-  document.body.addEventListener('mouseup', draggableService.endDrag);
+
+  bus.$on(GlobalBusType.versionChange, () => {
+    getDataById(route.query.qid);
+  });
+  bus.$on(GlobalBusType.componentHandle, (eventName, params, component: Component) => {
+    componentHandle(eventName, params, component);
+  });
+  document.body.addEventListener('mousemove', globalMouseMove, { passive: true });
+  bus.$on(GlobalBusType.onBodyMouseUp, globalMouseUp);
   if (route.query.qid) {
     getDataById(route.query.qid);
   }
 });
 
 onUnmounted(() => {
-  document.body.removeEventListener('mousemove', draggableService.dragMove);
-  document.body.removeEventListener('mouseup', draggableService.endDrag);
+  document.body.removeEventListener('mousemove', globalMouseMove);
+  bus.$off(GlobalBusType.onBodyMouseUp, globalMouseUp);
 });
 
 watch(() => route.fullPath, (newPath, oldPath) => {
@@ -419,7 +588,7 @@ const state = reactive({
     { code: 'default', title: '浅色主题' },
     { code: 'dark', title: '深色主题' },
     { code: 'translucent', title: '半透明主题' }
-  ] as { code: string, title: string }[],
+  ] as { code: "default" | "dark" | "translucent", title: string }[],
 });
 
 editorState.componentCanvas = ref(DesignCanvas);

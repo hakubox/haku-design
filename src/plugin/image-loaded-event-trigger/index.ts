@@ -1,4 +1,4 @@
-import { EventTriggerGroup } from '@/modules/event-module/enum';
+import { EventTriggerGroup } from '@/modules/event-module';
 import { PluginType, type PluginInfo, registerEventAction, registerEventTrigger } from '@/modules/plugin-module';
 
 /** 注册图片加载完成事件触发（插件测试） */
@@ -23,4 +23,10 @@ export function registerImageLoadedEventTrigger() {
     hasState: false,
     format: '当前组件图片加载完毕'
   });
+}
+
+export default {
+  install() {
+    registerImageLoadedEventTrigger();
+  }
 }

@@ -1,139 +1,111 @@
 <template>
-  <div>
-    <component @focus="onFocus(prop)"
-      v-bind="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      :component="model"
-      :value="getValue"
-      :disabled="prop.disabled"
-      :attrs="Object.assign({}, getEditor.attrs, prop.attrs, isFullScreen ? { style: { height: '500px' } } : {})"
-      @change="(val) => onChange(val, prop, propertys, model)"
-      :is="getEditor.component"
-    >
-      {{getEditor.html}}
-      <template v-for="slot in Object.keys(getEditor.slot)" #[slot]>
-        <component v-for="(detailComponent, index3) in getEditor.slot[slot]" 
-          :key="slot + detailComponent.component + index3"
-          v-bind="detailComponent.attrs" 
-          :is="detailComponent.component" 
-        >
-          {{detailComponent.html}}
-          <template v-for="detailSlot in Object.keys(detailComponent.slot)" #[detailSlot]>
-            <component 
-              v-for="(detail2Component, index4) in detailComponent.slot[detailSlot]" 
-              :key="detailSlot + detail2Component.component + index4"
-              v-bind="detail2Component.attrs" 
-              :is="detail2Component.component" 
-            >
-            {{detail2Component.html}}
-            </component>
-          </template>
-        </component>
-      </template>
-    </component>
-  </div>
+  <component @focus="onFocus(prop)"
+    v-if="getEditor"
+    v-bind="Object.assign({}, getEditor.attrs, prop.attrs)"
+    :component="model"
+    :value="getValue"
+    :disabled="prop.disabled"
+    :attrs="Object.assign({}, getEditor.attrs, prop.attrs)"
+    @change="(val) => onChange(val, prop, model)"
+    :is="getEditor.component"
+  >
+    {{getEditor.html}}
+    <template v-for="slot in Object.keys(getEditor.slot)" #[slot]>
+      <component v-for="(detailComponent, index3) in getEditor.slot[slot]" 
+        :key="slot + detailComponent.component + index3"
+        v-bind="detailComponent.attrs" 
+        :is="detailComponent.component" 
+      >
+        {{detailComponent.html}}
+        <template v-for="detailSlot in Object.keys(detailComponent.slot)" #[detailSlot]>
+          <component 
+            v-for="(detail2Component, index4) in detailComponent.slot[detailSlot]" 
+            :key="detailSlot + detail2Component.component + index4"
+            v-bind="detail2Component.attrs" 
+            :is="detail2Component.component" 
+          >
+          {{detail2Component.html}}
+          </component>
+        </template>
+      </component>
+    </template>
+  </component>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, computed } from "vue";
-import { state as editorState, service as editorService } from "@/modules/editor-module";
-import { state as historyState, service as historyService } from "@/common/history-module";
-import { Component, GeneralProperty } from "@/@types";
+<script lang="ts" setup>
+import { PropType, computed } from "vue";
+import { state as editorState } from "@/modules/editor-module";
+import type { GeneralProperty } from "@haku-design/core";
 
-export default defineComponent({
-  name: "GeneralEditorItem",
-  components: {},
-  props: {
-    /** 属性 */
-    prop: {
-      type: Object as PropType<GeneralProperty>,
-      required: true,
-      default: () => ({})
-    },
-    /** 属性列表 */
-    propertys: {
-      type: Array as PropType<GeneralProperty[]>,
-      default: () => []
-    },
-    /** 绑定主数据 */
-    model: {
-      type: Object as PropType<Record<string, any>>,
-      default: () => ({})
-    },
-    /** 是否全屏状态 */
-    isFullScreen: {
-      type: Boolean,
-      default: false
-    }
+const props = defineProps({
+  /** 属性 */
+  prop: {
+    type: Object as PropType<GeneralProperty<any>>,
+    required: true,
+    default: () => ({})
   },
-  methods: {
-    onFocus(prop) {
-      editorState.currentProp = prop;
-    },
-    /** 属性修改触发的事件 */
-    propChangeListener(e, prop, propMap, target?: Record<string, any>) {
-      if (e.target) {
-        console.warn('属性值包含val.target', e);
-        return;
-      }
-      // const _queston = this.editorState.currentSelectedComponent;
-      // if (_queston) {
-      //   this.historyService.exec('set-property', {
-      //     objectId: _queston.id,
-      //     attrs: {
-      //       property: this.prop,
-      //       propertyName: this.prop.name,
-      //       propertyTitle: this.prop.title,
-      //       componentTitle: _queston.title,
-      //     },
-      //     value: e
-      //   });
-      // }
-      // let _value = e.target ? e.target.value : e;
-    },
+  /** 属性列表 */
+  propertys: {
+    type: Array as PropType<GeneralProperty<any>[]>,
+    default: () => []
   },
-  created() {
-  },
-  mounted() {
-  },
-  setup(props, { emit }) {
-
-    const getEditor = computed(() => {
-      return editorState.propertyEditors[props.prop.editor];
-    });
-    
-    /** 值改变 */
-    const onChange = (value, prop, propertys, model) => {
-      if (value?.target) return;
-      emit('change', value, prop, propertys, model);
-    };
-
-    /** 获取值 */
-    const getValue = computed(() => {
-      let _returnValue;
-      if (typeof props.prop.name === 'string') {
-        _returnValue = props.model[props.prop.name];
-      } else {
-        let _value = props.model;
-        props.prop.name.forEach(name => {
-          if (_value) _value = _value[name];
-        });
-        _returnValue = _value;
-      }
-
-      if (_returnValue?.value !== undefined) {
-        _returnValue = _returnValue.value;
-      }
-
-      return _returnValue;
-    });
-
-    return {
-      editorState,
-      getEditor,
-      historyService,
-      getValue,
-      onChange
-    };
+  /** 绑定主数据 */
+  model: {
+    type: Object as PropType<Record<string, any>>,
+    default: () => ({})
   }
+});
+
+const emit = defineEmits<{
+  (event: 'change', value: any, prop: GeneralProperty<any>, propMap, model: Record<string, any>): void;
+}>();
+
+const onFocus = (prop) => {
+  editorState.currentProp = prop;
+};
+
+const getEditor = computed(() => {
+  return editorState.propertyEditors[props.prop.editor];
+});
+
+/** 值改变 */
+const onChange = (value, prop: GeneralProperty<any>, model: Record<string, any>) => {
+  if (value?.target) return;
+  emit('change', value, prop, editorState.currentSelectedComponentPropertyMap, model);
+};
+
+/** 获取值 */
+const getValue = computed(() => {
+  let _returnValue;
+  if (props.prop.names) {
+    _returnValue = props.prop.names.map(name => {
+      if (Array.isArray(name)) {
+        let _obj = props.model;
+        const _names = name;
+        for (let i = 0; i < _names.length; i++) {
+          _obj = _obj[_names[i]];
+        }
+        return _obj;
+      } else {
+        return props.model[name]
+      }
+    });
+  } else {
+    if (typeof props.prop.name === 'string') {
+      _returnValue = props.model[props.prop.name];
+    } else {
+      let _value = props.model;
+      props.prop.name.forEach(name => {
+        if (_value) _value = _value[name];
+      });
+      _returnValue = _value;
+    }
+  }
+
+  if (_returnValue?.value !== undefined) {
+    _returnValue = _returnValue.value;
+  }
+
+  return _returnValue;
 });
 </script>

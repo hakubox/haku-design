@@ -1,11 +1,11 @@
 <template>
-  <q-basic v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-table" :class="{ loading: props.loading }">
       <Loading class="component-table-loading" v-if="props.loading" />
       <Empty v-if="!dataSource.length" description="暂无数据">
         <Button round size="small" type="primary" style="padding: 6px 20px" @click="addRow">添加数据</Button>
       </Empty>
-      <div v-else-if="editorState.appConfig.deviceType === 'mobile' && props.useCard" class="component-card-list">
+      <div v-else-if="editorState.appConfig.designConfig.deviceType === 'mobile' && props.useCard" class="component-card-list">
         <ul class="card-list-body">
           <li
             v-for="row in props.dataSource"
@@ -76,20 +76,18 @@
         </table>
       </div>
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-    inheritAttrs: false,
-    components: { Loading }
-};
-</script>
 <script lang="ts" setup>
 import { PropType, reactive } from 'vue';
 import { state as editorState } from '@/modules/editor-module';
 import { getQBasicProps } from '@/tools/common';
 import { Button, Empty, Loading } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const emit = defineEmits<{
   (event: 'update:value', value: string): void;

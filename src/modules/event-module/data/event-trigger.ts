@@ -1,6 +1,6 @@
-import { AppEventTrigger } from '@/modules/event-module/@types';
+import { AppEventTrigger } from '../index.d';
 import { state as editorState } from '@/modules/editor-module';
-import { ComponentPropertyEditor, PageType } from '@/@types/enum';
+import { ComponentPropertyEditor, PageType } from '@haku-design/core';
 import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
 import { EventTriggerGroup, EventTriggerType } from '../enum';
 import { computed } from 'vue';
@@ -17,7 +17,7 @@ export const eventTriggerGroups: { label: string; value: EventTriggerGroup }[] =
 ];
 
 /** 获取所有事件触发 */
-export let getEventTriggers = computed<AppEventTrigger[]>(() => {
+export const getEventTriggers = computed<AppEventTrigger[]>(() => {
   return eventTriggers;
 });
 

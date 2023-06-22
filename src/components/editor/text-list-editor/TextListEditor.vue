@@ -1,108 +1,72 @@
 <template>
-  <div>
-    <template v-for="tag in state.tags" :key="tag">
-      <Tooltip v-if="tag.length > props.maxCount" :title="tag">
-        <Tag :closable="true" @close="handleClose(tag)">
-          {{ `${tag.slice(0, props.maxCount)}...` }}
-        </Tag>
-      </Tooltip>
-      <Tag v-else :closable="true" @close="handleClose(tag)">
-        {{ tag }}
-      </Tag>
-    </template>
-    <Input
-      v-if="state.inputVisible"
-      ref="inputRef"
-      v-model:value="state.inputValue"
-      type="text"
-      size="small"
-      :style="{ width: '78px' }"
-      @blur="handleInputConfirm"
-      @keyup.enter="handleInputConfirm"
-    />
-    <Tag v-else style="background: #fff; border-style: dashed" @click="showInput">
-      <PlusOutlined />
-      新标签
-    </Tag>
+  <div class="text-list-editor" :class="{ disabled: props.disabled }">
+    <div class="text-list-editor-item" v-for="(item, index) in options">
+      <span class="text-list-editor-label">{{ item.label ?? item.prop }}</span>
+      <input :disabled="props.disabled" v-model="state.vals[index]" @input="change" type="string" />
+      <span v-if="item.unit" class="text-list-editor-unit">{{ item.unit }}</span>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { PlusOutlined } from '@ant-design/icons-vue';
-import { Input, Tag, Tooltip } from 'ant-design-vue';
-import { ref, onMounted, PropType, reactive, nextTick, watch } from 'vue';
+import { throttle, toDecimal } from '@/tools/common';
+import { computed, onMounted, PropType, reactive, watch } from 'vue';
 
 const props = defineProps({
   value: {
-    type: Array as PropType<string[]>,
-    default: () => [],
+    type: Object as PropType<string[]>,
+    default: () => [] as string[],
   },
-  placeholder: {
-    type: String,
-    default: '',
+  disabled: {
+    type: Boolean,
+    default: false,
   },
-  maxCount: {
+  /** 每行文本框数量 */
+  rowCount: {
     type: Number,
-    default: 20
+    default: 2,
+  },
+  options: {
+    type: Array as PropType<{ label?: string, prop?: string, unit?: string }[]>,
+    default: () => []
   }
 });
-
-/** 新标签输入框 */
-const inputRef = ref<HTMLInputElement>();
 
 const emit = defineEmits<{
   (event: 'change', val: string[]): void;
-  (event: 'input', val: string[]): void;
 }>();
 
-let state = reactive({
-  inputValue: '',
-  tags: [] as string[],
-  inputVisible: false,
+const state = reactive({
+  vals: [] as string[],
 });
 
-const showInput = () => {
-  state.inputVisible = true;
-  nextTick(() => {
-    inputRef.value!.focus();
-  });
-};
-const handleClose = (removedTag: string) => {
-  const tags = state.tags.filter(tag => tag !== removedTag);
-  state.tags = tags;
-  change();
-};
-const handleInputConfirm = () => {
-  const inputValue = state.inputValue;
-  let tags = state.tags;
-  if (inputValue && tags.indexOf(state.inputValue) === -1) {
-    tags = [...tags, inputValue];
-  }
-  Object.assign(state, {
-    tags,
-    inputVisible: false,
-    inputValue: '',
-  });
-  change();
-};
+const valueToArray = computed<(string | string)[]>(() => {
+  return state.vals;
+});
+
 /** 初始化 */
 const init = () => {
-  if (props.value) state.tags = props.value;
-  else state.tags = [];
-};
-/** 改变值 */
-const change = () => {
-  const value = state.tags;
-  if (value !== props.value) {
-    emit('change', value);
-  }
+  state.vals = props.value;
 };
 
-watch(() => props.value, (val, oldVal) => {
-  if (val !== oldVal) {
-    if (val) state.tags = val;
-    else state.tags = [];
+/** 改变值 */
+const change = throttle(() => {
+  if (valueToArray.value.join(',') != props.value.join(',')) {
+    const isError = (state.vals as (string | string)[]).some((i, index) => {
+      return i === '';
+    });
+    if (!isError) {
+      emit('change', state.vals);
+    } else {
+      state.vals = props.value;
+    }
   }
+});
+
+watch(() => props.value, () => {
+  init();
+}, {
+  deep: true
 });
 
 onMounted(() => {
@@ -113,6 +77,101 @@ onMounted(() => {
 <style lang="less" scoped>
 @import '/src/assets/less/variable.less';
 
-.textarea-editor {
+.text-list-editor {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  // &:before {
+  //     content: '';
+  //     position: absolute;
+  //     top: 24px;
+  //     left: 32%;
+  //     width: 36%;
+  //     height: 12px;
+  //     border: 1px solid #CCC;
+  // }
+
+  &.disabled {
+
+    input {
+      color: #AAA;
+    }
+  }
+
+  > .text-list-editor-item {
+    flex-shrink: 1;
+    flex-grow: 1;
+    width: calc(50% - 5px);
+    position: relative;
+    height: 24px;
+    padding: 0px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    + .text-list-editor-item {
+      margin-left: 10px;
+
+      &:nth-child(2n - 1) {
+        margin-left: 0px;
+      }
+
+      &:nth-child(n + 3) {
+        margin-top: 10px;
+      }
+    }
+
+    > .text-list-editor-label {
+      display: inline-block;
+      vertical-align: top;
+      line-height: 24px;
+      margin-right: 8px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    > .text-list-editor-unit {
+      position: absolute;
+      top: 0px;
+      right: 12px;
+      color: #bbb;
+      font-size: 12px;
+      display: inline-block;
+      vertical-align: top;
+      line-height: 24px;
+      margin-left: 5px;
+    }
+
+    > input {
+      background-color: #f7f9fc;
+      border: 1px solid #f7f9fc;
+      border-radius: 4px;
+      height: 30px;
+      width: calc(100% - 15px);
+      vertical-align: top;
+      line-height: 18px;
+      padding-right: 30px;
+      padding-left: 5px;
+      color: #666;
+      font-size: 12px;
+      transition: 0.3s;
+
+      &:hover {
+        border-color: fadeout(@primary-color, 20%);
+        border-right-width: 1px !important;
+      }
+
+      &:focus {
+        box-shadow: 0px 0px 0px 2px fadeout(@primary-color, 70%);
+      }
+    }
+  }
 }
 </style>

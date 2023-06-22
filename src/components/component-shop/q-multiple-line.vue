@@ -1,20 +1,20 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-item-multiple"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
   >
     <textarea type="text" :disabled="disabled" :placeholder="placeholder" :style="{ minHeight: editorHeight }" :value="value" @input="changeValue"></textarea>
     <span v-if="max" class="component-item-multiple-count-suffix">{{ value.length }}/{{ max }}</span>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
+import { defineOptions } from 'vue';
 import { getQBasicProps } from '@/tools/common';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -57,32 +57,35 @@ const changeValue = (e) => {
 </script>
 
 <style lang="less" scoped>
-  @import '/src/assets/less/variable.less';
+@import '/src/assets/less/variable.less';
 
-  .component-item-multiple {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.component-item-multiple {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
 
-    > textarea {
-      min-width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      border: 1px solid @q-border-color;
-      background-color: @q-bg-color;
-      padding: 5px 10px;
-      border-radius: 6px;
-    }
-
-    > .component-item-multiple-count-suffix {
-      pointer-events: none;
-      user-select: none;
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      font-size: 13px;
-      color: rgba(0, 0, 0, 0.45);
-    }
+  > textarea {
+    flex-shrink: 1;
+    flex-grow: 1;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: 1px solid @q-border-color;
+    background-color: @q-bg-color;
+    padding: 5px 10px;
+    border-radius: 6px;
   }
+
+  > .component-item-multiple-count-suffix {
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.45);
+  }
+}
 </style>

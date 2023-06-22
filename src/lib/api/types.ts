@@ -104,7 +104,7 @@ export interface ApiConfig<TReturnResponse, TReturnPageList> extends AxiosReques
   onUploadProgress?: (...args) => any;
 }
 
-export type RequestType<T = void> = <ReturnResponse extends boolean = false, ReturnPageList extends boolean = false>(
+export type RequestType = <T = any, ReturnResponse extends boolean = false, ReturnPageList extends boolean = false>(
   /** url访问路径 */
   url: string,
   /** 参数 */

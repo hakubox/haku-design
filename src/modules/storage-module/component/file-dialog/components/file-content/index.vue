@@ -82,12 +82,12 @@
   <!-- 右键查看文件属性弹窗 -->
   <FileAttributeModal v-model:visible="fileAttributeModalVisible" :file-item="activeMenuFile" />
   <!-- 文件预览-->
-  <FilePreview v-model:visible="showPreview" :activeMenuFile="activeMenuFile"/>
+  <FilePreview v-model:visible="showPreview" :activeMenuFile="activeMenuFile" />
 </template>
 
 <script lang="ts" setup>
 /** 文件展示面板 */
-import { StorageFileInfo } from '@/modules/storage-module/@types';
+import { ProgressStateItem, StorageFileInfo } from '@/modules/storage-module/index.d';
 import { FileType, getFileIconByFileType } from '../../../../tools/fileTypeHandler';
 import {
   getCurrentInstance,
@@ -103,9 +103,8 @@ import {
 import InputLable from '../common/InputLable.vue';
 import { Button, Empty } from 'ant-design-vue';
 import { fileDialogState } from '../../fileDialogController';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import { parseByte } from '../../tools/transFileSize';
-import { ProgressState } from '../../hooks/useFile';
 import { VueDraggableNext } from 'vue-draggable-next';
 import FileAttributeModal from './components/FileAttributeModal.vue';
 import FilePreview from './components/FilePreview.vue';
@@ -139,7 +138,7 @@ const props = defineProps({
     required: true,
   },
   dirProgressState: {
-    type: Array as PropType<ProgressState>,
+    type: Array as PropType<ProgressStateItem[]>,
     default: () => [],
     required: true,
   },
@@ -148,7 +147,7 @@ const { curDirId } = toRefs(props);
 const state = reactive({
   /** 当前选中的文件id列表 */
   selectedFileIds: [] as string[],
-  menuEvent: null as any,
+  menuEvent: undefined as any,
   rightClickMenuVisible: false,
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <q-basic
+  <ComponentBasic
     class="component-single-choice"
     v-bind.prop="getQBasicProps({ ...props, ...$attrs })"
     :layout="globalState.isMobile ? 'layout-span-1' : props.layout"
@@ -45,21 +45,20 @@
       </div>
     </Radio>
   </RadioGroup>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
 import { onMounted, PropType, reactive, nextTick, watch, inject } from "vue";
 import { service as storageService } from '@/modules/storage-module';
 import { state as globalState } from '@/common/global';
 import { getQBasicProps } from '@/tools/common';
-import { computed } from "@vue/reactivity";
-import { Radio, RadioGroup } from "vant";
+import { computed } from 'vue';
+import { Radio, RadioGroup } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -113,7 +112,7 @@ watch(() => props.value, (val, oldVal) => {
 const elseTxt = computed({
   get() {
     if (!props.value) return '';
-    let _option = props.options?.find(i => i.value === props.value);
+    const _option = props.options?.find(i => i.value === props.value);
     if (_option) {
       return '';
     } else {
@@ -126,7 +125,7 @@ const elseTxt = computed({
 });
 
 const init = () => {
-  let _option = props.options?.find(i => i.value === props.value);
+  const _option = props.options?.find(i => i.value === props.value);
   if (!_option) {
     elseTxt.value = props.value;
     if (props.value) state.isElse = true;

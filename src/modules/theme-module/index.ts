@@ -1,12 +1,16 @@
-import { render } from 'less';
-import type { ThemeConfig } from './@types';
+import { render } from 'less/dist/less.min';
+import type { ThemeConfig } from './index.d';
 import { themePropertys } from './data/theme-propertys';
 import { cloneLoop } from '@/lib/clone';
 import { themeList } from './data/theme-list';
-import { computed, reactive } from 'vue';
+import { reactive, toRaw } from 'vue';
 import { toast } from '@/common/message';
+import { state as editorState, service as editorService } from '@/modules/editor-module';
+import { state as historyState, service as historyService } from '@/modules/history-module';
 
-/** 主题模块状态 */
+export * from './index.d';
+
+/** 客户端主题模块状态 */
 export const state = reactive({
   /** 变量 */
   variableMap: {
@@ -15,26 +19,27 @@ export const state = reactive({
   /** 主题列表 */
   themeList: themeList,
   /** 主题配置 */
-  themeConfig: {
-
-  } as ThemeConfig,
-  /** 当前主题名称 */
+  themeConfig: {} as ThemeConfig,
+  /** 当前主题名称（客户端主题） */
   currentThemeCode: 'theme-default',
-  /** 当前主题 */
-  currentTheme: computed<ThemeConfig | undefined>(() => {
-    return state.themeList.find(i => i.code === state.currentThemeCode);
-  }),
 });
 
 /** 变量模块逻辑 */
 export const service = {
+  /** 获取当前主题 */
+  getCurrentTheme: () => {
+    return state.themeList.find(i => i.code === state.currentThemeCode);
+  },
   /** 加载主题 */
   changeTheme(theme?: string | ThemeConfig) {
     if (theme === undefined || typeof theme === 'string') {
-      if (theme) state.currentThemeCode = theme;
+      if (theme) {
+        state.currentThemeCode = theme;
+        editorState.appConfig.appTheme = theme;
+      }
       const _index = state.themeList.findIndex(i => i.code === state.currentThemeCode);
       if (_index >= 0) {
-        state.themeConfig = cloneLoop(state.themeList[_index]);
+        state.themeConfig = cloneLoop(toRaw(state.themeList[_index]));
         themePropertys.forEach(prop => {
           if (prop.default && !state.themeConfig[prop.name as string]) {
             state.themeConfig[prop.name as string] = typeof prop.default === 'function' ? prop.default() : prop.default;
@@ -89,18 +94,6 @@ export const service = {
   loadThemeList() {
 
   },
-  /** 设置主题 */
-  setTheme(theme: ThemeConfig) {
-
-  },
-  /** 根据当前主题重设（重新从远程加载当前主题） */
-  resetTheme() {
-
-  },
-  /** 清除当前主题 */
-  clearTheme() {
-
-  }
 };
 
 export default {

@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-score-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-score-group" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div class="component-score-group-item" v-for="(item, index) in options" :key="index">
       <label>{{ item.label }}</label>
       <Rate
@@ -12,18 +12,17 @@
         @change="changeValue($event, index)"
       />
     </div>
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-};
-</script>
 <script lang="ts" setup>
 import { PropType } from 'vue';
 import { getQBasicProps } from '@/tools/common';
 import { Rate } from 'vant';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {
@@ -73,7 +72,7 @@ const emit = defineEmits<{
 }>();
 
 const changeValue = (val, index) => {
-  let vals = new Array(props.options.length).fill(0);
+  const vals = new Array(props.options.length).fill(0);
   for (let i = 0; i < props.value.length; i++) {
     vals[i] = props.value[i] ?? 0;
   }

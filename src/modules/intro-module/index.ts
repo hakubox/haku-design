@@ -1,5 +1,4 @@
 import introJs from 'intro.js';
-import 'intro.js/introjs.css';
 import './less/index.less';
 import { reactive } from 'vue';
 

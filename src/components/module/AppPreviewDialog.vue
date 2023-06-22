@@ -2,52 +2,53 @@
   <!-- 预览界面 -->
   <div class="preview-modal"
     :class="{
-      show: typeof props.visible === 'boolean' ? props.visible : props.visible.value,
+      show: isShow,
       leave: state.isLeaving
     }"
     @click.self.stop="closePreview"
   >
     <div class="preview-modal-body">
-      <!-- :style="{
-        width: editorState.appConfig.deviceType == 'pc' ? '950px' : '400px',
-        height: editorState.appConfig.deviceType == 'pc' ? '700px' : '687px',
-      }" -->
-      <!-- <div class="preview-modal-header">
-        <div class="preview-modal-title">预览界面</div>
-        <div class="preview-modal-tools">
-          <CloseOutlined @click="closePreview" />
-        </div>
-      </div> -->
       <div class="preview-modal-content device-info"
+        ref="deviceInfo"
         :class="[ state.previewUIConfig.useOriginScale ? 'origin-scale' : '', {
           'pc': 'device-info-pc',
           'tablet': 'device-info-tablet',
           'mobile': 'device-info-mobile',
-        }[state.previewUIConfig.deviceType]]"
+        }[state.previewUIConfig.deviceType], 
+        `app-type-${editorState.appConfig.appType}`]"
         :style="{
           '--tablet-scale': state.tabletScale,
+          '--tablet-content-scale': state.tabletContentScale,
           '--mobile-scale': state.mobileScale,
+          '--mobile-content-scale': state.mobileContentScale,
+          '--pc-scale': state.pcScale,
+          '--pc-content-scale': state.pcContentScale,
         }"
       >
         <DesignCanvas
+          v-if="isShow"
+          :style="{
+            width: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.width}px` : '',
+            height: editorState.appConfig.appType === AppType.canvas ? `${editorState.appConfig.canvasConfig.height}px` : '',
+          }"
           class="device-info-content"
-          ref="componentCanvas"
           :isPreview="true"
           @refresh="editorService.refresh"
         />
       </div>
 
       <!-- 调试器 -->
-      <div class="canvas-data-editor" v-if="editorState.currentPage.pageType === PageType.normalPage">
+      <div class="canvas-data-editor" v-if="isShow && editorState.currentPage.pageType === PageType.normalPage">
         <div class="canvas-data-editor-body">
           <Tabs v-model:activeKey="state.activeKey" type="card">
             <template #rightExtra>
-              <Popconfirm placement="bottomRight" @confirm="eventService.clearLog()">
+              <Popconfirm v-if="state.activeKey === 'event'" placement="bottomRight" @confirm="eventService.clearLog()">
                 <template #title>是否确认清空事件日志列表？</template>
-                <Button v-if="state.activeKey === 'event'" danger size="small" style="margin-right: 10px;">清除日志</Button>
+                <Button danger size="small" style="margin-right: 10px;">清除日志</Button>
               </Popconfirm>
+              <Button v-if="state.activeKey === 'preview'" type="primary" ghost size="small" style="margin-right: 10px;">新页面打开</Button>
             </template>
-            <TabPane key="config" tab="预览配置" force-render>
+            <TabPane key="preview" tab="预览配置" force-render>
               <GeneralEditor
                 :model="state.previewUIConfig"
                 :propertys="state.previewUIConfigProps"
@@ -117,21 +118,22 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted } from "vue";
+import { reactive, watch, computed, PropType, Ref, onMounted, onUnmounted, ref } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
-import { state as formFillState, service as formFillService } from '@/modules/form-fill-module';
-import { state as eventState, service as eventService } from '@/modules/event-module';
-import { ComponentPropertyEditor, PageType } from '@/@types/enum';
+import { state as formFillState, service as formFillService, type FormInfoItem } from '@/modules/form-fill-module';
+import { state as eventState, service as eventService, type AppEventLog } from '@/modules/event-module';
+import { AppType, ComponentPropertyEditor, PageType } from '@haku-design/core';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { cloneLoop } from "@/lib/clone";
-import { AppPage } from "@/@types/app-page";
-import { FormInfoItem } from "@/modules/form-fill-module/@types";
-import { GeneralProperty } from "@/@types";
-import { AppEventLog } from "@/modules/event-module/@types";
+import { AppPage } from "@haku-design/core";
+import { GeneralProperty } from "@haku-design/core";
 import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
+import bus, { GlobalBusType } from "@/tools/bus";
+
+const deviceInfo = ref<HTMLElement>();
 
 const props = defineProps({
   /** 是否显示预览框 */
@@ -146,23 +148,44 @@ const emit = defineEmits<{
 }>();
 
 const state = reactive({
-  activeKey: 'config',
+  activeKey: 'preview',
   /** 预览框关闭中 */
   isLeaving: false,
   /** 各个设备缩放比 */
   tabletScale: 1,
+  tabletContentScale: 1,
   mobileScale: 1,
+  mobileContentScale: 1,
+  pcScale: 1,
+  pcContentScale: 1,
   /** 预览配置 */
   previewUIConfig: {
     deviceType: 'pc',
     /** 使用原始缩放比 */
     useOriginScale: false,
+    /** 设备方向（landscape横向/vertical纵向） */
+    direction: 'vertical' as 'landscape' | 'vertical',
+  },
+  /** 设备屏幕信息（默认竖屏） */
+  deviceScreenInfos: {
+    /** 默认平板屏幕 */
+    tablet: {
+      width: 820,
+      height: 1180,
+      padding: [30, 26, 30, 26],
+    },
+    /** 默认手机屏幕 */
+    mobile: {
+      width: 390,
+      height: 750,
+      padding: [50, 15, 50, 15],
+    }
   },
   /** 预览配置属性栏 */
   previewUIConfigProps: [
     {
       name: 'deviceType',
-      title: '展现方式',
+      title: '设备类型',
       require: false,
       visible: true,
       group: 'ui',
@@ -173,6 +196,25 @@ const state = reactive({
           { label: '平板', value: 'tablet' },
           { label: '手机', value: 'mobile' }
         ]
+      },
+      change() {
+        onPageResize();
+      }
+    }, {
+      name: 'direction',
+      title: '方向',
+      require: false,
+      visible: true,
+      group: 'ui',
+      editor: ComponentPropertyEditor.radioGroup,
+      attrs: {
+        options: [
+          { label: '纵向', value: 'vertical' },
+          { label: '横向', value: 'landscape' }
+        ]
+      },
+      change() {
+        onPageResize();
       }
     }, {
       name: 'useOriginScale',
@@ -180,7 +222,10 @@ const state = reactive({
       require: false,
       visible: true,
       group: 'ui',
-      editor: ComponentPropertyEditor.boolean
+      editor: ComponentPropertyEditor.boolean,
+      change() {
+        onPageResize();
+      }
     }
   ],
 });
@@ -191,16 +236,20 @@ let tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, Form
 /** 临时appPages数据 */
 let tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
 
+const isShow = computed(() => {
+  return typeof props.visible === 'boolean' ? props.visible : props.visible.value
+});
+
 const components = computed(() => {
   return editorService.getAllFormItem();
 });
 
 /** 表单属性列表 */
-const formFillProps = computed<GeneralProperty[]>(() => {
+const formFillProps = computed<GeneralProperty<any>[]>(() => {
   const _formInfo = Object.values(formFillState.formInfo);
   _formInfo.sort((a, b) => components.value.findIndex(i => i.id === a.id) - components.value.findIndex(i => i.id === b.id));
   return _formInfo.map(item => {
-    let _editor: GeneralProperty['editor'] = ComponentPropertyEditor.singerLine;
+    let _editor: GeneralProperty<any>['editor'] = ComponentPropertyEditor.singerLine;
     if (item?.value?.dataOrigin === 'data-editor') {
       _editor = ComponentPropertyEditor.data;
     } else {
@@ -209,7 +258,7 @@ const formFillProps = computed<GeneralProperty[]>(() => {
           _editor = ComponentPropertyEditor.singerLine;
           break;
         case 'text-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'option':
           _editor = ComponentPropertyEditor.singerLine;
@@ -218,10 +267,10 @@ const formFillProps = computed<GeneralProperty[]>(() => {
           _editor = ComponentPropertyEditor.int;
           break;
         case 'number-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'option-list':
-          _editor = ComponentPropertyEditor.textList;
+          _editor = ComponentPropertyEditor.tags;
           break;
         case 'boolean':
           _editor = ComponentPropertyEditor.boolean;
@@ -247,7 +296,11 @@ const formFillProps = computed<GeneralProperty[]>(() => {
 
 /** 开启预览 */
 const openPreview = () => {
-
+  if (editorState.appConfig.appType === AppType.questionnaire) {
+    state.previewUIConfig.direction = 'vertical';
+  } else if (editorState.appConfig.appType === AppType.canvas) {
+    state.previewUIConfig.direction = 'landscape';
+  }
 };
 
 /** 关闭预览 */
@@ -282,24 +335,40 @@ const getHighlight = (item: AppEventLog) => {
 
 watch(() => props.visible, (val) => {
   if (val) {
-    state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
+    openPreview();
+    state.previewUIConfig.deviceType = editorState.appConfig.designConfig.deviceType;
     tempFormFillState = cloneLoop(formFillState.formInfo) as Record<string, FormInfoItem>;
     tempAppPagesState = cloneLoop(editorState.pages) as AppPage[];
-    
     resetScale();
   }
 });
 
+const onPageResize = () => {
+  bus.$emit(GlobalBusType.onPageResize);
+};
+
 const resetScale = () => {
   const _windowHeight = window.innerHeight - 60;
-  state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
-  state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+  if (editorState.appConfig.appType === AppType.questionnaire) {
+    state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
+    state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+  } else if (editorState.appConfig.appType === AppType.canvas) {
+    const _width = window.innerWidth - 500 - 40;
+    const _height = window.innerHeight - 60 - 48;
+    const _scale = Math.min(_width / editorState.appConfig.canvasConfig.width, _height / editorState.appConfig.canvasConfig.height);
+    state.pcContentScale = _scale;
+
+    state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
+    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.canvasConfig.height, (820 - 52) / editorState.appConfig.canvasConfig.width);
+    state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
+    state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.canvasConfig.height, (390 - 30) / editorState.appConfig.canvasConfig.width);
+  }
+  onPageResize();
 };
 
 onMounted(() => {
-  state.previewUIConfig.deviceType = editorState.appConfig.deviceType;
+  state.previewUIConfig.deviceType = editorState.appConfig.designConfig.deviceType;
   window.addEventListener('resize', resetScale);
-  openPreview();
 });
 
 onUnmounted(() => {
@@ -416,6 +485,16 @@ onUnmounted(() => {
 
       > .form-canvas {
         min-height: initial;
+        margin: auto;
+
+        > .app-canvas-bg-panel {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          // border-radius: 6px;
+          // overflow: hidden;
+        }
+        
         > .form-canvas-body {
           position: relative;
           // display: block;

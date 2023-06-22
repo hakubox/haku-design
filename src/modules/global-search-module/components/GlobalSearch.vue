@@ -129,19 +129,20 @@
               <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                 {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+              <span v-else :key="i+'2'">{{ fragment.txt }}</span>
             </template>
           </div>
           <div class="global-search-result-detail-tags">
-            <Tag v-for="tag in state.currentItem?.item.tags" :color="getDyanmicValue(tag.color)">
+            <Tag v-for="(tag, index) in state.currentItem?.item.tags || []" :key="index" :color="getDyanmicValue(tag.color)">
               {{ getDyanmicValue(tag.label) }}
             </Tag>
           </div>
           <!-- 详情页操作箱 -->
           <div class="global-search-result-detail-actions" v-show="state.currentItem?.item.actions">
-            <template v-for="(action, i) in state.currentItem?.item.actions">
+            <template v-for="(action, index) in state.currentItem?.item.actions || []">
               <Popconfirm
                 v-if="action.confirm"
+                :key="index"
                 :title="getDyanmicValue(action?.confirm, action)"
                 @confirm="action.action"
                 okText="确认"
@@ -154,7 +155,7 @@
                   {{ getDyanmicValue(action?.label, action) }}
                 </Button>
               </Popconfirm>
-              <Button v-else :type="(action.type as any)" :danger="getDyanmicValue(action?.danger, action)" @click="action.action">{{ getDyanmicValue(action?.label, action) }}</Button>
+              <Button :key="'_' + index" v-else :type="(action.type as any)" :danger="getDyanmicValue(action?.danger, action)" @click="action.action">{{ getDyanmicValue(action?.label, action) }}</Button>
             </template>
           </div>
           <!-- 详情页内容 -->
@@ -163,20 +164,20 @@
               <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                 {{ fragment.txt }}
               </span>
-              <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+              <span v-else :key="i+'2'">{{ fragment.txt }}</span>
             </template>
           </div>
           <!-- 相关内容 -->
           <div class="global-search-result-detail-related" v-show="state.currentItem?.item.related">
             <span>相关内容</span>
             <ul>
-              <li v-for="(related, index) in state.currentItem?.item.related" :key="index" @click="related?.goto?.()">
+              <li v-for="(related, index) in state.currentItem?.item.related || []" :key="index" @click="related?.goto?.()">
                 <span style="padding-right: 6px;">{{(index + 1) + '. '}}</span>
                 <template v-for="(fragment, i) in txtSplit('related.label', related.label, state.currentItem?.matches)">
                   <span v-if="fragment.isMatch" :key="i+'1'" style="color: #2857ff">
                     {{ fragment.txt }}
                   </span>
-                  <span v-else :key="i+'2'" style="color: #36395a;">{{ fragment.txt }}</span>
+                  <span v-else :key="i+'2'">{{ fragment.txt }}</span>
                 </template>
               </li>
             </ul>
@@ -215,12 +216,12 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import type { GlobalSearchGroupInstance, GlobalSearchItem, GlobalSearchItemCrumb } from '../@types';
+import type { GlobalSearchGroupInstance, GlobalSearchItem, GlobalSearchItemCrumb } from '../index.d';
 import { state as globalSearchState, service as globalSearchService } from '../';
 import { service as hotkeyService } from '@/modules/hotkey-module';
 import { throttle } from '@/tools/common';
 import { Button, Empty, Popconfirm, Tag, message } from 'ant-design-vue';
-import { computed } from '@vue/reactivity';
+import { computed } from 'vue';
 import type Fuse from 'fuse.js';
 
 /** 全局搜索状态管理 */

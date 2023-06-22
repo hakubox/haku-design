@@ -1,4 +1,4 @@
-import type { AddFormula } from '../@types';
+import type { AddFormula } from '../index.d';
 import { FormulaParamType, FormulaType } from '../type';
 
 /** 新增公式 */

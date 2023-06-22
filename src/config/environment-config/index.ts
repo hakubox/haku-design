@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { reactive } from 'vue';
-import type { ServerConfig, ServerEnvironment } from '@/@types';
+import type { ServerConfig, ServerEnvironment } from '@haku-design/core';
 
 let _config: ServerConfig;
 /** 是否初始化 */
@@ -11,8 +11,8 @@ export function changeConfig(environment: ServerEnvironment) {
   _config = reactive({
     subject: process.env.subject as string,
     environment: process.env.buildMode as 'development' | 'test' | 'production',
-    apiSrc: process.env.serverUrl as string,
-    whiteList: [] as string[]
+    apiSrc: process.env.serverApi as string,
+    whiteList: (process.env.whiteList || '').split(',') as string[]
   });
   _isInit = true;
   /** 设置axios默认访问地址 */

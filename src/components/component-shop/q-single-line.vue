@@ -1,5 +1,5 @@
 <template>
-  <q-basic class="component-single-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
+  <ComponentBasic class="component-single-line" v-bind.prop="getQBasicProps({ ...props, ...$attrs })">
     <div v-if="isPrint" class="component-single-line-printmode">{{ value }}</div>
     <input
       v-else
@@ -10,18 +10,17 @@
       :value="value"
       @input="changeValue"
     />
-  </q-basic>
+  </ComponentBasic>
 </template>
 
-<script lang="ts">
-export default {
-  inheritAttrs: false
-};
-</script>
 <script lang="ts" setup>
 import { inject, PropType, reactive } from 'vue';
 import { getQBasicProps } from '@/tools/common';
-import { Component } from '@/@types';
+import { Component } from '@haku-design/core';
+
+defineOptions({
+  inheritAttrs: false
+});
 
 const props = defineProps({
   value: {

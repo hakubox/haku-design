@@ -1,5 +1,5 @@
 import { deletes, get, post, put } from '@/lib/api';
-import type { FileListResponse, StorageFileInfo } from '../@types';
+import type { FileListResponse, StorageFileInfo } from '../index.d';
 import { SortType } from '../enum';
 import { transFileListResponse } from '../utils';
 

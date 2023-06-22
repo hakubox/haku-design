@@ -1,13 +1,14 @@
-import type { VersionHistoryInstance } from './@types';
-import { getQuestionaryVersionList, setQuestionaryVersion } from "@/api/common/questionnaire";
-import bus from '@/tools/bus';
+import type { VersionHistoryInstance } from './index.d';
+import { getQuestionaryVersionList, setQuestionaryVersion } from "@/api/questionnaire";
+import bus, { GlobalBusType } from '@/tools/bus';
 import { reactive } from 'vue';
 import { toast } from '@/common/message';
+
+export * from './index.d';
 
 export const state = reactive({
   /** 版本历史列表 */
   versionHistoryList: [] as VersionHistoryInstance[],
-  bus,
 });
 
 export const service = {
@@ -16,7 +17,7 @@ export const service = {
     return new Promise((resolve, reject) => {
       const _instance: VersionHistoryInstance = {
         id: '',
-        appVersion: '1',
+        appVersion: 1,
         description: '',
         remark: '',
         createUser: '',
@@ -34,10 +35,10 @@ export const service = {
     })
   },
   /** 获取对应的版本历史 */
-  setQuestionaryVersion(id: string, version: string) {
+  setQuestionaryVersion(id: string, version: number) {
     setQuestionaryVersion(id, version).then(res => {
       toast('问卷版本切换成功', 'success');
-      state.bus.$emit('version_change');
+      bus.$emit(GlobalBusType.versionChange);
       service.getQuestionaryVersionList(id);
     }).catch(([err]) => {
       

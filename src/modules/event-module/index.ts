@@ -1,10 +1,15 @@
-import type { AppEvent, AppEventLog, TriggerState } from './@types';
-import { getEventActions } from '@/modules/event-module/data/event-action';
-import { getEventTriggers } from '@/modules/event-module/data/event-trigger';
+import type { AppEvent, AppEventLog, TriggerState } from './index.d';
+import { getEventActions } from './data/event-action';
+import { getEventTriggers } from './data/event-trigger';
 import { EventTriggerType } from './enum';
 import { createModelId } from '@/tools/common';
 import { cloneLoop } from '@/lib/clone';
 import { reactive } from 'vue';
+
+export * from './index.d';
+export * from './enum';
+export { getEventActions, eventActionGroups } from './data/event-action';
+export { eventTriggerGroups, getEventTriggers } from './data/event-trigger';
 
 /** 事件模块状态 */
 export const state = reactive({
