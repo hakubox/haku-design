@@ -48,12 +48,6 @@ export const formConfigs = [
     editor: ComponentPropertyEditor.tags,
   }),
   getPropType({
-    name: 'headerContent',
-    title: '头部说明',
-    group: 'basic',
-    editor: ComponentPropertyEditor.multiLine,
-  }),
-  getPropType({
     name: 'description',
     title: '应用描述',
     placeholder: '请填写应用描述',
@@ -138,6 +132,12 @@ export const canvasConfig = [
 
 /** 问卷应用相关配置 */
 export const questionnaireConfig = [
+  getPropType({
+    name: 'headerContent',
+    title: '头部说明',
+    group: 'basic',
+    editor: ComponentPropertyEditor.multiLine,
+  }),
   getPropType({
     name: ['questionnaireConfig', 'hasScore'],
     title: '开启评分',

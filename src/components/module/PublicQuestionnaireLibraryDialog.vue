@@ -77,10 +77,10 @@
             <!-- 问卷预览图 -->
             <Tooltip overlayClassName="public-questionnaire-library-item-preview" placement="rightTop">
               <template #title>
-                <img src="@/assets/img/test-panel.webp" alt="" />
+                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="" />
               </template>
               <div class="public-questionnaire-library-item-img">
-                <img src="@/assets/img/test-panel.webp" alt="" />
+                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="" />
               </div>
             </Tooltip>
             <!-- 问卷信息 -->

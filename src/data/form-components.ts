@@ -56,7 +56,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -140,7 +139,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -234,7 +232,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -319,7 +316,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -395,7 +391,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -498,7 +493,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -599,7 +593,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -681,7 +674,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -749,7 +741,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -821,7 +812,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -909,7 +899,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1011,7 +1000,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1086,7 +1074,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1181,7 +1168,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1310,7 +1296,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1449,7 +1434,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1572,7 +1556,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1620,7 +1603,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1666,7 +1648,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -1793,11 +1774,10 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine,
         remark: '文本内容关联代码的类名称。'
       }),
-      getComponentPropType({
-        name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
-      }),
+      // getComponentPropType({
+      //   name: 'background', title: '背景', layout: PropertyLayout.block,
+      //   group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
+      // }),
       getComponentPropType({
         name: 'text', title: '内容', default: '文本标签',
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.multiLine,
@@ -1868,14 +1848,14 @@ export let formComponents: InitComponent[] = [
         attrs: { max: 100, suffix: '像素' }
       }),
       getComponentPropType({
-        name: 'blur', title: '模糊', default: 0,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
-        attrs: { max: 100, suffix: '像素' }
-      }),
-      getComponentPropType({
         name: 'opacity', title: '透明度', default: 100,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
         attrs: { max: 100, suffix: '%' }
+      }),
+      getComponentPropType({
+        name: 'blur', title: '模糊', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
       }),
       getComponentPropType({
         name: 'maskColor', title: '遮罩', default: '',
@@ -1948,7 +1928,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -2004,6 +1983,21 @@ export let formComponents: InitComponent[] = [
         }
       }),
       getComponentPropType({
+        name: 'borderRadius', title: '圆角', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
+      }),
+      getComponentPropType({
+        name: 'opacity', title: '透明度', default: 100,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '%' }
+      }),
+      getComponentPropType({
+        name: 'blur', title: '模糊', default: 0,
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.slider,
+        attrs: { max: 100, suffix: '像素' }
+      }),
+      getComponentPropType({
         name: 'visible', title: '是否显示', default: true, visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
@@ -2028,7 +2022,6 @@ export let formComponents: InitComponent[] = [
       }),
       getComponentPropType({
         name: 'background', title: '背景', layout: PropertyLayout.block,
-        default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
@@ -2055,9 +2048,9 @@ export let formComponents: InitComponent[] = [
         }
       }),
       getComponentPropType({
-        name: 'src', title: '视频文件',
-        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.file,
-        remark: '视频的URL路径。', attrs: { multiple: false }
+        name: 'src', title: '视频文件', default: 'https://www.hakuq.com/cdn/temp/video/big_buck_bunny.mp4',
+        group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine,
+        remark: '视频的URL路径。'
       }),
       getComponentPropType({
         name: 'poster', title: '视频封面',

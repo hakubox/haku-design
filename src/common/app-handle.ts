@@ -86,7 +86,10 @@ export function useAppHandle() {
     // 移除根组件列表propertys属性
     _pages.forEach(page => {
       page.children.forEach(component => {
-        delete component.propertys;
+        if (!component.isGroup) {
+          // @ts-ignore
+          delete component.propertys;
+        }
         _cb(component);
       });
     });
@@ -99,7 +102,6 @@ export function useAppHandle() {
       title: _appConfig.appTitle,
       description: _appConfig.description,
       headerTags: _appConfig.headerTags,
-      headerContent: _appConfig.headerContent,
       remark: _appConfig.remark,
 
       appConfig: _appConfig,

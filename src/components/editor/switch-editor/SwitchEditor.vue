@@ -59,6 +59,9 @@ const change = (val) => {
 
 <style lang="less" scoped>
 .switch-editor {
-  background-color: var(--primary-color);
+
+  &.ant-switch-checked {
+    background-color: var(--primary-color);
+  }
 }
 </style>

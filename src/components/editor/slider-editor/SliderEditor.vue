@@ -135,7 +135,9 @@ onMounted(() => {
   }
 
   > .ant-input-number-group-wrapper {
-    width: 60%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 120px;
   }
 
   > .ant-input-number {

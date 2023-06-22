@@ -30,7 +30,7 @@ import { type PropType } from 'vue';
 const props = defineProps({
   /** 选项列表 */
   options: {
-    type: Array as PropType<{ type: string, label: string, value: string }[]>,
+    type: Array as PropType<{ type?: 'split' | undefined, label: string, value: string }[]>,
   },
   /** 选项class */
   optionClass: {

@@ -40,35 +40,42 @@ export function getAppsByPage({
 }: {
   pageIndex: number,
   pageSize: number,
-  orders: (keyof AppInfoDto)[] | Record<(keyof AppInfoDto), 'esc' | 'desc'>,
-  filters: Record<keyof AppInfoDto, {
+  orders?: (keyof AppInfoDto)[] | Record<(keyof AppInfoDto), 'esc' | 'desc'>,
+  filters?: {
+    key: keyof AppInfoDto,
     value: string,
     type: 'contains' | 'equal' | 'in'
-  }>,
+  }[],
 }) {
   const _filters: Record<string, string> = {};
-  Object.entries(filters).forEach(([key, value]) => {
-    switch(value.type) {
-      case 'equal':
-        _filters[`_${key}_e`] = value.value;
-        break;
-      case 'contains':
-        _filters[`_${key}_c`] = value.value;
-        break;
-      case 'in':
-        _filters[`_${key}_i`] = value.value;
-        break;
-    }
-  });
-
-  let _orders = {} as Record<(keyof AppInfoDto), 'esc' | 'desc'>;
-  if (Array.isArray(orders)) {
-    _orders = Object.assign({}, ...orders.map(i => ({ [i]: 'esc' })));
-  } else {
-    _orders = orders;
+  if (filters) {
+    filters.forEach(item => {
+      if (item.value) {
+        switch(item.type) {
+          case 'equal':
+            _filters[`_${item.key}_e`] = item.value;
+            break;
+          case 'contains':
+            _filters[`_${item.key}_c`] = item.value;
+            break;
+          case 'in':
+            _filters[`_${item.key}_i`] = item.value;
+            break;
+        }
+      }
+    });
   }
 
-  return post(`${process.env.serverApi}/FdForm/GetFormPageList`, {
+  let _orders = {} as Record<(keyof AppInfoDto), 'esc' | 'desc'>;
+  if (orders) {
+    if (Array.isArray(orders)) {
+      _orders = Object.assign({}, ...orders.map(i => ({ [i]: 'esc' })));
+    } else {
+      _orders = orders;
+    }
+  }
+
+  return get(`${process.env.serverApi}/FdForm/GetFormPageList`, {
     pageIndex,
     pageSize,
     orders: _orders,

@@ -87,7 +87,7 @@ const state = reactive({
   /** 是否显示填充模式下拉框 */
   showFillModeSelect: false,
   /** 图片样式 */
-  imageStyle: {} as StyleValue,
+  imageStyle: {} as Record<string, any>,
   /** 图片特效 */
   imageFilter: '',
 });
@@ -346,7 +346,7 @@ onUnmounted(() => {
       opacity: 0.0;
       transition: 0.15s;
       background-color: rgba(210,210,210,0.3);
-      visibility: visible;
+      visibility: hidden;
 
       > .image-picker-preview-upload-btn {
         cursor: pointer;

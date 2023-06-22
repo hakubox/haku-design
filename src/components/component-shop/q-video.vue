@@ -19,8 +19,10 @@
       :controls="($attrs.controls as boolean)"
       style="width: 100%"
       :style="{
-        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
-        height: (props.height - props.padding[0] - props.padding[2]) + 'px'
+        objectFit: props.fillType,
+        borderRadius: props.borderRadius + 'px',
+        filter: `blur(${props.blur}px)`,
+        opacity: props.opacity / 100
       }"
     >
       您的浏览器不支持视频元素
@@ -47,6 +49,26 @@ const props = defineProps({
     type: Array as PropType<number[]>,
     default: () => [15, 15, 15, 15],
   },
+  /** 填充方式 */
+  fillType: {
+    type: String as PropType<'contain' | 'cover' | 'fill' | 'none' | 'scale-down'>,
+    default: 'contain'
+  },
+  /** 圆角 */
+  borderRadius: {
+    type: Number,
+    default: 0,
+  },
+  /** 透明度 */
+  opacity: {
+    type: Number,
+    default: 100
+  },
+  /** 模糊 */
+  blur: {
+    type: Number,
+    default: 0,
+  },
   /** 高度 */
   height: {
     type: Number,
@@ -60,9 +82,14 @@ const state = reactive({});
 <style lang="less" scoped>
 .component-video {
   padding: 5px;
+  width: 100%;
+  height: 100%;
 
   video {
     object-fit: cover;
+    width: 100%;
+    height: 100%;
+    
     &.hidden {
       height: 2px;
     }

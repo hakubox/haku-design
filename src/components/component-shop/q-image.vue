@@ -6,13 +6,13 @@
   >
     <img
       class="component-image-content"
-      :src="src ? storageService.getFileInfo(src)?.src : defaultImg"
+      :src="src ? storageService.getFileInfo(src)?.src : 'https://www.hakuq.com/cdn/assets/image/default-img.webp'"
       :padding="getBoxModel(padding)"
       :style="{
-        'border-radius': props.borderRadius + 'px',
-        'object-fit': $attrs.fillType as 'contain' | 'cover' | 'fill' | 'none' | 'scale-down',
-        'filter': `blur(${$attrs.blur}px)`,
-        opacity: $attrs.opacity as number / 100
+        objectFit: props.fillType,
+        borderRadius: props.borderRadius + 'px',
+        filter: `blur(${props.blur}px)`,
+        opacity: props.opacity / 100
       }"
     />
   </ComponentBasic>
@@ -29,8 +29,6 @@ defineOptions({
   inheritAttrs: false
 });
 
-const defaultImg = new URL('@/assets/img/temp/default-img.webp', import.meta.url).href;
-
 const props = defineProps({
   /** 是否显示标签 */
   showLabel: {
@@ -42,8 +40,23 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  /** 填充方式 */
+  fillType: {
+    type: String as PropType<'contain' | 'cover' | 'fill' | 'none' | 'scale-down'>,
+    default: 'contain'
+  },
   /** 圆角 */
   borderRadius: {
+    type: Number,
+    default: 0,
+  },
+  /** 透明度 */
+  opacity: {
+    type: Number,
+    default: 100
+  },
+  /** 模糊 */
+  blur: {
     type: Number,
     default: 0,
   },

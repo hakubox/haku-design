@@ -19,8 +19,6 @@ export interface ExportAppBody {
   description: string;
   /** 头部标签列表 */
   headerTags: string[];
-  /** 头部描述 */
-  headerContent: string;
   /** 备注 */
   remark: string;
 

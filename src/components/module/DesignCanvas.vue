@@ -8,6 +8,22 @@
     }"
     ref="formCanvas"
   >
+    <!-- 背景 -->
+    <template v-if="editorState.appConfig.background?.length">
+      <div
+        class="app-canvas-bg-panel"
+        :style="[item.parentStyle, {
+          opacity: item.opacity,
+          mixBlendMode: item.blendType
+        }]"
+        v-for="item in editorState.appConfig.background.filter(i => i.show)"
+      >
+        <div
+          class="app-canvas-bg-panel-layer"
+          :style="item.innerStyle"
+        ></div>
+      </div>
+    </template>
     <div class="form-canvas-body">
       <div
         style="padding-top: 7px"

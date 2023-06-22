@@ -5,7 +5,7 @@
       <div class="design-form-header">
 
         <div class="design-form-header-logo">
-          <img src="@/assets/logo.svg" alt="">
+          <img src="@/assets/logo.png" alt="">
         </div>
 
         <!-- 中间快捷操作栏 -->
@@ -167,23 +167,6 @@
               :style="[getCanvasRect(), { '--grid-size': editorState.appConfig.designConfig?.gridSize } ]"
               :class="[editorState.currentPage.pageType, { grid: editorState.appConfig.designConfig?.gridSize > 0 }]"
             >
-              <!-- 背景 -->
-              <template v-if="editorState.appConfig.background?.length">
-                <div
-                  class="app-canvas-bg-panel"
-                  :style="[item.parentStyle, {
-                    opacity: item.opacity,
-                    mixBlendMode: item.blendType
-                  }]"
-                  v-for="item in editorState.appConfig.background.filter(i => i.show)"
-                >
-                  <div
-                    class="app-canvas-bg-panel-layer"
-                    :style="item.innerStyle"
-                  ></div>
-                </div>
-              </template>
-
               <!-- 画布页面名称 -->
               <div class="design-form-canvas-page-title">{{ editorState.currentPage.pageTitle }}</div>
               <!-- 问卷标题 -->

@@ -80,8 +80,6 @@ export const basicChartPropertys = [
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
     remark: '是否在界面上显示。'
   }),
-  getPropType({ name: 'colorTest', title: '测试颜色', group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.color, attrs: { } }), 
-  
   getPropType({
     name: 'color', title: '颜色表', default: [
       { color: 'rgba(93, 114, 194, 1)' },
@@ -156,7 +154,6 @@ export const basicChartPropertys = [
   }),
   getPropType({
     name: 'background', title: '背景', layout: PropertyLayout.block,
-    default: [{ type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 255, g: 255, b: 255, a: 1 } }],
     group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
   }),
   getPropType({

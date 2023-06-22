@@ -126,7 +126,7 @@ import { AppType, ComponentPropertyEditor, PageType } from '@haku-design/core';
 import GeneralEditor from '@/components/module/config-panel/general-config/GeneralEditor.vue';
 import DesignCanvas from "./DesignCanvas.vue";
 import { cloneLoop } from "@/lib/clone";
-import { AppPage } from "@haku-design/core/app-page";
+import { AppPage } from "@haku-design/core";
 import { GeneralProperty } from "@haku-design/core";
 import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
@@ -245,11 +245,11 @@ const components = computed(() => {
 });
 
 /** 表单属性列表 */
-const formFillProps = computed<GeneralProperty[]>(() => {
+const formFillProps = computed<GeneralProperty<any>[]>(() => {
   const _formInfo = Object.values(formFillState.formInfo);
   _formInfo.sort((a, b) => components.value.findIndex(i => i.id === a.id) - components.value.findIndex(i => i.id === b.id));
   return _formInfo.map(item => {
-    let _editor: GeneralProperty['editor'] = ComponentPropertyEditor.singerLine;
+    let _editor: GeneralProperty<any>['editor'] = ComponentPropertyEditor.singerLine;
     if (item?.value?.dataOrigin === 'data-editor') {
       _editor = ComponentPropertyEditor.data;
     } else {
@@ -359,7 +359,7 @@ const resetScale = () => {
     state.pcContentScale = _scale;
 
     state.tabletScale = _windowHeight / 1180 > 1 ? 1 : _windowHeight / 1180;
-    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.canvasConfig.height, (820 - 54) / editorState.appConfig.canvasConfig.width);
+    state.tabletContentScale = Math.min((1180 - 60) / editorState.appConfig.canvasConfig.height, (820 - 52) / editorState.appConfig.canvasConfig.width);
     state.mobileScale = _windowHeight / 750 > 1 ? 1 : _windowHeight / 750;
     state.mobileContentScale = Math.min((750 - 100) / editorState.appConfig.canvasConfig.height, (390 - 30) / editorState.appConfig.canvasConfig.width);
   }
@@ -486,6 +486,14 @@ onUnmounted(() => {
       > .form-canvas {
         min-height: initial;
         margin: auto;
+
+        > .app-canvas-bg-panel {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          // border-radius: 6px;
+          // overflow: hidden;
+        }
         
         > .form-canvas-body {
           position: relative;

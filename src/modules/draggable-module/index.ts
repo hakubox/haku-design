@@ -767,8 +767,8 @@ export const service = {
           state.dragConfig.insertIndex = editorService.findComponentIndex(state.dragConfig.component?.id) ?? 0;
         } else {
           if (state.dragConfig.shadowDom) {
-            state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y + state.shadowOffsetY + 'px';
-            state.dragConfig.shadowDom.style.left = state.dragConfig.endLoc.x + state.shadowOffsetX + 'px';
+            state.dragConfig.shadowDom.style.top = state.dragConfig.endLoc.y * editorState.appConfig.canvasConfig.scale + state.shadowOffsetY + 'px';
+            state.dragConfig.shadowDom.style.left = state.dragConfig.endLoc.x * editorState.appConfig.canvasConfig.scale + state.shadowOffsetX + 'px';
           }
           editorService.changeComponentCursorByBlock({
             x: state.dragConfig.mouseX,

@@ -2,12 +2,13 @@
 
 MESSAGE=$(cat $1) 
 
-COMMITFORMAT="^(feat|fix|docs|style|refactor|perf|test|build|revert)[!]?: (.*)$"
+COMMITFORMAT="^(release|feat|fix|docs|style|refactor|perf|test|build|revert)[!]?: (.*)$"
 
 if ! [[ "$MESSAGE" =~ $COMMITFORMAT ]]; then
   echo "提交信息不规范" 
   echo ""
   echo "请使用一下格式:"
+  echo "release: xxx" "(新版本)"
   echo "feat: xxx" "(新特性)"
   echo "fix: xxx" "(修改问题)"
   echo "docs: xxx" "(文档修改)"

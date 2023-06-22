@@ -373,12 +373,17 @@ export const propertyEditors: InitPropertyEditor[] = [
             top: `${_top}px`,
             right: `520px`,
           };
-          let _bgs = [] as Record<string, any>;
+          let _bgs = [] as any[];
           if (!components?.length) {
             _bgs = editorState.appConfig.background;
           } else if (components && !components[0].isGroup) {
             // TODO: property.name不能强转为string类型
-            _bgs = components[0].attrs[property.name as string];
+            if (components[0].attrs[property.name as string]) {
+              _bgs = components[0].attrs[property.name as string] ?? [];
+            } else {
+              components[0].attrs[property.name as string] = [];
+              _bgs = components[0].attrs[property.name as string];
+            }
           }
           _bgs.push({
             type: 'color', blendType: 'normal', show: true, opacity: 1, color: { r: 216, g: 216, b: 216, a: 1 }

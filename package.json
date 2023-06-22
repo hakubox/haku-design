@@ -1,7 +1,7 @@
 {
   "name": "haku-design",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.4",
   "description": "小白快搭是使用vite4.0开发的一款设计工具。",
   "type": "module",
   "author": {

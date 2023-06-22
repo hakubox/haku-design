@@ -18,8 +18,6 @@ export interface AppInfoDto {
   description: string;
   /** 头部标签列表（逗号隔开） */
   headerTags: string;
-  /** 头部内容 */
-  headerContent: string;
   /** 备注 */
   remark?: string;
   /** 主题名称（主要用于搜索信息） */
@@ -57,6 +55,8 @@ export function appInfoDto2AppBody(dto: AppInfoDto): ExportAppBody {
     config?: ThemeConfig;
   } : undefined;
 
+  const _headerTags = (dto.headerTags ?? '').trim();
+
   return {
     id: dto.id,
     isPublished: dto.isPublished ?? false,
@@ -64,15 +64,13 @@ export function appInfoDto2AppBody(dto: AppInfoDto): ExportAppBody {
     title: dto.title,
     description: dto.description,
     headerTags: (dto.headerTags ?? '').split(','),
-    headerContent: dto.headerContent,
     remark: dto.remark ?? '',
     appConfig: {
       id: dto.id,
       appType: dto.appType as AppType,
       appVersion: dto.version ?? 1,
       appTitle: dto.title,
-      headerTags: (dto.headerTags ?? '').split(','),
-      headerContent: dto.headerContent,
+      headerTags: _headerTags === '' ? [] : _headerTags.split(','),
       remark: dto.remark ?? '',
       description: dto.description,
       background: _formJson.background ?? [],
@@ -100,7 +98,6 @@ export function appBody2AppInfoDto(body: ExportAppBody): AppInfoDto {
     title: body.title,
     description: body.description,
     headerTags: body.headerTags.join(','),
-    headerContent: body.headerContent,
     remark: body.remark,
     theme: body.themeConfig?.title,
     version: body.appConfig.appVersion,

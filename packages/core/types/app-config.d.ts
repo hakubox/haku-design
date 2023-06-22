@@ -38,6 +38,8 @@ export interface CanvasConfig extends BasicDetailConfig {
 
 /** 问卷配置 */
 export interface QuestionnaireConfig extends BasicDetailConfig {
+  /** 头部内容 */
+  headerContent: string;
   /** 分页类型 */
   turnPageMode: 'default' | 'page' | 'no-page';
   /** 头部高度 */
@@ -101,8 +103,6 @@ export interface AppConfig {
   appTitle: string;
   /** 头部标签 */
   headerTags: string[];
-  /** 头部内容 */
-  headerContent: string;
   /** 描述 */
   description: string;
   /** 背景 */
