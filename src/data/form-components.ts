@@ -15,7 +15,7 @@ export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component' |
 export let formComponents: InitComponent[] = [
 
   /** 
-   * 单行问答题
+   * 单行文本
    */
   {
     name: 'q-single-line',
@@ -24,7 +24,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text',
-    title: '单行问答题',
+    title: '单行文本',
     quickTools: [
       // {
       //   icon: (component) => component.attrs.visible ? 'iconfont icon-icon_yulan' : 'iconfont icon-miwen',
@@ -59,7 +59,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '单行问答题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '单行文本', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -112,7 +112,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
-   * 数值填写题
+   * 数值
    */
    {
     name: 'q-number',
@@ -121,7 +121,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'number',
-    title: '数值填写题',
+    title: '数值',
     attrs: {
       width: 300,
       height: 100,
@@ -142,7 +142,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '数值填写题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '数值', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -207,7 +207,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
-   * 单行问答组
+   * 文本组
    */
   {
     name: 'q-single-line-group',
@@ -216,7 +216,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text-list',
-    title: '单行问答组',
+    title: '文本组',
     attrs: {
       width: 300,
       height: 188,
@@ -235,7 +235,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '单行问答组', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '文本组', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -292,7 +292,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /**
-   * 多行问答题
+   * 多行文本
    */
   {
     name: 'q-multiple-line',
@@ -301,7 +301,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text',
-    title: '多行问答题',
+    title: '多行文本',
     attrs: {
       width: 300,
       height: 160,
@@ -319,7 +319,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '多行问答题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '多行文本', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -366,7 +366,7 @@ export let formComponents: InitComponent[] = [
   }, 
 
   /**
-   * 单项选择题
+   * 单项选择
    */
   {
     name: 'q-single-choice',
@@ -375,7 +375,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'option',
-    title: '单项选择题',
+    title: '单项选择',
     attrs: {
       width: 300,
       height: 90,
@@ -394,7 +394,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '单项选择题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '单项选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -468,7 +468,7 @@ export let formComponents: InitComponent[] = [
   }, 
 
   /**
-   * 多项选择题
+   * 多项选择
    */
   {
     name: 'q-multiple-choice',
@@ -477,7 +477,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'option-list',
-    title: '多项选择题',
+    title: '多项选择',
     attrs: {
       width: 330,
       height: 90,
@@ -496,7 +496,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '多项选择题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '多项选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -568,7 +568,7 @@ export let formComponents: InitComponent[] = [
   }, 
   
   /**
-   * 下拉选择题
+   * 下拉选择
    */
    {
     name: 'q-dropdown',
@@ -577,7 +577,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'option',
-    title: '下拉选择题',
+    title: '下拉选择',
     attrs: {
       width: 300,
       height: 90,
@@ -596,7 +596,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '下拉选择题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '下拉选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -787,7 +787,7 @@ export let formComponents: InitComponent[] = [
   }, 
 
   /** 
-   * 评分题
+   * 评分
    */
    {
     name: 'q-score',
@@ -796,7 +796,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'number',
-    title: '评分题',
+    title: '评分',
     attrs: {
       width: 300,
       height: 96,
@@ -815,7 +815,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '评分题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '评分', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -874,7 +874,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
-   * 多项评分题
+   * 多项评分
    */
   {
     name: 'q-score-group',
@@ -883,7 +883,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'number-list',
-    title: '多项评分题',
+    title: '多项评分',
     attrs: {
       width: 300,
       height: 152,
@@ -902,7 +902,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '多项评分题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '多项评分', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -976,7 +976,7 @@ export let formComponents: InitComponent[] = [
 
 
   /** 
-   * 手写题
+   * 手写板
    */
    {
     name: 'q-drawing-board',
@@ -985,7 +985,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'file',
-    title: '手写题',
+    title: '手写板',
     attrs: {
       width: 300,
       height: 240,
@@ -1003,7 +1003,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '手写题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '手写板', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -1050,7 +1050,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /** 
-   * 文件上传题
+   * 文件选择
    */
   {
     name: 'q-file-upload',
@@ -1059,7 +1059,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'file-list',
-    title: '文件上传题',
+    title: '文件选择',
     attrs: {
       width: 300,
       height: 240,
@@ -1077,7 +1077,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '文件上传题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '文件选择', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -1144,7 +1144,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /**
-   * 表格题
+   * 表格
    */
    {
     name: 'q-table',
@@ -1153,7 +1153,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'array-list',
-    title: '表格题',
+    title: '表格',
     attrs: {
       width: 300,
       height: 160,
@@ -1171,7 +1171,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '表格题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '表格', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -1238,7 +1238,7 @@ export let formComponents: InitComponent[] = [
   }, 
 
   /** 
-   * 隐藏题
+   * 隐藏内容
    */
    {
     name: 'q-hidden',
@@ -1247,10 +1247,10 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text',
-    title: '隐藏题',
+    title: '隐藏内容',
     propertys: [
       getComponentPropType({
-        name: 'label', title: '标题', default: '隐藏题', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '隐藏内容', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true

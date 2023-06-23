@@ -14,7 +14,6 @@
     <label
       v-if="componentDescription ?? description"
       class="component-item-description richtext-value"
-      :style="{ marginTop: componentLabel ?? label ? '10px' : '0px' }"
       v-html="componentDescription ?? description"
     ></label>
     <slot><q-blank v-if="['complex', 'layout'].includes(component!.type)" /></slot>

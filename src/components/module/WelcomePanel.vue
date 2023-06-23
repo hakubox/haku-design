@@ -80,7 +80,7 @@
         </div>
         <!-- 最近列表（卡片） -->
         <Spin :spinning="state.isLoading" tip="加载中...">
-          <div v-show="state.reviewType === 'card'" class="recent-card">
+          <div v-if="state.reviewType === 'card'" class="recent-card">
             <div
               class="recent-item"
               v-for="item in state.recentList"
@@ -122,10 +122,19 @@
               </div>
             </div>
           </div>
+          <div v-if="state.reviewType === 'card' && state.pagination.total> state.pagination.pageSize">
+            <!-- 翻页 -->
+            <Pagination
+              v-model:current="state.pagination.current"
+              show-quick-jumper
+              :total="state.pagination.total"
+              @change="state.pagination.onChange"
+            />
+          </div>
           <!-- 最近列表（列表） -->
           <List
             class="recent-list"
-            v-show="state.reviewType === 'list'"
+            v-if="state.reviewType === 'list'"
             item-layout="vertical"
             size="large"
             :pagination="state.pagination"
@@ -149,10 +158,10 @@
                 <template #extra>
                   <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
                     <template #title>
-                      <img src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" alt="" />
+                      <img :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'" alt="" />
                     </template>
                     <div class="recent-item-img">
-                      <img :alt="item.appTitle" src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />
+                      <img :alt="item.appTitle" :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'" />
                     </div>
                   </Tooltip>
                 </template>
@@ -171,8 +180,8 @@ import { reactive, onMounted, onUnmounted, createVNode } from 'vue';
 import { service as editorService } from '@/modules/editor-module';
 import { service as introService } from '@/modules/intro-module';
 import { dateFormat } from '@/tools/common';
-import { Input, List, ListItem, Dropdown, Select, SelectOption, Tooltip, message, Menu, MenuItem, MenuDivider, Modal, Spin } from 'ant-design-vue';
-import { getApp, getApps } from '@/api/app';
+import { Input, List, ListItem, Dropdown, Select, SelectOption, Tooltip, message, Menu, MenuItem, MenuDivider, Modal, Spin, Pagination } from 'ant-design-vue';
+import { getApp, getApps, getAppsByPage } from '@/api/app';
 import { AppInfoDto, appInfoDto2AppBody } from '@/model/app-info-dto';
 import { removeApp } from '@/api/app';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
@@ -192,6 +201,7 @@ const state = reactive({
     onChange: (page: number) => {
       console.log(page);
     },
+    current: 0,
     pageSize: 10,
     total: 0,
   },
@@ -237,10 +247,18 @@ const startShowIntro = () => {
 /** 搜索应用 */
 const search = () => {
   state.isLoading = true;
-  getApps().then(d => {
-    console.log('应用列表', d);
-    state.recentList = d;
-    state.pagination.total = d.length;
+  getAppsByPage({
+    pageIndex: state.pagination.current + 1,
+    pageSize: state.pagination.pageSize,
+    filters: [
+      { key: 'title', value: state.filterTxt, type: 'contains' },
+      { key: 'formJson', value: state.filterTxt, type: 'contains' },
+    ],
+    orders: ['updatedTime'],
+  }).then(d => {
+    console.log('应用列表', d.data);
+    state.recentList = d.data;
+    state.pagination.total = d.totalCount;
     startShowIntro();
   }).catch(err => {
     console.error(err);
@@ -254,7 +272,6 @@ const selectApp = (app: AppInfoDto) => {
   const id = app.id || '';
   getApp(id).then(appInfo => {
     const _appInfo = appInfoDto2AppBody(appInfo);
-    console.log('appInfo', _appInfo);
     editorService.loadAppBody(id, _appInfo);
   }).catch(err => {
     console.error(err);

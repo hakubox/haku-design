@@ -69,9 +69,9 @@ export interface ApiPageList<T = any> {
   /** 描述信息 */
   msg: string;
   /** 真实数据 */
-  rows: T extends any[] ? T : T[];
+  data: T extends any[] ? T : T[];
   /** 数据总条数 */
-  total: number;
+  totalCount: number;
 }
 
 /** 单个参数配置 */

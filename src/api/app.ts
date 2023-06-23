@@ -75,8 +75,8 @@ export function getAppsByPage({
     }
   }
 
-  return get(`${process.env.serverApi}/FdForm/GetFormPageList`, {
-    pageIndex,
+  return post(`${process.env.serverApi}/FdForm/GetFormPageList`, {
+    pageIndex: pageIndex,
     pageSize,
     orders: _orders,
     filters: _filters

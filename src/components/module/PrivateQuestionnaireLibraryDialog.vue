@@ -14,14 +14,14 @@
             v-model:value="state.filter.searchTxt"
             placeholder="请输入需要搜索问卷的关键词"
             size="large"
-            @search="(str) => search()"
+            @search="search()"
           >
             <template #prefix>
               <SearchOutlined style="color: #888;" />&nbsp;
             </template>
             <template #enterButton>
               <SearchOutlined />&nbsp;
-              <span>搜索问卷</span>
+              <span>搜索</span>
             </template>
           </InputSearch>
         </div>
@@ -36,12 +36,12 @@
           <div class="questionnaire-library-item" v-for="item in state.dataList" :key="item.id">
             <!-- 问卷预览图 -->
             <Tooltip overlayClassName="questionnaire-library-item-preview" placement="rightTop">
-              <template v-if="item.content.previewUrl" #title>
-                <img :src="item.content.previewUrl" alt="">
+              <template v-if="item.previewUrl" #title>
+                <img :src="item.previewUrl" alt="">
               </template>
               <div class="questionnaire-library-item-img">
                 <img
-                  :src="item.content.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
+                  :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
                   alt=""
                 />
               </div>
@@ -49,18 +49,18 @@
             <!-- 问卷信息 -->
             <div class="questionnaire-library-item-body">
               <div class="questionnaire-library-item-body-header">
-                <span v-if="item.innerType" class="questionnaire-library-item-body-apptype">{{ item.innerType }}</span>
+                <span v-if="item.appType" class="questionnaire-library-item-body-apptype">{{ getTypeTitle(item.appType) }}</span>
                 <!-- 版本号 -->
-                <span class="questionnaire-library-item-body-version">v{{item.appVersion}}</span>
+                <span class="questionnaire-library-item-body-version">v{{item.version}}</span>
                 <!-- 问卷标题 -->
                 <span class="questionnaire-library-item-body-title">
-                  {{ item.content.appConfig.appTitle }}
+                  {{ item.title }}
                 </span>
-                <span class="questionnaire-library-item-body-update-date">更新日期：{{ dateFormat(item.updateTime) }}</span>
+                <span class="questionnaire-library-item-body-update-date">更新日期：{{ dateFormat(item.updatedTime) }}</span>
                 <div class="questionnaire-library-item-body-tools">
                   <div class="questionnaire-library-item-body-tool tool-primary" @click="loadData(item)">
                     <i class="iconfont icon-zidingyi"></i>
-                    设计{{ getTypeTitle(item.innerType) }}
+                    {{ getTypeTitle(item.appType) }}
                   </div>
                   <div class="questionnaire-library-item-body-tool tool-red">
                     <i class="iconfont icon-shanchu"></i>
@@ -69,64 +69,33 @@
                 </div>
               </div>
               <!-- 问卷标签 -->
-              <div class="questionnaire-library-item-body-tags">
+              <!-- <div class="questionnaire-library-item-body-tags">
                 <Tag v-for="tag in (item.tags || [])" :key="tag">{{ tag }}</Tag>
-                <Tag color="#FF4D4F">医疗问卷</Tag>
-                <Tag color="#108EE9">官方</Tag>
-              </div>
+                <Tag color="#FF4D4F">模板</Tag>
+                <Tag color="#108EE9">普通</Tag>
+              </div> -->
               <!-- 问卷描述 -->
               <span class="questionnaire-library-item-body-description">{{ item.description }}</span>
             </div>
           </div>
-
-          <!-- <div class="questionnaire-library-item">
-            <Tooltip overlayClassName="questionnaire-library-item-preview" placement="rightTop">
-              <template #title>
-                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="">
-              </template>
-              <div class="questionnaire-library-item-img">
-                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="">
-              </div>
-            </Tooltip>
-            <div class="questionnaire-library-item-body">
-              <div class="questionnaire-library-item-body-header">
-                <span class="questionnaire-library-item-body-title">问卷标题问卷标题问卷标题</span>
-                <span class="questionnaire-library-item-body-update-date">更新日期：2022-07-07</span>
-                <div class="questionnaire-library-item-body-tools">
-                  <div class="questionnaire-library-item-body-tool tool-primary">
-                    <i class="iconfont icon-zidingyi"></i>
-                    设计
-                  </div>
-                  <div class="questionnaire-library-item-body-tool tool-red">
-                    <i class="iconfont icon-shanchu"></i>
-                    删除
-                  </div>
-                </div>
-              </div>
-              <div class="questionnaire-library-item-body-tags">
-                <Tag color="#FF4D4F">医疗问卷</Tag>
-                <Tag color="#108EE9">官方</Tag>
-                <Tag color="#531DBD">焦虑症</Tag>
-              </div>
-              <span class="questionnaire-library-item-body-description">问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述问卷描述</span>
-            </div>
-          </div> -->
         </div>
 
-        <Pagination v-model:current="state.pagination.pageNum" show-quick-jumper :total="state.pagination.total" @change="search" />
+        <Pagination v-model:current="state.pagination.current" show-quick-jumper :total="state.pagination.total" @change="search" />
       </div>
     </Modal>
   </ConfigProvider>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watch, PropType, Ref, onMounted } from "vue";
+import { reactive, watch, PropType, Ref, onMounted } from "vue";
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { getQuestionary, listQuestionary } from "@/api/questionnaire";
 import { dateFormat } from '@/tools/common';
 import { InputSearch, message, Modal, Pagination, Tag, Tooltip, ConfigProvider, CheckboxGroup } from "ant-design-vue";
 import { state as globalState } from '@/common/global';
 import SearchOutlined from "@ant-design/icons-vue/SearchOutlined";
+import { getApp, getAppsByPage } from "@/api/app";
+import { AppInfoDto, appInfoDto2AppBody } from "@/model/app-info-dto";
 
 const props = defineProps({
   /** 是否显示 */
@@ -150,7 +119,7 @@ const state = reactive({
   },
   /** 分页配置 */
   pagination: {
-    pageNum: 1,
+    current: 1,
     pageSize: 10,
     total: 0
   },
@@ -160,7 +129,7 @@ const state = reactive({
     { label: '医疗问卷', value: 'b' },
   ],
   /** 查询列表 */
-  dataList: [] as Record<string, any>[],
+  dataList: [] as AppInfoDto[],
 });
 
 const onClose = () => {
@@ -170,35 +139,19 @@ const onClose = () => {
 /** 获取类型名称 */
 const getTypeTitle = (type: string) => {
   return {
-    QUESTIONARY: '问卷',
-    COURSEWARE: '课件',
-  }[type];
+    questionnaire: '问卷',
+    canvas: '画布',
+  }[type.toLowerCase()];
 };
 
 /** 加载数据 */
-const loadData = (data: Record<string, any>) => {
+const loadData = (data: AppInfoDto) => {
   const hide = message.loading('加载中...');
   state.isLoading = true;
-  getQuestionary(data.id).then(({ questionary, tagList }) => {
-    console.log(questionary, `当前应用Id${questionary}`);
-    if (questionary.content) {
-      editorService.loadAppBody(questionary.id + '', questionary.content);
-      onClose();
-    } else {
-      switch (data.innerType) {
-        // 问卷
-        case 'QUESTIONARY':
-          
-          break;
-        // 课件
-        case 'COURSEWARE':
-          
-          break;
-      
-        default:
-          break;
-      }
-    }
+  getApp(data.id).then(appInfo => {
+    const _appInfo = appInfoDto2AppBody(appInfo);
+    editorService.loadAppBody(data.id, _appInfo);
+    onClose();
   }).finally(() => {
     state.isLoading = false;
     hide();
@@ -213,16 +166,23 @@ watch(() => props.visible, (count, prevCount) => {
 
 const search = (pageNum?: number, pageSize?: number) => {
   if (!pageNum || !pageSize) {
-    state.pagination.pageNum = 1;
+    state.pagination.current = 1;
   } else {
-    state.pagination.pageNum = pageNum;
+    state.pagination.current = pageNum;
     state.pagination.pageSize = pageSize;
   }
-  listQuestionary({
-    ...state.pagination,
+  
+  getAppsByPage({
+    pageIndex: state.pagination.current,
+    pageSize: state.pagination.pageSize,
+    filters: [
+      { key: 'title', value: state.filter.searchTxt, type: 'contains' },
+      { key: 'formJson', value: state.filter.searchTxt, type: 'contains' },
+    ],
+    orders: ['updatedTime'],
   }).then(d => {
-    state.dataList = d.rows;
-    state.pagination.total = d.total;
+    state.dataList = d.data;
+    state.pagination.total = d.totalCount;
   });
 };
 

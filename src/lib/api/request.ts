@@ -184,9 +184,9 @@ export function request<T, ReturnResponse extends boolean, ReturnPageList extend
         }
         reject(_data);
       } else if (_data.code === 200) {
-        if (config.returnResponse || config.returnPageList) {
+        if (config.returnResponse) {
           resolve(_data);
-        } else if (_data.data) {
+        } else if (_data.data || config.returnPageList) {
           resolve(_data.data);
         } else {
           resolve(undefined as any);

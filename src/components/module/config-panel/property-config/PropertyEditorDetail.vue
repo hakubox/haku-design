@@ -36,7 +36,7 @@
               @click="tool.click($event, editorState.currentSelectedComponents, prop)"
             ><i :class="tool.icon"></i></div>
 
-            <Tooltip
+            <!-- <Tooltip
               placement="topRight"
               class="prop-tool-btn"
               arrow-point-at-center
@@ -46,7 +46,7 @@
               <Button size="small" @click="resetComponentName()">
                 <clear-outlined size="small" />
               </Button>
-            </Tooltip>
+            </Tooltip> -->
             <Tooltip
               placement="topRight"
               class="prop-tool-btn"
@@ -104,14 +104,14 @@
           </template>
         </component>
       </div>
-      <template v-if="prop.layout == 'block' && prop.attach?.length">
+      <!-- <template v-if="prop.layout == 'block' && prop.attach?.length">
         <Tooltip placement="topLeft" class="fullscreen" v-if="props.propertyEditors[prop.editor]?.canFullScreen">
           <template #title>最大化</template>
           <Button size="small" @click="emit('fullscreen', props.propertyEditors[prop.editor], prop)">
             <FullscreenOutlined :style="{ fontSize: '12px' }" />
           </Button>
         </Tooltip>
-      </template>
+      </template> -->
     </div>
 
     <!-- 子属性列表 -->
@@ -234,17 +234,17 @@ const changePropAttach = <T extends ComponentPropertyEditor>(prop: ComponentProp
 };
 
 /** 将当前组件标题设为组件名称 */
-const resetComponentName = () => {
-  if (editorState.currentSelectedComponents.length) {
-    const _component = editorState.currentSelectedComponents[0];
-    if (_component && _component.attrs.label !== undefined) {
-      const _dom = document.createElement('div');
-      _dom.innerHTML = _component.attrs.label;
-      _component.attrs.name = _dom.innerText;
-      _dom.remove();
-    }
-  }
-}
+// const resetComponentName = () => {
+//   if (editorState.currentSelectedComponents.length) {
+//     const _component = editorState.currentSelectedComponents[0];
+//     if (_component && _component.attrs.label !== undefined) {
+//       const _dom = document.createElement('div');
+//       _dom.innerHTML = _component.attrs.label;
+//       _component.attrs.name = _dom.innerText;
+//       _dom.remove();
+//     }
+//   }
+// }
 
 const state = reactive({
 

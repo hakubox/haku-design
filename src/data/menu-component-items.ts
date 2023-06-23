@@ -1,5 +1,4 @@
-import { AppType, ComponentCategory, PageType } from '@haku-design/core';
-import { ToolComponentItem } from '@haku-design/core/tool-component-item';
+import { AppType, ComponentCategory, PageType, ToolComponentItem } from '@haku-design/core';
 import { state as editorState, service as editorService } from '@/modules/editor-module';
 import { computed } from 'vue';
 
@@ -10,7 +9,7 @@ export const getMenuComponentItems = computed(() => {
 
 export let menuComponentItems: ToolComponentItem[] = [
   {
-    title: '单行问答题',
+    title: '单行文本',
     name: 'q-single-line',
     icon: 'iconfont icon-textbox',
     category: ComponentCategory.normal,
@@ -18,7 +17,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '数值填写题',
+    title: '数值',
     name: 'q-number',
     icon: 'iconfont icon-textbox',
     category: ComponentCategory.normal,
@@ -26,7 +25,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '单行问答组',
+    title: '文本组',
     name: 'q-single-line-group',
     icon: 'iconfont icon-shebeiguanli',
     category: ComponentCategory.normal,
@@ -34,7 +33,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '多行问答题',
+    title: '多行文本',
     name: 'q-multiple-line',
     icon: 'iconfont icon-textarea',
     category: ComponentCategory.normal,
@@ -42,7 +41,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '单项选择题',
+    title: '单项选择',
     name: 'q-single-choice',
     icon: 'iconfont icon-check-circle',
     category: ComponentCategory.normal,
@@ -50,7 +49,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '多项选择题',
+    title: '多项选择',
     name: 'q-multiple-choice',
     icon: 'iconfont icon-checkbox',
     category: ComponentCategory.normal,
@@ -58,7 +57,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '下拉选择题',
+    title: '下拉选择',
     name: 'q-dropdown',
     icon: 'iconfont icon-dropdownlist',
     category: ComponentCategory.normal,
@@ -90,7 +89,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     }
   },
   {
-    title: '评分题',
+    title: '评分',
     name: 'q-score',
     icon: 'iconfont icon-star',
     category: ComponentCategory.normal,
@@ -98,7 +97,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage, PageType.endPage],
   },
   {
-    title: '多项评分题',
+    title: '多项评分',
     name: 'q-score-group',
     icon: 'iconfont icon-star',
     category: ComponentCategory.normal,
@@ -106,7 +105,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage, PageType.endPage],
   },
   {
-    title: '文件上传题',
+    title: '文件选择',
     name: 'q-file-upload',
     icon: 'iconfont icon-cloud-upload',
     category: ComponentCategory.normal,
@@ -114,7 +113,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '手写题',
+    title: '手写板',
     name: 'q-drawing-board',
     icon: 'iconfont icon-drawing-board',
     category: ComponentCategory.normal,
@@ -122,7 +121,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '表格题',
+    title: '表格',
     name: 'q-table',
     icon: 'iconfont icon-table',
     category: ComponentCategory.normal,
@@ -130,7 +129,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '隐藏题',
+    title: '隐藏内容',
     name: 'q-hidden',
     icon: 'iconfont icon-miwen',
     isNew: true,
