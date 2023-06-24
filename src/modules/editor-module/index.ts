@@ -787,17 +787,20 @@ export const service = {
       _canUpgrade = true;
     }
     const hide = toast(_canUpgrade ? '问卷更新中...' : '问卷保存中...', 'loading', 0);
+    if (_exportData) {
+      _exportData.appConfig.appVersion += 1;
+    }
     editApp(appBody2AppInfoDto(_exportData)).then(d => {
       historyState.saveHistoryIndex = historyState.historyIndex;
       configService.setSaveHistory(state.appConfig.id);
       configState.saveHistory;
       setTimeout(() => {
+        hide.clear();
         toast(_canUpgrade ? '问卷更新成功' : '问卷保存成功', 'success');
       }, 300);
-    }).catch(([err]) => {
-      toast(err.desc || '保存问卷出错', 'error');
-    }).finally(() => {
+    }).catch(err => {
       hide.clear();
+      toast(err.message || '保存问卷出错', 'error');
     });
   },
   /** 页面调整大小 */

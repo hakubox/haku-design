@@ -4,7 +4,7 @@
     <Modal title="发布问卷" :width="1080" :visible="visible" :footer="false" @cancel="onClose" @ok="onSubmit">
       <div class="publish-panel">
         <div class="publish-panel-left">
-          <Image src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />
+          <Image src="https://www.hakuq.com/cdn/assets/image/default-app-image.png" />
         </div>
         <div class="publish-panel-right">
           <div class="design-form-panel cols-2">

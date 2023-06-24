@@ -24,12 +24,12 @@
                   <i class="iconfont icon-file menu-iconfont"></i>JSON文件
                 </MenuItem>
               </SubMenu> -->
-              <!-- <MenuItem key="create" @click="showCreateNewDialog">
+              <MenuItem key="create" @click="showCreateNewDialog">
                 <i class="iconfont icon-add menu-iconfont"></i>新建
-              </MenuItem> -->
-              <MenuItem key="createByLocal" @click="showCreateNewByLocalDialog">
-                <i class="iconfont icon-add menu-iconfont"></i>新建本地
               </MenuItem>
+              <!-- <MenuItem key="createByLocal" @click="showCreateNewByLocalDialog">
+                <i class="iconfont icon-add menu-iconfont"></i>新建本地
+              </MenuItem> -->
               <MenuItem @click="showPrivateQuestionnaireLibraryDialog()">
                 <i class="iconfont icon-weizhigeshi menu-iconfont"></i>打开
               </MenuItem>
@@ -37,10 +37,10 @@
                 <template #title>
                   <i class="iconfont icon-file menu-iconfont"></i>导入
                 </template>
-                <MenuItem key="importForFile">
+                <MenuItem key="importForFile" :disabled="true">
                   <i class="iconfont icon-file menu-iconfont"></i>从文件导入
                 </MenuItem>
-                <MenuItem @click="showPublicQuestionnaireLibraryDialog()">
+                <MenuItem @click="showPublicQuestionnaireLibraryDialog()" :disabled="true">
                   <i class="iconfont icon-weizhigeshi menu-iconfont"></i>从公共模板库导入
                 </MenuItem>
               </SubMenu>

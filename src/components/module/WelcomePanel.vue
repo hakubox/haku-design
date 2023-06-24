@@ -88,7 +88,7 @@
             >
               <img
                 class="recent-item-img"
-                :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
+                :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'"
                 alt=""
                 @click="selectApp(item)"
               />
@@ -158,10 +158,10 @@
                 <template #extra>
                   <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
                     <template #title>
-                      <img :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'" alt="" />
+                      <img :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'" alt="" />
                     </template>
                     <div class="recent-item-img">
-                      <img :alt="item.appTitle" :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'" />
+                      <img :alt="item.appTitle" :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'" />
                     </div>
                   </Tooltip>
                 </template>
@@ -256,7 +256,6 @@ const search = () => {
     ],
     orders: ['updatedTime'],
   }).then(d => {
-    console.log('应用列表', d.data);
     state.recentList = d.data;
     state.pagination.total = d.totalCount;
     startShowIntro();
@@ -270,13 +269,18 @@ const search = () => {
 /** 选择应用 */
 const selectApp = (app: AppInfoDto) => {
   const id = app.id || '';
+  state.isLoading = true;
+  const hide = message.loading('加载中...');
   getApp(id).then(appInfo => {
     const _appInfo = appInfoDto2AppBody(appInfo);
     editorService.loadAppBody(id, _appInfo);
   }).catch(err => {
     console.error(err);
     message.error(`应用加载失败，错误原因：${err.message}`);
-  })
+  }).finally(() => {
+    state.isLoading = false;
+    hide();
+  });
 };
 
 /** 移除项 */

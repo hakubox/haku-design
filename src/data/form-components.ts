@@ -15,7 +15,7 @@ export type InitComponent = SetPartial<Component, 'id' | 'attrs' | 'component' |
 export let formComponents: InitComponent[] = [
 
   /** 
-   * 单行文本
+   * 单行文本框
    */
   {
     name: 'q-single-line',
@@ -24,7 +24,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text',
-    title: '单行文本',
+    title: '单行文本框',
     quickTools: [
       // {
       //   icon: (component) => component.attrs.visible ? 'iconfont icon-icon_yulan' : 'iconfont icon-miwen',
@@ -59,7 +59,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '单行文本', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '单行文本框', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -292,7 +292,7 @@ export let formComponents: InitComponent[] = [
   },
 
   /**
-   * 多行文本
+   * 多行文本框
    */
   {
     name: 'q-multiple-line',
@@ -301,7 +301,7 @@ export let formComponents: InitComponent[] = [
     isTopLevel: false,
     type: ComponentCategory.normal,
     answerType: 'text',
-    title: '多行文本',
+    title: '多行文本框',
     attrs: {
       width: 300,
       height: 160,
@@ -319,7 +319,7 @@ export let formComponents: InitComponent[] = [
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.background,
       }),
       getComponentPropType({
-        name: 'label', title: '标题', default: '多行文本', layout: PropertyLayout.block,
+        name: 'label', title: '标题', default: '多行文本框', layout: PropertyLayout.block,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.richtext,
         attrs: {
           isTitleMode: true
@@ -1730,11 +1730,14 @@ export let formComponents: InitComponent[] = [
     },
     propertys: [
       getComponentPropType({
-        name: 'width', title: '宽度', visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int
+        name: 'width', title: '宽度',
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.int,
+        showCondition() {
+          return editorState.appConfig.appType === AppType.canvas;
+        }
       }),
       getComponentPropType({
-        name: 'autowidth', title: '自动宽度', default: true, visible: true,
+        name: 'autowidth', title: '自动宽度', default: () => editorState.appConfig.appType === AppType.canvas,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否使用自动宽度。', change({ component }) {
           if (component.attrs.autowidth) {
@@ -1744,10 +1747,13 @@ export let formComponents: InitComponent[] = [
             component.attrs.disabledWidth = false;
           }
           bus.$emit(GlobalBusType.autoSizeChange, component);
+        },
+        showCondition() {
+          return editorState.appConfig.appType === AppType.canvas;
         }
       }),
       getComponentPropType({
-        name: 'autoheight', title: '自动高度', default: true, visible: true,
+        name: 'autoheight', title: '自动高度', default: () => editorState.appConfig.appType !== AppType.canvas,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否使用自动高度。', change({ component }) {
           if (component.attrs.autoheight) {
@@ -1757,22 +1763,45 @@ export let formComponents: InitComponent[] = [
             component.attrs.disabledHeight = false; 
           }
           bus.$emit(GlobalBusType.autoSizeChange, component);
+        },
+        showCondition() {
+          return editorState.appConfig.appType === AppType.canvas;
         }
       }),
       getComponentPropType({
-        name: 'visible', title: '是否显示', default: true, visible: true,
+        name: 'visible', title: '是否显示', default: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.boolean,
         remark: '是否在界面上显示。'
+      }),
+      getComponentPropType({
+        name: 'hPos', title: '水平位置', default: 'start',
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.dropdownList,
+        attrs: {
+          options: [
+            { label: '左侧', value: 'start' }, 
+            { label: '居中', value: 'center' }, 
+            { label: '右侧', value: 'end' }, 
+          ]
+        }
+      }),
+      getComponentPropType({
+        name: 'vPos', title: '垂直位置', default: 'start',
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.dropdownList,
+        attrs: {
+          options: [
+            { label: '上方', value: 'start' }, 
+            { label: '居中', value: 'center' }, 
+            { label: '下方', value: 'end' }, 
+          ]
+        },
+        showCondition() {
+          return editorState.appConfig.appType === AppType.canvas;
+        }
       }),
       getComponentPropType({
         name: 'className', title: '类名', default: '', visible: true,
         group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine,
         remark: '组件关联代码的类名称。'
-      }),
-      getComponentPropType({
-        name: 'textClassName', title: '文本类名', default: '', visible: true,
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.singerLine,
-        remark: '文本内容关联代码的类名称。'
       }),
       // getComponentPropType({
       //   name: 'background', title: '背景', layout: PropertyLayout.block,
@@ -1793,10 +1822,8 @@ export let formComponents: InitComponent[] = [
         }
       }),
       getComponentPropType({
-        name: 'margin', title: '外边距', default: [[0,0,0,0]],
-        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box, attrs: {
-          single: true
-        }
+        name: '', names: ['margin', 'padding'], title: '边距', default: [[0,0,0,0], [0,0,0,0]],
+        group: ComponentPropertyGroup.style, editor: ComponentPropertyEditor.box,
       }),
       getComponentPropType({
         name: 'name', title: '组件名称', default: '',

@@ -14,7 +14,7 @@
             <span class="theme-item-title">{{ item.title }}</span>
           </div>
           <div class="theme-item-img">
-            <img src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" alt="" />
+            <img src="https://www.hakuq.com/cdn/assets/image/default-app-image.png" alt="" />
           </div>
         </li>
       </ul>

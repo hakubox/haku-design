@@ -41,7 +41,7 @@
               </template>
               <div class="questionnaire-library-item-img">
                 <img
-                  :src="item.previewUrl || 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png'"
+                  :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'"
                   alt=""
                 />
               </div>
@@ -60,7 +60,7 @@
                 <div class="questionnaire-library-item-body-tools">
                   <div class="questionnaire-library-item-body-tool tool-primary" @click="loadData(item)">
                     <i class="iconfont icon-zidingyi"></i>
-                    {{ getTypeTitle(item.appType) }}
+                    编辑
                   </div>
                   <div class="questionnaire-library-item-body-tool tool-red">
                     <i class="iconfont icon-shanchu"></i>

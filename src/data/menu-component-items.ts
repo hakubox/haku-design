@@ -9,7 +9,7 @@ export const getMenuComponentItems = computed(() => {
 
 export let menuComponentItems: ToolComponentItem[] = [
   {
-    title: '单行文本',
+    title: '单行文本框',
     name: 'q-single-line',
     icon: 'iconfont icon-textbox',
     category: ComponentCategory.normal,
@@ -33,7 +33,7 @@ export let menuComponentItems: ToolComponentItem[] = [
     pageType: [PageType.normalPage],
   },
   {
-    title: '多行文本',
+    title: '多行文本框',
     name: 'q-multiple-line',
     icon: 'iconfont icon-textarea',
     category: ComponentCategory.normal,
@@ -68,7 +68,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     title: '日期选择',
     name: 'q-datetime-picker',
     icon: 'iconfont icon-dropdownlist',
-    isNew: true,
     category: ComponentCategory.normal,
     appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
@@ -78,7 +77,6 @@ export let menuComponentItems: ToolComponentItem[] = [
     name: 'q-datetime-picker',
     icon: 'iconfont icon-dropdownlist',
     answerType: 'datetime-range',
-    isNew: true,
     category: ComponentCategory.normal,
     appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
@@ -128,15 +126,14 @@ export let menuComponentItems: ToolComponentItem[] = [
     appType: [AppType.questionnaire],
     pageType: [PageType.normalPage],
   },
-  {
-    title: '隐藏内容',
-    name: 'q-hidden',
-    icon: 'iconfont icon-miwen',
-    isNew: true,
-    category: ComponentCategory.normal,
-    appType: [AppType.questionnaire],
-    pageType: [PageType.normalPage],
-  },
+  // {
+  //   title: '隐藏内容',
+  //   name: 'q-hidden',
+  //   icon: 'iconfont icon-miwen',
+  //   category: ComponentCategory.normal,
+  //   appType: [AppType.questionnaire],
+  //   pageType: [PageType.normalPage],
+  // },
   {
     title: '可选择卡片',
     name: 'q-card-picker',

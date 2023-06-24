@@ -18,12 +18,12 @@
       left: `${props.component.attrs.x}px`,
       transform: `rotate(${props.component.attrs.rotate || 0}deg)`,
     }: {
+      width: `calc(100% - ${(props.component.attrs?.margin?.[1] ?? 0) + (props.component.attrs?.margin?.[3] ?? 0)}px)`,
       margin: getBoxModel(props.component.attrs.margin),
     }"
     @mousedown.stop="mouseDownEvent($event, props.component)"
     ref="formComponent"
   >
-  
     <template v-if="props.component.attrs.background?.length">
       <div
         class="form-component-bg-panel"

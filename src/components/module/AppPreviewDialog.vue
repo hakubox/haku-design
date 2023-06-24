@@ -132,6 +132,7 @@ import EventItem from "@/modules/event-module/component/EventItem.vue";
 import { Avatar, Button, Empty, List, ListItem, ListItemMeta, Popconfirm, Popover, Skeleton, TabPane, Tabs, Tag, message } from "ant-design-vue";
 import { dateFormat } from "@/tools/common";
 import bus, { GlobalBusType } from "@/tools/bus";
+import { getPropType } from "@/common/app-handle";
 
 const deviceInfo = ref<HTMLElement>();
 
@@ -183,7 +184,7 @@ const state = reactive({
   },
   /** 预览配置属性栏 */
   previewUIConfigProps: [
-    {
+    getPropType({
       name: 'deviceType',
       title: '设备类型',
       require: false,
@@ -200,7 +201,8 @@ const state = reactive({
       change() {
         onPageResize();
       }
-    }, {
+    }),
+    getPropType({
       name: 'direction',
       title: '方向',
       require: false,
@@ -215,8 +217,12 @@ const state = reactive({
       },
       change() {
         onPageResize();
+      },
+      showCondition({ value }) {
+        return true;
       }
-    }, {
+    }),
+    getPropType({
       name: 'useOriginScale',
       title: '原始缩放比',
       require: false,
@@ -226,7 +232,7 @@ const state = reactive({
       change() {
         onPageResize();
       }
-    }
+    })
   ],
 });
 

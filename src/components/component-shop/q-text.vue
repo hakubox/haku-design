@@ -5,13 +5,16 @@
     :component-label="''"
     :component-description="''"
     :class-name="$attrs.className"
+    :h-pos="props.hPos"
+    :v-pos="props.vPos"
   >
-    <div class="component-content" :class="{ autowidth: $attrs.autowidth }">
-      <div v-if="$attrs.text" class="component-text-content" :class="$attrs.textClassName" v-html="($attrs.text as string)?.replace(/\n/g, '<br />')"></div>
+    <div class="component-content" :class="{
+      autowidth: $attrs.autowidth,
+    }">
+      <div v-if="$attrs.text" class="component-text-content" v-html="($attrs.text as string)?.replace(/\n/g, '<br />')"></div>
       <div
         v-if="$attrs.description"
         class="component-text-content richtext-value"
-        :class="$attrs.textClassName"
         :style="{ marginTop: $attrs.text ? '10px' : '0px' }"
         v-html="variableService.getVarText($attrs.description as string)?.replace(/\n/g, '<br />')"
       ></div>
@@ -20,13 +23,16 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
-import { getQBasicProps } from '@/tools/common';
+import { PropType, reactive } from 'vue';
+import { getQBasicProps, getBoxModel } from '@/tools/common';
 import { service as variableService } from '@/modules/variable-module';
+import { useAttrs } from 'vue';
 
 defineOptions({
   inheritAttrs: false
 });
+
+const attrs = useAttrs();
 
 const props = defineProps({
   component: {
@@ -37,8 +43,22 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** 水平位置 */
+  hPos: {
+    type: String,
+    default: 'start',
+  },
+  /** 垂直位置 */
+  vPos: {
+    type: String,
+    default: 'start',
+  },
+  padding: {
+    type: Array as PropType<number[]>,
+    default: () => [0, 0, 0, 0],
+  },
   margin: {
-    type: Array,
+    type: Array as PropType<number[]>,
     default: () => [0, 0, 0, 0],
   },
 });
@@ -56,7 +76,30 @@ const state = reactive({});
   align-items: flex-start;
   overflow: hidden;
 
+  &[h-pos='start'] {
+
+    .component-text-content {
+      text-align: left;
+    }
+  }
+
+  &[h-pos='center'] {
+
+    .component-text-content {
+      text-align: center;
+    }
+  }
+
+  &[h-pos='end'] {
+
+    .component-text-content {
+      text-align: right;
+    }
+  }
+
   > .component-content {
+    display: flex;
+    flex-direction: column;
     width: 100%;
 
     &.autowidth {

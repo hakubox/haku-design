@@ -195,8 +195,10 @@ export function useAppHandle() {
               for (let i = 0; i < _names.length - 1; i++) {
                 _obj = _obj[_names[i]];
               }
-              _obj[_names.at(-1)!] = _default;
-            } else {
+              if (_obj[_names.at(-1)!] === undefined) {
+                _obj[_names.at(-1)!] = _default;
+              }
+            } else if (_obj[name] === undefined) {
               _obj[name] = _default;
             }
           }
@@ -211,7 +213,9 @@ export function useAppHandle() {
           } else if (!model[prop.name]) {
             _name = prop.name;
           }
-          if (_name) model[_name] = typeof prop.default === 'function' ? (prop.default as any)() : prop.default;
+          if (_name && model[_name] === undefined) {
+            model[_name] = typeof prop.default === 'function' ? (prop.default as any)() : prop.default;
+          }
         }
       }
     }
@@ -343,6 +347,7 @@ export function useAppHandle() {
     const state = reactive({
       visible: true
     });
+    // @ts-ignore
     const _module = import.meta.glob('@/components/module/PrivateQuestionnaireLibraryDialog.vue') as Record<string, any>;
     const PrivateQuestionnaireLibraryDialog = (await Object.values(_module)[0]()).default;
     const container = loadComponent(PrivateQuestionnaireLibraryDialog as ConcreteComponent, {
@@ -361,6 +366,7 @@ export function useAppHandle() {
     const state = reactive({
       visible: true
     });
+    // @ts-ignore
     const _module = import.meta.glob('@/components/module/PublicQuestionnaireLibraryDialog.vue') as Record<string, any>;
     const PublicQuestionnaireLibraryDialog = (await Object.values(_module)[0]()).default;
     const container = loadComponent(PublicQuestionnaireLibraryDialog as ConcreteComponent, {
