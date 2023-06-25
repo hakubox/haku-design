@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.hakuq.com/">
-    <img width="120" src="https://www.hakuq.com/cdn/assets/image/logo-img.svg">
+    <img width="120" src="https://cdn.hakuq.com/assets/image/logo-img.svg">
   </a>
 </p>
 
@@ -14,9 +14,9 @@
 
 ## 预览图
 
-![示例1](https://www.hakuq.com/cdn/assets/image/docs/website-example1.png)
+![示例1](https://cdn.hakuq.com/assets/image/docs/website-example1.png)
 
-![示例2](https://www.hakuq.com/cdn/assets/image/docs/website-example2.png)
+![示例2](https://cdn.hakuq.com/assets/image/docs/website-example2.png)
 
 ## 特性
 

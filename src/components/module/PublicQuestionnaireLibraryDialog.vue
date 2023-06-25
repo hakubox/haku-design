@@ -35,10 +35,10 @@
             <!-- 问卷预览图 -->
             <Tooltip overlayClassName="public-questionnaire-library-item-preview" placement="rightTop">
               <template #title>
-                <img src="https://www.hakuq.com/cdn/assets/image/default-app-image.png" alt="" />
+                <img src="https://cdn.hakuq.com/assets/image/default-app-image.png" alt="" />
               </template>
               <div class="public-questionnaire-library-item-img">
-                <img src="https://www.hakuq.com/cdn/assets/image/default-app-image.png" alt="" />
+                <img src="https://cdn.hakuq.com/assets/image/default-app-image.png" alt="" />
               </div>
             </Tooltip>
             <!-- 问卷信息 -->
@@ -77,10 +77,10 @@
             <!-- 问卷预览图 -->
             <Tooltip overlayClassName="public-questionnaire-library-item-preview" placement="rightTop">
               <template #title>
-                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="" />
+                <img src="https://cdn.hakuq.com/assets/image/test-panel.webp" alt="" />
               </template>
               <div class="public-questionnaire-library-item-img">
-                <img src="https://www.hakuq.com/cdn/assets/image/test-panel.webp" alt="" />
+                <img src="https://cdn.hakuq.com/assets/image/test-panel.webp" alt="" />
               </div>
             </Tooltip>
             <!-- 问卷信息 -->

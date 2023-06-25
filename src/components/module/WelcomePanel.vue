@@ -88,7 +88,7 @@
             >
               <img
                 class="recent-item-img"
-                :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'"
+                :src="item.previewUrl || 'https://cdn.hakuq.com/assets/image/default-app-image.png'"
                 alt=""
                 @click="selectApp(item)"
               />
@@ -158,10 +158,10 @@
                 <template #extra>
                   <Tooltip overlayClassName="recent-item-preview" placement="leftTop">
                     <template #title>
-                      <img :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'" alt="" />
+                      <img :src="item.previewUrl || 'https://cdn.hakuq.com/assets/image/default-app-image.png'" alt="" />
                     </template>
                     <div class="recent-item-img">
-                      <img :alt="item.appTitle" :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'" />
+                      <img :alt="item.appTitle" :src="item.previewUrl || 'https://cdn.hakuq.com/assets/image/default-app-image.png'" />
                     </div>
                   </Tooltip>
                 </template>

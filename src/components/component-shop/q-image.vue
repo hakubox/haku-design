@@ -6,7 +6,7 @@
   >
     <img
       class="component-image-content"
-      :src="src ? storageService.getFileInfo(src)?.src : 'https://www.hakuq.com/cdn/assets/image/default-img.webp'"
+      :src="src ? storageService.getFileInfo(src)?.src : 'https://cdn.hakuq.com/assets/image/default-img.webp'"
       :style="{
         objectFit: props.fillType,
         borderRadius: props.borderRadius + 'px',

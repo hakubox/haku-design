@@ -14,7 +14,7 @@
             <span class="theme-item-title">{{ item.title }}</span>
           </div>
           <div class="theme-item-img">
-            <img src="https://www.hakuq.com/cdn/assets/image/default-app-image.png" alt="" />
+            <img src="https://cdn.hakuq.com/assets/image/default-app-image.png" alt="" />
           </div>
         </li>
       </ul>

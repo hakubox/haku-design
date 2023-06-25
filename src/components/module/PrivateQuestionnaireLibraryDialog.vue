@@ -41,7 +41,7 @@
               </template>
               <div class="questionnaire-library-item-img">
                 <img
-                  :src="item.previewUrl || 'https://www.hakuq.com/cdn/assets/image/default-app-image.png'"
+                  :src="item.previewUrl || 'https://cdn.hakuq.com/assets/image/default-app-image.png'"
                   alt=""
                 />
               </div>

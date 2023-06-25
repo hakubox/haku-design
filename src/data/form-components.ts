@@ -2075,7 +2075,7 @@ export let formComponents: InitComponent[] = [
         }
       }),
       getComponentPropType({
-        name: 'src', title: '视频文件', default: 'https://www.hakuq.com/cdn/temp/video/big_buck_bunny.mp4',
+        name: 'src', title: '视频文件', default: 'https://cdn.hakuq.com/temp/video/big_buck_bunny.mp4',
         group: ComponentPropertyGroup.data, editor: ComponentPropertyEditor.singerLine,
         remark: '视频的URL路径。'
       }),

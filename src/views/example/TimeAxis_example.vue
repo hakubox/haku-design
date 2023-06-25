@@ -44,7 +44,7 @@ const onProgress = (second: number, detail: { fragmentId: string, attrs: Record<
 /** 加载时间轴数据 */
 const loadAxisData = async () => {
   await animeService.addFragment({ target: '.test-circle-aaa', trackId: 'aaa', title: '组件轨道 - 测试1', startTime: 1000, endTime: 3600 });
-  await animeService.addFragment({ target: 'https://www.hakuq.com/cdn/temp/audio/sound2.mp3', trackId: 'bbb', title: '音频轨道 - 测试2', startTime: 2600, endTime: 4800 });
+  await animeService.addFragment({ target: 'https://cdn.hakuq.com/temp/audio/sound2.mp3', trackId: 'bbb', title: '音频轨道 - 测试2', startTime: 2600, endTime: 4800 });
 };
 
 onMounted(() => {
