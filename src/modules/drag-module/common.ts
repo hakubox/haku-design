@@ -46,6 +46,20 @@ export function getRect(dom: HTMLElement | (() => HTMLElement)): DragRect {
   };
 }
 
+/** 获取数组里的对象 */
+export function getDataByArrs<T>(fn: ((obj: T) => boolean), ...arrs: T[][]): T | undefined {
+  for (let i = 0; i < arrs.length; i++) {
+    const arr = arrs[i];
+    for (let obj = 0; obj < arr.length; obj++) {
+      const _isSuccess = fn(arr[obj]);
+      if (_isSuccess) {
+        return arr[obj];
+      }
+    }
+  }
+  return undefined;
+}
+
 /** 转换鼠标事件参数 */
 function transformMouseEvent(e: MouseEvent): DragEvent {
   return e as unknown as DragEvent;
@@ -100,17 +114,19 @@ export function toggleStyle(
 }
 
 /** 查询节点 */
-export const findTreeNode = (itemId: string, tree: DragNode[]): DragNode | undefined => {
+export const findTreeNode = <T = any>(itemId: string, tree: DragNode<T>[]): DragNode<T> | undefined => {
   for (let i = 0; i < tree.length; i++) {
     const item = tree[i];
     if (item.id === itemId) {
       return item;
     } 
-    else if (item.type === 'droppable' && item.children?.length) {
-      return findTreeNode(itemId, item.children);
+    if (item.type === 'droppable' && item.children?.length) {
+      const _childNode = findTreeNode(itemId, item.children);
+      if (_childNode) {
+        return _childNode;
+      }
     }
   }
-  return undefined;
 };
 
 
@@ -135,17 +151,17 @@ export function moveItem({ arr, itemId, parentId, index }: {
       targetChildList.push(i);
     }
   }
-  let size = targetChildList.length;
+  const size = targetChildList.length;
   if (size === 0) {
     return;
   }
-  let num = (index >= size ? targetChildList[size - 1] + 1 : targetChildList[index]) - cur;
+  const num = (index >= size ? targetChildList[size - 1] + 1 : targetChildList[index]) - cur;
   swap(arr, cur, num > 0 ? num - 1 : num);
 }
 
 const swap = (arr: any[], start: number, num: number) => {
   let target;
-  let step = Math.abs(num);
+  const step = Math.abs(num);
   let temp: any;
   for (let i = 0; i < step; i++) {
     target = num > 0 ? start + 1 : start - 1;

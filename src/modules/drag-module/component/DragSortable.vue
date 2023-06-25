@@ -58,7 +58,7 @@ const props = defineProps({
     default: false,
   },
   data: {
-    type: Array as PropType<(any & { dragId: string })[]>,
+    type: Array as PropType<(any & { id: string })[]>,
     default: () => []
   },
   visual: {
@@ -114,7 +114,7 @@ const { proxy } = getCurrentInstance()!;
 const emit = defineEmits<{
   (event: 'update:x', value: number): void;
   (event: 'update:y', value: number): void;
-  (event: 'update:data', value: (any & { dragId: string })[]): void;
+  (event: 'update:data', value: (any & { id: string })[]): void;
 }>();
 
 const state = reactive({
@@ -125,7 +125,7 @@ const state = reactive({
 //   get() {
 //     return props.data;
 //   },
-//   set(data: (any & { dragId: string })[]) {
+//   set(data: (any & { id: string })[]) {
 //     emit('update:data', data);
 //   }
 // });
@@ -157,7 +157,8 @@ onMounted(() => {
     dragHook.addDroppable(props.dragId, getRootDom, {
       component: 'sortable',
       direction: props.direction,
-      reverse: props.reverse
+      reverse: props.reverse,
+      parentId: parentId ?? ''
     });
   } else {
     throw new Error('未查询到根节点');
@@ -166,14 +167,15 @@ onMounted(() => {
   dragHook.addDataParent(props.dragId, parentId);
   dragHook.setDroppableLoc(props.dragId, props.x, props.y);
   dragHook.bingData(props.dragId, {
+    type: 'droppable',
     get() {
       return props.data;
     },
-    set(data: (any & { dragId: string })[]) {
+    set(data: (any & { id: string })[]) {
+      // console.warn('设置值', props.dragId, data);
       emit('update:data', data);
     }
   });
-
 });
 
 onUnmounted(() => {

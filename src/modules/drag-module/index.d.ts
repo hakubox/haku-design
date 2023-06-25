@@ -9,20 +9,26 @@ export interface DragRect {
 }
 
 /** 拖拽节点 */
-export type DragNode = {
+export type DragNode<T> = {
   /** 节点Id */
   id: string;
+  parentId: string;
   /** 节点类型 */
   type: 'draggable';
+  /** 额外数据 */
+  data: T;
 } | {
   /** 节点Id */
   id: string;
+  parentId: string;
   /** 节点类型 */
   type: 'droppable';
   /** 节点配置 */
   config: AllDroppableConfig;
   /** 子节点列表 */
-  children: DragNode[];
+  children: DragNode<T>[];
+  /** 额外数据 */
+  data: T[];
 };
 
 /** 拖拽节点状态 */
@@ -46,10 +52,10 @@ export interface DraggableState {
   height: number;
   /** 自由拖拽 */
   freeDrag: boolean;
-  /** 旧目标Id（拖拽完毕更新） */
-  prevDroppableId: string;
   /** 目标Id（拖拽时更新） */
   inDroppableId: string;
+  /** 父级节点Id（拖拽完毕更新） */
+  parentId: string;
   /** 使用拖拽副本 */
   useDuplicate: boolean;
   /** 拖拽副本样式 */
@@ -76,12 +82,16 @@ export type AllDroppableConfig = DroppableConfig | SortableConfig;
 
 /** 放置节点配置 */
 export interface DroppableConfig {
+  /** 父节点Id */
+  parentId: string;
   /** 组件类型 */
   component: 'droppable';
 }
 
 /** 放置节点配置 */
 export interface SortableConfig {
+  /** 父节点Id */
+  parentId: string;
   /** 组件类型 */
   component: 'sortable';
   /** 方向 */
@@ -100,6 +110,8 @@ export interface DroppableState {
   layerY: number;
   width: number;
   height: number;
+  /** 父级Id */
+  parentId: string;
   /** 使用Transoform坐标 */
   useTransformPosition: boolean;
 }
@@ -145,6 +157,7 @@ export interface DragHook<T = Record<string, any>> {
   removeDataParent: (id: string) => void;
   /** 绑定数据 */
   bingData: <T>(id: string, config: {
+    type: 'draggable' | 'droppable';
     get: () => void,
     set: (val: any[]) => void
   }) => void;

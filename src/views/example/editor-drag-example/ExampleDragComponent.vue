@@ -1,23 +1,32 @@
 <template>
-  <DragDraggable v-if="props.type === 'item'">
+  <DragDraggable :data="data" :dragId="props.dragId" v-if="props.component === 'item'">
     <slot></slot>
   </DragDraggable>
-  <DragSortable v-else-if="props.type === 'list'">
+  <DragSortable :data="data" :dragId="props.dragId" v-else-if="props.component === 'list'">
     <slot>
       
     </slot>
-    <ExampleDragComponent :children="props.children" />
   </DragSortable>
+  <div v-else>??? {{ props.component }}</div>
 </template>
 
 <script lang="ts" setup>
 import { DragDraggable, DragSortable, DragDroppable } from '@/modules/drag-module';
+import { createModelId } from '@/tools/common';
 import { reactive, type PropType } from 'vue';
 
 const props = defineProps({
-  type: {
+  data: {
+    type: Object as PropType<(any & { id: string })>,
+    default: () => ({})
+  },
+  component: {
     type: String as PropType<'item' | 'list'>,
     default: 'item'
+  },
+  dragId: {
+    type: String,
+    default: () => createModelId(10)
   },
   children: {
     type: Array as PropType<any[]>,
@@ -26,7 +35,7 @@ const props = defineProps({
 });
 
 const getComponent = () => {
-  switch (props.type) {
+  switch (props.component) {
     case 'item':
       return 'DragDraggable';
     case 'list':

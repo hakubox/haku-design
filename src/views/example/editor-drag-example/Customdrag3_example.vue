@@ -7,24 +7,29 @@
       successDragDraggableClass="check-area-success"
       successDragDroppableClass="check-area-success"
     >
-      <!-- 基础列表 -->
-      <div class="basic-list">
-        <ExampleDragComponent
-          :type="item.type"
-          duplicate-class="duplicate"
-          class="drag-obj drag-1 has-handle"
-          v-for="item in state.defaultNodes"
-        >
-          {{ item.type === 'item' ? `普通${item.id}` : `排序${item.id}` }}
-        </ExampleDragComponent>
-      </div>
+      <!-- 组件列表 -->
+      <DragSortable v-model:data="state.defaultNodes" :visual="true" drag-id="defaultNodes">
+        <div class="basic-list">
+          <ExampleDragComponent
+            :drag-id="item.id"
+            :component="item.component"
+            duplicate-class="duplicate"
+            class="drag-obj drag-1 has-handle"
+            :key="item.id"
+            v-model:data="state.defaultNodes[index]"
+            v-for="(item, index) in state.defaultNodes"
+          >
+            {{ item.component === 'item' ? `普通${item.id}` : `排序${item.id}` }}
+          </ExampleDragComponent>
+        </div>
+      </DragSortable>
 
-      <!-- 容器3 -->
+      <!-- 编辑器区域 -->
       <div class="target-container target-container-1">
         <div class="header">
           头部区域
         </div>
-        <DragSortable v-model:data="state.editorNodes" :visual="true" transitionName="fade" drag-id="aaaaa">
+        <DragSortable v-model:data="state.editorNodes" :visual="true" transitionName="fade" drag-id="editorNodes">
           <div class="content">
             <DragDraggable
               duplicate-class="duplicate" 
@@ -43,7 +48,8 @@
       </div>
 
       <div class="editor-code-panel">
-        {{ state.editorNodes }}
+        <!-- <pre>{{ getDataCode }}</pre> -->
+        <pre>{{ state.defaultNodes }}</pre>
       </div>
     </DragContext>
   </div>
@@ -56,6 +62,7 @@ import { reactive, ref } from 'vue';
 import type { DragNode } from '@/modules/drag-module/index.d';
 import { EditorDragNode } from './type';
 import ExampleDragComponent from './ExampleDragComponent.vue';
+import { computed } from 'vue';
 
 const state = reactive({
   data2: [] as any[],
@@ -63,14 +70,24 @@ const state = reactive({
   tempRects: [] as { top: number; left: number; width: number; height: number }[],
 
   defaultNodes: [
-    { id: 'drag-item-1', type: 'item' },
-    { id: 'drag-item-2', type: 'item' },
-    { id: 'drag-item-3', type: 'item' },
-    { id: 'drag-list-1', type: 'list' },
+    { id: 'drag-item-1', component: 'item' },
+    { id: 'drag-item-2', component: 'item' },
+    { id: 'drag-item-3', component: 'item' },
+    { id: 'drag-list-1', component: 'list' },
   ] as EditorDragNode[],
   /** 编辑器节点 */
   editorNodes: [] as EditorDragNode[]
 });
+
+const getDataCode = computed(() => {
+  return JSON.stringify(state.editorNodes, (key, val) => {
+    if (val instanceof HTMLElement) {
+      return `<DOM${val.getAttribute('drag-id') ? ' id=\'' + val.getAttribute('drag-id') + '\'' : ''}>`;
+    } else {
+      return val;
+    }
+  }, '  ');
+})
 </script>
 
 <style lang="less" scoped>
@@ -216,11 +233,19 @@ const state = reactive({
 
 .editor-code-panel {
   display: block;
-  width: 400px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  width: 500px;
   line-height: 12px;
   font-size: 12px;
   background-color: #282C34;
   border-radius: 10px;
   padding: 10px;
+  color: white;
+  font-weight: 400;
+  overflow: auto;
+
+  > pre {
+    overflow: hidden;
+  }
 }
 </style>

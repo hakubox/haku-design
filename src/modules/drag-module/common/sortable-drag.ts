@@ -1,4 +1,4 @@
-import { getDom, getRect } from "../common";
+import { getDataByArrs, getDom, getRect } from "../common";
 import type { AllDroppableConfig, DroppableState, DraggableState, DragHookState, DragNode, SortableConfig, DragRect } from "../index.d";
 
 // export function getInsertIndex<T>({
@@ -14,21 +14,33 @@ import type { AllDroppableConfig, DroppableState, DraggableState, DragHookState,
 //   return getInsertIndexBySortable<T>({ e, parentId, treeData, state, draggableState, droppableState });
 // }
 
-/** 获取插入索引 */
-export function getInsertIndexBySortable<T>({
+/** 获取插入信息 */
+export function getInsertIndexBySortable<T, U>({
   e, parentId, treeData, state, draggableState, droppableState
 }: {
   e: MouseEvent,
   parentId: string,
-  treeData: DragNode[],
+  treeData: DragNode<U>[],
   state: DragHookState<T>,
   draggableState: DraggableState,
   droppableState: DroppableState & AllDroppableConfig,
-}): { id: string, index: number, childType: 'draggable' | 'droppable', parentDom: HTMLElement | undefined, childId: string } {
+}): {
+  /** 拖拽元素DragId */
+  id: string,
+  /** 插入索引 */
+  index: number, 
+  /** 子节点类型 */
+  childType: 'draggable' | 'droppable',
+  /** 父元素Dom */
+  parentDom: HTMLElement | undefined,
+  /** 拖拽节点DragId */
+  childId: string
+} {
 
   let childType = '' as 'draggable' | 'droppable';
 
   let parentDom: HTMLElement | undefined = undefined;
+  const insertDom: HTMLElement | undefined = undefined;
 
   // 获取所有基本DOM节点
   const _draggableRect = getRect(draggableState.dom);
@@ -43,7 +55,7 @@ export function getInsertIndexBySortable<T>({
       rect = getRect(state.droppableMap[i.id].dom);
     }
     return { ...i, rect };
-  }) as (DragNode & { rect: DragRect })[];
+  }) as (DragNode<U> & { rect: DragRect })[];
 
   // console.error('_treeList', _treeList);
 
@@ -106,7 +118,7 @@ export function getInsertIndexBySortable<T>({
         if (_areaLoc === 'in') {
           childType = 'droppable';
           _reLocIndex = i;
-          return getInsertIndexBySortable<T>({ e, parentId: item.children[i].id, treeData: item.children, state, draggableState, droppableState });
+          return getInsertIndexBySortable<T, U>({ e, parentId: item.children[i].id, treeData: item.children, state, draggableState, droppableState });
         }
 
       }
@@ -114,6 +126,8 @@ export function getInsertIndexBySortable<T>({
   }
   if (_reLocIndex === -1) {
     _reLocIndex = _treeList.length;
+  } else {
+    _reLocIndex = _reLocIndex - 1;
   }
   parentDom = getDom(droppableState.dom);
   // console.log('结果', { id: parentId, childType, index: _reLocIndex, parentDom: parentDom, childId: _treeList[_reLocIndex]?.id });
@@ -121,14 +135,14 @@ export function getInsertIndexBySortable<T>({
 }
 
 /** 重构所有坐标及宽高度 */
-export function getRects(
+export function getRects<T>(
   parentId: string,
   droppableState: DroppableState & AllDroppableConfig,
-  treeList: (DragNode & { rect: DragRect; })[]
+  treeList: (DragNode<T> & { rect: DragRect; })[]
 ) {
   if (!parentId) return [];
   
-  const _rectList = [] as (DragNode & { rect: DragRect; })[];
+  const _rectList = [] as (DragNode<T> & { rect: DragRect; })[];
   if (droppableState.component === 'sortable') {
     if (droppableState.direction === 'row') {
       

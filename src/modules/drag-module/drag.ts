@@ -109,7 +109,7 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
   let prevDisplay = '';
   /** 上一个坐标 */
   let prevLocation = [0, 0];
-  /** 父级目标Id */
+  /** 父级目标Id（拖拽时更新） */
   let prevDroppableId = '';
   /** 父级目标内的索引 */
   let prevDroppableIndexId = '';
@@ -117,7 +117,7 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
   const bindState: Record<
     string,
     {
-      get: () => void;
+      get: () => any[];
       set: (val: any[]) => void;
     }
   > = {};
@@ -151,9 +151,9 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
     ...config,
   }) as UnwrapNestedRefs<T>;
 
-  const dataList = ref<[string, string | undefined][]>([]);
+  const dataList = ref<[string, string][]>([]);
 
-  const treeList = ref<Record<string, DragNode>>({});
+  const treeList = ref<Record<string, DragNode<any>>>({});
 
   // const getState = (id: string): DraggableState | DroppableState | undefined => {
   //   if (state.draggableMap[id]) {
@@ -164,15 +164,16 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
   //   return undefined;
   // };
 
-  const treeData = computed<DragNode[]>(() => {
-    const _items = dataList.value.map<DragNode | undefined>(([id, parentId]) => {
+  const treeData = computed<DragNode<any>[]>(() => {
+    const _items = dataList.value.map<DragNode<any> | undefined>(([id, parentId]) => {
       if (state.draggableMap[id]) {
         return {
           id,
           parentId,
           type: 'draggable',
           state: state.draggableMap[id],
-          children: [] as DragNode[],
+          children: [] as DragNode<any>[],
+          data: bindState[id].get()
         };
       } else if (state.droppableMap[id]) {
         return {
@@ -181,23 +182,31 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
           type: 'droppable',
           state: state.droppableMap[id],
           config: {} as AllDroppableConfig,
-          children: [] as DragNode[],
+          children: [] as DragNode<any>[],
+          data: bindState[id].get()
         };
       }
       return undefined;
     });
-    const _tree = {} as Record<string, DragNode[]>;
-    let _re: DragNode[] = [];
+    const _tree = {} as Record<string, DragNode<any>[]>;
+    let _re: DragNode<any>[] = [];
     for (let i = 0; i < _items.length; i++) {
-      const item = _items[i] as DragNode & { parentId: string };
+      const item = _items[i] as DragNode<any> & { parentId: string };
       if (item?.type === 'droppable') {
-        item.children = _tree[item!.id] ?? ([] as DragNode[]);
+        item.children = _tree[item!.id] ?? ([] as DragNode<any>[]);
       }
       if (item) {
         // if (!item['children']) item['children'] = [];
         treeList.value[item.id] = item;
         if (item.parentId) {
-          if (!_tree[item.parentId]) _tree[item.parentId] = [];
+          if (!_tree[item.parentId]) {
+            const _node = _tree['___']?.find(o => o.id === item.parentId);
+            if (_node) {
+              _tree[item.parentId] = _node['children'];
+            } else {
+              _tree[item.parentId] = [];
+            }
+          }
           _tree[item.parentId].push(item);
         } else {
           if (!_tree['___']) _tree['___'] = [];
@@ -215,9 +224,9 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
       state.dragId = '';
       if (e.target) {
         const _dragId = (e.target as HTMLElement).getAttribute('drag-id');
-        console.log('_dragId', _dragId);
         if (_dragId) {
           state.dragId = _dragId;
+          // state.draggableMap[state.dragId].dom = e.target as HTMLElement;
         }
       }
       if (!state.dragId) {
@@ -226,16 +235,13 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
       }
       isStart.value = true;
       const _currentState = state.draggableMap[state.dragId];
-      const _dom = getCurrentDom.value;
+      const _dom = e.target as HTMLElement;
       const _rect = _dom.getBoundingClientRect();
       prevLocation = [_rect.left, _rect.top];
       const _cloneDom = _dom.cloneNode(true) as HTMLElement;
-      // _cloneDom.style.transform = 'none';
-      // _cloneDom.style.top = '0px';
-      // _cloneDom.style.left = '0px';
 
-      let _comment
-      if (!_currentState.prevDroppableId) {
+      let _comment;
+      if (!_currentState.parentId) {
         _comment = document.createComment(`--${state.dragId}--`);
         _dom.parentElement!.insertBefore(_comment, _dom);
       }
@@ -266,7 +272,8 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
       }, 10);
 
       if (_currentState.useDuplicate) {
-        setAlpha(0.5);
+        prevDisplay = _dom.style.display;
+        _dom.style.display = 'none';
       } else {
         prevDisplay = _dom.style.display;
         _dom.style.display = 'none';
@@ -371,22 +378,10 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
         const _dom = typeof item === 'function' ? item() : item;
         const _rect = _dom.getBoundingClientRect();
 
-        if (
-          isCrash(
-            {
-              left: _rect.left - _contextRect.left,
-              top: _rect.top - _contextRect.top,
-              width: _rect.width,
-              height: _rect.height,
-            },
-            {
-              left: _x,
-              top: _y,
-              width: _currentState.width,
-              height: _currentState.height,
-            },
-          )
-        ) {
+        if (isCrash(
+          { left: _rect.left - _contextRect.left, top: _rect.top - _contextRect.top, width: _rect.width, height: _rect.height },
+          { left: _x, top: _y, width: _currentState.width, height: _currentState.height },
+        )) {
           _draggableCrashCount++;
           _currentState.inDroppableId = _keyValues[i];
           if (state.successDragDroppableClass) _dom.classList.add(state.successDragDroppableClass);
@@ -409,7 +404,7 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
         prevDroppableIndexId = '';
       } else {
         // 测试拖拽列表组件
-        insertInfo = getInsertIndexBySortable<T>({
+        insertInfo = getInsertIndexBySortable<T, any>({
           e,
           parentId: _currentState.inDroppableId,
           treeData: treeList.value[_currentState.inDroppableId]['children'],
@@ -418,17 +413,20 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
           droppableState: state.droppableMap[_currentState.inDroppableId],
         });
 
+        // 【执行条件】
+        // 条件1：
+        // 条件2：没有插入任何节点
+        // 条件3：
         if (
-          prevDroppableId !== _currentState.inDroppableId ||
+          _currentState.parentId !== _currentState.inDroppableId ||
           !insertInfo ||
           insertInfo.childId !== prevDroppableIndexId
         ) {
-          _dom.remove();
-          // console.error('?????');
+          _dom.style.display = 'none';
           // 如果是在拖拽位置
           if (_currentState.inDroppableId) {
             // 移除原始DOM节点
-            const _domDroppable = getDom(state.droppableMap[_currentState.inDroppableId].dom);
+            // const _domDroppable = getDom(state.droppableMap[_currentState.inDroppableId].dom);
             // _domDroppable.appendChild(_currentState.droppableDuplicateDom);
 
             // console.log('insertInfo', insertInfo);
@@ -500,61 +498,63 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
       const _draggableDom = _currentState.duplicateDom.firstChild;
 
       // console.log('开始 dataList', JSON.stringify(dataList.value, undefined, ''));
+      const _pid = findTreeNode(state.dragId, treeData.value)?.parentId;
+      // debugger
       moveItem({
         arr: dataList.value,
         itemId: state.dragId,
         parentId: _currentState.inDroppableId,
         index: insertInfo.index,
       });
+      // debugger
+      if (_pid) {
+        setBindData(_pid);
+      }
       // console.log('结束 dataList', JSON.stringify(dataList.value, undefined, ''));
 
+      console.log('_currentState.inDroppableId', _currentState.inDroppableId);
       if (_currentState.inDroppableId) {
         treeData.value;
         setAlpha(0);
         _dom.classList.add('drag-in-area');
 
-        // const _droppableDom = insertInfo.parentDom ?? _contextDom;
         let _reRect: DOMRect;
         if (state.successDragDroppableClass) _contextDom.classList.remove(state.successDragDroppableClass);
 
-        if (prevDroppableId !== _currentState.prevDroppableId)
-          _reRect = getRect(_currentState.droppableDuplicateDom) as DOMRect;
-        else if (_currentState.prevDroppableId) _reRect = getRect(_currentState.droppableDuplicateDom) as DOMRect;
+        if (prevDroppableId !== _currentState.parentId) _reRect = getRect(_currentState.droppableDuplicateDom) as DOMRect;
+        else if (_currentState.parentId) _reRect = getRect(_currentState.droppableDuplicateDom) as DOMRect;
         else _reRect = getDom(_currentState.dom).getBoundingClientRect();
-        const _droppableDuplicateDom = getRect(_currentState.droppableDuplicateDom);
-        // const _duplicateRect = getRect(_currentState.duplicateDom);
-        // console.log('_duplicateRect.width', _currentState.duplicateDom, _duplicateRect.width, _droppableDuplicateDom.width);
-        _currentState.prevDroppableId = _currentState.inDroppableId;
-        gsap
-          .to(_currentState.duplicateDom, {
-            '--drag-x': `${_reRect.left}px`,
-            '--drag-y': `${_reRect.top}px`,
-            '--drag-width': `${_droppableDuplicateDom.width}px`,
-            '--drag-height': `${_droppableDuplicateDom.height}px`,
-            '--drag-scale': '1.0',
-            boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
-            duration: 0.15,
-          })
-          .then((d) => {
-            _currentState.droppableDuplicateDom.remove();
-            setBindData(_currentState.inDroppableId);
-            setAlpha(1);
-            // if (insertInfo.childId) {
-            //   const _child = getDom(state.draggableMap[insertInfo.childId].dom)
-            //   _child.insertAdjacentElement('beforebegin', _dom);
-            // } else {
-            //   insertInfo.parentDom?.appendChild(_dom);
-            // }
-            // _droppableDom.appendChild(_dom);
 
-            if (!_currentState.useDuplicate) {
-              _dom.style.display = prevDisplay;
-            }
-            _currentState.duplicateDom.remove();
-          });
+        const _droppableDuplicateRect = getRect(_currentState.droppableDuplicateDom);
+        _currentState.parentId = _currentState.inDroppableId;
+        setBindData(_currentState.inDroppableId);
+        _currentState.droppableDuplicateDom.remove();
+
+        gsap.to(_currentState.duplicateDom, {
+          '--drag-x': `${_reRect.left}px`,
+          '--drag-y': `${_reRect.top}px`,
+          '--drag-width': `${_droppableDuplicateRect.width}px`,
+          '--drag-height': `${_droppableDuplicateRect.height}px`,
+          '--drag-scale': '1.0',
+          boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
+          duration: 0.15,
+        }).then((d) => {
+          // setAlpha(1);
+          // if (insertInfo.childId) {
+          //   const _child = getDom(state.draggableMap[insertInfo.childId].dom)
+          //   _child.insertAdjacentElement('beforebegin', _dom);
+          // } else {
+          //   insertInfo.parentDom?.appendChild(_dom);
+          // }
+          // _droppableDom.appendChild(_dom);
+
+          _dom.style.display = prevDisplay;
+          setAlpha(1);
+          _currentState.duplicateDom.remove();
+        });
       } else {
         treeData.value;
-        if (_currentState.prevDroppableId !== _currentState.inDroppableId) {
+        if (_currentState.parentId !== _currentState.inDroppableId) {
           setAlpha(0);
         }
 
@@ -565,81 +565,72 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
           const _contextRect = getRect(state.contextDom);
           state.draggableMap[state.dragId].x = e.pageX - _contextRect.left - _currentState.layerX;
           state.draggableMap[state.dragId].y = e.pageY - _contextRect.top - _currentState.layerY;
-          gsap
-            .to(_currentState.duplicateDom, {
+          gsap.to(_currentState.duplicateDom, {
+            boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
+            '--drag-scale': '1.0',
+            duration: 0.15,
+          }).then((d) => {
+            _currentState.droppableDuplicateDom.remove();
+            _currentState.duplicateDom.classList.remove('dragging');
+            setAlpha(1);
+            _dom.style.display = prevDisplay;
+            _contextDom.appendChild(_dom);
+            _currentState.duplicateDom.remove();
+          });
+        } else {
+          if (!_currentState.freeDrag && _currentState.inDroppableId === '') {
+            // 非自由拖拽且没有拖拽到目标点，则返回原点
+            _currentState.domComment?.parentElement!.insertBefore(_dom, _currentState.domComment);
+            gsap.to(_currentState.duplicateDom, {
+              '--drag-x': `${prevLocation[0]}px`,
+              '--drag-y': `${prevLocation[1]}px`,
               boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
               '--drag-scale': '1.0',
               duration: 0.15,
-            })
-            .then((d) => {
+            }).then((d) => {
               _currentState.droppableDuplicateDom.remove();
               _currentState.duplicateDom.classList.remove('dragging');
-              setAlpha(1);
               _dom.style.display = prevDisplay;
-              _contextDom.appendChild(_dom);
+              setAlpha(1);
               _currentState.duplicateDom.remove();
             });
-        } else {
-          if (!_currentState.freeDrag && _currentState.inDroppableId === '') {
-            _currentState.domComment?.parentElement!.insertBefore(_dom, _currentState.domComment);
-            gsap
-              .to(_currentState.duplicateDom, {
-                '--drag-x': `${prevLocation[0]}px`,
-                '--drag-y': `${prevLocation[1]}px`,
-                boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
-                '--drag-scale': '1.0',
-                duration: 0.15,
-              })
-              .then((d) => {
-                _currentState.droppableDuplicateDom.remove();
-                _currentState.duplicateDom.classList.remove('dragging');
-                _dom.style.display = prevDisplay;
-                setAlpha(1);
-                _currentState.duplicateDom.remove();
-              });
-          } else if (
-            _currentState.prevDroppableId === _currentState.inDroppableId &&
-            _currentState.inDroppableId === ''
-          ) {
-            gsap
-              .to(_currentState.duplicateDom, {
-                '--drag-x': `${prevLocation[0]}px`,
-                '--drag-y': `${prevLocation[1]}px`,
-                boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
-                '--drag-scale': '1.0',
-                duration: 0.15,
-              })
-              .then((d) => {
-                _currentState.droppableDuplicateDom.remove();
-                _currentState.duplicateDom.classList.remove('dragging');
-                _dom.style.display = prevDisplay;
-                _contextDom.appendChild(_dom);
-                setAlpha(1);
-                _currentState.duplicateDom.remove();
-              });
+          } else if (_currentState.parentId === _currentState.inDroppableId && _currentState.inDroppableId === '') {
+            // 一直在外部拖拽的逻辑
+            gsap.to(_currentState.duplicateDom, {
+              '--drag-x': `${prevLocation[0]}px`,
+              '--drag-y': `${prevLocation[1]}px`,
+              boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
+              '--drag-scale': '1.0',
+              duration: 0.15,
+            }).then((d) => {
+              _currentState.droppableDuplicateDom.remove();
+              _currentState.duplicateDom.classList.remove('dragging');
+              _dom.style.display = prevDisplay;
+              _contextDom.appendChild(_dom);
+              setAlpha(1);
+              _currentState.duplicateDom.remove();
+            });
           } else {
             const _contextRect = getRect(state.contextDom);
             state.draggableMap[state.dragId].x = e.pageX - _contextRect.left - _currentState.layerX;
             state.draggableMap[state.dragId].y = e.pageY - _contextRect.top - _currentState.layerY;
-            gsap
-              .to(_currentState.duplicateDom, {
-                '--drag-x': `${e.pageX - _currentState.layerX}px`,
-                '--drag-y': `${e.pageY - _currentState.layerY}px`,
-                boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
-                '--drag-scale': '1.0',
-                duration: 0.15,
-              })
-              .then((d) => {
-                _currentState.droppableDuplicateDom.remove();
-                _currentState.duplicateDom.classList.remove('dragging');
-                _dom.style.display = prevDisplay;
-                _contextDom.appendChild(_dom);
-                setAlpha(1);
-                _currentState.duplicateDom.remove();
-              });
+            gsap.to(_currentState.duplicateDom, {
+              '--drag-x': `${e.pageX - _currentState.layerX}px`,
+              '--drag-y': `${e.pageY - _currentState.layerY}px`,
+              boxShadow: '0px 0px 0px 0px rgba(34, 33, 81, 0.01), 0px 0px 0px 0px rgba(34, 33, 81, 0.01)',
+              '--drag-scale': '1.0',
+              duration: 0.15,
+            }).then((d) => {
+              _currentState.droppableDuplicateDom.remove();
+              _currentState.duplicateDom.classList.remove('dragging');
+              _dom.style.display = prevDisplay;
+              _contextDom.appendChild(_dom);
+              setAlpha(1);
+              _currentState.duplicateDom.remove();
+            });
           }
         }
-        _currentState.prevDroppableId = '';
+        _currentState.parentId = '';
       }
 
       prevDroppableId = '';
@@ -723,6 +714,8 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
 
   /** 设置透明度 */
   const setAlpha = (alpha: number) => {
+    // console.log(state.dragId, alpha);
+    // console.log('获取节点', getCurrentDom.value);
     getCurrentDom.value.style.opacity = alpha + '';
   };
 
@@ -814,7 +807,7 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
         width: _rect.width,
         height: _rect.height,
         inDroppableId: '',
-        prevDroppableId: '',
+        parentId: '',
       };
     }
   };
@@ -896,12 +889,18 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
     }
   };
 
-  const addDataParent = (id: string, parentId: string | undefined) => {
+  const addDataParent = (id: string, parentId: string = '') => {
     const _index = dataList.value.findIndex((i) => i[0] == id);
     if (_index < 0) {
       dataList.value.push([id, parentId]);
     } else {
       dataList.value[_index][1] = parentId;
+    }
+    if (state.draggableMap[id]) {
+      state.draggableMap[id].parentId = parentId;
+    }
+    if (state.droppableMap[id]) {
+      state.droppableMap[id].parentId = parentId;
     }
   };
 
@@ -909,8 +908,11 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
     if (parentId && bindState[parentId]) {
       const treeNode = findTreeNode(parentId, treeData.value);
       if (treeNode?.type === 'droppable') {
-        // console.error('设置bindState值', treeNode.children);
-        bindState[parentId]?.set(treeNode.children);
+        console.log('设置数据', parentId, treeNode.children.map(i => i.data));
+        bindState[parentId]?.set(treeNode.children.map(i => i.data));
+
+        // console.log('设置数据', parentId, treeNode.children.map(i => bindState[i.id].get()));
+        // bindState[parentId]?.set(treeNode.children.map(i => bindState[i.id].get()));
       }
     }
   };
@@ -918,13 +920,14 @@ export const useCustomDragHook = <T extends undefined | object = undefined>({
   const removeDataParent = (id: string) => {
     const _index = dataList.value.findIndex((i) => i[0] == id);
     dataList.value.splice(_index, 1);
+    delete bindState[id];
   };
 
   /** 绑定数据 */
   const bingData = (
     id: string,
     config: {
-      get: () => void;
+      get: () => any[];
       set: (val: any[]) => void;
     },
   ) => {

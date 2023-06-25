@@ -22,10 +22,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref, getCurrentInstance, inject, provide, onBeforeMount } from 'vue';
+import { onMounted, onUnmounted, reactive, ref, getCurrentInstance, inject, provide, onBeforeMount, PropType } from 'vue';
 import { DragHook } from '../index.d';
 import { createModelId } from '@/tools/common';
 import { message } from 'ant-design-vue';
+import { onUpdated } from 'vue';
+import { onBeforeUnmount } from 'vue';
 
 // defineOptions({
 //   inheritAttrs: false,
@@ -34,6 +36,10 @@ import { message } from 'ant-design-vue';
 const slots = defineSlots();
 
 const props = defineProps({
+  data: {
+    type: Object as PropType<(any & { id: string })>,
+    default: () => ({})
+  },
   visual: {
     type: Boolean,
     default: false,
@@ -104,6 +110,7 @@ const rootEl = ref<HTMLElement>();
 const emit = defineEmits<{
   (event: 'update:x', value: number): void;
   (event: 'update:y', value: number): void;
+  (event: 'update:data', value: (any & { id: string })[]): void;
 }>();
 
 const state = reactive({
@@ -131,8 +138,8 @@ const getRootDom = (): HTMLElement => {
       }
     }
   } else {
+    // debugger;
     _context = rootEl.value;
-    // console.log('根节点', rootEl.value);
   }
   return _context!;
 };
@@ -148,6 +155,8 @@ onMounted(() => {
   if (!dragHook) {
     throw new Error('未查询到拖拽钩子，请确认外部是否包含DragContext组件');
   }
+
+  console.log('添加state.draggableMap', props.dragId);
 
 
   const parentId = inject<string>(`draghook-${props.hookname}`);
@@ -207,6 +216,16 @@ onMounted(() => {
       emit('update:y', e.state.y);
     }
   });
+  dragHook.bingData(props.dragId, {
+    type: 'draggable',
+    get() {
+      return props.data;
+    },
+    set(data: (any & { id: string })[]) {
+      // console.warn('设置值', props.dragId, data);
+      emit('update:data', data);
+    }
+  });
 
   dragHook.onEndDrag(props.dragId, (e) => {
     if (e.droppableId) {
@@ -215,7 +234,16 @@ onMounted(() => {
     }
   });
 });
+onUpdated(() => {
+  // console.log('drag-draggable onUpdated', props.dragId, rootEl.value);
+});
+
+onBeforeUnmount(() => {
+
+});
+
 onUnmounted(() => {
+  // console.log('drag-draggable onUnmounted', props.dragId);
   if (dragHook) {
     dragHook.removeDraggable(props.dragId);
     dragHook.removeDataParent(props.dragId);
