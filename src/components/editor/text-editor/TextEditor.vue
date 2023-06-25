@@ -5,13 +5,15 @@
   <Input
     v-else
     class="text-editor"
-    :class="{ disabled: $attrs.disabled }"
-    :disabled="($attrs.disabled as boolean)"
-    :placeholder="placeholder"
+    :class="{ disabled: props.disabled }"
+    :disabled="props.disabled"
+    :placeholder="props.placeholder"
     v-model:value="state.inputValue"
-    @change="input"
+    @change="onInput"
   >
-    <slot name="suffix"></slot>
+    <template v-if="props.suffix" #addonAfter>
+      <span>{{ props.suffix }}</span>
+    </template>
   </Input>
 </template>
 
@@ -29,6 +31,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
   placeholder: {
     type: String,
     default: '',
@@ -37,11 +43,13 @@ const props = defineProps({
   openThrottle: {
     type: Boolean,
     default: true
+  },
+  suffix: {
+    type: String,
   }
 });
 
 const emit = defineEmits<{
-  (event: 'update:value', val: string): void;
   (event: 'change', val: string): void;
 }>();
 
@@ -50,21 +58,17 @@ const state = reactive({
 });
 
 watch(() => props.value, (val, oldVal) => {
-  if (val !== oldVal) {
-    state.inputValue = val;
-  }
+  state.inputValue = val;
 });
 
-/** 改变值 */
-const input = props.openThrottle ? throttle(() => {
+const changeValue = () => {
   if (state.inputValue !== props.value) {
     emit('change', state.inputValue);
   }
-}) : () => {
-  if (state.inputValue !== props.value) {
-    emit('change', state.inputValue);
-  }
-};
+}
+
+/** 值改变事件 */
+const onInput = props.openThrottle ? throttle(changeValue) : changeValue;
 
 onMounted(() => {
   state.inputValue = props.value;

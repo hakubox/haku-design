@@ -1794,8 +1794,8 @@ export let formComponents: InitComponent[] = [
             { label: '下方', value: 'end' }, 
           ]
         },
-        showCondition() {
-          return editorState.appConfig.appType === AppType.canvas;
+        showCondition({ component }) {
+          return editorState.appConfig.appType === AppType.canvas && !component.attrs.autoheight;
         }
       }),
       getComponentPropType({

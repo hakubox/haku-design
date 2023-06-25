@@ -356,6 +356,7 @@ const onEndDrag = (e: MouseEvent) => {
     draggableState.tipConfig.isShow = false;
     state.actionType = undefined;
     draggableState.dragConfig.isPause = false;
+    draggableState.alignLines = [];
     setTimeout(() => {
       draggableState.tipConfig.text = undefined;
     }, 300);

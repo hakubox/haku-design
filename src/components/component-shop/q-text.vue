@@ -70,6 +70,8 @@ const state = reactive({});
 @import '/src/assets/less/variable.less';
 
 .component-text {
+  flex-grow: 1;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -77,24 +79,29 @@ const state = reactive({});
   overflow: hidden;
 
   &[h-pos='start'] {
-
     .component-text-content {
       text-align: left;
     }
   }
-
   &[h-pos='center'] {
-
     .component-text-content {
       text-align: center;
     }
   }
-
   &[h-pos='end'] {
-
     .component-text-content {
       text-align: right;
     }
+  }
+
+  &[v-pos='start'] {
+    justify-content: flex-start;
+  }
+  &[v-pos='center'] {
+    justify-content: center;
+  }
+  &[v-pos='end'] {
+    justify-content: flex-end;
   }
 
   > .component-content {

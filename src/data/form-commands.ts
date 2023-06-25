@@ -226,7 +226,7 @@ export function initCommands() {
     updatable: false,
     objectType: 'global',
     exec(command) {
-      editorService.saveQuestionnaire();
+      editorService.saveApp();
     },
     undo(command) {},
   });
