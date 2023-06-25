@@ -75,7 +75,7 @@ export function listQuestionary({
       searchKey,
     },
     { returnPageList: true },
-  ) as PageList<QuestionaryBasicInfoDto>;
+  );
 }
 
 /** 查询问卷详细 */

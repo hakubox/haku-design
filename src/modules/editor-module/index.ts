@@ -769,7 +769,7 @@ export const service = {
     // }
   },
   /** 保存问卷 */
-  saveQuestionnaire() {
+  saveApp() {
     if (!state.appConfig.id) {
       state.appConfig.id = createModelId();
     }
@@ -787,9 +787,10 @@ export const service = {
       _canUpgrade = true;
     }
     const hide = toast(_canUpgrade ? '问卷更新中...' : '问卷保存中...', 'loading', 0);
-    if (_exportData) {
-      _exportData.appConfig.appVersion += 1;
-    }
+    // if (_exportData?.appConfig) {
+    //   if (!_exportData.appConfig.appVersion) _exportData.appConfig.appVersion = 1;
+    //   _exportData.appConfig.appVersion = _exportData.appConfig.appVersion + 1;
+    // }
     editApp(appBody2AppInfoDto(_exportData)).then(d => {
       historyState.saveHistoryIndex = historyState.historyIndex;
       configService.setSaveHistory(state.appConfig.id);
