@@ -135,17 +135,17 @@ export function moveItem({ arr, itemId, parentId, index }: {
       targetChildList.push(i);
     }
   }
-  let size = targetChildList.length;
+  const size = targetChildList.length;
   if (size === 0) {
     return;
   }
-  let num = (index >= size ? targetChildList[size - 1] + 1 : targetChildList[index]) - cur;
+  const num = (index >= size ? targetChildList[size - 1] + 1 : targetChildList[index]) - cur;
   swap(arr, cur, num > 0 ? num - 1 : num);
 }
 
 const swap = (arr: any[], start: number, num: number) => {
   let target;
-  let step = Math.abs(num);
+  const step = Math.abs(num);
   let temp: any;
   for (let i = 0; i < step; i++) {
     target = num > 0 ? start + 1 : start - 1;
